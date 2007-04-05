@@ -1,188 +1,235 @@
 <tmpl_include name="inc.head.tmpl">
-<tmpl_include name="inc.subhead.tmpl">
-<tmpl_include name="inc.adminmenu.tmpl">
+<tmpl_include name="inc.titleBar.tmpl">
 <script src="js/adminSettings.js" type="text/javascript"></script>
-<div align="center">
-	<table width="100%" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
-		<tr>
-			<td bgcolor="<tmpl_var name="table_header_bg">" background="themes/default/images/bar.gif">
-				<img src="themes/default/images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title">Stats Settings</font>
-			</td>
-		</tr>
-		<tr>
-			<td align="center">
-				<div align="center">
-					<table cellpadding="5" cellspacing="0" border="0" width="100%">
-						<form name="theForm" action="admin.php?op=updateStatsSettings" method="post" onsubmit="return validateSettings('stats')">
-							<tr>
-								<td align="left" width="350" valign="top"><strong>Enable Public Stats</strong><br>
-								If Public Stats are enabled stats show complete (superadmin-level) stats without authentication.
-								</td>
-								<td valign="top">
-									<select name="stats_enable_public">
-										<option value="1">true</option>
-										<option value="0"
-										<tmpl_if name="stats_enable_public" value="0">
-											 selected
-										</tmpl_if>
-										>false</option>
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<td align="left" width="350" valign="top"><strong>Show Usage</strong><br>
-								Show Usage when stats is called without arguments.<br>
-								<a href="stats.php?usage" target="_blank">
-									<img src="themes/default/images/arrow.gif" width="9" height="9" title="Show Usage" border="0">
-									Show Usage
-								</a>
-								</td>
-								<td valign="top">
-									<select name="stats_show_usage">
-										<option value="1">true</option>
-										<option value="0"
-										<tmpl_if name="stats_show_usage" value="0">
-											 selected
-										</tmpl_if>
-										>false</option>
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<td align="left" width="350" valign="top"><strong>Deflate Level</strong><br>
-								Specify level of deflate compression. (default is "9"):
-								</td>
-								<td valign="bottom">
-									<select name="stats_deflate_level">
-										<tmpl_loop name="deflate_list">
-											<option value="<tmpl_var name="i">"
-												<tmpl_if name="is_selected" value="1">
-													 selected
-												</tmpl_if>
-											><tmpl_var name="i"></option>
-										</tmpl_loop>
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<td align="left" width="350" valign="top"><strong>Text Delim Char</strong><br>
-								Specify delim-char for text-format. (default is ';'):
-								</td>
-								<td valign="bottom">
-									<input name="stats_txt_delim" type="Text" maxlength="1" value="<tmpl_var name="stats_txt_delim">" size="1">
-								</td>
-							</tr>
-							<tr>
-								<td align="left" width="350" valign="top"><strong>Default : Header</strong><br>
-								Specify default for send-header. <br><em>Note</em>: Only used in txt-format.
-								</td>
-								<td valign="top">
-									<select name="stats_default_header">
-										<option value="1">true</option>
-										<option value="0"
-										<tmpl_if name="stats_default_header" value="0">
-											 selected
-										</tmpl_if>
-										>false</option>
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<td align="left" width="350" valign="top"><strong>Default : type</strong><br>
-								Specify default-type :
-								</td>
-								<td valign="bottom">
-									<select name="stats_default_type">
-										<option value="all"
-										<tmpl_if name="stats_default_type" value="all">
-											 selected
-										</tmpl_if>
-										>all</option>
-										<option value="server"
-										<tmpl_if name="stats_default_type" value="server">
-											 selected
-										</tmpl_if>
-										>server</option>
-										<option value="xfer"
-										<tmpl_if name="stats_default_type" value="xfer">
-											 selected
-										</tmpl_if>
-										>xfer</option>
-										<option value="users"
-										<tmpl_if name="stats_default_type" value="users">
-											 selected
-										</tmpl_if>
-										>users</option>										
-										<option value="transfers"
-										<tmpl_if name="stats_default_type" value="transfers">
-											 selected
-										</tmpl_if>
-										>transfers</option>
-									</select>									
-								</td>
-							</tr>
-							<tr>
-								<td align="left" width="350" valign="top"><strong>Default : format</strong><br>
-								Specify default-format :
-								</td>
-								<td valign="bottom">
-									<select name="stats_default_format">
-										<option value="xml"
-										<tmpl_if name="stats_default_format" value="xml">
-											 selected
-										</tmpl_if>
-										>xml</option>
-										<option value="rss"
-										<tmpl_if name="stats_default_format" value="rss">
-											 selected
-										</tmpl_if>
-										>rss</option>
-										<option value="txt"
-										<tmpl_if name="stats_default_format" value="txt">
-											 selected
-										</tmpl_if>
-										>txt</option>
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<td align="left" width="350" valign="top"><strong>Default : Compress</strong><br>
-								Specify default for send-compressed :
-								</td>
-								<td valign="top">
-									<select name="stats_default_compress">
-										<option value="1">true</option>
-										<option value="0"
-										<tmpl_if name="stats_default_compress" value="0">
-											 selected
-										</tmpl_if>
-										>false</option>
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<td align="left" width="350" valign="top"><strong>Default : Attachment</strong><br>
-								Specify default for send-as-attachment :
-								</td>
-								<td valign="top">
-									<select name="stats_default_attach">
-										<option value="1">true</option>
-										<option value="0"
-										<tmpl_if name="stats_default_attach" value="0">
-											 selected
-										</tmpl_if>
-										>false</option>
-									</select>
-								</td>
-							</tr>
-						</table>
-						<br>
+<div id="content">
+	<div id="upload">
+		<div id="uploadLast"></div>
+		<div id="uploadFirst">
+			<span class="upload">
+				Stats Settings
+			</span>
+		</div>
+	</div>
+	<div class="uploadClass">
+		<form name="theForm" action="admin.php?op=updateStatsSettings" method="post" onsubmit="return validateSettings('stats')">
+			<table id="settings">
+				<tr>
+					<td class="settingsTitle">
+						Enable Public Stats
+					</td>
+					<td class="settingsSetting" rowspan="2">
+						<select name="stats_enable_public">
+							<option value="1">true</option>
+							<option value="0"
+							<tmpl_if name="stats_enable_public" value="0">
+								 selected
+							</tmpl_if>
+							>false</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsText">
+						If Public Stats are enabled stats show complete (superadmin-level) stats without authentication.
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsTitle">
+						Show Usage
+					</td>
+					<td class="settingsSetting" rowspan="2">
+						<select name="stats_show_usage">
+							<option value="1">true</option>
+							<option value="0"
+							<tmpl_if name="stats_show_usage" value="0">
+								 selected
+							</tmpl_if>
+							>false</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsText">
+						Show Usage when stats is called without arguments.<br />
+						<a id="closeLink" href="stats.php?usage" target="_blank">Show Usage</a>
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsTitle">
+						Deflate Level
+					</td>
+					<td class="settingsSetting" rowspan="2">
+						<select name="stats_deflate_level">
+							<tmpl_loop name="deflate_list">
+								<option value="<tmpl_var name="i">"
+									<tmpl_if name="is_selected" value="1">
+										 selected
+									</tmpl_if>
+								><tmpl_var name="i"></option>
+							</tmpl_loop>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsText">
+						Specify level of deflate compression. (default is "9").
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsTitle">
+						Text Delim Char
+					</td>
+					<td class="settingsSetting" rowspan="2">
+						<input name="stats_txt_delim" type="Text" maxlength="1" value="<tmpl_var name="stats_txt_delim">" size="1">
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsText">
+						Specify delim-char for text-format. (default is ';').
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsTitle">
+						Default : Header
+					</td>
+					<td class="settingsSetting" rowspan="2">
+						<select name="stats_default_header">
+							<option value="1">true</option>
+							<option value="0"
+							<tmpl_if name="stats_default_header" value="0">
+								 selected
+							</tmpl_if>
+							>false</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsText">
+						Specify default for send-header.<br />
+						<em>Note</em>: Only used in txt-format.
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsTitle">
+						Default : type
+					</td>
+					<td class="settingsSetting" rowspan="2">
+						<select name="stats_default_type">
+							<option value="all"
+							<tmpl_if name="stats_default_type" value="all">
+								 selected
+							</tmpl_if>
+							>all</option>
+							<option value="server"
+							<tmpl_if name="stats_default_type" value="server">
+								 selected
+							</tmpl_if>
+							>server</option>
+							<option value="xfer"
+							<tmpl_if name="stats_default_type" value="xfer">
+								 selected
+							</tmpl_if>
+							>xfer</option>
+							<option value="users"
+							<tmpl_if name="stats_default_type" value="users">
+								 selected
+							</tmpl_if>
+							>users</option>
+							<option value="transfers"
+							<tmpl_if name="stats_default_type" value="transfers">
+								 selected
+							</tmpl_if>
+							>transfers</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsText">
+						Specify default-type.
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsTitle">
+						Default : format
+					</td>
+					<td class="settingsSetting" rowspan="2">
+						<select name="stats_default_format">
+							<option value="xml"
+							<tmpl_if name="stats_default_format" value="xml">
+								 selected
+							</tmpl_if>
+							>xml</option>
+							<option value="rss"
+							<tmpl_if name="stats_default_format" value="rss">
+								 selected
+							</tmpl_if>
+							>rss</option>
+							<option value="txt"
+							<tmpl_if name="stats_default_format" value="txt">
+								 selected
+							</tmpl_if>
+							>txt</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsText">
+						Specify default-format.
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsTitle">
+						Default : Compress
+					</td>
+					<td class="settingsSetting" rowspan="2">
+						<select name="stats_default_compress">
+							<option value="1">true</option>
+							<option value="0"
+							<tmpl_if name="stats_default_compress" value="0">
+								 selected
+							</tmpl_if>
+							>false</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsText">
+						Specify default for send-compressed.
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsTitle">
+						Default : Attachment
+					</td>
+					<td class="settingsSetting" rowspan="2">
+						<select name="stats_default_attach">
+							<option value="1">true</option>
+							<option value="0"
+							<tmpl_if name="stats_default_attach" value="0">
+								 selected
+							</tmpl_if>
+							>false</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsText">
+						Specify default for send-as-attachment.
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsTitle">
+					</td>
+					<td class="settingsSetting">
 						<input type="Submit" value="Update Settings">
-					</form>
-				</div>
-				<br>
-			</td>
-		</tr>
-	</table>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+	<div id="uploadBottom"></div>
+	<div id="uploadBottomEnd"></div>
+	<tmpl_include name="inc.subfoot.tmpl">
 </div>
-<tmpl_include name="inc.subfoot.tmpl">
+</body>
+</html>
