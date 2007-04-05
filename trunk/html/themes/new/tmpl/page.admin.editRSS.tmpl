@@ -35,9 +35,9 @@
 						</td>
 						<td class="outlinks">
 							<tmpl_if name="enable_dereferrer">
-								<a class="outlinks" href="index.php?iid=dereferrer&u=<tmpl_var name="link">" target="_blank"><tmpl_var name="link"></a>
+								<a class="outlinks" href="index.php?iid=dereferrer&u=<tmpl_var escape="url" name="link">" target="_blank"><tmpl_var escape="htmlkeepspaces" name="link"></a>
 							<tmpl_else>
-								<a class="outlinks" href="<tmpl_var name="link">" target="_blank"><tmpl_var name="link"></a>
+								<a class="outlinks" href="<tmpl_var escape="html" name="link">" target="_blank"><tmpl_var escape="htmlkeepspaces" name="link"></a>
 							</tmpl_if>
 						</td>
 					</tr>

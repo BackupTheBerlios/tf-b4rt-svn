@@ -964,7 +964,6 @@ function getSite($lid) {
  */
 function addNewRSS($newRSS) {
 	global $db;
-	$newRSS=html_entity_decode($newRSS);
 	$rec = array('url'=>$newRSS);
 	$sTable = 'tf_rss';
 	$sql = $db->GetInsertSql($sTable, $rec);
