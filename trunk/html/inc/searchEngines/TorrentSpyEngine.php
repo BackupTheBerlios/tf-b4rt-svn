@@ -505,14 +505,14 @@ class tSpy
     {
         $output = "<tr>\n";
         $output .= "    <td width=16 bgcolor=\"".$bg."\"><a href=\"dispatcher.php?action=urlUpload&type=torrent&url=".$this->torrentFile."\"><img src=\"".getImagesPath()."download_owner.gif\" width=\"16\" height=\"16\" title=\"".$this->torrentName."\" border=0></a></td>\n";
-		$output .= "    <td bgcolor=\"".$bg."\"><a href=\"dispatcher.php?action=urlUpload&type=torrent&url=".$this->torrentFile."\" title=\"".$this->torrentName."\">".$this->torrentDisplayName."</a></td>\n";
+		$output .= "    <td bgcolor=\"".$bg."\"><a href=\"dispatcher.php?action=urlUpload&type=torrent&url=".$this->torrentFile."\" title=\"".$this->torrentName."\">".$this->torrentDisplayName."</a>";
         switch ($this->torrentStatus)
         {
             case "R":
-                $output .= " <span title=Registration_Needed><b>R</b></span>";
+                $output .= " <span title='Registration needed'><b>R</b></span>";
                 break;
             case "P":
-                $output .= " <span title=Password_Needed><b>P</b></span>";
+                $output .= " <span title='Password needed'><b>P</b></span>";
                 break;
         }
         $output .= "</td>\n";
