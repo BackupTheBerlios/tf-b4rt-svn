@@ -93,9 +93,9 @@
 							</td>
 							<td class="outlinks">
 								<tmpl_if name="enable_dereferrer">
-									<a class="outlinks" href="index.php?iid=dereferrer&u=<tmpl_var name="url">" target="_blank"><tmpl_var name="url"></a>
+									<a class="outlinks" href="index.php?iid=dereferrer&u=<tmpl_var escape="url" name="url">" target="_blank"><tmpl_var escape="htmlkeepspaces" name="url"></a>
 								<tmpl_else>
-									<a class="outlinks" href="<tmpl_var name="url">" target="_blank"><tmpl_var name="url"></a>
+									<a class="outlinks" href="<tmpl_var escape="html" name="url">" target="_blank"><tmpl_var escape="htmlkeepspaces" name="url"></a>
 								</tmpl_if>
 							</td>
 							<td class="buttonLinks">
@@ -385,7 +385,7 @@
 								<input type="text" size="30" name="savedir" value="<tmpl_var name="rssad_savedir">">
 							</td>
 							<td class="buttonLinks">
-								<input type="text" size="30" name="url" value="<tmpl_var name="rssad_url">">
+								<input type="text" size="30" name="url" value="<tmpl_var escape="html" name="rssad_url">">
 	
 							</td>
 							<td class="buttonLinks">

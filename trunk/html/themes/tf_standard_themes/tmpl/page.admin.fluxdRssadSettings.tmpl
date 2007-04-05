@@ -74,9 +74,9 @@
 						</td>
 						<td>
 							<tmpl_if name="enable_dereferrer">
-								<a href="index.php?iid=dereferrer&u=<tmpl_var name="url">" target="_blank"><tmpl_var name="url"></a>
+								<a href="index.php?iid=dereferrer&u=<tmpl_var escape="url" name="url">" target="_blank"><tmpl_var escape="htmlkeepspaces" name="url"></a>
 							<tmpl_else>
-								<a href="<tmpl_var name="url">" target="_blank"><tmpl_var name="url"></a>
+								<a href="<tmpl_var escape="html" name="url">" target="_blank"><tmpl_var escape="htmlkeepspaces" name="url"></a>
 							</tmpl_if>
 						</td>
 						<td>
@@ -312,7 +312,7 @@
 						<input type="text" size="40" name="savedir" value="<tmpl_var name="rssad_savedir">">
 					</td>
 					<td>
-						<input type="text" size="50" name="url" value="<tmpl_var name="rssad_url">">
+						<input type="text" size="50" name="url" value="<tmpl_var escape="html" name="rssad_url">">
 					</td>
 					<td>
 						<select name="filtername">

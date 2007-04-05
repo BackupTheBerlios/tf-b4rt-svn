@@ -1746,6 +1746,33 @@ function tfb_strip_quotes(&$var){
 }
 
 /**
+ * HTML-encode a string.
+ *
+ * @param $str
+ * @return string
+ */
+function tfb_htmlencode($str) {
+	return htmlspecialchars($str, ENT_QUOTES);
+}
+
+/**
+ * HTML-encode a string, transforming spaces into '&nbsp;'.
+ * Should be used on strings that might contain multiple spaces
+ * (names, paths & filenames, ...), unless string will be output:
+ *   - in an HTML attribute,
+ *   - in a <pre> element,
+ * since both of those do not ignore multiple spaces (in that
+ * case, tfb_htmlencode is enough).
+ *
+ * @param $str
+ * @return string
+ */
+function tfb_htmlencodekeepspaces($str) {
+	return str_replace(' ', '&nbsp;', htmlspecialchars($str, ENT_QUOTES));
+}
+
+
+/**
  * Audit Action
  *
  * @param $action

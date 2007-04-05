@@ -47,8 +47,9 @@ if (!(isset($_REQUEST["u"]))) {
 tmplInitializeInstance($cfg["theme"], "page.dereferrer.tmpl");
 
 // set vars
-$tmpl->setvar('url', htmlentities($url, ENT_QUOTES));
-$tmpl->setvar('meta_refresh', '0;URL='.$url);
+$url2 = tfb_htmlencode($url);
+$tmpl->setvar('url', $url2);
+$tmpl->setvar('meta_refresh', '0;URL='.$url2);
 //
 tmplSetTitleBar($cfg["pagetitle"].' - dereferrer', false);
 tmplSetFoot(false);
