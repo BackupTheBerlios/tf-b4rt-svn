@@ -43,18 +43,18 @@
 								<div class="linksClass">
 									<form action="admin.php?op=editLink" method="post">
 										<tmpl_var name="_FULLURLLINK">:
-										<input type="Text" size="25" maxlength="255" name="editLink" value="<tmpl_var name="url">">
+										<input type="Text" size="25" maxlength="255" name="editLink" value="<tmpl_var escape="html" name="url">">
 										<tmpl_var name="_FULLSITENAME">:
-										<input type="Text" size="25" maxlength="255" name="editSite" value="<tmpl_var name="sitename">">
+										<input type="Text" size="25" maxlength="255" name="editSite" value="<tmpl_var escape="html" name="sitename">">
 										<input type="hidden" name="lid" value="<tmpl_var name="lid">">
 										<input type="Submit" value="<tmpl_var name="_UPDATE">"><br>
 									</form>
 								</div>
 							<tmpl_else>
 								<tmpl_if name="enable_dereferrer">
-									<a class="outlinks" href="index.php?iid=dereferrer&u=<tmpl_var name="url">" target="_blank"><tmpl_var name="sitename"></a>
+									<a class="outlinks" href="index.php?iid=dereferrer&u=<tmpl_var escape="url" name="url">" target="_blank"><tmpl_var escape="html" name="sitename"></a>
 								<tmpl_else>
-									<a class="outlinks" href="<tmpl_var name="url">" target="_blank"><tmpl_var name="sitename"></a>
+									<a class="outlinks" href="<tmpl_var escape="html" name="url">" target="_blank"><tmpl_var escape="html" name="sitename"></a>
 								</tmpl_if>
 							</tmpl_if>
 						</td>

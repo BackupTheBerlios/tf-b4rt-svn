@@ -24,10 +24,10 @@
 				<tmpl_if name="is_edit">
 					<td colspan="2">
 						<form action="admin.php?op=editLink" method="post">
-							<tmpl_var name="FULLURLLINK">
-							<input type="Text" size="30" maxlength="255" name="editLink" value="<tmpl_var name="url">">
-							<tmpl_var name="_FULLSITENAME">
-							<input type="Text" size="30" maxlength="255" name="editSite" value="<tmpl_var name="sitename">">
+							<tmpl_var name="_FULLURLLINK">:
+							<input type="Text" size="30" maxlength="255" name="editLink" value="<tmpl_var escape="html" name="url">">
+							<tmpl_var name="_FULLSITENAME">:
+							<input type="Text" size="30" maxlength="255" name="editSite" value="<tmpl_var escape="html" name="sitename">">
 							<input type="hidden" name="lid" value="<tmpl_var name="lid">">
 							<input type="Submit" value="<tmpl_var name="_UPDATE">"><br>
 						</form>
@@ -37,9 +37,9 @@
 						<a href="admin.php?op=deleteLink&lid=<tmpl_var name="lid">" onclick="return confirm('Delete Link <tmpl_var name="sitename"> ?')"><img src="themes/tf_standard_themes/images/delete_on.gif" width=16 height=16 border=0 title="<tmpl_var name="_DELETE"> <tmpl_var name="lid">" align="absmiddle"></a>&nbsp;
 						<a href="admin.php?op=editLinks&edit=<tmpl_var name="lid">"><img src="themes/tf_standard_themes/images/edit.gif" width=16 height=16 border=0 title="<tmpl_var name="_EDIT"> <tmpl_var name="lid">" align="absmiddle"></a>&nbsp;
 						<tmpl_if name="enable_dereferrer">
-							<a href="index.php?iid=dereferrer&u=<tmpl_var name="url">" target="_blank"><tmpl_var name="sitename"></a>
+							<a href="index.php?iid=dereferrer&u=<tmpl_var escape="url" name="url">" target="_blank"><tmpl_var escape="html" name="sitename"></a>
 						<tmpl_else>
-							<a href="<tmpl_var name="url">" target="_blank"><tmpl_var name="sitename"></a>
+							<a href="<tmpl_var escape="html" name="url">" target="_blank"><tmpl_var escape="html" name="sitename"></a>
 						</tmpl_if>
 					</td>
 					<td align=<tmpl_if name="last_link">left<tmpl_else>right</tmpl_if> width='36'>
