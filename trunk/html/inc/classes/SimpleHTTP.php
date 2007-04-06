@@ -311,6 +311,8 @@ class SimpleHTTP
 		$domain = parse_url($this->url);
 
 		// get-command
+		if (!array_key_exists("path", $domain))
+			$domain["path"] = "/";
 		$this->getcmd = $domain["path"];
 
 	    if (!array_key_exists("query", $domain))
