@@ -310,6 +310,18 @@ class SimpleHTTP
 		 */
 		$domain = parse_url($this->url);
 
+		if (
+			empty($domain) ||   // Check URL is a well-formed HTTP URL.
+			empty($domain['scheme']) || $domain['scheme'] != 'http' ||
+			empty($domain['host'])
+		) {
+			$this->state = SIMPLEHTTP_STATE_ERROR;
+			$msg = "Error fetching " . $this->url .".  This is not a valid HTTP URL.";
+			array_push($this->messages, $msg);
+			AuditAction($cfg["constants"]["error"], $msg);
+			return($data="");
+		}
+
 		// get-command
 		if (!array_key_exists("path", $domain))
 			$domain["path"] = "/";
