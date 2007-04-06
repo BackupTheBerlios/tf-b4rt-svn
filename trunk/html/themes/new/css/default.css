@@ -251,6 +251,11 @@ span.serverStats {
 	font-size: 12pt;
 	font-weight: 700;
 }
+#action_in_progress {
+	height: 26px;
+	margin-bottom: 5px;
+	text-align: center;
+}
 #statsDiskspaceBar {
 	padding-top: 5px;
 	margin-left: 20px;

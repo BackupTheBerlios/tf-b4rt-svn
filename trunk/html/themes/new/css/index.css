@@ -83,6 +83,16 @@ div.linksTitle {
 	background-image: url("../pics/menu_box.jpg");
 	background-repeat: repeat-y;
 }
+#seedingTorrents {
+	margin-left: 30px;
+	background-image: url("../pics/menu_box.jpg");
+	background-repeat: repeat-y;
+}
+#pageRefresh {
+	margin-left: 30px;
+	background-image: url("../pics/menu_box.jpg");
+	background-repeat: repeat-y;
+}
 span.serverStats2 {
 	color: #585858;
 	margin-left: 35px;
