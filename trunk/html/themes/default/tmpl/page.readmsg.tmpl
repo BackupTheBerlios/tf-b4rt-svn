@@ -30,16 +30,16 @@
 <tmpl_else>
 	<div align="center">
 		<table border="0" cellpadding="0" cellspacing="0">
-			<form name="formMessage" action="index.php?iid=message" method="post">
-				<tr><td><tmpl_var name="_SENDMESSAGETO">
+			<tr><td><tmpl_var name="_SENDMESSAGETO">
+				<form name="formMessage" action="index.php?iid=message" method="post">
 					<select name="to_user">
 						<tmpl_loop name="messageList_user">
 							<option><tmpl_var name="user"></option>
 						</tmpl_loop>
 					</select>
 					<input type="Submit" value="<tmpl_var name="_COMPOSE">">
-				</td></tr>
-			</form>
+				</form>
+			</td></tr>
 		</table>
 	</div>
 	<table width="760" border=1 bordercolor="#94ABC0" cellpadding="2" cellspacing="0" bgcolor="#A2BED4">

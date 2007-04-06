@@ -7,6 +7,7 @@
     <tmpl_include name="inc.driveSpaceBar_tf.tmpl">
 </tmpl_if>
 <br>
+<form action="index.php?iid=dir&dir=<tmpl_var name="dir">&multidel=1" method="post" name="multidir">
 <table cellpadding="2"" width="740">
 	<tr>
 		<td align="left">
@@ -23,7 +24,6 @@
 			</tmpl_if>
 		</td>
 	</tr>
-	<form action="index.php?iid=dir&dir=<tmpl_var name="dir">&multidel=1" method="post" name="multidir">
 	<tmpl_if name="list">
 		<tmpl_loop name="list">
 			<tmpl_if name="__EVEN__">
@@ -128,11 +128,11 @@
 				</td>
 		</tr>
 	</tmpl_if>
-</form>
 <tmpl_if name="enable_dirstats" value="1">
 	<tr bgcolor="#829FB5">
 		<td align="center" colspan="4"><tmpl_var name="_TDDU"> <tmpl_var name="duTotal">B</td>
 	</tr>
 </tmpl_if>
 </table>
+</form>
 <tmpl_include name="inc.subfoot.tmpl">

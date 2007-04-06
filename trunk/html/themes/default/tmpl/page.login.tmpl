@@ -51,14 +51,17 @@
 																		<tr>
 																			<td align="center" colspan="2"><strong>Cookie found</strong></td>
 																		</tr>
-																		<form name="cookieLogin" action="login.php" method="post">
-																		<input name="docookielogin" type="Hidden" value="true">
-																		<input name="username" type="Hidden" value="<tmpl_var name="cookieuser">">
-																		<input name="md5pass" type="Hidden" value="<tmpl_var name="cookiepass">">
 																		<tr>
-																			<td colspan="2" align="center"><input class="button" type="submit" value="Login as <tmpl_var name="cookieuser">" /><br><br></td>
+																			<td colspan="2" align="center">
+																				<form name="cookieLogin" action="login.php" method="post">
+																					<input name="docookielogin" type="Hidden" value="true">
+																					<input name="username" type="Hidden" value="<tmpl_var name="cookieuser">">
+																					<input name="md5pass" type="Hidden" value="<tmpl_var name="cookiepass">">
+																					<input class="button" type="submit" value="Login as <tmpl_var name="cookieuser">" />
+																				</form>
+																				<br><br>
+																			</td>
 																		</tr>
-																		</form>
 																		<tr>
 																			<td align="center" colspan="2"><strong>Login as different User :</strong></td>
 																		</tr>
