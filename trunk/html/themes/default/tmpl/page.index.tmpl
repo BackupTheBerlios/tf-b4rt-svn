@@ -23,76 +23,53 @@
 						<td bgcolor="#A2BED4">
 							<table width="100%" cellpadding="1" cellspacing="0" border="0">
 								<tr>
-									<form name="form_file" action="dispatcher.php?action=fileUpload" method="post" enctype="multipart/form-data" onsubmit="return actionSubmit()">
 									<td>
-										<tmpl_var name="_SELECTFILE"> (<tmpl_var name="file_types_label">): <br>
-										<table cellpadding="1" cellspacing="1" border="0">
-											<tr>
-												<td id="fileUploadCell">
-													<input type="File" name="upload_files[]" size="40"><span id="fileUploadSpan"></span>
-												</td>
-												<td valign="top">
-													<select name="aid" size="1">
-														<option value="1" selected><tmpl_var name="_UPLOAD"></option>
-														<tmpl_if name="queueActive" value="1">
-															<tmpl_if name="isAdmin">
+										<form name="form_file" action="dispatcher.php?action=fileUpload" method="post" enctype="multipart/form-data" onsubmit="return actionSubmit()">
+											<tmpl_var name="_SELECTFILE"> (<tmpl_var name="file_types_label">): <br>
+											<table cellpadding="1" cellspacing="1" border="0">
+												<tr>
+													<td id="fileUploadCell">
+														<input type="File" name="upload_files[]" size="40"><span id="fileUploadSpan"></span>
+													</td>
+													<td valign="top">
+														<select name="aid" size="1">
+															<option value="1" selected><tmpl_var name="_UPLOAD"></option>
+															<tmpl_if name="queueActive" value="1">
+																<tmpl_if name="isAdmin">
+																	<option value="2"><tmpl_var name="_UPLOAD">+Start</option>
+																</tmpl_if>
+																<option value="3"><tmpl_var name="_UPLOAD">+Queue</option>
+															<tmpl_else>
 																<option value="2"><tmpl_var name="_UPLOAD">+Start</option>
 															</tmpl_if>
-															<option value="3"><tmpl_var name="_UPLOAD">+Queue</option>
-														<tmpl_else>
-															<option value="2"><tmpl_var name="_UPLOAD">+Start</option>
-														</tmpl_if>
-													</select>
-													<input type="Submit" value="Go">
-												</td>
-											</tr>
-											<tmpl_if name="enable_multiupload">
-												<tr>
-													<td>
-														<script src="js/multiup.js" type="text/javascript"></script>
-														<a href="JavaScript:addUploadField()">More...</a>
-														&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-														<a href="index.php?iid=multiup"><img src="themes/default/images/arrow.gif" width="9" height="9" title="<tmpl_var name="_MULTIPLE_UPLOAD">" border="0"></a>&nbsp;
-														<a href="index.php?iid=multiup"><tmpl_var name="_MULTIPLE_UPLOAD"></a>
-													</td>
-													<td>
-														&nbsp;
+														</select>
+														<input type="Submit" value="Go">
 													</td>
 												</tr>
-											</tmpl_if>
-										</table>
+												<tmpl_if name="enable_multiupload">
+													<tr>
+														<td>
+															<script src="js/multiup.js" type="text/javascript"></script>
+															<a href="JavaScript:addUploadField()">More...</a>
+															&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+															<a href="index.php?iid=multiup"><img src="themes/default/images/arrow.gif" width="9" height="9" title="<tmpl_var name="_MULTIPLE_UPLOAD">" border="0"></a>&nbsp;
+															<a href="index.php?iid=multiup"><tmpl_var name="_MULTIPLE_UPLOAD"></a>
+														</td>
+														<td>
+															&nbsp;
+														</td>
+													</tr>
+												</tmpl_if>
+											</table>
+										</form>
 									</td>
-									</form>
 								</tr>
 								<tr>
-									<form name="form_url_torrent" action="dispatcher.php?action=urlUpload" method="post" onsubmit="return actionSubmit()">
 									<td>
-										<hr>
-										<tmpl_var name="_URLFILE">:<br>
-										<input type="hidden" name="type" value="torrent">
-										<input type="text" name="url" size="40">
-										<select name="aid" size="1">
-											<option value="1" selected><tmpl_var name="_GETFILE"></option>
-											<tmpl_if name="queueActive" value="1">
-												<tmpl_if name="isAdmin">
-													<option value="2"><tmpl_var name="_GETFILE">+Start</option>
-												</tmpl_if>
-												<option value="3"><tmpl_var name="_GETFILE">+Queue</option>
-											<tmpl_else>
-												<option value="2"><tmpl_var name="_GETFILE">+Start</option>
-											</tmpl_if>
-										</select>
-										<input type="Submit" value="Go">
-									</td>
-									</form>
-								</tr>
-								<tmpl_if name="enable_nzbperl">
-									<tr>
-										<form name="form_url_nzb" action="dispatcher.php?action=urlUpload" method="post" onsubmit="return actionSubmit()">
-										<td>
+										<form name="form_url_torrent" action="dispatcher.php?action=urlUpload" method="post" onsubmit="return actionSubmit()">
 											<hr>
-											URL for the nzb-File:<br>
-											<input type="hidden" name="type" value="nzb">
+											<tmpl_var name="_URLFILE">:<br>
+											<input type="hidden" name="type" value="torrent">
 											<input type="text" name="url" size="40">
 											<select name="aid" size="1">
 												<option value="1" selected><tmpl_var name="_GETFILE"></option>
@@ -106,49 +83,72 @@
 												</tmpl_if>
 											</select>
 											<input type="Submit" value="Go">
-										</td>
 										</form>
+									</td>
+								</tr>
+								<tmpl_if name="enable_nzbperl">
+									<tr>
+										<td>
+											<form name="form_url_nzb" action="dispatcher.php?action=urlUpload" method="post" onsubmit="return actionSubmit()">
+												<hr>
+												URL for the nzb-File:<br>
+												<input type="hidden" name="type" value="nzb">
+												<input type="text" name="url" size="40">
+												<select name="aid" size="1">
+													<option value="1" selected><tmpl_var name="_GETFILE"></option>
+													<tmpl_if name="queueActive" value="1">
+														<tmpl_if name="isAdmin">
+															<option value="2"><tmpl_var name="_GETFILE">+Start</option>
+														</tmpl_if>
+														<option value="3"><tmpl_var name="_GETFILE">+Queue</option>
+													<tmpl_else>
+														<option value="2"><tmpl_var name="_GETFILE">+Start</option>
+													</tmpl_if>
+												</select>
+												<input type="Submit" value="Go">
+											</form>
+										</td>
 									</tr>
 								</tmpl_if>
 								<tmpl_if name="enable_wget">
 									<tr>
-										<form name="form_wget" action="dispatcher.php?action=wget" method="post" onsubmit="return actionSubmit()">
 										<td>
-											<hr>
-											URL for the File to wget:<br>
-											<input type="text" name="url" size="40">
-											<select name="aid" size="1">
-												<option value="1" selected>Inject</option>
-												<tmpl_if name="queueActive" value="1">
-													<tmpl_if name="isAdmin">
+											<form name="form_wget" action="dispatcher.php?action=wget" method="post" onsubmit="return actionSubmit()">
+												<hr>
+												URL for the File to wget:<br>
+												<input type="text" name="url" size="40">
+												<select name="aid" size="1">
+													<option value="1" selected>Inject</option>
+													<tmpl_if name="queueActive" value="1">
+														<tmpl_if name="isAdmin">
+															<option value="2">Inject+Start</option>
+														</tmpl_if>
+														<option value="3">Inject+Queue</option>
+													<tmpl_else>
 														<option value="2">Inject+Start</option>
 													</tmpl_if>
-													<option value="3">Inject+Queue</option>
-												<tmpl_else>
-													<option value="2">Inject+Start</option>
-												</tmpl_if>
-											</select>
-											<input type="Submit" value="Go">
+												</select>
+												<input type="Submit" value="Go">
+											</form>
 										</td>
-										</form>
 									</tr>
 								</tmpl_if>
 								<tmpl_if name="enable_search">
 									<tr>
-										<form name="form_search" action="index.php" method="get" onsubmit="return actionSubmit()">
-										<input type="hidden" name="iid" value="torrentSearch">
 										<td>
-											<hr>
-											Torrent <tmpl_var name="_SEARCH">:<br>
-											<input type="text" name="searchterm" size="40" maxlength="50">
-											<select name="searchEngine" style="width: 125px">
-											<tmpl_loop name="Engine_List">
-												<option <tmpl_if name="selected">selected</tmpl_if>><tmpl_var name="Engine"></option>
-											</tmpl_loop>
-											</select>
-											<input type="Submit" value="<tmpl_var name="_SEARCH">">
+											<form name="form_search" action="index.php" method="get" onsubmit="return actionSubmit()">
+												<hr>
+												Torrent <tmpl_var name="_SEARCH">:<br>
+												<input type="text" name="searchterm" size="40" maxlength="50">
+												<select name="searchEngine" style="width: 125px">
+												<tmpl_loop name="Engine_List">
+													<option <tmpl_if name="selected">selected</tmpl_if>><tmpl_var name="Engine"></option>
+												</tmpl_loop>
+												</select>
+												<input type="hidden" name="iid" value="torrentSearch">
+												<input type="Submit" value="<tmpl_var name="_SEARCH">">
+											</form>
 										</td>
-										</form>
 									</tr>
 								</tmpl_if>
 						</table>

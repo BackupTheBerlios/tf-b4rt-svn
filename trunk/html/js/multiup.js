@@ -1,7 +1,7 @@
 /* $Id$ */
 
 // fields
-var formContent = '<br><input type="File" name="upload_files[]" size="40"><span id="fileUploadSpan"></span>';
+var formContent = '<br><input type="file" name="upload_files[]" size="40"><span id="fileUploadSpan"></span>';
 
 /**
  * addUploadField
@@ -15,5 +15,4 @@ function addUploadField() {
 		range.setStartBefore(element);
 		element.parentNode.replaceChild(range.createContextualFragment(formContent), element);
 	}
-	// alert(document.getElementById("fileUploadCell").innerHTML);
 }
