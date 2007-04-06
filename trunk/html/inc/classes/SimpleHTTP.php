@@ -474,7 +474,44 @@ class SimpleHTTP
 				$this->redirectCount++;
 				// Check we have a location to get redirected content:
 				if( isset($this->responseHeaders["location"]) && !empty($this->responseHeaders["location"]) ){
-					$this->redirectUrl = $this->responseHeaders["location"];
+					// 3 different cases for location header:
+					// - full URL (scheme://.../foobar) -- just go to that URL,
+					// - absolute URL (/foobar) -- keep everything up to host/port,
+					//                             and replace end of request,
+					// - relative URL (foobar) -- keep everything up to last component of path,
+					//                            and replace end of request.
+					$redirectLocation = $this->responseHeaders["location"];
+					if (preg_match('#^(ht|f)tp(s)?://#', $redirectLocation) > 0) {
+						// Case 1: full URL. Just use it.
+						$this->redirectUrl = $redirectLocation;
+					} else {
+						// Cases 2 or 3: partial URL.
+						// Keep scheme/user/pass/host/port of current request.
+						$redirectUrlBase =
+							$domain['scheme'].'://'.
+							((isset($domain['user']) || isset($domain['pass'])) ?
+								((isset($domain['user']) ?     $domain['user'] : '').
+								 (isset($domain['pass']) ? ':'.$domain['pass'] : '').'@') : '').
+							$domain['host'].
+							(isset($domain['port']) ? ':'.$domain['port'] : '');
+						if ($redirectLocation[0] == '/') {
+							// Case 2: absolute URL.
+							// Append it to current request's base.
+							$this->redirectUrl = $redirectUrlBase . $redirectLocation;
+						} else {
+							// Case 3: relative URL.
+							// Append it to current request's base + path stripped of its last component.
+							$domainPathAry = explode('/', $domain['path']);
+							array_splice($domainPathAry, -1, 1, $redirectLocation);
+							$domainPathNew = implode('/', $domainPathAry);
+							$this->redirectUrl =
+								$redirectUrlBase .
+								((isset($domainPathNew) &&
+								  strlen($domainPathNew) > 0 &&
+								  $domainPathNew[0] == '/') ? '' : '/') .
+								$domainPathNew;
+						}
+					}
 				} else {
 					$msg = "Error fetching " . $this->url .".  A redirect status code (" . $this->status . ")";
 					$msg .= " was sent from the remote webserver, but no location header was set to obtain the redirected content from.";
