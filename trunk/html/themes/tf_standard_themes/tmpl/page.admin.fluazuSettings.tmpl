@@ -29,13 +29,13 @@
 		<tr>
 			<td align="center">
 				<div align="center">
-					<table cellpadding="5" cellspacing="0" border="0" width="100%">
-						<tr bgcolor="<tmpl_var name="table_header_bg">">
-							<td align="center" colspan="2">
-								<strong>Connected to <tmpl_var name="azu_host">:<tmpl_var name="azu_port"> (Azureus <tmpl_var name="azu_version">)</strong>
-							</td>
-						</tr>
-						<form name="azuForm" action="admin.php?op=updateAzureusSettings" method="post" onsubmit="return validateSettings('azureus')">
+					<form name="azuForm" action="admin.php?op=updateAzureusSettings" method="post" onsubmit="return validateSettings('azureus')">
+						<table cellpadding="5" cellspacing="0" border="0" width="100%">
+							<tr bgcolor="<tmpl_var name="table_header_bg">">
+								<td align="center" colspan="2">
+									<strong>Connected to <tmpl_var name="azu_host">:<tmpl_var name="azu_port"> (Azureus <tmpl_var name="azu_version">)</strong>
+								</td>
+							</tr>
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Max Active Torrents</strong>
 								</td>
@@ -111,8 +111,8 @@
 								<input type="Submit" value="Update Settings">
 								</td>
 							</tr>
-						</form>
 						</table>
+						</form>
 					</div>
 				</td>
 			</tr>
@@ -120,7 +120,8 @@
 		<tr>
 			<td align="center">
 				<div align="center">
-					<table cellpadding="5" cellspacing="0" border="0" width="100%">
+					<form name="controlForm" action="admin.php?op=controlFluAzu" method="post">
+						<table cellpadding="5" cellspacing="0" border="0" width="100%">
 							<tmpl_if name="pythonMissing">
 								<tr>
 									<td align="center" colspan="2">
@@ -130,29 +131,31 @@
 									</td>
 								</tr>
 							<tmpl_else>
-								<form name="controlForm" action="admin.php?op=controlFluAzu" method="post">
-									<tmpl_if name="fluazuRunning">
-										<input type="Hidden" name="a" value="stop">
-										<tr>
-											<td align="center" colspan="2">
-												<input type="Submit" value="Stop fluazu">
-												<br><br>
-											</td>
-										</tr>
-									<tmpl_else>
-										<input type="Hidden" name="a" value="start">
-										<tr>
-											<td align="left" width="350" valign="top" colspan="2"><strong>Start fluazu:</strong><br></td>
-										</tr>
-										<tr>
-											<td align="center" colspan="2">
-												<input type="Submit" value="Start fluazu">
-												<br><br>
-											</td>
-										</tr>
-									</tmpl_if>
-								</form>
+								<tmpl_if name="fluazuRunning">
+									<input type="Hidden" name="a" value="stop">
+									<tr>
+										<td align="center" colspan="2">
+											<input type="Submit" value="Stop fluazu">
+											<br><br>
+										</td>
+									</tr>
+								<tmpl_else>
+									<input type="Hidden" name="a" value="start">
+									<tr>
+										<td align="left" width="350" valign="top" colspan="2"><strong>Start fluazu:</strong><br></td>
+									</tr>
+									<tr>
+										<td align="center" colspan="2">
+											<input type="Submit" value="Start fluazu">
+											<br><br>
+										</td>
+									</tr>
+								</tmpl_if>
 							</tmpl_if>
+						</table>
+					</form>
+					<form name="theForm" action="admin.php?op=updateFluAzuSettings" method="post" onsubmit="return validateSettings('fluazu')">
+						<table cellpadding="5" cellspacing="0" border="0" width="100%">
 							<tr>
 								<td align="center" colspan="2">
 									<table width="100%" border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0">
@@ -169,7 +172,6 @@
 									<br>
 								</td>
 							</tr>
-							<form name="theForm" action="admin.php?op=updateFluAzuSettings" method="post" onsubmit="return validateSettings('fluazu')">
 								<tr>
 									<td align="left" width="350" valign="top"><strong>Host</strong><br>
 									Host of Azureus-server (currently only localhost is supported):
@@ -223,8 +225,8 @@
 									<input type="Submit" value="Update Settings">
 									</td>
 								</tr>
-							</form>
-						</table>
+							</table>
+						</form>
 					</div>
 				</td>
 			</tr>

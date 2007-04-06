@@ -252,71 +252,29 @@
 		</table>
 		<div align="center">[<a href="admin.php?op=fluxdRssadSettings">Return to fluxd-Rssad-Settings</a>]</div>
 	<tmpl_elseif name="pageop" value="addJob">
-		<table width="100%" border=1 bordercolor="#94ABC0" cellpadding="2" cellspacing="0" bgcolor="#A2BED4">
-			<tr>
-				<td colspan="3" bgcolor="#A2BED4" background="themes/default/images/bar.gif">
-					<img src="themes/default/images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title">Add Job</font>
-				</td>
-			</tr>
-			<tr bgcolor="#A2BED4">
-				<td align="center">Savedir</td>
-				<td align="center">URL</td>
-				<td align="center">Filter</td>
-			</tr>
-			<form name="theForm" action="admin.php?op=fluxdRssadSettings" method="post" onsubmit="return validateSettings('fluxd_Rssad_job')">
-			<input type="hidden" name="pageop" value="saveJob">
-			<tr>
-				<td>
-					<input type="text" size="40" name="savedir">
-				</td>
-				<td>
-					<input type="text" size="50" name="url">
-				</td>
-				<td>
-					<select name="filtername">
-						<tmpl_loop name="rssad_filters">
-							<option value="<tmpl_var name="filtername">"><tmpl_var name="filtername"></option>
-						</tmpl_loop>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td colspan="3" align="center">
-					Check/Create dir <input type="checkbox" name="checkdir" value="true" checked>
-					<br>
-					<input type="Submit" value="Add Job">
-				</td>
-			</tr>
-			</form>
-		</table>
-		<div align="center">[<a href="admin.php?op=fluxdRssadSettings">Return to fluxd-Rssad-Settings</a>]</div>
-	<tmpl_elseif name="pageop" value="editJob">
-		<table width="100%" border=1 bordercolor="#94ABC0" cellpadding="2" cellspacing="0" bgcolor="#A2BED4">
-			<tr>
-				<td colspan="3" bgcolor="#A2BED4" background="themes/default/images/bar.gif">
-					<img src="themes/default/images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title">Edit Job</font>
-				</td>
-			</tr>
-			<tmpl_if name="rssad_job_loaded" value="1">
+		<form name="theForm" action="admin.php?op=fluxdRssadSettings" method="post" onsubmit="return validateSettings('fluxd_Rssad_job')">
+			<table width="100%" border=1 bordercolor="#94ABC0" cellpadding="2" cellspacing="0" bgcolor="#A2BED4">
+				<tr>
+					<td colspan="3" bgcolor="#A2BED4" background="themes/default/images/bar.gif">
+						<img src="themes/default/images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title">Add Job</font>
+					</td>
+				</tr>
 				<tr bgcolor="#A2BED4">
 					<td align="center">Savedir</td>
 					<td align="center">URL</td>
 					<td align="center">Filter</td>
 				</tr>
-				<form name="theForm" action="admin.php?op=fluxdRssadSettings" method="post" onsubmit="return validateSettings('fluxd_Rssad_job')">
-				<input type="hidden" name="pageop" value="saveJob">
-				<input type="hidden" name="job" value="<tmpl_var name="jobnumber">">
 				<tr>
 					<td>
-						<input type="text" size="40" name="savedir" value="<tmpl_var name="rssad_savedir">">
+						<input type="text" size="40" name="savedir">
 					</td>
 					<td>
-						<input type="text" size="50" name="url" value="<tmpl_var escape="html" name="rssad_url">">
+						<input type="text" size="50" name="url">
 					</td>
 					<td>
 						<select name="filtername">
 							<tmpl_loop name="rssad_filters">
-								<option value="<tmpl_var name="filtername">"<tmpl_var name="selected">><tmpl_var name="filtername"></option>
+								<option value="<tmpl_var name="filtername">"><tmpl_var name="filtername"></option>
 							</tmpl_loop>
 						</select>
 					</td>
@@ -325,26 +283,68 @@
 					<td colspan="3" align="center">
 						Check/Create dir <input type="checkbox" name="checkdir" value="true" checked>
 						<br>
-						<input type="Submit" value="Save Job">
+						<input type="hidden" name="pageop" value="saveJob">
+						<input type="Submit" value="Add Job">
 					</td>
 				</tr>
-				</form>
-			<tmpl_else>
+			</table>
+		</form>
+		<div align="center">[<a href="admin.php?op=fluxdRssadSettings">Return to fluxd-Rssad-Settings</a>]</div>
+	<tmpl_elseif name="pageop" value="editJob">
+		<form name="theForm" action="admin.php?op=fluxdRssadSettings" method="post" onsubmit="return validateSettings('fluxd_Rssad_job')">
+			<table width="100%" border=1 bordercolor="#94ABC0" cellpadding="2" cellspacing="0" bgcolor="#A2BED4">
 				<tr>
-					<td colspan="3">
-						<strong>Error loading Job : </strong>
-						<br>
-						<tmpl_if name="messages">
-						    <ul>
-						        <tmpl_loop name="messages">
-						            <li><tmpl_var name="msg"></li>
-						        </tmpl_loop>
-						    </ul>
-						</tmpl_if>
+					<td colspan="3" bgcolor="#A2BED4" background="themes/default/images/bar.gif">
+						<img src="themes/default/images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title">Edit Job</font>
 					</td>
 				</tr>
-			</tmpl_if>
-		</table>
+				<tmpl_if name="rssad_job_loaded" value="1">
+					<tr bgcolor="#A2BED4">
+						<td align="center">Savedir</td>
+						<td align="center">URL</td>
+						<td align="center">Filter</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="text" size="40" name="savedir" value="<tmpl_var name="rssad_savedir">">
+						</td>
+						<td>
+							<input type="text" size="50" name="url" value="<tmpl_var escape="html" name="rssad_url">">
+						</td>
+						<td>
+							<select name="filtername">
+								<tmpl_loop name="rssad_filters">
+									<option value="<tmpl_var name="filtername">"<tmpl_var name="selected">><tmpl_var name="filtername"></option>
+								</tmpl_loop>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="3" align="center">
+							Check/Create dir <input type="checkbox" name="checkdir" value="true" checked>
+							<br>
+							<input type="hidden" name="pageop" value="saveJob">
+							<input type="hidden" name="job" value="<tmpl_var name="jobnumber">">
+							<input type="Submit" value="Save Job">
+						</td>
+					</tr>
+				<tmpl_else>
+					<tr>
+						<td colspan="3">
+							<strong>Error loading Job : </strong>
+							<br>
+							<tmpl_if name="messages">
+							    <ul>
+							        <tmpl_loop name="messages">
+							            <li><tmpl_var name="msg"></li>
+							        </tmpl_loop>
+							    </ul>
+							</tmpl_if>
+						</td>
+					</tr>
+				</tmpl_if>
+			</table>
+		</form>
 		<div align="center">[<a href="admin.php?op=fluxdRssadSettings">Return to fluxd-Rssad-Settings</a>]</div>
 	<tmpl_elseif name="pageop" value="saveJob">
 		<table width="100%" border=1 bordercolor="#94ABC0" cellpadding="2" cellspacing="0" bgcolor="#A2BED4">

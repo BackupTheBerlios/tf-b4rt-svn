@@ -12,8 +12,8 @@
 		<tr>
 			<td align="center">
 				<div align="center">
-					<table cellpadding="5" cellspacing="0" border="0" width="100%">
-						<form name="theForm" action="admin.php?op=updateStatsSettings" method="post" onsubmit="return validateSettings('stats')">
+					<form name="theForm" action="admin.php?op=updateStatsSettings" method="post" onsubmit="return validateSettings('stats')">
+						<table cellpadding="5" cellspacing="0" border="0" width="100%">
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Enable Public Stats</strong><br>
 								If Public Stats are enabled stats show complete (superadmin-level) stats without authentication.
@@ -112,13 +112,13 @@
 										<tmpl_if name="stats_default_type" value="users">
 											 selected
 										</tmpl_if>
-										>users</option>										
+										>users</option>
 										<option value="transfers"
 										<tmpl_if name="stats_default_type" value="transfers">
 											 selected
 										</tmpl_if>
 										>transfers</option>
-									</select>									
+									</select>
 								</td>
 							</tr>
 							<tr>

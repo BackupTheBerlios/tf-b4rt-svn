@@ -30,9 +30,9 @@
 		<tr>
 			<td align="center">
 				<div align="center">
-					<table cellpadding="5" cellspacing="0" border="0" width="100%">
+					<form name="controlForm" action="admin.php?op=controlFluxd" method="post">
+						<table cellpadding="5" cellspacing="0" border="0" width="100%">
 							<tmpl_if name="fluxdSupported" value="1">
-								<form name="controlForm" action="admin.php?op=controlFluxd" method="post">
 									<tmpl_if name="fluxdRunning">
 										<input type="Hidden" name="a" value="stop">
 										<tr>
@@ -53,7 +53,7 @@
 											</td>
 										</tr>
 									</tmpl_if>
-								</form>
+
 							<tmpl_else>
 								<tr>
 									<td align="center" colspan="2">
@@ -74,6 +74,10 @@
 									</td>
 								</tr>
 							</tmpl_if>
+						</table>
+					</form>
+					<form name="theForm" action="admin.php?op=updateFluxdSettings" method="post" onsubmit="return validateSettings('fluxd')">
+						<table cellpadding="5" cellspacing="0" border="0" width="100%">
 							<tr>
 								<td align="center" colspan="2">
 									<table width="100%" border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0">
@@ -97,7 +101,6 @@
 									<br>
 								</td>
 							</tr>
-							<form name="theForm" action="admin.php?op=updateFluxdSettings" method="post" onsubmit="return validateSettings('fluxd')">
 								<tr>
 									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_border_dk">">
 										<strong>Core</strong>
@@ -481,8 +484,8 @@
 									<input type="Submit" value="Update Settings">
 									</td>
 								</tr>
-							</form>
-						</table>
+							</table>
+						</form>
 					</div>
 					<br>
 				</td>

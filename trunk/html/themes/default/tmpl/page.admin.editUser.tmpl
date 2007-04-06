@@ -73,8 +73,8 @@
 				</td>
 				<td valign="top" bgcolor="#A2BED4">
 					<div align="center">
-						<table cellpadding="5" cellspacing="0" border="0">
-							<form name="theForm" action="admin.php?op=updateUser" method="post" onsubmit="return validateUser('<tmpl_var name="_USERIDREQUIRED">', '<tmpl_var name="_PASSWORDLENGTH">', '<tmpl_var name="_PASSWORDNOTMATCH">', '<tmpl_var name="_PLEASECHECKFOLLOWING">')">
+						<form name="theForm" action="admin.php?op=updateUser" method="post" onsubmit="return validateUser('<tmpl_var name="_USERIDREQUIRED">', '<tmpl_var name="_PASSWORDLENGTH">', '<tmpl_var name="_PASSWORDNOTMATCH">', '<tmpl_var name="_PLEASECHECKFOLLOWING">')">
+							<table cellpadding="5" cellspacing="0" border="0">
 								<tr>
 									<td align="right"><tmpl_var name="_USER">:</td>
 									<td>
@@ -118,8 +118,8 @@
 										<input type="Submit" value="<tmpl_var name="_UPDATE">">
 									</td>
 								</tr>
-							</form>
-						</table>
+							</table>
+						</form>
 					</div>
 				</table>
 			</td>

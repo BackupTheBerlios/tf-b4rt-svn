@@ -11,8 +11,8 @@
 		<tr>
 			<td align="center">
 				<div align="center">
-					<table cellpadding="5" cellspacing="0" border="0" width="100%">
-						<form name="theForm" action="admin.php?op=searchSettings" method="post">
+					<form name="theForm" action="admin.php?op=searchSettings" method="post">
+						<table cellpadding="5" cellspacing="0" border="0" width="100%">
 							<tr>
 								<td align="right" width="350" valign="top"><strong>Select Search Engine</strong><br>
 								</td>
@@ -24,8 +24,8 @@
 									</select>
 								</td>
 							</tr>
-						</form>
-					</table>
+						</table>
+					</form>
 					<tmpl_if name="is_file">
 						<form name="theSearchEngineSettings" action="admin.php?op=updateSearchSettings" method="post">
 							<input type="hidden" name="searchEngine" value="<tmpl_var name="searchEngine">">
