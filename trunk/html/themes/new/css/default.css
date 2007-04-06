@@ -284,3 +284,8 @@ td.outlinks {
 #newUser {
 	font-weight: 700;
 }
+#statsBandwidth {
+	margin-left: 30px;
+	background-image: url("../pics/menu_box.jpg");
+	background-repeat: repeat-y;
+}

@@ -1,18 +1,18 @@
 <tmpl_if name="image_list">
-	<table bgcolor="#A2BED4" width="100%" cellpadding="1">
+	<table width="100%">
 		<tr>
 			<td>
 				<div align="center">
-					<table border="0" cellpadding="2" cellspacing="2" width="100%">
+					<table width="100%">
 						<tmpl_loop name="image_list">
 							<tr>
 								<td align="center">
-									<strong><tmpl_var name="title"></strong>
+									<span id="newUser"><tmpl_var name="title"></span>
 								</td>
 							</tr>
 							<tr>
 								<td align="center">
-									<img src="<tmpl_var name="src">" border="0" title="<tmpl_var name="title">">
+									<img src="<tmpl_var name='src'>" alt="<tmpl_var name='title'>">
 								</td>
 							</tr>
 						</tmpl_loop>

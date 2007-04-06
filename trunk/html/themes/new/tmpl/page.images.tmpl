@@ -1,24 +1,33 @@
 <tmpl_include name="inc.head.tmpl">
-<tmpl_include name="inc.subhead.tmpl">
-<div align="center">
-	<table width="740" border="0" cellpadding="0" cellspacing="0">
-		<tr>
-			<td align="left">
-				<form name="typeSelector" action="index.php?iid=images" method="post">
-					<strong>Type : </strong>
+<tmpl_include name="inc.titleBar.tmpl">
+<div id="content">
+	<tmpl_var name="content">
+	<tmpl_include name="inc.subfoot.tmpl">
+</div>
+<div id="stats">
+	<div id="bandwidthTitle">
+		<a class="mainMenu" href="javascript:slider('statsBandwidth','toggle')">Type</a>
+	</div>
+		<form name="typeSelector" action="index.php?iid=images" method="post">
+		<div id="statsBandwidth">
+			<div class="serverStatsBottom">
+				<span class="serverStats">
 					<select name="type" onChange="javascript:submit();">
 						<tmpl_loop name="type_list">
 							<option value="<tmpl_var name="name">" <tmpl_if name="selected">selected</tmpl_if>><tmpl_var name="name"></option>
 						</tmpl_loop>
 					</select>
-					<input type="submit" value="Change Type">
-				</form>
-			</td>
-			<td align="center" width="40">&nbsp;</td>
-			<td align="right">
-				<form name="targetSelector" action="index.php?iid=images" method="post">
-					<input type="hidden" name="type" value="<tmpl_var name="type">">
-					<strong>Target : </strong>
+				</span>
+			</div>
+		</div>
+		</form>
+	<div id="drivespaceTitle">
+		<a class="mainMenu" href="javascript:slider('statsDrivespace','toggle')">Target</a>
+	</div>
+		<form name="targetSelector" action="index.php?iid=images" method="post">
+		<div id="statsDrivespace">
+			<div class="serverStatsBottom">
+				<span class="serverStats">
 					<select name="target" onChange="javascript:submit();">
 						<tmpl_if name="target_list">
 							<tmpl_loop name="target_list">
@@ -26,16 +35,10 @@
 							</tmpl_loop>
 						</tmpl_if>
 					</select>
-					<input type="submit" value="Change Target">
-				</form>
-			</td>
-		</tr>
-	</table>
+				</span>
+			</div>
+		</div>
+	</form>
 </div>
-<tmpl_if name="content">
-	<p>
-	<div align="center" id="BodyLayer" name="BodyLayer" style="border: thin solid #829FB5 position:relative; width:740; height:500; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">
-		<tmpl_var name="content">
-	</div>
-</tmpl_if>
-<tmpl_include name="inc.subfoot.tmpl">
+</body>
+</html>

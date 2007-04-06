@@ -9,11 +9,6 @@
 #transfer_table {
 	width: 100%;
 }
-#statsBandwidth {
-	margin-left: 30px;
-	background-image: url("../pics/menu_box.jpg");
-	background-repeat: repeat-y;
-}
 #statsBandwidthBars {
 	margin-left: 10px;
 	padding-top: 5px;
