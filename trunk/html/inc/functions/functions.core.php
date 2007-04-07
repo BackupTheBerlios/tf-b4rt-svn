@@ -820,14 +820,14 @@ function getTorrentMetaInfo($transfer) {
 	global $cfg;
 	switch ($cfg["metainfoclient"]) {
 		case "transmissioncli":
-			return shell_exec($cfg["btclient_transmission_bin"] . " -i ".escapeshellarg($cfg["transfer_file_path"].$transfer));
+			return shell_exec($cfg["btclient_transmission_bin"]." -i ".tfb_shellencode($cfg["transfer_file_path"].$transfer));
 		case "ttools.pl":
-			return shell_exec($cfg["perlCmd"].' -I "'.$cfg["docroot"].'bin/ttools" "'.$cfg["docroot"].'bin/ttools/ttools.pl" -i '.escapeshellarg($cfg["transfer_file_path"].$transfer));
+			return shell_exec($cfg["perlCmd"].' -I '.tfb_shellencode($cfg["docroot"].'bin/ttools').' '.tfb_shellencode($cfg["docroot"].'bin/ttools/ttools.pl').' -i '.tfb_shellencode($cfg["transfer_file_path"].$transfer));
 		case "torrentinfo-console.py":
-			return shell_exec("cd ".$cfg["transfer_file_path"]."; ".$cfg["pythonCmd"]." -OO ".$cfg["docroot"]."bin/clients/mainline/torrentinfo-console.py ".escapeshellarg($transfer));
+			return shell_exec("cd ".tfb_shellencode($cfg["transfer_file_path"])."; ".$cfg["pythonCmd"]." -OO ".tfb_shellencode($cfg["docroot"]."bin/clients/mainline/torrentinfo-console.py")." ".tfb_shellencode($transfer));
 		case "btshowmetainfo.py":
 		default:
-			return shell_exec("cd ".$cfg["transfer_file_path"]."; ".$cfg["pythonCmd"]." -OO ".$cfg["docroot"]."bin/clients/tornado/btshowmetainfo.py ".escapeshellarg($transfer));
+			return shell_exec("cd ".tfb_shellencode($cfg["transfer_file_path"])."; ".$cfg["pythonCmd"]." -OO ".tfb_shellencode($cfg["docroot"]."bin/clients/tornado/btshowmetainfo.py")." ".tfb_shellencode($transfer));
 	}
 }
 
