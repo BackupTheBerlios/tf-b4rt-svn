@@ -1077,7 +1077,7 @@ function getTransferArray($sortOrder = '') {
 					break;
 				default:
 					if (isValidTransfer($transfer))
-						$retVal[filemtime($cfg["transfer_file_path"]."/".$transfer).md5($transfer)] = $transfer;
+						$retVal[filemtime($cfg["transfer_file_path"].$transfer).md5($transfer)] = $transfer;
 					else
 						AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
 					break;
