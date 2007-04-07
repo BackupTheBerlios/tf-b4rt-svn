@@ -2190,7 +2190,7 @@ function isValidTransfer($transfer) {
  */
 function getCleanTransferName($transfer) {
 	global $cfg;
-	return str_replace($cfg["file_types_array"], "", preg_replace("/[^0-9a-zA-Z.-]+/",'_', $inName));
+	return str_replace($cfg["file_types_array"], "", preg_replace("/[^0-9a-zA-Z.-]+/",'_', $transfer));
 }
 
 /**
