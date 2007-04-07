@@ -970,24 +970,15 @@ function getLoadAverageString() {
 	global $cfg;
 	switch ($cfg["_OS"]) {
 		case 1: // linux
-			$data = "";
-			if ($fileHandle = @fopen($cfg["loadavg_path"],'r')) {
-				while (!@feof($fileHandle))
-					$data .= @fgets($fileHandle, 128);
-				@fclose ($fileHandle);
-				$loadavg_array = explode(" ", $data);
-				return $loadavg_array[2];
-			} else {
-				return 'n/a';
-			}
-			break;
+			$loadavg = @explode(" ", @file_get_contents($cfg["loadavg_path"]));
+			return ((is_array($loadavg)) && (count($loadavg) > 2))
+				? $loadavg[2]
+				: 'n/a';
 		case 2: // bsd
 			return preg_replace("/.*load averages:(.*)/", "$1", exec("uptime"));
-			break;
 		default:
 			return 'n/a';
 	}
-	return 'n/a';
 }
 
 /**
