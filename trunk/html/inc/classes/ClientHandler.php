@@ -805,7 +805,7 @@ class ClientHandler
             // set pid
             if (!empty($transferPid)) {
             	// test for valid pid-var
-            	if (is_numeric($transferPid)) {
+            	if (preg_match('/^[0-9]+$/D', $transferPid)) {
                 	$this->pid = $transferPid;
             	} else {
             		$this->state = CLIENTHANDLER_STATE_ERROR;
