@@ -292,7 +292,7 @@ sub checkTtools {
 
 	# 1. CORE-Perl-modules
 	print "1. CORE-Perl-modules\n";
-	my @mods = ('LWP::UserAgent');
+	my @mods = ('Digest::SHA1', 'LWP::UserAgent');
 	foreach my $mod (@mods) {
 		if (eval "require $mod")  {
 			print "   - OK : ".$mod."\n";

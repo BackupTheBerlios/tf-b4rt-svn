@@ -23,6 +23,7 @@
 ################################################################################
 #                                                                              #
 #  Requirements :                                                              #
+#   * Digest::SHA1    ( perl -MCPAN -e "install Digest::SHA1" )                #
 #   * LWP::UserAgent  ( perl -MCPAN -e "install LWP::UserAgent" )              #
 #                                                                              #
 ################################################################################
@@ -225,6 +226,13 @@ sub getUrl() {
 # Returns: null                                                                #
 #------------------------------------------------------------------------------#
 sub loadModules {
+	# load Digest::SHA1
+	if (eval "require Digest::SHA1")  {
+		Digest::SHA1->import();
+	} else {
+		print STDERR "Error : cant load perl-module Digest::SHA1 : ".$@."\n";
+		exit;
+	}
 	# load LWP::UserAgent
 	if (eval "require LWP::UserAgent")  {
 		LWP::UserAgent->import();
@@ -257,7 +265,7 @@ sub check {
 	print "checking requirements...\n";
 	# 1. perl-modules
 	print "1. perl-modules\n";
-	my @mods = ('LWP::UserAgent', 'Convert::Bencode', 'Net::BitTorrent::File');
+	my @mods = ('Digest::SHA1', 'LWP::UserAgent', 'Convert::Bencode', 'Net::BitTorrent::File');
 	foreach my $mod (@mods) {
 		if (eval "require $mod")  {
 			print " - ".$mod."\n";

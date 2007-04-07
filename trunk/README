@@ -331,8 +331,9 @@ Torrentflux-b4rt 1.0 README file
 
 	o ttools.pl is an alternative BitTorrent metadata client that
 	  supports metadata scraping.  It can be enabled in the
-	  Administration panel.  It requires the following module:
+	  Administration panel.  It requires the following modules:
 
+		* Digest::SHA1     (perl -MCPAN -e "install Digest::SHA1")
 		* LWP::UserAgent   (perl -MCPAN -e "install LWP::UserAgent")
 
 	o Mac OS X specific:

@@ -449,6 +449,7 @@ Perl-Modules
    * Thread::Queue
 
 -- ttools.pl (metainfoclient)
+   * Digest::SHA1     (perl -MCPAN -e "install Digest::SHA1")
    * LWP::UserAgent   (perl -MCPAN -e "install LWP::UserAgent")
 
 -----------------------------------------------------------------
