@@ -139,11 +139,11 @@ function sa_processes($action = "") {
 			$htmlMain .= '<br>';
 			$htmlMain .= '<p><strong>fluxd</strong>';
 			$htmlMain .= '<pre>';
-			$htmlMain .= shell_exec("ps auxww | ".$cfg['bin_grep']." fluxd | ".$cfg['bin_grep']." -v grep");
+			$htmlMain .= tfb_htmlencode(shell_exec("ps auxww | ".$cfg['bin_grep']." fluxd | ".$cfg['bin_grep']." -v grep"));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '<p><strong>fluazu</strong>';
 			$htmlMain .= '<pre>';
-			$htmlMain .= shell_exec("ps auxww | ".$cfg['bin_grep']." fluazu.py | ".$cfg['bin_grep']." -v grep");
+			$htmlMain .= tfb_htmlencode(shell_exec("ps auxww | ".$cfg['bin_grep']." fluazu.py | ".$cfg['bin_grep']." -v grep"));
 			$htmlMain .= '</pre>';
 			$clients = array('tornado', 'transmission', 'mainline', 'wget', 'nzbperl', 'azureus');
 			foreach ($clients as $client) {
@@ -151,7 +151,7 @@ function sa_processes($action = "") {
 				$htmlMain .= '<p><strong>'.$client.'</strong>';
 				$htmlMain .= '<br>';
 				$htmlMain .= '<pre>';
-				$htmlMain .= shell_exec("ps auxww | ".$cfg['bin_grep']." ".$ch->binClient." | ".$cfg['bin_grep']." -v grep");
+				$htmlMain .= tfb_htmlencode(shell_exec("ps auxww | ".$cfg['bin_grep']." ".tfb_shellencode($ch->binClient)." | ".$cfg['bin_grep']." -v grep"));
 				$htmlMain .= '</pre>';
 				$htmlMain .= '<br>';
 				$htmlMain .= '<pre>';
@@ -180,7 +180,7 @@ function sa_processes($action = "") {
 				$rt = RunningTransfer::getInstance($rng['pinfo'], $rng['client']);
 			    $htmlMain .= '<tr bgcolor="'.$cfg["table_header_bg"].'">';
 			    $htmlMain .= '<td nowrap><div class="tiny">';
-			    $htmlMain .= $rt->transferowner;
+			    $htmlMain .= tfb_htmlencodekeepspaces($rt->transferowner);
 			    $htmlMain .= '</div></td>';
 			    $htmlMain .= '<td nowrap><div align=center><div class="tiny" align="left">';
 			    $htmlMain .= $rt->transferFile;
@@ -301,20 +301,20 @@ function sa_maintenance($action = "") {
 			$htmlMain .= '<br><br>';
 			$htmlMain .= '<strong>process-list (filtered) before call :</strong><br>';
 			$htmlMain .= '<pre>';
-			$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." php | ".$cfg['bin_grep']." -v grep"));
+			$htmlMain .= tfb_htmlencode(trim(shell_exec("ps auxww | ".$cfg['bin_grep']." php | ".$cfg['bin_grep']." -v grep")));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '<br>';
 			$callResult = trim(shell_exec("killall -9 php 2> /dev/null"));
 			if ((isset($callResult)) && ($callResult != "")) {
 				$htmlMain .= '<br>';
 				$htmlMain .= 'Call-Result : <br>';
-				$htmlMain .= '<pre>'.$callResult.'</pre>';
+				$htmlMain .= '<pre>'.tfb_htmlencode($callResult).'</pre>';
 				$htmlMain .= '<br>';
 			}
 			sleep(2); // just 2 sec
 			$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
 			$htmlMain .= '<pre>';
-			$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." php | ".$cfg['bin_grep']." -v grep"));
+			$htmlMain .= tfb_htmlencode(trim(shell_exec("ps auxww | ".$cfg['bin_grep']." php | ".$cfg['bin_grep']." -v grep")));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '<br>';
 			break;
@@ -326,20 +326,20 @@ function sa_maintenance($action = "") {
 			$htmlMain .= '<br><br>';
 			$htmlMain .= '<strong>process-list (filtered) before call :</strong><br>';
 			$htmlMain .= '<pre>';
-			$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." python | ".$cfg['bin_grep']." -v grep"));
+			$htmlMain .= tfb_htmlencode(trim(shell_exec("ps auxww | ".$cfg['bin_grep']." python | ".$cfg['bin_grep']." -v grep")));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '<br>';
 			$callResult = trim(shell_exec("killall -9 python 2> /dev/null"));
 			if ((isset($callResult)) && ($callResult != "")) {
 				$htmlMain .= '<br>';
 				$htmlMain .= 'Call-Result : <br>';
-				$htmlMain .= '<pre>'.$callResult.'</pre>';
+				$htmlMain .= '<pre>'.tfb_htmlencode($callResult).'</pre>';
 				$htmlMain .= '<br>';
 			}
 			sleep(2); // just 2 sec
 			$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
 			$htmlMain .= '<pre>';
-			$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." python | ".$cfg['bin_grep']." -v grep"));
+			$htmlMain .= tfb_htmlencode(trim(shell_exec("ps auxww | ".$cfg['bin_grep']." python | ".$cfg['bin_grep']." -v grep")));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '<br>';
 			break;
@@ -351,20 +351,20 @@ function sa_maintenance($action = "") {
 			$htmlMain .= '<br><br>';
 			$htmlMain .= '<strong>process-list (filtered) before call :</strong><br>';
 			$htmlMain .= '<pre>';
-			$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." perl | ".$cfg['bin_grep']." -v grep"));
+			$htmlMain .= tfb_htmlencode(trim(shell_exec("ps auxww | ".$cfg['bin_grep']." perl | ".$cfg['bin_grep']." -v grep")));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '<br>';
 			$callResult = trim(shell_exec("killall -9 perl 2> /dev/null"));
 			if ((isset($callResult)) && ($callResult != "")) {
 				$htmlMain .= '<br>';
 				$htmlMain .= 'Call-Result : <br>';
-				$htmlMain .= '<pre>'.$callResult.'</pre>';
+				$htmlMain .= '<pre>'.tfb_htmlencode($callResult).'</pre>';
 				$htmlMain .= '<br>';
 			}
 			sleep(2); // just 2 sec
 			$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
 			$htmlMain .= '<pre>';
-			$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." perl | ".$cfg['bin_grep']." -v grep"));
+			$htmlMain .= tfb_htmlencode(trim(shell_exec("ps auxww | ".$cfg['bin_grep']." perl | ".$cfg['bin_grep']." -v grep")));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '<br>';
 			break;
@@ -376,20 +376,20 @@ function sa_maintenance($action = "") {
 			$htmlMain .= '<br><br>';
 			$htmlMain .= '<strong>process-list (filtered) before call :</strong><br>';
 			$htmlMain .= '<pre>';
-			$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." transmissioncli | ".$cfg['bin_grep']." -v grep"));
+			$htmlMain .= tfb_htmlencode(trim(shell_exec("ps auxww | ".$cfg['bin_grep']." transmissioncli | ".$cfg['bin_grep']." -v grep")));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '<br>';
 			$callResult = trim(shell_exec("killall -9 transmissioncli 2> /dev/null"));
 			if ((isset($callResult)) && ($callResult != "")) {
 				$htmlMain .= '<br>';
 				$htmlMain .= 'Call-Result : <br>';
-				$htmlMain .= '<pre>'.$callResult.'</pre>';
+				$htmlMain .= '<pre>'.tfb_htmlencode($callResult).'</pre>';
 				$htmlMain .= '<br>';
 			}
 			sleep(2); // just 2 sec
 			$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
 			$htmlMain .= '<pre>';
-			$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." transmissioncli | ".$cfg['bin_grep']." -v grep"));
+			$htmlMain .= tfb_htmlencode(trim(shell_exec("ps auxww | ".$cfg['bin_grep']." transmissioncli | ".$cfg['bin_grep']." -v grep")));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '<br>';
 			break;
@@ -401,20 +401,20 @@ function sa_maintenance($action = "") {
 			$htmlMain .= '<br><br>';
 			$htmlMain .= '<strong>process-list (filtered) before call :</strong><br>';
 			$htmlMain .= '<pre>';
-			$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." wget | ".$cfg['bin_grep']." -v grep"));
+			$htmlMain .= tfb_htmlencode(trim(shell_exec("ps auxww | ".$cfg['bin_grep']." wget | ".$cfg['bin_grep']." -v grep")));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '<br>';
 			$callResult = trim(shell_exec("killall -9 wget 2> /dev/null"));
 			if ((isset($callResult)) && ($callResult != "")) {
 				$htmlMain .= '<br>';
 				$htmlMain .= 'Call-Result : <br>';
-				$htmlMain .= '<pre>'.$callResult.'</pre>';
+				$htmlMain .= '<pre>'.tfb_htmlencode($callResult).'</pre>';
 				$htmlMain .= '<br>';
 			}
 			sleep(2); // just 2 sec
 			$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
 			$htmlMain .= '<pre>';
-			$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." wget | ".$cfg['bin_grep']." -v grep"));
+			$htmlMain .= tfb_htmlencode(trim(shell_exec("ps auxww | ".$cfg['bin_grep']." wget | ".$cfg['bin_grep']." -v grep")));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '<br>';
 			break;
@@ -426,20 +426,20 @@ function sa_maintenance($action = "") {
 			$htmlMain .= '<br><br>';
 			$htmlMain .= '<strong>process-list (filtered) before call :</strong><br>';
 			$htmlMain .= '<pre>';
-			$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." vlc | ".$cfg['bin_grep']." -v grep"));
+			$htmlMain .= tfb_htmlencode(trim(shell_exec("ps auxww | ".$cfg['bin_grep']." vlc | ".$cfg['bin_grep']." -v grep")));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '<br>';
 			$callResult = trim(shell_exec("killall -9 vlc 2> /dev/null"));
 			if ((isset($callResult)) && ($callResult != "")) {
 				$htmlMain .= '<br>';
 				$htmlMain .= 'Call-Result : <br>';
-				$htmlMain .= '<pre>'.$callResult.'</pre>';
+				$htmlMain .= '<pre>'.tfb_htmlencode($callResult).'</pre>';
 				$htmlMain .= '<br>';
 			}
 			sleep(2); // just 2 sec
 			$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
 			$htmlMain .= '<pre>';
-			$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." vlc | ".$cfg['bin_grep']." -v grep"));
+			$htmlMain .= tfb_htmlencode(trim(shell_exec("ps auxww | ".$cfg['bin_grep']." vlc | ".$cfg['bin_grep']." -v grep")));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '<br>';
 			break;
@@ -480,7 +480,7 @@ function sa_maintenance($action = "") {
 						$tname = substr($file, 0, -4);
 						if (!in_array($tname, $transferList)) {
 							// transfer not in db. delete pid-file.
-							$result .= $file."\n";
+							$result .= tfb_htmlencode($file)."\n";
 							@unlink($cfg["transfer_file_path"].$file);
 						}
 					}
@@ -521,7 +521,7 @@ function sa_maintenance($action = "") {
 						$thash = substr($file, -40);
 						if (!in_array($thash, $hashes)) {
 							// torrent not in db. delete cache-file.
-							$result .= $file."\n";
+							$result .= tfb_htmlencode($file)."\n";
 							@unlink($cfg["path"].".transmission/cache/resume.".$thash);
 						}
 					}
@@ -705,7 +705,7 @@ function sa_backup($action = "") {
 			$htmlMain .= '<input type="submit" value="Backup to Client">';
 			$htmlMain .= '</form><p>';
 			$htmlMain .= 'In case you choose "Backup on Server" the archive will be located in : <br>';
-			$htmlMain .= '<em>'.$cfg["path"]. _DIR_BACKUP . '/</em>';
+			$htmlMain .= '<em>'.tfb_htmlencodekeepspaces($cfg["path"] . _DIR_BACKUP).'/</em>';
 			$htmlMain .= '<br><br>';
 			$htmlMain .= 'Be patient until "its done" and dont click stuff while backup is created.<br>';
 			$htmlMain .= 'This script will tell you if things go wrong so no need to stress it.<br>';
@@ -725,7 +725,7 @@ function sa_backup($action = "") {
 			} else {
 				sendLine('<br>');
 				sendLine('<strong>Backup Created</strong>');
-				sendLine('<br><br>Archive of backup is <em>'.$backupArchive.'</em>');
+				sendLine('<br><br>Archive of backup is <em>'.tfb_htmlencodekeepspaces($backupArchive).'</em>');
 				sendLine('<br><br>');
 				sendLine(backupListDisplay());
 			}
@@ -763,7 +763,7 @@ function sa_backup($action = "") {
 				$htmlTitle = "Backup - Download";
 				$htmlMain .= '<br><br>';
 				$htmlMain .= '<font color="red"><strong>Backup - Error</strong></font><br><br>';
-				$htmlMain .= $backupArchive.' is not a valid Backup-ID';
+				$htmlMain .= tfb_htmlencodekeepspaces($backupArchive).' is not a valid Backup-ID';
 				printPage();
 			}
 			exit();
@@ -775,7 +775,7 @@ function sa_backup($action = "") {
 				buildPage("b");
 				$htmlTitle = "Backup - Delete";
 				$htmlMain .= '<br>';
-				$htmlMain .= '<em>'.$backupArchive.'</em> deleted.';
+				$htmlMain .= '<em>'.tfb_htmlencodekeepspaces($backupArchive).'</em> deleted.';
 				$htmlMain .= '<br><br>';
 				$htmlMain .= backupListDisplay();
 			} else {
@@ -783,7 +783,7 @@ function sa_backup($action = "") {
 				$htmlTitle = "Backup - Delete";
 				$htmlMain .= '<br><br>';
 				$htmlMain .= '<font color="red"><strong>Backup - Error</strong></font><br><br>';
-				$htmlMain .= $backupArchive.' is not a valid Backup-ID';
+				$htmlMain .= tfb_htmlencodekeepspaces($backupArchive).' is not a valid Backup-ID';
 			}
 			printPage();
 			exit();
@@ -821,7 +821,7 @@ function sa_log($action = "") {
 			$htmlTitle = "log - fluxd";
 			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 			$htmlMain .= '<pre>';
-			$htmlMain .= @file_get_contents($cfg["path"].'.fluxd/fluxd.log');
+			$htmlMain .= tfb_htmlencode(@file_get_contents($cfg["path"].'.fluxd/fluxd.log'));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '</div>';
 			break;
@@ -830,7 +830,7 @@ function sa_log($action = "") {
 			$htmlTitle = "log - fluxd - error-log";
 			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 			$htmlMain .= '<pre>';
-			$htmlMain .= @file_get_contents($cfg["path"].'.fluxd/fluxd-error.log');
+			$htmlMain .= tfb_htmlencode(@file_get_contents($cfg["path"].'.fluxd/fluxd-error.log'));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '</div>';
 			break;
@@ -841,7 +841,7 @@ function sa_log($action = "") {
 			$htmlMain .= '<pre>';
 			$mainlineLog = $cfg["path"].'.bittorrent/tfmainline.log';
 			if (is_file($mainlineLog))
-				$htmlMain .= @file_get_contents($mainlineLog);
+				$htmlMain .= tfb_htmlencode(@file_get_contents($mainlineLog));
 			else
 				$htmlMain .= "mainline-log not found.";
 			$htmlMain .= '</pre>';
@@ -856,8 +856,8 @@ function sa_log($action = "") {
 				foreach ($logList as $logFile) {
 					if ((isset($logFile)) && ($logFile != "")) {
 						$htmlMain .= '<li>';
-						$htmlMain .= '<a href="'. _FILE_THIS .'?l=9&transfer='.$logFile.'">';
-						$htmlMain .= $logFile;
+						$htmlMain .= '<a href="'. _FILE_THIS .'?l=9&transfer='.urlencode($logFile).'">';
+						$htmlMain .= tfb_htmlencode($logFile);
 						$htmlMain .= '</a>';
 						$htmlMain .= '</li>';
 					}
@@ -868,15 +868,15 @@ function sa_log($action = "") {
 
 		case "9": // transfer-log
 			if (isset($_REQUEST["transfer"])) {
-				$transfer = trim(htmlentities($_REQUEST["transfer"], ENT_QUOTES));
+				$transfer = trim(getRequestVarRaw('transfer'));
 				// shorten name if too long
 				if(strlen($transfer) >= 70)
-					$htmlTitle = "log - transfer-log - ".substr($transfer, 0, 67)."...";
+					$htmlTitle = "log - transfer-log - ".tfb_htmlencodekeepspaces(substr($transfer, 0, 67))."...";
 				else
-					$htmlTitle = "log - transfer-log - ".$transfer;
+					$htmlTitle = "log - transfer-log - ".tfb_htmlencodekeepspaces($transfer);
 				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 				$htmlMain .= '<pre>';
-				$htmlMain .= getTransferLog($transfer);
+				$htmlMain .= tfb_htmlencode(getTransferLog($transfer));
 				$htmlMain .= '</pre>';
 				$htmlMain .= '</div>';
 			} else {
@@ -967,7 +967,7 @@ function sa_misc($action = "") {
 			$htmlTitle = "Misc - Check - php-cli";
 			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 			$htmlMain .= '<pre>';
-			$htmlMain .= shell_exec($cfg["bin_php"]." ".$cfg["docroot"]."bin/check/check-cli.php");
+			$htmlMain .= tfb_htmlencode(shell_exec($cfg["bin_php"]." ".tfb_shellencode($cfg["docroot"]."bin/check/check-cli.php")));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '</div>';
 			break;
@@ -976,7 +976,7 @@ function sa_misc($action = "") {
 			$htmlTitle = "Misc - Check - Perl";
 			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 			$htmlMain .= '<pre>';
-			$htmlMain .= shell_exec($cfg["perlCmd"]." ".$cfg["docroot"]."bin/check/check.pl all");
+			$htmlMain .= tfb_htmlencode(shell_exec($cfg["perlCmd"]." ".tfb_shellencode($cfg["docroot"]."bin/check/check.pl")." all"));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '</div>';
 			break;
@@ -985,7 +985,7 @@ function sa_misc($action = "") {
 			$htmlTitle = "Misc - Check - Perl";
 			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 			$htmlMain .= '<pre>';
-			$htmlMain .= shell_exec($cfg["perlCmd"]." ".$cfg["docroot"]."bin/check/check.pl nzbperl");
+			$htmlMain .= tfb_htmlencode(shell_exec($cfg["perlCmd"]." ".tfb_shellencode($cfg["docroot"]."bin/check/check.pl")." nzbperl"));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '</div>';
 			break;
@@ -1329,7 +1329,7 @@ function sa_update($action = "") {
 			// extract archive
 			sendLine('<li>Extracting Update-Archive : <br>');
 			sendLine('<em>');
-			$cmd  = 'cd '.escapeshellarg($cfg['docroot']).' && tar jxvf '._UPDATE_ARCHIVE;
+			$cmd  = 'cd '.tfb_shellencode($cfg['docroot']).' && tar jxvf '._UPDATE_ARCHIVE;
 			$cmd .= ' 2>&1';
 			$handle = @popen($cmd, 'r');
 			while (!@feof($handle)) {
@@ -1402,7 +1402,7 @@ function sa_fluxd($action = "") {
 			$htmlTitle = "fluxd - log";
 			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 			$htmlMain .= '<pre>';
-			$htmlMain .= @file_get_contents($cfg["path"].'.fluxd/fluxd.log');
+			$htmlMain .= tfb_htmlencode(@file_get_contents($cfg["path"].'.fluxd/fluxd.log'));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '</div>';
 			break;
@@ -1411,7 +1411,7 @@ function sa_fluxd($action = "") {
 			$htmlTitle = "fluxd - error-log";
 			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 			$htmlMain .= '<pre>';
-			$htmlMain .= @file_get_contents($cfg["path"].'.fluxd/fluxd-error.log');
+			$htmlMain .= tfb_htmlencode(@file_get_contents($cfg["path"].'.fluxd/fluxd-error.log'));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '</div>';
 			break;
@@ -1420,7 +1420,7 @@ function sa_fluxd($action = "") {
 			$htmlTitle = "fluxd - ps";
 			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 			$htmlMain .= '<pre>';
-			$htmlMain .= shell_exec("ps auxww | ".$cfg['bin_grep']." fluxd | ".$cfg['bin_grep']." -v grep");
+			$htmlMain .= tfb_htmlencode(shell_exec("ps auxww | ".$cfg['bin_grep']." fluxd | ".$cfg['bin_grep']." -v grep"));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '</div>';
 			break;
@@ -1430,7 +1430,7 @@ function sa_fluxd($action = "") {
 			if (Fluxd::isRunning()) {
 				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 				$htmlMain .= '<pre>';
-				$htmlMain .= Fluxd::status();
+				$htmlMain .= tfb_htmlencode(Fluxd::status());
 				$htmlMain .= '</pre>';
 				$htmlMain .= '</div>';
 			} else {
@@ -1442,7 +1442,7 @@ function sa_fluxd($action = "") {
 			$htmlTitle = "fluxd - check";
 			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 			$htmlMain .= '<pre>';
-			$htmlMain .= shell_exec($cfg["perlCmd"]." -I ".$cfg["docroot"]."bin/fluxd -I ".$cfg["docroot"]."bin/lib ".$cfg["docroot"]."bin/fluxd/fluxd.pl check");
+			$htmlMain .= tfb_htmlencode(shell_exec($cfg["perlCmd"]." -I ".tfb_shellencode($cfg["docroot"]."bin/fluxd")." -I ".tfb_shellencode($cfg["docroot"]."bin/lib")." ".tfb_shellencode($cfg["docroot"]."bin/fluxd/fluxd.pl")." check"));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '</div>';
 			break;
@@ -1451,7 +1451,7 @@ function sa_fluxd($action = "") {
 			$htmlTitle = "fluxd - db-debug";
 			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 			$htmlMain .= '<pre>';
-			$htmlMain .= shell_exec($cfg["perlCmd"]." -I ".$cfg["docroot"]."bin/fluxd -I ".$cfg["docroot"]."bin/lib ".$cfg["docroot"]."bin/fluxd/fluxd.pl debug db ".$cfg["docroot"]." ".$cfg["path"]." ".$cfg["bin_php"]);
+			$htmlMain .= tfb_htmlencode(shell_exec($cfg["perlCmd"]." -I ".tfb_shellencode($cfg["docroot"]."bin/fluxd")." -I ".tfb_shellencode($cfg["docroot"]."bin/lib")." ".tfb_shellencode($cfg["docroot"]."bin/fluxd/fluxd.pl")." debug db ".tfb_shellencode($cfg["docroot"])." ".tfb_shellencode($cfg["path"])." ".tfb_shellencode($cfg["bin_php"])));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '</div>';
 			break;
@@ -1460,7 +1460,7 @@ function sa_fluxd($action = "") {
 			$htmlTitle = "fluxd - version";
 			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 			$htmlMain .= '<pre>';
-			$htmlMain .= shell_exec($cfg["perlCmd"]." -I ".$cfg["docroot"]."bin/fluxd -I ".$cfg["docroot"]."bin/lib ".$cfg["docroot"]."bin/fluxd/fluxd.pl version");
+			$htmlMain .= tfb_htmlencode(shell_exec($cfg["perlCmd"]." -I ".tfb_shellencode($cfg["docroot"]."bin/fluxd")." -I ".tfb_shellencode($cfg["docroot"]."bin/lib")." ".tfb_shellencode($cfg["docroot"]."bin/fluxd/fluxd.pl")." version"));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '</div>';
 			break;
@@ -1488,7 +1488,7 @@ function sa_fluazu($action = "") {
 			$htmlTitle = "fluazu - log";
 			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 			$htmlMain .= '<pre>';
-			$htmlMain .= @file_get_contents($cfg["path"].'.fluazu/fluazu.log');
+			$htmlMain .= tfb_htmlencode(@file_get_contents($cfg["path"].'.fluazu/fluazu.log'));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '</div>';
 			break;
@@ -1497,7 +1497,7 @@ function sa_fluazu($action = "") {
 			$htmlTitle = "fluazu - ps";
 			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 			$htmlMain .= '<pre>';
-			$htmlMain .= shell_exec("ps auxww | ".$cfg['bin_grep']." fluazu.py | ".$cfg['bin_grep']." -v grep");
+			$htmlMain .= tfb_htmlencode(shell_exec("ps auxww | ".$cfg['bin_grep']." fluazu.py | ".$cfg['bin_grep']." -v grep"));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '</div>';
 			break;
@@ -1506,7 +1506,7 @@ function sa_fluazu($action = "") {
 			$htmlTitle = "fluazu - version";
 			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 			$htmlMain .= '<pre>';
-			$htmlMain .= shell_exec("cd ".$cfg["docroot"]."bin/clients/fluazu/; ".$cfg["pythonCmd"]." -OO fluazu.py --version");
+			$htmlMain .= tfb_htmlencode(shell_exec("cd ".tfb_shellencode($cfg["docroot"]."bin/clients/fluazu/")."; ".$cfg["pythonCmd"]." -OO fluazu.py --version"));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '</div>';
 			break;
@@ -1914,9 +1914,9 @@ function cleanDir($dir) {
 	while (false !== ($file = @readdir($dirHandle))) {
 		if ((@is_file($dir.$file)) && ((substr($file, 0, 1)) != ".")) {
 			if (@unlink($dir.$file) === true)
-				$result .= $file."\n";
+				$result .= tfb_htmlencode($file)."\n";
 			else
-				$result .= "ERROR : ".$file."\n";
+				$result .= "ERROR : ".tfb_htmlencode($file)."\n";
 		}
 	}
 	@closedir($dirHandle);
@@ -2153,7 +2153,7 @@ function backupCreate($talk = false, $compression = 0) {
 	// backup-dir
 	$dirBackup = $cfg["path"]. _DIR_BACKUP;
 	if (!checkDirectory($dirBackup)) {
-		$error = "Errors when checking/creating backup-dir : ".$dirBackup;
+		$error = "Errors when checking/creating backup-dir : ".tfb_htmlencodekeepspaces($dirBackup);
 		return "";
 	}
 	// files and more strings
@@ -2185,19 +2185,19 @@ function backupCreate($talk = false, $compression = 0) {
 	$exec['mrtg'] = ((@is_dir($cfg["path"].'.mrtg')) === true);
 	// commands
 	$commands = array();
-	$commands['archive'] = "cd ".$dirBackup."; tar ".$tarSwitch." ".$fileArchiveName." ";
+	$commands['archive'] = "cd ".tfb_shellencode($dirBackup)."; tar ".$tarSwitch." ".$fileArchiveName." ";
 	$commands['db'] = "";
 	switch ($cfg["db_type"]) {
 		case "mysql":
-			$commands['db'] = "mysqldump -h ".$cfg["db_host"]." -u ".$cfg["db_user"]." --password=".$cfg["db_pass"]." --all -f ".$cfg["db_name"]." > ".$files['db'];
+			$commands['db'] = "mysqldump -h ".tfb_shellencode($cfg["db_host"])." -u ".tfb_shellencode($cfg["db_user"])." --password=".tfb_shellencode($cfg["db_pass"])." --all -f ".tfb_shellencode($cfg["db_name"])." > ".tfb_shellencode($files['db']);
 			$commands['archive'] .= 'database.sql ';
 			break;
 		case "sqlite":
-			$commands['db'] = "sqlite ".$cfg["db_host"]." .dump > ".$files['db'];
+			$commands['db'] = "sqlite ".tfb_shellencode($cfg["db_host"])." .dump > ".tfb_shellencode($files['db']);
 			$commands['archive'] .= 'database.sql ';
 			break;
 		case "postgres":
-			$commands['db'] = "pg_dump -h ".$cfg["db_host"]." -D ".$cfg["db_name"]." -U ".$cfg["db_user"]." -f ".$files['db'];
+			$commands['db'] = "pg_dump -h ".tfb_shellencode($cfg["db_host"])." -D ".tfb_shellencode($cfg["db_name"])." -U ".tfb_shellencode($cfg["db_user"])." -f ".tfb_shellencode($files['db']);
 			$commands['archive'] .= 'database.sql ';
 			break;
 	}
@@ -2208,32 +2208,32 @@ function backupCreate($talk = false, $compression = 0) {
 		$commands['archive'] .= ' fluxd.tar';
 	if ($exec['mrtg'] === true)
 		$commands['archive'] .= ' mrtg.tar';
-	//$commands['docroot'] = "cd ".$dirBackup."; tar -cf docroot.tar ".$cfg["docroot"]; // with path of docroot
-	$commands['docroot'] = "cd ".escapeshellarg($cfg["docroot"])."; tar -cf ".$files['docroot']." ."; // only content of docroot
-	$commands['transfers'] = "cd ".escapeshellarg($cfg["transfer_file_path"])."; tar -cf ".$files['transfers']." .";
-	$commands['fluxd'] = "cd ".escapeshellarg($cfg["path"].'.fluxd')."; tar -cf ".$files['fluxd']." .";
-	$commands['mrtg'] = "cd ".escapeshellarg($cfg["path"].'.mrtg')."; tar -cf ".$files['mrtg']." .";
+	//$commands['docroot'] = "cd ".tfb_shellencode($dirBackup)."; tar -cf docroot.tar ".tfb_shellencode($cfg["docroot"]); // with path of docroot
+	$commands['docroot'] = "cd ".tfb_shellencode($cfg["docroot"])."; tar -cf ".tfb_shellencode($files['docroot'])." ."; // only content of docroot
+	$commands['transfers'] = "cd ".tfb_shellencode($cfg["transfer_file_path"])."; tar -cf ".tfb_shellencode($files['transfers'])." .";
+	$commands['fluxd'] = "cd ".tfb_shellencode($cfg["path"].'.fluxd')."; tar -cf ".tfb_shellencode($files['fluxd'])." .";
+	$commands['mrtg'] = "cd ".tfb_shellencode($cfg["path"].'.mrtg')."; tar -cf ".tfb_shellencode($files['mrtg'])." .";
 	// action
 	if ($talk)
 		sendLine('<br>');
 	// database-command
 	if ($commands['db'] != "") {
 		if ($talk)
-			sendLine('Backup of Database <em>'.$cfg["db_name"].'</em> ...');
+			sendLine('Backup of Database <em>'.tfb_htmlencodekeepspaces($cfg["db_name"]).'</em> ...');
 		shell_exec($commands['db']);
 	}
 	if ($talk)
 		sendLine(' <font color="green">Ok</font><br>');
 	// docroot-command
 	if ($talk)
-		sendLine('Backup of Docroot <em>'.$cfg["docroot"].'</em> ...');
+		sendLine('Backup of Docroot <em>'.tfb_htmlencodekeepspaces($cfg["docroot"]).'</em> ...');
 	shell_exec($commands['docroot']);
 	if ($talk)
 		sendLine(' <font color="green">Ok</font><br>');
 	// transfers-command
 	if ($exec['transfers'] === true) {
 		if ($talk)
-			sendLine('Backup of transfers <em>'.$cfg["transfer_file_path"].'</em> ...');
+			sendLine('Backup of transfers <em>'.tfb_htmlencodekeepspaces($cfg["transfer_file_path"]).'</em> ...');
 		shell_exec($commands['transfers']);
 		if ($talk)
 			sendLine(' <font color="green">Ok</font><br>');
@@ -2241,7 +2241,7 @@ function backupCreate($talk = false, $compression = 0) {
 	// fluxd-command
 	if ($exec['fluxd'] === true) {
 		if ($talk)
-			sendLine('Backup of fluxd <em>'.$cfg["path"].'.fluxd'.'</em> ...');
+			sendLine('Backup of fluxd <em>'.tfb_htmlencodekeepspaces($cfg["path"].'.fluxd').'</em> ...');
 		shell_exec($commands['fluxd']);
 		if ($talk)
 			sendLine(' <font color="green">Ok</font><br>');
@@ -2249,7 +2249,7 @@ function backupCreate($talk = false, $compression = 0) {
 	// mrtg-command
 	if ($exec['mrtg'] === true) {
 		if ($talk)
-			sendLine('Backup of mrtg <em>'.$cfg["path"].'.mrtg'.'</em> ...');
+			sendLine('Backup of mrtg <em>'.tfb_htmlencodekeepspaces($cfg["path"].'.mrtg').'</em> ...');
 		shell_exec($commands['mrtg']);
 		if ($talk)
 			sendLine(' <font color="green">Ok</font><br>');
@@ -2329,7 +2329,7 @@ function validateLocalFiles() {
 	sendLine('<br><strong>Validating...</strong><br>');
 	// validate pass 1
 	foreach ($remoteChecksums as $file => $md5) {
-		$line = $file;
+		$line = tfb_htmlencodekeepspaces($file);
 		if (isset($localChecksums[$file])) {
 			if ($md5 == $localChecksums[$file]) {
 				array_push($filesOk, $file);
@@ -2364,7 +2364,7 @@ function validateLocalFiles() {
 	if (count($filesNew) > 0) {
 		sendLine('<br><strong>New Files : </strong><br>');
 		foreach ($filesNew as $newFile)
-			sendLine($newFile.'<br>');
+			sendLine(tfb_htmlencodekeepspaces($newFile).'<br>');
 	}
 }
 

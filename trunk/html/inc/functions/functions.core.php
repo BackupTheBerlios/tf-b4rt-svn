@@ -1762,6 +1762,18 @@ function tfb_htmlencodekeepspaces($str) {
 	return str_replace(' ', '&nbsp;', htmlspecialchars($str, ENT_QUOTES));
 }
 
+/**
+ * Shell-escape a string. The argument must be one whole (and only one) arg
+ * (this function adds quotes around it so that the shell sees it as such).
+ *
+ * @param $str
+ * @return string
+ */
+function tfb_shellencode($str) {
+  $str = (string)$str;
+  return isset($str) && strlen($str) > 0 ? escapeshellarg($str) : "''";
+}
+
 
 /**
  * Audit Action
