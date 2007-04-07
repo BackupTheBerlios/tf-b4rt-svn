@@ -55,7 +55,7 @@ $pg = getRequestVar('pg');
 $searchEngine = getRequestVar('searchEngine');
 if (empty($searchEngine))
 	$searchEngine = $cfg["searchEngine"];
-if (!preg_match('/^[a-zA-Z0-9]+$/', $searchEngine))
+if (!preg_match('/^[a-zA-Z0-9]+$/D', $searchEngine))
 	error("Invalid SearchEngine", "", "");
 $searchterm = getRequestVar('searchterm');
 if (empty($searchterm))

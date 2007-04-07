@@ -158,7 +158,7 @@ switch ($type) {
 		$targetFile = _MRTG_DIR_INPUT."/".$target.".inc";
 		// check target
 		if (!((isValidPath($targetFile) === true)
-			&& (preg_match('/^[0-9a-zA-Z_]+$/', $target))
+			&& (preg_match('/^[0-9a-zA-Z_]+$/D', $target))
 			&& (@is_file($targetFile))
 			)) {
 			AuditAction($cfg["constants"]["error"], "ILLEGAL MRTG-TARGET: ".$cfg["user"]." tried to access ".$target);

@@ -824,7 +824,7 @@ function dispatcher_exit() {
 				@header("location: ".$_SERVER["HTTP_REFERER"]);
 			break;
 		default:
-			if (preg_match('/^[a-zA-Z]+$/', $redir)) {
+			if (preg_match('/^[a-zA-Z]+$/D', $redir)) {
 				@header("location: index.php?iid=".$redir);
 			} else {
 				AuditAction($cfg["constants"]["error"], "INVALID PAGE (riid): ".$redir);

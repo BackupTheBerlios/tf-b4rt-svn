@@ -146,7 +146,7 @@ function downloadFile($down) {
 			if (isset($_SERVER['HTTP_RANGE'])) {
 				// Partial download
 				$bufsize = 32768;
-				if (preg_match("/^bytes=(\\d+)-(\\d*)$/", $_SERVER['HTTP_RANGE'], $matches)) {
+				if (preg_match("/^bytes=(\\d+)-(\\d*)$/D", $_SERVER['HTTP_RANGE'], $matches)) {
 					$from = $matches[1];
 					$to = $matches[2];
 					if (empty($to))

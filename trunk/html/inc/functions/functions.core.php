@@ -2188,7 +2188,7 @@ function isValidPath($path, $ext = "") {
  */
 function isValidTransfer($transfer) {
 	global $cfg;
-	return (preg_match('/^[0-9a-zA-Z._-]+('.$cfg["file_types_regexp"].')$/', $transfer) == 1);
+	return (preg_match('/^[0-9a-zA-Z._-]+('.$cfg["file_types_regexp"].')$/D', $transfer) == 1);
 }
 
 /**

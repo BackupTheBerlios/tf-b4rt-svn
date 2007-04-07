@@ -475,7 +475,7 @@ class SimpleHTTP
 		303 See Other (should be fetched using GET, probably not relevant but won't hurt to include it)
 		307 Temporary Redirect
 		*/
-		if( preg_match("/^30[0-37]$/", $this->status) > 0 ){
+		if( preg_match("/^30[0-37]$/D", $this->status) > 0 ){
 			// Check we're not already over the max redirects limit:
 			if ( $this->redirectCount > $this->redirectMax ) {
 				$this->state = SIMPLEHTTP_STATE_ERROR;

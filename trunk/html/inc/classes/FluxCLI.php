@@ -709,7 +709,7 @@ class FluxCLI
 		}
 		switch ($settingsKeys[$key]) {
 			case 'NUMBER':
-				if (!preg_match('/^[0-9\-]+$/', $val)) {
+				if (!preg_match('/^[0-9\-]+$/D', $val)) {
 					$this->_outputError("value for ".$key." must be a number: ".$val."\n");
 					return false;
 				}

@@ -40,7 +40,7 @@ if ((!isset($cfg['isAdmin'])) || (!$cfg['isAdmin'])) {
 $op = (isset($_REQUEST['op'])) ? $_REQUEST['op'] : "default";
 
 // check arg
-if (!preg_match('/^[a-zA-Z]+$/', $op)) {
+if (!preg_match('/^[a-zA-Z]+$/D', $op)) {
 	$op = getRequestVar('op');
 	AuditAction($cfg["constants"]["error"], "INVALID ADMIN-OP : ".$op);
 	@error("Invalid Admin-Op", "admin.php", "Admin", array($op));

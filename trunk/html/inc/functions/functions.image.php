@@ -306,7 +306,7 @@ function image_mrtg() {
 	$targetFile = $cfg["path"].'.mrtg/'.$fileName;
 	// validate file
 	if (!((isValidPath($targetFile) === true)
-		&& (preg_match('/^[0-9a-zA-Z_]+(-day|-week|-month|-year)(.png)$/', $fileName))
+		&& (preg_match('/^[0-9a-zA-Z_]+(-day|-week|-month|-year)(.png)$/D', $fileName))
 		&& (@is_file($targetFile))
 		)) {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL MRTG-IMAGE: ".$cfg["user"]." tried to access ".$fileName);

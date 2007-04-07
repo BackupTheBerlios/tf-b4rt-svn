@@ -33,7 +33,7 @@ if (!isset($_REQUEST['iid'])) {
 }
 
 // include page
-if (preg_match('/^[a-zA-Z]+$/', $_REQUEST['iid'])) {
+if (preg_match('/^[a-zA-Z]+$/D', $_REQUEST['iid'])) {
 	@require_once("inc/iid/".$_REQUEST['iid'].".php");
 } else {
 	$iid = getRequestVar('iid');
