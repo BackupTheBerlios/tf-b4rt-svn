@@ -313,7 +313,7 @@ sub daemonize {
 
 	# check for pid-file
 	if (-f $PID_FILE) {
-		printMessage("CORE", "pid-file (".$PATH_SOCKET.") exists but daemon not running. deleting...\n");
+		printMessage("CORE", "pid-file (".$PID_FILE.") exists but daemon not running. deleting...\n");
 		pidFileDelete();
 	}
 
