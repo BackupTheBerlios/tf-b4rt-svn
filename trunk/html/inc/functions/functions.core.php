@@ -39,7 +39,7 @@ require_once("inc/functions/functions.core.netstat.php");
  * POSIX-wrapper for PHPs lacking posix-support (--disable-posix)
  */
 if (!function_exists("posix_kill"))
-	require_once("inc/functions/functions.posix.php");
+	require_once("inc/functions/functions.core.posix.php");
 
 /*
  * tfb
