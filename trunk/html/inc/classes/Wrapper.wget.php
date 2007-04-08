@@ -342,7 +342,7 @@ class WrapperWget
 			$command .= " -t ".$this->_retries;
 		if ($this->_pasv == 1)
 			$command .= " --passive-ftp";
-		$command .= " -i ".escapeshellarg($cfg['transfer_file_path'].$this->_transfer);
+		$command .= " -i ".tfb_shellencode($cfg['transfer_file_path'].$this->_transfer);
 		$command .= " 2>&1"; // direct STDERR to STDOUT
 		$command .= " & echo $! > ".$cfg['transfer_file_path'].$this->_transfer.".pid"; // write pid-file
 
@@ -418,7 +418,7 @@ class WrapperWget
 	 * @return boolean
 	 */
 	function _clientIsRunning() {
-		return (strpos(exec('ps --pid '.escapeshellarg($this->_pid)), $this->_pid) !== false);
+		return (strpos(exec('ps --pid '.tfb_shellencode($this->_pid)), $this->_pid) !== false);
 	}
 
 	/**

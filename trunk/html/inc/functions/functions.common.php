@@ -198,8 +198,8 @@ function tmplSetDirTree($dir, $maxdepth) {
 	if (is_numeric($maxdepth)) {
 		$retvar_list = array();
 		$last = ($maxdepth == 0)
-			? exec("find ".escapeshellarg($dir)." -type d | sort && echo", $retval)
-			: exec("find ".escapeshellarg($dir)." -maxdepth ".escapeshellarg($maxdepth)." -type d | sort && echo", $retval);
+			? exec("find ".tfb_shellencode($dir)." -type d | sort && echo", $retval)
+			: exec("find ".tfb_shellencode($dir)." -maxdepth ".tfb_shellencode($maxdepth)." -type d | sort && echo", $retval);
 		for ($i = 1; $i < (count ($retval) - 1); $i++)
 			array_push($retvar_list, array('retval' => $retval[$i]));
 		$tmpl->setloop('dirtree_retvar_list', $retvar_list);
@@ -1412,7 +1412,7 @@ function getTorrentScrapeInfo($transfer) {
 	if (is_executable($cfg["btclient_transmission_bin"])) {
 		$hasClient = true;
 		$retVal = "";
-		$retVal = @shell_exec($cfg["btclient_transmission_bin"] . " -s ".escapeshellarg($cfg["transfer_file_path"].$transfer));
+		$retVal = @shell_exec($cfg["btclient_transmission_bin"] . " -s ".tfb_shellencode($cfg["transfer_file_path"].$transfer));
 		if ((isset($retVal)) && ($retVal != "") && (!preg_match('/.*failed.*/i', $retVal)))
 			return trim($retVal);
 	}
@@ -1420,7 +1420,7 @@ function getTorrentScrapeInfo($transfer) {
 	if (is_executable($cfg["perlCmd"])) {
 		$hasClient = true;
 		$retVal = "";
-		$retVal = @shell_exec($cfg["perlCmd"].' -I '.escapeshellarg($cfg["docroot"].'bin/ttools').' '.escapeshellarg($cfg["docroot"].'bin/ttools/ttools.pl').' -s '.escapeshellarg($cfg["transfer_file_path"].$transfer));
+		$retVal = @shell_exec($cfg["perlCmd"].' -I '.tfb_shellencode($cfg["docroot"].'bin/ttools').' '.tfb_shellencode($cfg["docroot"].'bin/ttools/ttools.pl').' -s '.tfb_shellencode($cfg["transfer_file_path"].$transfer));
 		if ((isset($retVal)) && ($retVal != "") && (!preg_match('/.*failed.*/i', $retVal)))
 			return trim($retVal);
 	}

@@ -114,39 +114,39 @@ class ClientHandlerTornado extends ClientHandler
         if (@file_exists($this->transferFilePath.".prio")) {
             $priolist = explode(',', @file_get_contents($this->transferFilePath.".prio"));
             $priolist = implode(',', array_slice($priolist, 1, $priolist[0]));
-            $filePrio = " --priority ".escapeshellarg($priolist);
+            $filePrio = " --priority ".tfb_shellencode($priolist);
         }
 
         // build the command-string
 		// note : order of args must not change for ps-parsing-code in
 		// RunningTransferTornado
-		$this->command  = "cd ".escapeshellarg($this->savepath).";";
-		$this->command .= " HOME=".escapeshellarg($cfg["path"]);
+		$this->command  = "cd ".tfb_shellencode($this->savepath).";";
+		$this->command .= " HOME=".tfb_shellencode($cfg["path"]);
 		$this->command .= "; export HOME;";
 		$this->command .= $this->umask;
 		$this->command .= " nohup ";
 		$this->command .= $this->nice;
-		$this->command .= $pyCmd . " " .escapeshellarg($this->tornadoBin);
-        $this->command .= " ".escapeshellarg($this->runtime);
-        $this->command .= " ".escapeshellarg($this->sharekill_param);
-        $this->command .= " ".escapeshellarg($this->owner);
-        $this->command .= " ".escapeshellarg($this->transferFilePath);
-        $this->command .= " --responsefile ".escapeshellarg($this->transferFilePath);
+		$this->command .= $pyCmd . " " .tfb_shellencode($this->tornadoBin);
+        $this->command .= " ".tfb_shellencode($this->runtime);
+        $this->command .= " ".tfb_shellencode($this->sharekill_param);
+        $this->command .= " ".tfb_shellencode($this->owner);
+        $this->command .= " ".tfb_shellencode($this->transferFilePath);
+        $this->command .= " --responsefile ".tfb_shellencode($this->transferFilePath);
         $this->command .= " --display_interval 1";
-        $this->command .= " --max_download_rate ".escapeshellarg($this->drate);
-        $this->command .= " --max_upload_rate ".escapeshellarg($this->rate);
-        $this->command .= " --max_uploads ".escapeshellarg($this->maxuploads);
-        $this->command .= " --minport ".escapeshellarg($this->port);
-        $this->command .= " --maxport ".escapeshellarg($this->maxport);
-        $this->command .= " --rerequest_interval ".escapeshellarg($this->rerequest);
-        $this->command .= " --super_seeder ".escapeshellarg($this->superseeder);
-        $this->command .= " --max_connections ".escapeshellarg($this->maxcons);
+        $this->command .= " --max_download_rate ".tfb_shellencode($this->drate);
+        $this->command .= " --max_upload_rate ".tfb_shellencode($this->rate);
+        $this->command .= " --max_uploads ".tfb_shellencode($this->maxuploads);
+        $this->command .= " --minport ".tfb_shellencode($this->port);
+        $this->command .= " --maxport ".tfb_shellencode($this->maxport);
+        $this->command .= " --rerequest_interval ".tfb_shellencode($this->rerequest);
+        $this->command .= " --super_seeder ".tfb_shellencode($this->superseeder);
+        $this->command .= " --max_connections ".tfb_shellencode($this->maxcons);
         $this->command .= $skipHashCheck;
 		$this->command .= $filePrio;
 		if (strlen($cfg["btclient_tornado_options"]) > 0)
 			$this->command .= " ".$cfg["btclient_tornado_options"];
-        $this->command .= " 1>> ".escapeshellarg($this->transferFilePath.".log");
-        $this->command .= " 2>> ".escapeshellarg($this->transferFilePath.".log");
+        $this->command .= " 1>> ".tfb_shellencode($this->transferFilePath.".log");
+        $this->command .= " 2>> ".tfb_shellencode($this->transferFilePath.".log");
         $this->command .= " &";
 
         // start the client

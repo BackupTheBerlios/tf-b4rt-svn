@@ -83,7 +83,7 @@ if (!empty($file)) {
 tmplInitializeInstance($cfg["theme"], "page.checkSFV.tmpl");
 
 // process
-$cmd = $cfg['bin_cksfv'] . ' -C ' . escapeshellarg($dir) . ' -f ' . escapeshellarg($file);
+$cmd = $cfg['bin_cksfv'] . ' -C ' . tfb_shellencode($dir) . ' -f ' . tfb_shellencode($file);
 $handle = popen($cmd . ' 2>&1', 'r' );
 $buff = (isset($cfg["debuglevel"]) && $cfg["debuglevel"] == 2)
 	? "<strong>Debug:</strong> Evaluating command:<br/><br/><pre>$cmd</pre><br/>Output follows below:<br/>"

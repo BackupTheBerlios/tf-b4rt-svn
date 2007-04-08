@@ -102,37 +102,37 @@ class ClientHandlerMainline extends ClientHandler
 		// build the command-string
 		// note : order of args must not change for ps-parsing-code in
 		// RunningTransferMainline
-		$this->command  = "cd ".escapeshellarg($this->savepath).";";
-		$this->command .= " HOME=".escapeshellarg($cfg["path"]);
+		$this->command  = "cd ".tfb_shellencode($this->savepath).";";
+		$this->command .= " HOME=".tfb_shellencode($cfg["path"]);
 		$this->command .= "; export HOME;";
 		$this->command .= $this->umask;
 		$this->command .= " nohup ";
 		$this->command .= $this->nice;
-		$this->command .= $cfg["pythonCmd"] . " -OO" . " " .escapeshellarg($this->mainlineBin);
-		$this->command .= " --tf_owner ".escapeshellarg($this->owner);
+		$this->command .= $cfg["pythonCmd"] . " -OO" . " " .tfb_shellencode($this->mainlineBin);
+		$this->command .= " --tf_owner ".tfb_shellencode($this->owner);
 		$this->command .= " --display_interval 1";
-		$this->command .= " --save_incomplete_in ".escapeshellarg($this->savepath);
-		$this->command .= " --save_in ".escapeshellarg($this->savepath);
-		$this->command .= " --die_when_done ".escapeshellarg($this->runtime);
-		$this->command .= " --seed_limit ".escapeshellarg($this->sharekill_param);
+		$this->command .= " --save_incomplete_in ".tfb_shellencode($this->savepath);
+		$this->command .= " --save_in ".tfb_shellencode($this->savepath);
+		$this->command .= " --die_when_done ".tfb_shellencode($this->runtime);
+		$this->command .= " --seed_limit ".tfb_shellencode($this->sharekill_param);
 		$this->command .= ($this->drate != 0)
-			? " --max_download_rate " . escapeshellarg($this->drate * 1024)
+			? " --max_download_rate " . tfb_shellencode($this->drate * 1024)
 			: " --max_download_rate 125000000"; // 1 GBit local net = 125MB/s
 		$this->command .= ($this->rate != 0)
-			? " --max_upload_rate " . escapeshellarg($this->rate * 1024)
+			? " --max_upload_rate " . tfb_shellencode($this->rate * 1024)
 			: " --max_upload_rate 125000000"; // 1 GBit local net = 125MB/s
-		$this->command .= " --max_uploads ".escapeshellarg($this->maxuploads);
-		$this->command .= " --minport ".escapeshellarg($this->port);
-		$this->command .= " --maxport ".escapeshellarg($this->maxport);
-		$this->command .= " --rerequest_interval ".escapeshellarg($this->rerequest);
-		$this->command .= " --max_initiate ".escapeshellarg($this->maxcons);
+		$this->command .= " --max_uploads ".tfb_shellencode($this->maxuploads);
+		$this->command .= " --minport ".tfb_shellencode($this->port);
+		$this->command .= " --maxport ".tfb_shellencode($this->maxport);
+		$this->command .= " --rerequest_interval ".tfb_shellencode($this->rerequest);
+		$this->command .= " --max_initiate ".tfb_shellencode($this->maxcons);
 		if ((!(empty($this->skip_hash_check))) && (getTorrentDataSize($this->transfer) > 0))
 			$this->command .= " --no_check_hashes";
 		if (strlen($cfg["btclient_mainline_options"]) > 0)
 			$this->command .= " ".$cfg["btclient_mainline_options"];
-		$this->command .= " ".escapeshellarg($this->transferFilePath);
-        $this->command .= " 1>> ".escapeshellarg($this->transferFilePath.".log");
-        $this->command .= " 2>> ".escapeshellarg($this->transferFilePath.".log");
+		$this->command .= " ".tfb_shellencode($this->transferFilePath);
+        $this->command .= " 1>> ".tfb_shellencode($this->transferFilePath.".log");
+        $this->command .= " 2>> ".tfb_shellencode($this->transferFilePath.".log");
         $this->command .= " &";
 
 		// start the client

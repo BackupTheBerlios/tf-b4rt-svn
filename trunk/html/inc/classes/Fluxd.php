@@ -355,16 +355,16 @@ class Fluxd
             $startCommand = "cd ".$cfg["docroot"]." ; HOME=".$cfg["path"].";";
             $startCommand .= " export HOME;";
             $startCommand .= " nohup " . $cfg["perlCmd"];
-            $startCommand .= " -I ".escapeshellarg($cfg["docroot"]."bin/fluxd");
-            $startCommand .= " -I ".escapeshellarg($cfg["docroot"]."bin/lib");
-            $startCommand .= " ".escapeshellarg($cfg["docroot"]."bin/fluxd/fluxd.pl");
+            $startCommand .= " -I ".tfb_shellencode($cfg["docroot"]."bin/fluxd");
+            $startCommand .= " -I ".tfb_shellencode($cfg["docroot"]."bin/lib");
+            $startCommand .= " ".tfb_shellencode($cfg["docroot"]."bin/fluxd/fluxd.pl");
             $startCommand .= " start";
-            $startCommand .= " ".escapeshellarg($cfg["docroot"]);
-            $startCommand .= " ".escapeshellarg($cfg["path"]);
-            $startCommand .= " ".escapeshellarg($cfg["bin_php"]);
-            $startCommand .= " ".escapeshellarg($cfg["fluxd_dbmode"]);
-	        $startCommand .= " 1>> ".escapeshellarg($this->_pathLogFile);
-	        $startCommand .= " 2>> ".escapeshellarg($this->_pathLogFileError);
+            $startCommand .= " ".tfb_shellencode($cfg["docroot"]);
+            $startCommand .= " ".tfb_shellencode($cfg["path"]);
+            $startCommand .= " ".tfb_shellencode($cfg["bin_php"]);
+            $startCommand .= " ".tfb_shellencode($cfg["fluxd_dbmode"]);
+	        $startCommand .= " 1>> ".tfb_shellencode($this->_pathLogFile);
+	        $startCommand .= " 2>> ".tfb_shellencode($this->_pathLogFileError);
 	        $startCommand .= " &";
         	$this->instance_logMessage("executing command : \n".$startCommand."\n", true);
         	// exec

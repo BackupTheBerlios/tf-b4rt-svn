@@ -184,7 +184,7 @@ function downloadFile($down) {
 				@header("Content-length: " . $filesize . "\n");
 				// write the session to close so you can continue to browse on the site.
 				@session_write_close();
-				$fp = popen("cat ".escapeshellarg($path), "r");
+				$fp = popen("cat ".tfb_shellencode($path), "r");
 				fpassthru($fp);
 				pclose($fp);
 			}

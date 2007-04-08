@@ -116,14 +116,14 @@ class ClientHandlerWget extends ClientHandler
 		// note : order of args must not change for ps-parsing-code in
 		// RunningTransferWget
         $this->command  = "nohup ".$cfg['bin_php']." -f bin/wget.php";
-        $this->command .= " " . escapeshellarg($this->transferFilePath);
-        $this->command .= " " . escapeshellarg($this->owner);
-        $this->command .= " " . escapeshellarg($this->savepath);
-        $this->command .= " " . escapeshellarg($this->drate * 1024);
-        $this->command .= " " . escapeshellarg($cfg["wget_limit_retries"]);
-        $this->command .= " " . escapeshellarg($cfg["wget_ftp_pasv"]);
-        $this->command .= " 1>> ".escapeshellarg($this->transferFilePath.".log");
-        $this->command .= " 2>> ".escapeshellarg($this->transferFilePath.".log");
+        $this->command .= " " . tfb_shellencode($this->transferFilePath);
+        $this->command .= " " . tfb_shellencode($this->owner);
+        $this->command .= " " . tfb_shellencode($this->savepath);
+        $this->command .= " " . tfb_shellencode($this->drate * 1024);
+        $this->command .= " " . tfb_shellencode($cfg["wget_limit_retries"]);
+        $this->command .= " " . tfb_shellencode($cfg["wget_ftp_pasv"]);
+        $this->command .= " 1>> ".tfb_shellencode($this->transferFilePath.".log");
+        $this->command .= " 2>> ".tfb_shellencode($this->transferFilePath.".log");
         $this->command .= " &";
 
 		// state

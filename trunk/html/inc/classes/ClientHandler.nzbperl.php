@@ -100,17 +100,17 @@ class ClientHandlerNzbperl extends ClientHandler
 		}
 
 		// Build Command String (do not change order of last args !)
-		$this->command  = "cd ".escapeshellarg($this->savepath).";";
-		$this->command .= " HOME=".escapeshellarg(substr($cfg["path"], 0, -1));
+		$this->command  = "cd ".tfb_shellencode($this->savepath).";";
+		$this->command .= " HOME=".tfb_shellencode(substr($cfg["path"], 0, -1));
 		$this->command .= "; export HOME;";
 		$this->command .= $this->umask;
 		$this->command .= " nohup ";
 		$this->command .= $this->nice;
 		$this->command .= $cfg['perlCmd'];
 		$this->command .= " -I ".$cfg["docroot"]."bin/lib";
-		$this->command .= " ".escapeshellarg($this->nzbbin);
-		$this->command .= " --conn ".escapeshellarg($cfg['nzbperl_conn']);
-		$this->command .= " --uudeview ".escapeshellarg($cfg["bin_uudeview"]);
+		$this->command .= " ".tfb_shellencode($this->nzbbin);
+		$this->command .= " --conn ".tfb_shellencode($cfg['nzbperl_conn']);
+		$this->command .= " --uudeview ".tfb_shellencode($cfg["bin_uudeview"]);
 		$this->command .= ($cfg['nzbperl_badAction'])
 			? " --insane"
 			: " --dropbad";
@@ -122,21 +122,21 @@ class ClientHandlerNzbperl extends ClientHandler
 				$this->command .= " --dlcreategrp";
 				break;
 		}
-		$this->command .= " --dthreadct ".escapeshellarg($cfg['nzbperl_threads']);
-		$this->command .= " --speed ".escapeshellarg($this->drate);
-		$this->command .= " --server ".escapeshellarg($cfg['nzbperl_server']);
+		$this->command .= " --dthreadct ".tfb_shellencode($cfg['nzbperl_threads']);
+		$this->command .= " --speed ".tfb_shellencode($this->drate);
+		$this->command .= " --server ".tfb_shellencode($cfg['nzbperl_server']);
 		if ($cfg['nzbperl_user'] != "") {
-			$this->command .= " --user ".escapeshellarg($cfg['nzbperl_user']);
-			$this->command .= " --pw ".escapeshellarg($cfg['nzbperl_pw']);
+			$this->command .= " --user ".tfb_shellencode($cfg['nzbperl_user']);
+			$this->command .= " --pw ".tfb_shellencode($cfg['nzbperl_pw']);
 		}
 		if (strlen($cfg["nzbperl_options"]) > 0)
 			$this->command .= " ".$cfg['nzbperl_options'];
 		// do NOT change anything below (not even order)
-		$this->command .= " --dlpath ".escapeshellarg($this->savepath);
-		$this->command .= " --tfuser ".escapeshellarg($this->owner);
-		$this->command .= " ".escapeshellarg($this->transferFilePath);
-        $this->command .= " 1>> ".escapeshellarg($this->transferFilePath.".log");
-        $this->command .= " 2>> ".escapeshellarg($this->transferFilePath.".log");
+		$this->command .= " --dlpath ".tfb_shellencode($this->savepath);
+		$this->command .= " --tfuser ".tfb_shellencode($this->owner);
+		$this->command .= " ".tfb_shellencode($this->transferFilePath);
+        $this->command .= " 1>> ".tfb_shellencode($this->transferFilePath.".log");
+        $this->command .= " 2>> ".tfb_shellencode($this->transferFilePath.".log");
         $this->command .= " &";
 
 		// state

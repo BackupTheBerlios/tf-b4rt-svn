@@ -1693,7 +1693,7 @@ function getRequestVar($varName) {
  *
  * Be careful what you do with the return value: it must not be output in HTML
  * without going thru htmlspecialchars, in a shell command without going thru
- * escapeshellarg, in a DB without going thru addslashes or similar, ...
+ * tfb_shellencode, in a DB without going thru addslashes or similar, ...
  *
  * @param $varName
  * @return string
@@ -1808,7 +1808,7 @@ function isFile($file) {
     if (@is_file($file)) {
         $rtnValue = True;
     } else {
-        if ($file == @trim(shell_exec("ls 2>/dev/null ".escapeshellarg($file))))
+        if ($file == @trim(shell_exec("ls 2>/dev/null ".tfb_shellencode($file))))
             $rtnValue = True;
     }
     return $rtnValue;
@@ -2115,7 +2115,7 @@ function getStatusImage($sf) {
 function file_size($file) {
 	$size = @filesize($file);
 	if ($size == 0)
-		return exec("ls -l ".escapeshellarg($file)." 2>/dev/null | awk '{print $5}'");
+		return exec("ls -l ".tfb_shellencode($file)." 2>/dev/null | awk '{print $5}'");
 	return $size;
 }
 

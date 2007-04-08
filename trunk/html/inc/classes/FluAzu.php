@@ -359,18 +359,18 @@ class FluAzu
             $startCommand .= " nohup";
             $startCommand .= " ".$cfg["pythonCmd"]." -OO";
             $startCommand .= " fluazu.py";
-            $startCommand .= " ".escapeshellarg($cfg["path"]);
-            $startCommand .= " ".escapeshellarg($cfg["fluazu_host"]);
-            $startCommand .= " ".escapeshellarg($cfg["fluazu_port"]);
-            $startCommand .= " ".escapeshellarg($cfg["fluazu_secure"]);
+            $startCommand .= " ".tfb_shellencode($cfg["path"]);
+            $startCommand .= " ".tfb_shellencode($cfg["fluazu_host"]);
+            $startCommand .= " ".tfb_shellencode($cfg["fluazu_port"]);
+            $startCommand .= " ".tfb_shellencode($cfg["fluazu_secure"]);
             $startCommand .= ($cfg["fluazu_user"] == "")
             	? ' ""'
-            	: " ".escapeshellarg($cfg["fluazu_user"]);
+            	: " ".tfb_shellencode($cfg["fluazu_user"]);
             $startCommand .= ($cfg["fluazu_pw"] == "")
             	? ' ""'
-            	: " ".escapeshellarg($cfg["fluazu_pw"]);
-	        $startCommand .= " 1>> ".escapeshellarg($this->_pathLogFile);
-	        $startCommand .= " 2>> ".escapeshellarg($this->_pathLogFile);
+            	: " ".tfb_shellencode($cfg["fluazu_pw"]);
+	        $startCommand .= " 1>> ".tfb_shellencode($this->_pathLogFile);
+	        $startCommand .= " 2>> ".tfb_shellencode($this->_pathLogFile);
 	        $startCommand .= " &";
 			// log the command
         	$this->instance_logMessage("executing command : \n".$startCommand."\n", true);

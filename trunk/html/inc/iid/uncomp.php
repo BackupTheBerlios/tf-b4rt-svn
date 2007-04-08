@@ -102,14 +102,14 @@ if ((isset($_POST['exec'])) && ($_POST['exec'] == true)) {
 	if ($passwd == "")
 		$passwd = "-";
 	$cmd = $cfg['bin_php']." bin/uncompress.php";
-	$cmd .= " ".escapeshellarg($file);
-	$cmd .= " ".escapeshellarg($dir);
-	$cmd .= " ".escapeshellarg(getRequestVar('type'));
+	$cmd .= " ".tfb_shellencode($file);
+	$cmd .= " ".tfb_shellencode($dir);
+	$cmd .= " ".tfb_shellencode(getRequestVar('type'));
 	if (strcasecmp('rar', $_REQUEST['type']) == 0)
 		$cmd .= " ".$cfg['bin_unrar'];
 	else if (strcasecmp('zip', $_REQUEST['type']) == 0)
 		$cmd .= " ".$cfg['bin_unzip'];
-	$cmd .= " ".escapeshellarg($passwd);
+	$cmd .= " ".tfb_shellencode($passwd);
 	// os-switch
 	switch ($cfg["_OS"]) {
 		case 1: // linux

@@ -232,8 +232,8 @@ class Vlc
 		$this->_command = "nohup";
 		$this->_command .= " ".$cfg['bin_vlc'];
 		$this->_command .= " --rc-fake-tty";
-		$this->_command .= " --sout ".escapeshellarg("#transcode{vcodec=".$vidc.",vb=".$vbit.",scale=1,acodec=".$audc.",ab=".$abit.",channels=2}:std{access=mmsh,mux=asfh,dst=".$this->addr.":".$this->port."}");
-		$this->_command .= " ".escapeshellarg($file);
+		$this->_command .= " --sout ".tfb_shellencode("#transcode{vcodec=".$vidc.",vb=".$vbit.",scale=1,acodec=".$audc.",ab=".$abit.",channels=2}:std{access=mmsh,mux=asfh,dst=".$this->addr.":".$this->port."}");
+		$this->_command .= " ".tfb_shellencode($file);
 		$this->_command .= " > /dev/null &";
 		// DEBUG : log the command
 		if ($cfg['debuglevel'] > 1)

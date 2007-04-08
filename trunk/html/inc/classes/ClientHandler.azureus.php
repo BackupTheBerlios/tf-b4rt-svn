@@ -107,7 +107,7 @@ class ClientHandlerAzureus extends ClientHandler
         $content .= $this->maxport."\n";
         $content .= $this->maxcons."\n";
         $content .= $this->rerequest;
-		$this->command  = "echo -e ".escapeshellarg($content)." > ".escapeshellarg($cfg["path"].'.fluazu/run/'.$transfer);
+		$this->command  = "echo -e ".tfb_shellencode($content)." > ".tfb_shellencode($cfg["path"].'.fluazu/run/'.$transfer);
 		$this->command .= " && ";
 		$this->command .= "echo r > ".$cfg["path"].'.fluazu/fluazu.cmd';
 

@@ -36,25 +36,25 @@ function createTorrentTornado() {
 		@unlink($cfg["transfer_file_path"].$tfile );
 	// This is the command to execute
 	$command = "nohup ".$cfg["pythonCmd"]." -OO";
-	$command .= " ".escapeshellarg($cfg["docroot"]."bin/clients/tornado/btmakemetafile.py");
-	$command .= " ".escapeshellarg($announce);
-	$command .= " ".escapeshellarg($cfg["path"].$path);
+	$command .= " ".tfb_shellencode($cfg["docroot"]."bin/clients/tornado/btmakemetafile.py");
+	$command .= " ".tfb_shellencode($announce);
+	$command .= " ".tfb_shellencode($cfg["path"].$path);
 	// Is there comments to add?
 	if (!empty($comment))
-		$command .= " --comment ".escapeshellarg($comment);
+		$command .= " --comment ".tfb_shellencode($comment);
 	// Set the piece size
 	if (!empty($piece))
-		$command .= " --piece_size_pow2 ".escapeshellarg($piece);
+		$command .= " --piece_size_pow2 ".tfb_shellencode($piece);
 	if (!empty($ancelist)) {
 		$check = "/".str_replace("/", "\/", quotemeta($announce)) . "/i";
 		// if they didn't add the primary tracker in, we will add it for them
 		if (preg_match( $check, $ancelist, $result))
-			$command .= " --announce_list ".escapeshellarg($ancelist);
+			$command .= " --announce_list ".tfb_shellencode($ancelist);
 		else
-			$command .= " --announce_list ".escapeshellarg($announce.",".$ancelist);
+			$command .= " --announce_list ".tfb_shellencode($announce.",".$ancelist);
 	}
 	// Set the target torrent field
-	$command .= " --target ".escapeshellarg($cfg["transfer_file_path"].$tfile);
+	$command .= " --target ".tfb_shellencode($cfg["transfer_file_path"].$tfile);
 	// Set to never timeout for large torrents
 	@set_time_limit(0);
 	// Let's see how long this takes...
@@ -115,8 +115,8 @@ function createTorrentMainline() {
 	if (@file_exists($cfg["transfer_file_path"].$tfile))
 		@unlink($cfg["transfer_file_path"].$tfile );
 	// build command-string
-	$command = "cd ".escapeshellarg($cfg["transfer_file_path"]).";";
-	$command .= " HOME=".escapeshellarg($cfg["path"]);
+	$command = "cd ".tfb_shellencode($cfg["transfer_file_path"]).";";
+	$command .= " HOME=".tfb_shellencode($cfg["path"]);
 	$command .= "; export HOME;";
 	$command .= "nohup ".$cfg["pythonCmd"]." -OO ";
 	$command .= $cfg["docroot"]."bin/clients/mainline/maketorrent-console.py";
@@ -125,10 +125,10 @@ function createTorrentMainline() {
 	// $command .= " --language en";
 	// Is there comments to add?
 	if (!empty($comment))
-		$command .= " --comment ".escapeshellarg($comment);
+		$command .= " --comment ".tfb_shellencode($comment);
 	// Set the piece size
 	if (!empty($piece))
-		$command .= " --piece_size_pow2 ".escapeshellarg($piece);
+		$command .= " --piece_size_pow2 ".tfb_shellencode($piece);
 	// trackerless / tracker
 	/*
 	if ((isset($use_tracker)) && ($use_tracker == 1))
@@ -139,13 +139,13 @@ function createTorrentMainline() {
 	$command .= " --use_tracker";
 	// tracker-name
 	//if ((!empty($tracker_name)) && ($tracker_name != "http://"))
-	$command .= " --tracker_name ".escapeshellarg($tracker_name);
+	$command .= " --tracker_name ".tfb_shellencode($tracker_name);
 	// Set the target torrent field
-	$command .= " --target ".escapeshellarg($cfg["transfer_file_path"].$tfile);
+	$command .= " --target ".tfb_shellencode($cfg["transfer_file_path"].$tfile);
 	// tracker (i dont know...)
-	$command .= " ".escapeshellarg($tracker_name);
+	$command .= " ".tfb_shellencode($tracker_name);
 	// input
-	$command .= " ".escapeshellarg($cfg["path"].$path);
+	$command .= " ".tfb_shellencode($cfg["path"].$path);
 	// Set to never timeout for large torrents
 	@set_time_limit(0);
 	// Let's see how long this takes...

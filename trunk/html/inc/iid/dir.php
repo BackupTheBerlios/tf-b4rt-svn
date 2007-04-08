@@ -221,7 +221,7 @@ if ($cfg['enable_dirstats'] == 1) {
 			$duArg = "-L";
 			break;
 	}
-	$du = @shell_exec($cfg['bin_du']." -ch ".escapeshellarg($duArg)." ".escapeshellarg($dirName)." | ".$cfg['bin_grep']." \"total\"");
+	$du = @shell_exec($cfg['bin_du']." -ch ".tfb_shellencode($duArg)." ".tfb_shellencode($dirName)." | ".$cfg['bin_grep']." \"total\"");
 	$tmpl->setvar('duTotal', @substr($du, 0, -7));
 	$tmpl->setvar('_TDDU', $cfg['_TDDU']);
 } else {
@@ -257,7 +257,7 @@ foreach ($entrys as $entry) {
 	if (@is_dir($dirName.$entry)) { // dir
 		// dirstats
 		if ($cfg['enable_dirstats'] == 1) {
-			$dudir = @shell_exec($cfg['bin_du']." -sk -h ".escapeshellarg($duArg)." ".escapeshellarg($dirName.$entry));
+			$dudir = @shell_exec($cfg['bin_du']." -sk -h ".tfb_shellencode($duArg)." ".tfb_shellencode($dirName.$entry));
 			$size = @explode("\t", $dudir);
 			$size = @array_shift($size);
 			$arStat = @lstat($dirName.$entry);

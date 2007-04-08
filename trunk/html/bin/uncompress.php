@@ -31,6 +31,17 @@ $_SESSION = array('cache' => false);
 
 /******************************************************************************/
 
+// change to docroot if needed
+if (!is_file(realpath(getcwd().'/inc/functions/functions.core.php')))
+	chdir(realpath(dirname(__FILE__)."/.."));
+
+// check for home
+if (!is_file('inc/functions/functions.core.php'))
+	exit("Error: this script can only be used in its default-path (DOCROOT/bin/)\n");
+
+// core functions
+require_once('inc/functions/functions.core.php');
+
 /**
  * @author    R.D. Damron
  * @name      rar/zip uncompression
@@ -50,8 +61,8 @@ $arg5 = $argv[5];
 if (strcasecmp('rar', $arg3) == 0){
 	if (file_exists($arg2.$logfile))
 		@unlink($arg2.$logfile);
-    $Command = escapeshellarg($arg4)." x -o+ -p". escapeshellarg($arg5) ." ". escapeshellarg($arg1) . " " . escapeshellarg($arg2);
-	$unrarpid = trim(shell_exec("nohup ".$Command." > " . escapeshellarg($arg2.$logfile) . " 2>&1 & echo $!"));
+    $Command = tfb_shellencode($arg4)." x -o+ -p". tfb_shellencode($arg5) ." ". tfb_shellencode($arg1) . " " . tfb_shellencode($arg2);
+	$unrarpid = trim(shell_exec("nohup ".$Command." > " . tfb_shellencode($arg2.$logfile) . " 2>&1 & echo $!"));
 	echo 'Uncompressing file...<BR>PID is: ' . $unrarpid . '<BR>';
 	usleep(250000); // wait for 0.25 seconds
 	while (is_running($unrarpid)) {
@@ -101,8 +112,8 @@ if (strcasecmp('rar', $arg3) == 0){
 if (strcasecmp('zip', $arg3) == 0) {
 	if (file_exists($arg2.$logfile))
 		@unlink($arg2.$logfile);
-    $Command = escapeshellarg($arg4).' -o ' . escapeshellarg($arg1) . ' -d ' . escapeshellarg($arg2);
-	$unzippid = trim(shell_exec("nohup ".$Command." > " . escapeshellarg($arg2.$logfile) . " 2>&1 & echo $!"));
+    $Command = tfb_shellencode($arg4).' -o ' . tfb_shellencode($arg1) . ' -d ' . tfb_shellencode($arg2);
+	$unzippid = trim(shell_exec("nohup ".$Command." > " . tfb_shellencode($arg2.$logfile) . " 2>&1 & echo $!"));
 	echo 'Uncompressing file...<BR>PID is: ' . $unzippid . '<BR>';
 	usleep(250000); // wait for 0.25 seconds
 	while (is_running($unzippid)) {
@@ -120,7 +131,7 @@ if (strcasecmp('zip', $arg3) == 0) {
  * @return
  */
 function is_running($PID){
-    $ProcessState = exec("ps ".escapeshellarg($PID));
+    $ProcessState = exec("ps ".tfb_shellencode($PID));
     return (count($ProcessState) >= 2);
 }
 
@@ -131,7 +142,7 @@ function is_running($PID){
  * @return
  */
 function kill($PID){
-    exec("kill -KILL ".escapeshellarg($PID));
+    exec("kill -KILL ".tfb_shellencode($PID));
     return true;
 }
 
@@ -142,7 +153,7 @@ function kill($PID){
  * @return
  */
 function del($file){
-    exec("rm -rf ".escapeshellarg($file));
+    exec("rm -rf ".tfb_shellencode($file));
     return true;
 }
 

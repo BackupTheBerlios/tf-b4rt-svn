@@ -101,24 +101,24 @@ class ClientHandlerTransmission extends ClientHandler
         // build the command-string
 		// note : order of args must not change for ps-parsing-code in
 		// RunningTransferTransmission
-        $this->command  = "cd ".escapeshellarg($this->savepath).";";
-        $this->command .= " HOME=".escapeshellarg($cfg["path"])."; export HOME;".
+        $this->command  = "cd ".tfb_shellencode($this->savepath).";";
+        $this->command .= " HOME=".tfb_shellencode($cfg["path"])."; export HOME;".
         $this->command .= $this->umask;
         $this->command .= " nohup ";
         $this->command .= $this->nice;
-        $this->command .= escapeshellarg($cfg["btclient_transmission_bin"]);
-        $this->command .= " -d ".escapeshellarg($this->drate);
-        $this->command .= " -u ".escapeshellarg($this->rate);
-        $this->command .= " -p ".escapeshellarg($this->port);
-		$this->command .= " -r ".escapeshellarg(($this->runtime == "True") ? 1 : 0);
-        $this->command .= " -c ".escapeshellarg($this->sharekill_param);
+        $this->command .= tfb_shellencode($cfg["btclient_transmission_bin"]);
+        $this->command .= " -d ".tfb_shellencode($this->drate);
+        $this->command .= " -u ".tfb_shellencode($this->rate);
+        $this->command .= " -p ".tfb_shellencode($this->port);
+		$this->command .= " -r ".tfb_shellencode(($this->runtime == "True") ? 1 : 0);
+        $this->command .= " -c ".tfb_shellencode($this->sharekill_param);
         $this->command .= " -e 5";
-        $this->command .= " -o ".escapeshellarg($this->owner);
+        $this->command .= " -o ".tfb_shellencode($this->owner);
         if (strlen($cfg["btclient_transmission_options"]) > 0)
         	$this->command .= " ".$cfg["btclient_transmission_options"];
-        $this->command .= " ".escapeshellarg($this->transferFilePath);
-        $this->command .= " 1>> ".escapeshellarg($this->transferFilePath.".log");
-        $this->command .= " 2>> ".escapeshellarg($this->transferFilePath.".log");
+        $this->command .= " ".tfb_shellencode($this->transferFilePath);
+        $this->command .= " 1>> ".tfb_shellencode($this->transferFilePath.".log");
+        $this->command .= " 2>> ".tfb_shellencode($this->transferFilePath.".log");
         $this->command .= " &";
 
         // start the client

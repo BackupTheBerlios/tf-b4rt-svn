@@ -687,10 +687,10 @@ function tmplSetUserSection() {
 		if (is_dir($tDir)) {
 			switch ($cfg["_OS"]) {
 				case 1: //Linux
-					$dudir = shell_exec($cfg['bin_du']." -sk -h -D ".escapeshellarg($tDir));
+					$dudir = shell_exec($cfg['bin_du']." -sk -h -D ".tfb_shellencode($tDir));
 					break;
 				case 2: //BSD
-					$dudir = shell_exec($cfg['bin_du']." -sk -h -L ".escapeshellarg($tDir));
+					$dudir = shell_exec($cfg['bin_du']." -sk -h -L ".tfb_shellencode($tDir));
 					break;
 			}
 			$dusize = explode("\t", $dudir);
