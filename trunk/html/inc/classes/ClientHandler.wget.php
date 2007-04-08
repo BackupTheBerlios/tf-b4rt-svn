@@ -171,7 +171,7 @@ class ClientHandlerWget extends ClientHandler
         $transfer = strrchr($transferUrl,'/');
         if ($transfer{0} == '/')
         	$transfer = substr($transfer, 1);
-        $transfer = cleanFileName($transfer.".wget");
+        $transfer = tfb_cleanFileName($transfer.".wget");
 		$this->_setVarsForTransfer($transfer);
         if (empty($this->owner) || (strtolower($this->owner) == "n/a"))
         	$this->owner = $cfg['user'];

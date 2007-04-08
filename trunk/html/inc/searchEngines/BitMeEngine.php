@@ -98,9 +98,9 @@ class SearchEngine extends SearchEngineBase
     // Function to get Latest..
     function getLatest()
     {
-        $cat = getRequestVar('mainGenre');
+        $cat = tfb_getRequestVar('mainGenre');
 
-        if (empty($cat)) $cat = getRequestVar('cat');
+        if (empty($cat)) $cat = tfb_getRequestVar('cat');
 
         $request = "/browse.php";
 
@@ -158,7 +158,7 @@ class SearchEngine extends SearchEngineBase
             $request .= "&cat=".$cat;
         }
 
-        $incldead = getRequestVar('incldead');
+        $incldead = tfb_getRequestVar('incldead');
         if (empty($incldead)) $incldead = "0";
         $request .= "&incldead=".$incldead;
 
@@ -347,7 +347,7 @@ class SearchEngine extends SearchEngineBase
                     $pagesout .= str_replace($tmpVal,"XXXURLXXX".$pgNum,$value);
                 }
 
-                $cat = getRequestVar('mainGenre');
+                $cat = tfb_getRequestVar('mainGenre');
 
                 if(strpos($this->curRequest,"LATEST"))
                 {

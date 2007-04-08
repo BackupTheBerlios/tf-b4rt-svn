@@ -29,11 +29,11 @@ if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
 
 /******************************************************************************/
 
-$user_id = getRequestVar('user_id');
-$org_user_id = getRequestVar('org_user_id');
-$pass1 = getRequestVar('pass1');
-$userType = getRequestVar('userType');
-$hideOffline = getRequestVar('hideOffline');
+$user_id = tfb_getRequestVar('user_id');
+$org_user_id = tfb_getRequestVar('org_user_id');
+$pass1 = tfb_getRequestVar('pass1');
+$userType = tfb_getRequestVar('userType');
+$hideOffline = tfb_getRequestVar('hideOffline');
 $user_id = strtolower($user_id);
 
 if (!(IsUser($user_id) && ($user_id != $org_user_id))) {

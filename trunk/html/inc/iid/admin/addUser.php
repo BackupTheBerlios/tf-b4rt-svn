@@ -29,9 +29,9 @@ if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
 
 /******************************************************************************/
 
-$newUser = getRequestVar('newUser');
-$pass1 = getRequestVar('pass1');
-$userType = getRequestVar('userType');
+$newUser = tfb_getRequestVar('newUser');
+$pass1 = tfb_getRequestVar('pass1');
+$userType = tfb_getRequestVar('userType');
 
 // new user ?
 $newUser = strtolower($newUser);

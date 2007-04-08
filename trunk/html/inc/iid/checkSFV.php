@@ -57,13 +57,13 @@ if (@file_exists($cfg['bin_cksfv']) !== true) {
 }
 
 // target
-$dir = getRequestVar('dir');
-$file = getRequestVar('file');
+$dir = tfb_getRequestVar('dir');
+$file = tfb_getRequestVar('file');
 
 // validate dir + file
 if (!empty($dir)) {
 	$dirS = str_replace($cfg["path"], '', $dir);
-	if (!((isValidPath($dir)) &&
+	if (!((tfb_isValidPath($dir)) &&
 		(hasPermission($dirS, $cfg["user"], 'r')))) {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL SFV-ACCESS: ".$cfg["user"]." tried to check ".$dirS);
 		@error("Illegal access. Action has been logged.", "", "");
@@ -71,7 +71,7 @@ if (!empty($dir)) {
 }
 if (!empty($file)) {
 	$fileS = str_replace($cfg["path"], '', $file);
-	if (!((isValidPath($file)) &&
+	if (!((tfb_isValidPath($file)) &&
 		(isValidEntry(basename($file))) &&
 		(hasPermission($fileS, $cfg["user"], 'r')))) {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL SFV-ACCESS: ".$cfg["user"]." tried to check ".$fileS);

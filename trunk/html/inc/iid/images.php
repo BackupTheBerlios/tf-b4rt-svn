@@ -47,8 +47,8 @@ define('_IMAGE_PREFIX_MRTG', "?i=mrtg&f=");
 tmplInitializeInstance($cfg["theme"], "page.images.tmpl");
 
 // request-vars
-$type = (isset($_REQUEST['type'])) ? getRequestVar('type') : _DEFAULT_TYPE;
-$target = getRequestVar('target');
+$type = (isset($_REQUEST['type'])) ? tfb_getRequestVar('type') : _DEFAULT_TYPE;
+$target = tfb_getRequestVar('target');
 
 // types
 $type_list = array();
@@ -157,7 +157,7 @@ switch ($type) {
 		// target-content
 		$targetFile = _MRTG_DIR_INPUT."/".$target.".inc";
 		// check target
-		if (!((isValidPath($targetFile) === true)
+		if (!((tfb_isValidPath($targetFile) === true)
 			&& (preg_match('/^[0-9a-zA-Z_]+$/D', $target))
 			&& (@is_file($targetFile))
 			)) {

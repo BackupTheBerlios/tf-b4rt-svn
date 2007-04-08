@@ -868,7 +868,7 @@ function sa_log($action = "") {
 
 		case "9": // transfer-log
 			if (isset($_REQUEST["transfer"])) {
-				$transfer = trim(getRequestVarRaw('transfer'));
+				$transfer = trim(tfb_getRequestVarRaw('transfer'));
 				// shorten name if too long
 				if(strlen($transfer) >= 70)
 					$htmlTitle = "log - transfer-log - ".tfb_htmlencodekeepspaces(substr($transfer, 0, 67))."...";

@@ -34,7 +34,7 @@ require_once('inc/functions/functions.common.php');
 
 // delete
 if (isset($_REQUEST['delete'])) {
-	$delete = getRequestVar('delete');
+	$delete = tfb_getRequestVar('delete');
 	if (!empty($delete))
 		DeleteMessage($delete);
 	@header("location: index.php?iid=readmsg");
@@ -45,7 +45,7 @@ if (isset($_REQUEST['delete'])) {
 tmplInitializeInstance($cfg["theme"], "page.readmsg.tmpl");
 
 if (isset($_REQUEST['mid'])) {
-	$mid = getRequestVar('mid');
+	$mid = tfb_getRequestVar('mid');
 	list($from_user, $message, $ip, $time, $isnew, $force_read) = GetMessage($mid);
 	if (!empty($from_user) && $isnew == 1) {
 		// We have a Message that is being seen

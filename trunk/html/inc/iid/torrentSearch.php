@@ -45,21 +45,21 @@ require_once("inc/searchEngines/SearchEngineBase.php");
 tmplInitializeInstance($cfg["theme"], "page.torrentSearch.tmpl");
 
 // Go get the if this is a search request. go get the data and produce output.
-$hideSeedless = getRequestVar('hideSeedless');
+$hideSeedless = tfb_getRequestVar('hideSeedless');
 if (!empty($hideSeedless))
 	$_SESSION['hideSeedless'] = $hideSeedless;
 if (!isset($_SESSION['hideSeedless']))
 	$_SESSION['hideSeedless'] = 'no';
 $hideSeedless = $_SESSION['hideSeedless'];
-$pg = getRequestVar('pg');
-$searchEngine = getRequestVar('searchEngine');
+$pg = tfb_getRequestVar('pg');
+$searchEngine = tfb_getRequestVar('searchEngine');
 if (empty($searchEngine))
 	$searchEngine = $cfg["searchEngine"];
 if (!preg_match('/^[a-zA-Z0-9]+$/D', $searchEngine))
 	error("Invalid SearchEngine", "", "");
-$searchterm = getRequestVar('searchterm');
+$searchterm = tfb_getRequestVar('searchterm');
 if (empty($searchterm))
-	$searchterm = getRequestVar('query');
+	$searchterm = tfb_getRequestVar('query');
 $searchterm = str_replace(" ", "+",$searchterm);
 if (empty($searchterm)) {
 	// no searchterm set the get latest flag.
@@ -94,7 +94,7 @@ if (!is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {
 			);
 		}
 		$tmpl->setloop('link_list', $link_list);
-		$mainGenre = getRequestVar('mainGenre');
+		$mainGenre = tfb_getRequestVar('mainGenre');
 		$subCats = $sEngine->getSubCategories($mainGenre);
 		if ((empty($mainGenre) && array_key_exists("subGenre", $_REQUEST)) || (count($subCats) <= 0)) {
 			$tmpl->setvar('no_genre', 1);

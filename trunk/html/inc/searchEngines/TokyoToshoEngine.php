@@ -79,8 +79,8 @@ class SearchEngine extends SearchEngineBase
             $searchTerm = str_replace(" ", "+", $searchTerm);
             $request = "/search.php?terms=" . $searchTerm;
         }
-        $cat = getRequestVar("cat");
-        if(empty($cat)) $cat = getRequestVar("mainGenre");
+        $cat = tfb_getRequestVar("cat");
+        if(empty($cat)) $cat = tfb_getRequestVar("mainGenre");
 
         if(!empty($cat))
         {

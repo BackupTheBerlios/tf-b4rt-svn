@@ -803,7 +803,7 @@ class FluxCLI
 	    $cfg["user"] = $username;
 	    // set filename
 	    $transfer = basename($transferFile);
-        $transfer = cleanFileName($transfer);
+        $transfer = tfb_cleanFileName($transfer);
         // only inject valid transfers
         $msgs = array();
         if ($transfer !== false) {

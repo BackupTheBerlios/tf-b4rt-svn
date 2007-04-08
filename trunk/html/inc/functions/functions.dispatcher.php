@@ -31,21 +31,21 @@ define("_UPLOAD_LIMIT", 10000000);
 function dispatcher_startTransfer($transfer) {
 	global $cfg;
 	// valid
-	if (isValidTransfer($transfer) !== true) {
+	if (tfb_isValidTransfer($transfer) !== true) {
 		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
 		@error("Invalid Transfer", "", "", array($transfer));
 	}
 	// interactive
-	$interactive = (getRequestVar('interactive') == 1) ? 1 : 0;
+	$interactive = (tfb_getRequestVar('interactive') == 1) ? 1 : 0;
 	// ch
 	$ch = ($interactive == 1)
-		? ClientHandler::getInstance(getRequestVar('client'))
+		? ClientHandler::getInstance(tfb_getRequestVar('client'))
 		: ClientHandler::getInstance(getTransferClient($transfer));
 	// permission
 	dispatcher_checkTypePermission($transfer, $ch->type, "start");
 	// start
 	if ($interactive == 1)
-		$ch->start($transfer, true, (getRequestVar('queue') == '1') ? FluxdQmgr::isRunning() : false);
+		$ch->start($transfer, true, (tfb_getRequestVar('queue') == '1') ? FluxdQmgr::isRunning() : false);
 	else
 		$ch->start($transfer, false, FluxdQmgr::isRunning());
 	// check
@@ -76,7 +76,7 @@ function dispatcher_startTransfer($transfer) {
 function dispatcher_stopTransfer($transfer) {
 	global $cfg;
 	// valid
-	if (isValidTransfer($transfer) !== true) {
+	if (tfb_isValidTransfer($transfer) !== true) {
 		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
 		@error("Invalid Transfer", "", "", array($transfer));
 	}
@@ -117,7 +117,7 @@ function dispatcher_restartTransfer($transfer) {
 function dispatcher_forceStopTransfer($transfer, $pid) {
 	global $cfg;
 	// valid
-	if (isValidTransfer($transfer) !== true) {
+	if (tfb_isValidTransfer($transfer) !== true) {
 		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
 		@error("Invalid Transfer", "", "", array($transfer));
 	}
@@ -140,7 +140,7 @@ function dispatcher_forceStopTransfer($transfer, $pid) {
 function dispatcher_deleteTransfer($transfer) {
 	global $cfg;
 	// valid
-	if (isValidTransfer($transfer) !== true) {
+	if (tfb_isValidTransfer($transfer) !== true) {
 		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
 		@error("Invalid Transfer", "", "", array($transfer));
 	}
@@ -163,7 +163,7 @@ function dispatcher_deleteTransfer($transfer) {
 function dispatcher_deQueueTransfer($transfer) {
 	global $cfg;
 	// valid
-	if (isValidTransfer($transfer) !== true) {
+	if (tfb_isValidTransfer($transfer) !== true) {
 		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
 		@error("Invalid Transfer", "", "", array($transfer));
 	}
@@ -189,7 +189,7 @@ function dispatcher_injectWget($url) {
 		$ch = ClientHandler::getInstance('wget');
 		$ch->inject($url);
 		// instant action ?
-		$actionId = getRequestVar('aid');
+		$actionId = tfb_getRequestVar('aid');
 		if ($actionId > 1) {
 			switch ($actionId) {
 				case 3:
@@ -332,7 +332,7 @@ function dispatcher_multi($action) {
 
 		// is valid transfer ? + check permissions
 		$invalid = true;
-		if (isValidTransfer($transfer) === true) {
+		if (tfb_isValidTransfer($transfer) === true) {
 			if (substr($transfer, -8) == ".torrent") {
 				// this is a torrent-client
 				$invalid = false;
@@ -529,7 +529,7 @@ function _dispatcher_processDownload($url, $type = 'torrent', $ext = '.torrent')
 		}
 		$url = str_replace(" ", "%20", $url);
 		// This is to support Sites that pass an id along with the url for downloads.
-		$tmpId = getRequestVar("id");
+		$tmpId = tfb_getRequestVar("id");
 		if(!empty($tmpId))
 			$url .= "&id=".$tmpId;
 		// retrieve the file
@@ -549,15 +549,15 @@ function _dispatcher_processDownload($url, $type = 'torrent', $ext = '.torrent')
 			$filename = SimpleHTTP::getFilename();
 			if ($filename != "") {
 				$filename = ((strpos($filename, $ext) !== false))
-					? cleanFileName($filename)
-					: cleanFileName($filename.$ext);
+					? tfb_cleanFileName($filename)
+					: tfb_cleanFileName($filename.$ext);
 			}
 			if (($filename == "") || ($filename === false) || (transferExists($filename))) {
-				$filename = cleanFileName($fileNameBackup);
+				$filename = tfb_cleanFileName($fileNameBackup);
 				if (($filename === false) || (transferExists($filename))) {
-					$filename = cleanFileName($url.$ext);
+					$filename = tfb_cleanFileName($url.$ext);
 					if (($filename === false) || (transferExists($filename))) {
-						$filename = cleanFileName(md5($url.strval(@microtime())).$ext);
+						$filename = tfb_cleanFileName(md5($url.strval(@microtime())).$ext);
 						if (($filename === false) || (transferExists($filename))) {
 							// Error
 							array_push($downloadMessages , "failed to get a valid transfer-filename for ".$url);
@@ -598,7 +598,7 @@ function _dispatcher_processDownload($url, $type = 'torrent', $ext = '.torrent')
 			// inject
 			injectTransfer($filename);
 			// instant action ?
-			$actionId = getRequestVar('aid');
+			$actionId = tfb_getRequestVar('aid');
 			if ($actionId > 1) {
 				$ch = ClientHandler::getInstance(getTransferClient($filename));
 				switch ($actionId) {
@@ -632,7 +632,7 @@ function dispatcher_processUpload() {
 	// file upload
 	if (!empty($_FILES['upload_files'])) {
 		// action-id
-		$actionId = getRequestVar('aid');
+		$actionId = tfb_getRequestVar('aid');
 		// stack
 		$tStack = array();
 		// process upload
@@ -642,7 +642,7 @@ function dispatcher_processUpload() {
 				continue;
 			}
 			$filename = stripslashes($_FILES['upload_files']['name'][$id]);
-			$filename = cleanFileName($filename);
+			$filename = tfb_cleanFileName($filename);
 			if ($filename === false) {
 				// invalid file
 				array_push($uploadMessages, "The type of file ".stripslashes($_FILES['upload_files']['name'][$id])." is not allowed.");
@@ -738,7 +738,7 @@ function dispatcher_sendMetafile($mfile) {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to download a metafile");
 		@error("metafile download is disabled", "", "");
 	}
-	if (isValidTransfer($mfile) === true) {
+	if (tfb_isValidTransfer($mfile) === true) {
 		// Does the file exist?
 		if (@file_exists($cfg["transfer_file_path"].$mfile)) {
 			// filenames in IE containing dots will screw up the filename
@@ -814,7 +814,7 @@ function dispatcher_checkTypePermission($transfer, $type, $action) {
 function dispatcher_exit() {
 	global $cfg;
 	$redir = (isset($_REQUEST['riid']))
-		? getRequestVar('riid')
+		? tfb_getRequestVar('riid')
 		: "index";
 	switch ($redir) {
 		case "_none_":

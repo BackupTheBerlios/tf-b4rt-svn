@@ -74,10 +74,10 @@ class SearchEngine extends SearchEngineBase
     // Function to get Latest..
     function getLatest()
     {
-        $cat = getRequestVar('subGenre');
-        $count = getRequestVar('count');
+        $cat = tfb_getRequestVar('subGenre');
+        $count = tfb_getRequestVar('count');
 
-        if (empty($cat)) $cat = getRequestVar('cat');
+        if (empty($cat)) $cat = tfb_getRequestVar('cat');
 
         if(empty($cat) && empty($this->pg))
         {
@@ -147,17 +147,17 @@ class SearchEngine extends SearchEngineBase
             $request .= "&cat=".$cat;
         }
 
-        $count = getRequestVar('count');
+        $count = tfb_getRequestVar('count');
         if(!empty($count))
         {
             $request .= "&count=".$count;
         }
 
-        $onlyname = getRequestVar('onlyname');
+        $onlyname = tfb_getRequestVar('onlyname');
         if (empty($onlyname)) $onlyname = "no";
         $request .= "&onlyname=".$onlyname;
 
-        $incldead = getRequestVar('incldead');
+        $incldead = tfb_getRequestVar('incldead');
         if (empty($incldead)) $incldead = "0";
         $request .= "&incldead=".$incldead;
 

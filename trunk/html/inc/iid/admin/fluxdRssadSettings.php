@@ -36,7 +36,7 @@ FluxdServiceMod::initializeServiceMod('Rssad');
 tmplInitializeInstance($cfg["theme"], "page.admin.fluxdRssadSettings.tmpl");
 
 // message section
-$message = getRequestVar('m');
+$message = tfb_getRequestVar('m');
 if ((isset($message)) && ($message != "")) {
 	$tmpl->setvar('new_msg', 1);
 	$tmpl->setvar('message', urldecode($message));
@@ -58,7 +58,7 @@ if ((isset($message)) && ($message != "")) {
 // * saveJob
 // * deleteJob
 //
-$pageop = getRequestVar('pageop');
+$pageop = tfb_getRequestVar('pageop');
 $tmpl->setvar('pageop', (empty($pageop)) ? "default" : $pageop);
 // op-switch
 switch ($pageop) {
@@ -85,7 +85,7 @@ switch ($pageop) {
 		break;
 
 	case "addFilter":
-		$filtername = getRequestVar('filtername');
+		$filtername = tfb_getRequestVar('filtername');
 		if (empty($filtername)) {
 			$tmpl->setvar('new_msg', 1);
 			$tmpl->setvar('message', "Error : No Filtername.");
@@ -120,7 +120,7 @@ switch ($pageop) {
 		break;
 
 	case "editFilter":
-		$filtername = getRequestVar('filtername');
+		$filtername = tfb_getRequestVar('filtername');
 		if (empty($filtername)) {
 			$tmpl->setvar('new_msg', 1);
 			$tmpl->setvar('message', "Error : No Filtername.");
@@ -155,9 +155,9 @@ switch ($pageop) {
 		break;
 
 	case "saveFilter":
-		$filtername = getRequestVar('filtername');
-		$filtercontent = getRequestVar('rssad_filtercontent');
-		$new = getRequestVar('new');
+		$filtername = tfb_getRequestVar('filtername');
+		$filtercontent = tfb_getRequestVar('rssad_filtercontent');
+		$new = tfb_getRequestVar('new');
 		if (empty($filtername)) {
 			$tmpl->setvar('new_msg', 1);
 			$tmpl->setvar('message', "Error : No Filtername.");
@@ -194,7 +194,7 @@ switch ($pageop) {
 		break;
 
 	case "deleteFilter":
-		$filtername = getRequestVar('filtername');
+		$filtername = tfb_getRequestVar('filtername');
 		if (empty($filtername)) {
 			$tmpl->setvar('new_msg', 1);
 			$tmpl->setvar('message', "Error : No Filtername.");
@@ -238,7 +238,7 @@ switch ($pageop) {
 		break;
 
 	case "editJob":
-		$jobNumber = trim(getRequestVar('job'));
+		$jobNumber = trim(tfb_getRequestVar('job'));
 		if (empty($jobNumber)) {
 			$tmpl->setvar('new_msg', 1);
 			$tmpl->setvar('message', "Error : No Job-Number.");
@@ -276,11 +276,11 @@ switch ($pageop) {
 		break;
 
 	case "saveJob":
-		$jobNumber = trim(getRequestVar('job'));
-		$savedir = getRequestVar('savedir');
-		$url = getRequestVarRaw('url');
-		$filtername = getRequestVar('filtername');
-		$checkdir = getRequestVar('checkdir');
+		$jobNumber = trim(tfb_getRequestVar('job'));
+		$savedir = tfb_getRequestVar('savedir');
+		$url = tfb_getRequestVarRaw('url');
+		$filtername = tfb_getRequestVar('filtername');
+		$checkdir = tfb_getRequestVar('checkdir');
 		$isNew = (empty($jobNumber)) ? true : false;
 		$doCheckdir = ($checkdir == "true") ? true : false;
 		$paramErrors = 0;
@@ -325,7 +325,7 @@ switch ($pageop) {
 		break;
 
 	case "deleteJob":
-		$jobNumber = trim(getRequestVar('job'));
+		$jobNumber = trim(tfb_getRequestVar('job'));
 		if (empty($jobNumber)) {
 			$tmpl->setvar('new_msg', 1);
 			$tmpl->setvar('message', "Error : No Job-Number.");

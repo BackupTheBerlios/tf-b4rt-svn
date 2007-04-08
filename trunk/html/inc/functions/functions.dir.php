@@ -94,7 +94,7 @@ function delDirEntry($del) {
 
 	$current = "";
 
-	if (isValidPath($del)) {
+	if (tfb_isValidPath($del)) {
 		avddelete($cfg["path"].$del);
 		$arTemp = explode("/", $del);
 		if (count($arTemp) > 1) {
@@ -124,7 +124,7 @@ function downloadFile($down) {
 	// the second strip will give us the correct
 	//	"test/tester's file/test.txt"
 	$down = stripslashes(stripslashes($down));
-	if (isValidPath($down)) {
+	if (tfb_isValidPath($down)) {
 		$path = $cfg["path"].$down;
 		$p = explode(".", $path);
 		$pc = count($p);
@@ -210,7 +210,7 @@ function downloadArchive($down) {
 	global $cfg;
 	$current = "";
 
-	if (isValidPath($down)) {
+	if (tfb_isValidPath($down)) {
 		// This prevents the script from getting killed off when running lengthy tar jobs.
 		@ini_set("max_execution_time", 3600);
 		$down = $cfg["path"].$down;

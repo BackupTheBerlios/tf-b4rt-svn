@@ -68,7 +68,7 @@ tmplInitializeInstance($cfg["theme"], "page.vlc.tmpl");
 // * start
 // * stop
 //
-$pageop = getRequestVar('pageop');
+$pageop = tfb_getRequestVar('pageop');
 $tmpl->setvar('pageop', (empty($pageop)) ? "default" : $pageop);
 // op-switch
 switch ($pageop) {
@@ -104,7 +104,7 @@ switch ($pageop) {
 		$fileName = urldecode(stripslashes($_REQUEST['file']));
 		$targetFile = $dirName.$fileName;
 		// only valid dirs + entries with permission
-		if (!((isValidPath($targetFile)) &&
+		if (!((tfb_isValidPath($targetFile)) &&
 			(isValidEntry(basename($targetFile))) &&
 			(hasPermission($targetFile, $cfg["user"], 'r')))) {
 			AuditAction($cfg["constants"]["error"], "ILLEGAL VLC-ACCESS: ".$cfg["user"]." tried to view ".$fileName." in ".$dirName);
@@ -137,7 +137,7 @@ switch ($pageop) {
 		$target_audc = $_POST['audc'];
 		$target_abit = $_POST['abit'];
 		// only valid dirs + entries with permission
-		if (!((isValidPath($targetFile)) &&
+		if (!((tfb_isValidPath($targetFile)) &&
 			(isValidEntry(basename($targetFile))) &&
 			(hasPermission($targetFile, $cfg["user"], 'r')))) {
 			AuditAction($cfg["constants"]["error"], "ILLEGAL VLC-ACCESS: ".$cfg["user"]." tried to view ".$fileName." in ".$dirName);

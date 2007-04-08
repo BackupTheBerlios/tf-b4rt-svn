@@ -573,51 +573,51 @@ class ClientHandler
 		// only read request-vars if enabled
     	if ($customize_settings == 1) {
 	    	// rate
-	    	$reqvar = getRequestVar('max_upload_rate');
+	    	$reqvar = tfb_getRequestVar('max_upload_rate');
 	    	if ($reqvar != "")
 	    		$this->rate = $reqvar;
 	    	// drate
-	    	$reqvar = getRequestVar('max_download_rate');
+	    	$reqvar = tfb_getRequestVar('max_download_rate');
 	    	if ($reqvar != "")
 	    		$this->drate = $reqvar;
 	    	// maxuploads
-	    	$reqvar = getRequestVar('max_uploads');
+	    	$reqvar = tfb_getRequestVar('max_uploads');
 	    	if ($reqvar != "")
 	    		$this->maxuploads = $reqvar;
 	    	// superseeder
-	    	$reqvar = getRequestVar('superseeder');
+	    	$reqvar = tfb_getRequestVar('superseeder');
 	    	if ($reqvar != "")
 	    		$this->superseeder = $reqvar;
 	    	// runtime
-	    	$reqvar = getRequestVar('die_when_done');
+	    	$reqvar = tfb_getRequestVar('die_when_done');
 	    	if ($reqvar != "")
 	    		$this->runtime = $reqvar;
 	    	// sharekill
-	    	$reqvar = getRequestVar('sharekill');
+	    	$reqvar = tfb_getRequestVar('sharekill');
 	    	if ($reqvar != "")
 	    		$this->sharekill = $reqvar;
 	    	// minport
-	    	$reqvar = getRequestVar('minport');
+	    	$reqvar = tfb_getRequestVar('minport');
 	    	if (!empty($reqvar))
 	    		$this->minport = $reqvar;
 	    	// maxport
-	    	$reqvar = getRequestVar('maxport');
+	    	$reqvar = tfb_getRequestVar('maxport');
 	    	if (!empty($reqvar))
 	    		$this->maxport = $reqvar;
 	    	// maxcons
-	    	$reqvar = getRequestVar('maxcons');
+	    	$reqvar = tfb_getRequestVar('maxcons');
 	    	if ($reqvar != "")
 	    		$this->maxcons = $reqvar;
 	    	// rerequest
-	    	$reqvar = getRequestVar('rerequest');
+	    	$reqvar = tfb_getRequestVar('rerequest');
 	    	if ($reqvar != "")
 	    		$this->rerequest = $reqvar;
     	}
     	// savepath
     	if ($cfg["showdirtree"] == 1)
-    		 $this->savepath = getRequestVar('savepath');
+    		 $this->savepath = tfb_getRequestVar('savepath');
         // skip_hash_check
-        $this->skip_hash_check = getRequestVar('skiphashcheck');
+        $this->skip_hash_check = tfb_getRequestVar('skiphashcheck');
     }
 
     /**

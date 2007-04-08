@@ -50,8 +50,8 @@ if ((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 	$dir = UrlHTMLSlashesDecode($_REQUEST['dir']);
 	$sourceDir = $cfg["path"].$dir;
 	// only valid dirs + entries with permission
-	if (!((isValidPath($sourceDir)) &&
-		(isValidPath($sourceDir.$file)) &&
+	if (!((tfb_isValidPath($sourceDir)) &&
+		(tfb_isValidPath($sourceDir.$file)) &&
 		(isValidEntry($file)) &&
 		(hasPermission($dir, $cfg["user"], 'w')))) {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL RENAME: ".$cfg["user"]." tried to rename ".$file." in ".$dir);
@@ -64,9 +64,9 @@ if ((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 	$tmpl->setvar('_REN_FILE', $cfg['_REN_FILE']);
 	$tmpl->setvar('_REN_STRING', $cfg['_REN_STRING']);
 } else {
-	$file = getRequestVar('fileFrom');
-	$fileTo = getRequestVar('fileTo');
-	$dir = getRequestVar('dir');
+	$file = tfb_getRequestVar('fileFrom');
+	$fileTo = tfb_getRequestVar('fileTo');
+	$dir = tfb_getRequestVar('dir');
 	$sourceDir = $cfg["path"].$dir;
 	$targetDir = $cfg["path"].$dir.$fileTo;
 	// Add slashes if magic_quotes off:
@@ -75,9 +75,9 @@ if ((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 		$sourceDir = addslashes($sourceDir);
 	}
 	// only valid dirs + entries with permission
-	if (!((isValidPath($sourceDir)) &&
-		(isValidPath($sourceDir.$file)) &&
-		(isValidPath($targetDir)) &&
+	if (!((tfb_isValidPath($sourceDir)) &&
+		(tfb_isValidPath($sourceDir.$file)) &&
+		(tfb_isValidPath($targetDir)) &&
 		(isValidEntry($file)) &&
 		(isValidEntry($fileTo)) &&
 		(hasPermission($dir, $cfg["user"], 'w')))) {

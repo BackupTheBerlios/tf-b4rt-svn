@@ -42,8 +42,8 @@ tmplInitializeInstance($cfg["theme"], "page.transferSettings.tmpl");
 transfer_init();
 
 // request-vars
-$saveop = getRequestVar('save');
-$client = getRequestVar('client');
+$saveop = tfb_getRequestVar('save');
+$client = tfb_getRequestVar('client');
 $isSave = ($saveop == 1) ? true : false;
 
 // init ch-instance
@@ -119,7 +119,7 @@ if ($isSave) {                                                        /* save */
 	// new settings
 	$settingsNew = array();
 	foreach ($settingsKeys as $settingsKey) {
-		$settingsNew[$settingsKey] = getRequestVar($settingsKey);
+		$settingsNew[$settingsKey] = tfb_getRequestVar($settingsKey);
 		if ($settingsNew[$settingsKey] == "")
 			$settingsNew[$settingsKey] = $settingsCurrent[$settingsKey];
 	}

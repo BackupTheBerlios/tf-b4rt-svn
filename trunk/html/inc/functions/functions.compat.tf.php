@@ -28,19 +28,19 @@ function compat_tf_indexDispatch() {
 	require_once("inc/functions/functions.dispatcher.php");
 	// start
 	if (isset($_REQUEST['torrent']))
-		dispatcher_startTransfer(urldecode(getRequestVar('torrent')));
+		dispatcher_startTransfer(urldecode(tfb_getRequestVar('torrent')));
 	// stop
 	if (isset($_REQUEST["kill_torrent"]))
-		dispatcher_stopTransfer(urldecode(getRequestVar('kill_torrent')));
+		dispatcher_stopTransfer(urldecode(tfb_getRequestVar('kill_torrent')));
 	// del
 	if (isset($_REQUEST['delfile']))
-		dispatcher_deleteTransfer(urldecode(getRequestVar('delfile')));
+		dispatcher_deleteTransfer(urldecode(tfb_getRequestVar('delfile')));
 	// deQueue
 	if (isset($_REQUEST["QEntry"]))
-		dispatcher_deQueueTransfer(urldecode(getRequestVar('QEntry')));
+		dispatcher_deQueueTransfer(urldecode(tfb_getRequestVar('QEntry')));
 	// get torrent via url
 	if (isset($_REQUEST['url_upload']))
-		dispatcher_processDownload(getRequestVarRaw('url_upload'), 'torrent');
+		dispatcher_processDownload(tfb_getRequestVarRaw('url_upload'), 'torrent');
 	// file upload
 	if ((isset($_FILES['upload_file'])) && (!empty($_FILES['upload_file']['name'])))
 		compat_tf_processUpload();
@@ -57,7 +57,7 @@ function compat_tf_processUpload() {
 	$uploadMessages = array();
 	if ((isset($_FILES['upload_file'])) && (!empty($_FILES['upload_file']['name']))) {
 		$filename = stripslashes($_FILES['upload_file']['name']);
-		$filename = cleanFileName($filename);
+		$filename = tfb_cleanFileName($filename);
 		if ($filename === false) {
 			// invalid file
 			array_push($uploadMessages, "The type of file you are uploading is not allowed.");
@@ -100,7 +100,7 @@ function compat_tf_processUpload() {
 						// inject
 						injectTransfer($filename);
 						// instant action ?
-						$actionId = getRequestVar('aid');
+						$actionId = tfb_getRequestVar('aid');
 						if ($actionId > 1) {
 							$ch = ClientHandler::getInstance(getTransferClient($filename));
 							switch ($actionId) {

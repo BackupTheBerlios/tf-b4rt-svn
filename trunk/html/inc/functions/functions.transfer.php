@@ -29,11 +29,11 @@ require_once('inc/config/config.clients.php');
 function transfer_init() {
 	global $cfg, $tmpl, $transfer, $transferLabel, $ch;
 	// request-var
-	$transfer = getRequestVar('transfer');
+	$transfer = tfb_getRequestVar('transfer');
 	if (empty($transfer))
 		@error("missing params", "", "", array('transfer'));
 	// validate transfer
-	if (isValidTransfer($transfer) !== true) {
+	if (tfb_isValidTransfer($transfer) !== true) {
 		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
 		@error("Invalid Transfer", "", "", array($transfer));
 	}
@@ -283,7 +283,7 @@ function transfer_setProfiledVars() {
 		transfer_setVarsFromCHSettings();
 		$tmpl->setvar('useLastSettings', 1);
 	} else {
-		$profile = getRequestVar('profile');
+		$profile = tfb_getRequestVar('profile');
 		if (($profile != "") && ($profile != "last_used")) {
 			// set vars for transfer from profile
 			transfer_setVarsFromProfileSettings($profile);

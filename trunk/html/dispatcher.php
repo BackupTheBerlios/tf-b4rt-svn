@@ -43,25 +43,25 @@ switch ($action) {
  * single transfer ops
  ******************************************************************************/
     case "start":
-		dispatcher_startTransfer(urldecode(getRequestVar('transfer')));
+		dispatcher_startTransfer(urldecode(tfb_getRequestVar('transfer')));
     	break;
     case "delete":
-    	dispatcher_deleteTransfer(urldecode(getRequestVar('transfer')));
+    	dispatcher_deleteTransfer(urldecode(tfb_getRequestVar('transfer')));
     	break;
     case "stop":
-    	dispatcher_stopTransfer(urldecode(getRequestVar('transfer')));
+    	dispatcher_stopTransfer(urldecode(tfb_getRequestVar('transfer')));
     	break;
     case "forceStop":
-    	dispatcher_forceStopTransfer(urldecode(getRequestVar('transfer')), getRequestVar('pid'));
+    	dispatcher_forceStopTransfer(urldecode(tfb_getRequestVar('transfer')), tfb_getRequestVar('pid'));
     	break;
     case "restart":
-    	dispatcher_restartTransfer(urldecode(getRequestVar('transfer')));
+    	dispatcher_restartTransfer(urldecode(tfb_getRequestVar('transfer')));
     	break;
     case "deQueue":
-    	dispatcher_deQueueTransfer(urldecode(getRequestVar('transfer')));
+    	dispatcher_deQueueTransfer(urldecode(tfb_getRequestVar('transfer')));
     	break;
     case "setFilePriority":
-		dispatcher_setFilePriority(urldecode(getRequestVar('transfer')));
+		dispatcher_setFilePriority(urldecode(tfb_getRequestVar('transfer')));
     	break;
 
 /*******************************************************************************
@@ -71,24 +71,24 @@ switch ($action) {
 		dispatcher_processUpload();
     	break;
     case "urlUpload":
-		dispatcher_processDownload(getRequestVarRaw('url'), getRequestVar('type'));
+		dispatcher_processDownload(tfb_getRequestVarRaw('url'), tfb_getRequestVar('type'));
     	break;
     case "wget":
-		dispatcher_injectWget(getRequestVarRaw('url'));
+		dispatcher_injectWget(tfb_getRequestVarRaw('url'));
     	break;
 
 /*******************************************************************************
  * metafile-download
  ******************************************************************************/
 	case "metafileDownload":
-		dispatcher_sendMetafile(getRequestVar('transfer'));
+		dispatcher_sendMetafile(tfb_getRequestVar('transfer'));
     	break;
 
 /*******************************************************************************
  * set
  ******************************************************************************/
     case "set":
-    	dispatcher_set(getRequestVar('key'), getRequestVar('val'));
+    	dispatcher_set(tfb_getRequestVar('key'), tfb_getRequestVar('val'));
     	break;
 
 /*******************************************************************************
@@ -96,7 +96,7 @@ switch ($action) {
  ******************************************************************************/
     case "maintenance":
 		require_once("inc/classes/MaintenanceAndRepair.php");
-		MaintenanceAndRepair::maintenance((getRequestVar('trestart') == "true") ? true : false);
+		MaintenanceAndRepair::maintenance((tfb_getRequestVar('trestart') == "true") ? true : false);
 		// set transfers-cache
 		cacheTransfersSet();
     	break;

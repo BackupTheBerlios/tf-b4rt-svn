@@ -41,7 +41,7 @@ $tmpl->setvar('SuperAdminLink3', getSuperAdminLink('?a=3','<font class="adminlin
 $tmpl->setvar('SuperAdminLink9', getSuperAdminLink('?a=9','<font class="adminlink">version</font></a>'));
 
 // message section
-$message = getRequestVar('m');
+$message = tfb_getRequestVar('m');
 if ($message != "")
 	$tmpl->setvar('message', urldecode($message));
 

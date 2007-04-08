@@ -51,15 +51,15 @@ initRestrictedDirEntries();
 checkIncomingPath();
 
 // get request-vars
-$chmod = UrlHTMLSlashesDecode(getRequestVar('chmod'));
-$del = UrlHTMLSlashesDecode(getRequestVar('del'));
-$down = UrlHTMLSlashesDecode(getRequestVar('down'));
-$tar = UrlHTMLSlashesDecode(getRequestVar('tar'));
-$multidel = UrlHTMLSlashesDecode(getRequestVar('multidel'));
-$dir = UrlHTMLSlashesDecode(getRequestVar('dir'));
+$chmod = UrlHTMLSlashesDecode(tfb_getRequestVar('chmod'));
+$del = UrlHTMLSlashesDecode(tfb_getRequestVar('del'));
+$down = UrlHTMLSlashesDecode(tfb_getRequestVar('down'));
+$tar = UrlHTMLSlashesDecode(tfb_getRequestVar('tar'));
+$multidel = UrlHTMLSlashesDecode(tfb_getRequestVar('multidel'));
+$dir = UrlHTMLSlashesDecode(tfb_getRequestVar('dir'));
 
 // check dir-var
-if (isValidPath($dir) !== true) {
+if (tfb_isValidPath($dir) !== true) {
 	AuditAction($cfg["constants"]["error"], "ILLEGAL DIR: ".$cfg["user"]." tried to access ".$dir);
 	@error("Invalid Dir", "index.php?iid=dir", "", array($dir));
 }
@@ -93,7 +93,7 @@ if ($del != "") {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg["user"]." tried to delete (".$del.")");
 		$current = $del;
 
-		if (isValidPath($del)) {
+		if (tfb_isValidPath($del)) {
 			$arTemp = explode("/", $del);
 			if (count($arTemp) > 1) {
 				array_pop($arTemp);
@@ -137,7 +137,7 @@ if ($down != "") {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL DOWNLOAD: ".$cfg["user"]." tried to download ".$down);
 		$current = $down;
 
-		if (isValidPath($down)) {
+		if (tfb_isValidPath($down)) {
 			$path = $cfg["path"].$down;
 			$p = explode(".", $path);
 			$pc = count($p);
@@ -170,7 +170,7 @@ if ($tar != "") {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL TAR DOWNLOAD: ".$cfg["user"]." tried to download ".$tar);
 		$current = $tar;
 
-		if (isValidPath($tar)) {
+		if (tfb_isValidPath($tar)) {
 			$arTemp = explode("/", $tar);
 			if (count($arTemp) > 1) {
 				array_pop($arTemp);

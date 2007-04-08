@@ -29,7 +29,7 @@ if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
 
 /******************************************************************************/
 
-$user_id = getRequestVar('user_id');
+$user_id = tfb_getRequestVar('user_id');
 
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.admin.editUser.tmpl");

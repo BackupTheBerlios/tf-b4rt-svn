@@ -42,8 +42,8 @@ tmplInitializeInstance($cfg["theme"], "page.transferControl.tmpl");
 transfer_init();
 
 // request-vars
-$pageop = getRequestVar('pageop');
-$client = getRequestVar('client');
+$pageop = tfb_getRequestVar('pageop');
+$client = tfb_getRequestVar('client');
 
 // init ch-instance
 $ch = ($client == "")

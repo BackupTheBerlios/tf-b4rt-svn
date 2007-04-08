@@ -128,8 +128,8 @@ class SearchEngine extends SearchEngineBase
     // Function to get Latest..
     function getLatest()
     {
-        $cat = getRequestVar('subGenre');
-        if (empty($cat)) $cat = getRequestVar('cat');
+        $cat = tfb_getRequestVar('subGenre');
+        if (empty($cat)) $cat = tfb_getRequestVar('cat');
 
         $request = "/torrents-browse.php";
 
@@ -180,11 +180,11 @@ class SearchEngine extends SearchEngineBase
             $request .= "&cat=".$cat;
         }
 
-        $onlyname = getRequestVar('onlyname');
+        $onlyname = tfb_getRequestVar('onlyname');
         if (empty($onlyname)) $onlyname = "no";
         $request .= "&onlyname=".$onlyname;
 
-        $incldead = getRequestVar('incldead');
+        $incldead = tfb_getRequestVar('incldead');
         if (empty($incldead)) $incldead = "0";
         $request .= "&incldead=".$incldead;
 

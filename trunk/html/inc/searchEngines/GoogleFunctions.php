@@ -34,7 +34,7 @@ function FetchHTMLNoWaitNoFollow( $url, $referer = "" )
     ini_set("allow_url_fopen", "1");
     ini_set("user_agent", $cfg['user_agent']);
 
-    $url = cleanURL( $url );
+    $url = tfb_cleanURL( $url );
     $domain = parse_url( $url );
     $getcmd  = $domain["path"];
 

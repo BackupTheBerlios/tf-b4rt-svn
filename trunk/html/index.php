@@ -36,7 +36,7 @@ if (!isset($_REQUEST['iid'])) {
 if (preg_match('/^[a-zA-Z]+$/D', $_REQUEST['iid'])) {
 	@require_once("inc/iid/".$_REQUEST['iid'].".php");
 } else {
-	$iid = getRequestVar('iid');
+	$iid = tfb_getRequestVar('iid');
 	AuditAction($cfg["constants"]["error"], "INVALID PAGE: ".$iid);
 	@error("Invalid Page", "index.php?iid=index", "Home", array($iid));
 }

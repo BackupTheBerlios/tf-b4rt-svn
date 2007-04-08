@@ -205,7 +205,7 @@ function admin_updateFluxdSettings() {
 function admin_controlFluxd() {
 	global $cfg;
 	$message = "";
-	$action = getRequestVar('a');
+	$action = tfb_getRequestVar('a');
 	switch($action) {
 		case "start":
 			// start fluxd
@@ -284,7 +284,7 @@ function admin_controlFluAzu() {
 	// FluAzu
 	require_once("inc/classes/FluAzu.php");
 	$message = "";
-	$action = getRequestVar('a');
+	$action = tfb_getRequestVar('a');
 	switch($action) {
 		case "start":
 			// start fluazu
@@ -340,7 +340,7 @@ function admin_updateAzureusSettings() {
 		// new settings
 		$settingsNew = array();
 		foreach ($statusKeys as $statusKey) {
-			$settingsNew[$statusKey] = getRequestVar($statusKey);
+			$settingsNew[$statusKey] = tfb_getRequestVar($statusKey);
 			if ($settingsNew[$statusKey] == "")
 				$settingsNew[$statusKey] = $settingsCurrent[$statusKey];
 		}
@@ -394,7 +394,7 @@ function admin_updateSearchSettings() {
 	}
 	saveSettings('tf_settings', $settings);
 	AuditAction($cfg["constants"]["admin"], " Updating Search Settings");
-	$searchEngine = getRequestVar('searchEngine');
+	$searchEngine = tfb_getRequestVar('searchEngine');
 	if (empty($searchEngine))
 		$searchEngine = $cfg["searchEngine"];
 	@header("location: admin.php?op=searchSettings&searchEngine=".$searchEngine);
@@ -406,8 +406,8 @@ function admin_updateSearchSettings() {
  */
 function admin_addLink() {
 	global $cfg;
-	$newLink = getRequestVarRaw('newLink');
-	$newSite = getRequestVarRaw('newSite');
+	$newLink = tfb_getRequestVarRaw('newLink');
+	$newSite = tfb_getRequestVarRaw('newSite');
 	if (!empty($newLink)){
 		if (strpos($newLink, "http://" ) !== 0 && strpos($newLink, "https://" ) !== 0 && strpos($newLink, "ftp://" ) !== 0)
 			$newLink = "http://".$newLink;
@@ -424,9 +424,9 @@ function admin_addLink() {
  */
 function admin_editLink() {
 	global $cfg;
-	$lid = getRequestVar('lid');
-	$newLink = getRequestVarRaw('editLink');
-	$newSite = getRequestVarRaw('editSite');
+	$lid = tfb_getRequestVar('lid');
+	$newLink = tfb_getRequestVarRaw('editLink');
+	$newSite = tfb_getRequestVarRaw('editSite');
 	if (!empty($newLink)){
 		if(strpos($newLink, "http://" ) !== 0 && strpos($newLink, "https://" ) !== 0 && strpos($newLink, "ftp://" ) !== 0)
 			$newLink = "http://".$newLink;
@@ -445,8 +445,8 @@ function admin_editLink() {
  */
 function admin_moveLink() {
 	global $db;
-	$lid = getRequestVar('lid');
-	$direction = getRequestVar('direction');
+	$lid = tfb_getRequestVar('lid');
+	$direction = tfb_getRequestVar('direction');
 	if (!isset($lid) && !isset($direction) && $direction !== "up" && $direction !== "down") {
 		@header("location: admin.php?op=editLinks");
 		exit();
@@ -471,7 +471,7 @@ function admin_moveLink() {
  */
 function admin_deleteLink() {
 	global $cfg;
-	$lid = getRequestVar('lid');
+	$lid = tfb_getRequestVar('lid');
 	AuditAction($cfg["constants"]["admin"], $cfg['_DELETE']." Link: ".getSite($lid)." [".getLink($lid)."]");
 	deleteOldLink($lid);
 	// flush session-cache
@@ -485,7 +485,7 @@ function admin_deleteLink() {
  */
 function admin_addRSS() {
 	global $cfg;
-	$newRSS = getRequestVarRaw('newRSS');
+	$newRSS = tfb_getRequestVarRaw('newRSS');
 	if(!empty($newRSS)){
 		addNewRSS($newRSS);
 		AuditAction($cfg["constants"]["admin"], "New RSS: ".addslashes($newRSS));
@@ -499,7 +499,7 @@ function admin_addRSS() {
  */
 function admin_deleteRSS() {
 	global $cfg;
-	$rid = getRequestVar('rid');
+	$rid = tfb_getRequestVar('rid');
 	AuditAction($cfg["constants"]["admin"], $cfg['_DELETE']." RSS: ".getRSS($rid));
 	deleteOldRSS($rid);
 	@header("location: admin.php?op=editRSS");
@@ -511,7 +511,7 @@ function admin_deleteRSS() {
  */
 function admin_deleteUser() {
 	global $cfg;
-	$user_id = getRequestVar('user_id');
+	$user_id = tfb_getRequestVar('user_id');
 	if (!IsSuperAdmin($user_id)) {
 		DeleteThisUser($user_id);
 		AuditAction($cfg["constants"]["admin"], $cfg['_DELETE']." ".$cfg['_USER'].": ".$user_id);
@@ -805,8 +805,8 @@ function validateBinary($the_file) {
  */
 function setUserState() {
 	global $cfg, $db;
-	$user_id = getRequestVar('user_id');
-	$user_state = getRequestVar('state');
+	$user_id = tfb_getRequestVar('user_id');
+	$user_state = tfb_getRequestVar('state');
 	// check params
 	if (!(isset($user_id)) && (isset($user_state)))
 		return false;

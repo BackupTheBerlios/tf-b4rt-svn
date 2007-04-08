@@ -70,8 +70,8 @@ class SearchEngine extends SearchEngineBase
     // Function to get Latest..
     function getLatest()
     {
-        $cat = getRequestVar('mainGenre');
-        if (empty($cat)) $cat = getRequestVar('c');
+        $cat = tfb_getRequestVar('mainGenre');
+        if (empty($cat)) $cat = tfb_getRequestVar('c');
 
         if(!empty($cat))
         {

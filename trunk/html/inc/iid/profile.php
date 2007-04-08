@@ -36,25 +36,25 @@ require_once('inc/functions/functions.common.php');
 tmplInitializeInstance($cfg["theme"], "page.profile.tmpl");
 
 // op-switch
-$op = getRequestVar('op');
+$op = tfb_getRequestVar('op');
 switch ($op) {
 
 //******************************************************************************
 // addProfile -- adding a Profile Information
 //******************************************************************************
 	case "addProfile":
-		$newProfile["name"] = getRequestVar('name');
-		$newProfile["minport"] = getRequestVar('minport');
-		$newProfile["maxport"] = getRequestVar('maxport');
-		$newProfile["maxcons"] = getRequestVar('maxcons');
-		$newProfile["rerequest"] = getRequestVar('rerequest');
-		$newProfile["rate"] = getRequestVar('rate');
-		$newProfile["maxuploads"] = getRequestVar('maxuploads');
-		$newProfile["drate"] = getRequestVar('drate');
-		$newProfile["runtime"] = getRequestVar('runtime');
-		$newProfile["sharekill"] = getRequestVar('sharekill');
-		$newProfile["superseeder"] = getRequestVar('superseeder');
-		$pub = getRequestVar('public');
+		$newProfile["name"] = tfb_getRequestVar('name');
+		$newProfile["minport"] = tfb_getRequestVar('minport');
+		$newProfile["maxport"] = tfb_getRequestVar('maxport');
+		$newProfile["maxcons"] = tfb_getRequestVar('maxcons');
+		$newProfile["rerequest"] = tfb_getRequestVar('rerequest');
+		$newProfile["rate"] = tfb_getRequestVar('rate');
+		$newProfile["maxuploads"] = tfb_getRequestVar('maxuploads');
+		$newProfile["drate"] = tfb_getRequestVar('drate');
+		$newProfile["runtime"] = tfb_getRequestVar('runtime');
+		$newProfile["sharekill"] = tfb_getRequestVar('sharekill');
+		$newProfile["superseeder"] = tfb_getRequestVar('superseeder');
+		$pub = tfb_getRequestVar('public');
 		$newProfile["public"] = ($pub == "") ? 0 : $pub;
 		if (!empty( $newProfile)) {
 			AddProfileInfo($newProfile);
@@ -67,20 +67,20 @@ switch ($op) {
 // modProfile -- edit Profile Information
 //******************************************************************************
 	case "modProfile":
-		$newProfile["name"] = getRequestVar('name');
-		$newProfile["minport"] = getRequestVar('minport');
-		$newProfile["maxport"] = getRequestVar('maxport');
-		$newProfile["maxcons"] = getRequestVar('maxcons');
-		$newProfile["rerequest"] = getRequestVar('rerequest');
-		$newProfile["rate"] = getRequestVar('rate');
-		$newProfile["maxuploads"] = getRequestVar('maxuploads');
-		$newProfile["drate"] = getRequestVar('drate');
-		$newProfile["runtime"] = getRequestVar('runtime');
-		$newProfile["sharekill"] = getRequestVar('sharekill');
-		$newProfile["superseeder"] = getRequestVar('superseeder');
-		$pub = getRequestVar('public');
+		$newProfile["name"] = tfb_getRequestVar('name');
+		$newProfile["minport"] = tfb_getRequestVar('minport');
+		$newProfile["maxport"] = tfb_getRequestVar('maxport');
+		$newProfile["maxcons"] = tfb_getRequestVar('maxcons');
+		$newProfile["rerequest"] = tfb_getRequestVar('rerequest');
+		$newProfile["rate"] = tfb_getRequestVar('rate');
+		$newProfile["maxuploads"] = tfb_getRequestVar('maxuploads');
+		$newProfile["drate"] = tfb_getRequestVar('drate');
+		$newProfile["runtime"] = tfb_getRequestVar('runtime');
+		$newProfile["sharekill"] = tfb_getRequestVar('sharekill');
+		$newProfile["superseeder"] = tfb_getRequestVar('superseeder');
+		$pub = tfb_getRequestVar('public');
 		$newProfile["public"] = ($pub == "") ? 0 : $pub;
-		$pid = getRequestVar('pid');
+		$pid = tfb_getRequestVar('pid');
 		modProfileInfo($pid,$newProfile);
 		AuditAction($cfg["constants"]["admin"], "Modified Profile: ".$newProfile["name"]);
 		@header("location: index.php?iid=profile&op=showProfiles");
@@ -130,8 +130,8 @@ switch ($op) {
 // addCookie -- adding a Cookie Host Information
 //******************************************************************************
 	case "addCookie":
-		$newCookie["host"] = getRequestVar('host');
-		$newCookie["data"] = getRequestVar('data');
+		$newCookie["host"] = tfb_getRequestVar('host');
+		$newCookie["data"] = tfb_getRequestVar('data');
 		if (!empty($newCookie)) {
 			AddCookieInfo($newCookie);
 			AuditAction($cfg["constants"]["admin"], "New Cookie: " . $newCookie["host"] . " | " . $newCookie["data"]);
@@ -154,9 +154,9 @@ switch ($op) {
 // modCookie -- edit a Cookie Host Information
 //******************************************************************************
 	case "modCookie":
-		$newCookie["host"] = getRequestVar('host');
-		$newCookie["data"] = getRequestVar('data');
-		$cid = getRequestVar('cid');
+		$newCookie["host"] = tfb_getRequestVar('host');
+		$newCookie["data"] = tfb_getRequestVar('data');
+		$cid = tfb_getRequestVar('cid');
 		modCookieInfo($cid,$newCookie);
 		AuditAction($cfg["constants"]["admin"], "Modified Cookie: ".$newCookie["host"]." | ".$newCookie["data"]);
 		@header("location: index.php?iid=profile&op=showCookies");
@@ -168,11 +168,11 @@ switch ($op) {
 //******************************************************************************
 	case "updateProfile":
 		$tmpl->setvar('updateProfile', 1);
-		$pass1 = getRequestVar('pass1');
-		$pass2 = getRequestVar('pass2');
-		$hideOffline = getRequestVar('hideOffline');
-		$theme = getRequestVar('theme');
-		$language = getRequestVar('language');
+		$pass1 = tfb_getRequestVar('pass1');
+		$pass2 = tfb_getRequestVar('pass2');
+		$hideOffline = tfb_getRequestVar('hideOffline');
+		$theme = tfb_getRequestVar('theme');
+		$language = tfb_getRequestVar('language');
 		if ($pass1 != "")
 			$_SESSION['user'] = md5($cfg["pagetitle"]);
 		UpdateUserProfile($cfg["user"], $pass1, $hideOffline, $theme, $language);

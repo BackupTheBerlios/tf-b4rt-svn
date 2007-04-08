@@ -81,7 +81,7 @@ $arListTorrent = array();
 // settings
 $settings = convertIntegerToArray($cfg["index_page_settings"]);
 // sortOrder
-$sortOrder = getRequestVar("so");
+$sortOrder = tfb_getRequestVar("so");
 $tmpl->setvar('sortOrder', (empty($sortOrder)) ? $cfg["index_page_sortorder"] : $sortOrder);
 // t-list
 $arList = getTransferArray($sortOrder);

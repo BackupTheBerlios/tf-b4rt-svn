@@ -49,11 +49,11 @@ function image_test() {
 function image_pieTransferTotals() {
 	global $cfg;
 	// transfer-id
-	$transfer = getRequestVar('transfer');
+	$transfer = tfb_getRequestVar('transfer');
 	if (empty($transfer))
 		Image::paintNoOp();
 	// validate transfer
-	if (isValidTransfer($transfer) !== true) {
+	if (tfb_isValidTransfer($transfer) !== true) {
 		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
 		Image::paintNoOp();
 	}
@@ -86,11 +86,11 @@ function image_pieTransferTotals() {
 function image_pieTransferPeers() {
 	global $cfg;
 	// transfer-id
-	$transfer = getRequestVar('transfer');
+	$transfer = tfb_getRequestVar('transfer');
 	if (empty($transfer))
 		Image::paintNoOp();
 	// validate transfer
-	if (isValidTransfer($transfer) !== true) {
+	if (tfb_isValidTransfer($transfer) !== true) {
 		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
 		Image::paintNoOp();
 	}
@@ -184,11 +184,11 @@ function image_pieTransferPeers() {
 function image_pieTransferScrape() {
 	global $cfg;
 	// transfer-id
-	$transfer = getRequestVar('transfer');
+	$transfer = tfb_getRequestVar('transfer');
 	if (empty($transfer))
 		Image::paintNoOp();
 	// validate transfer
-	if (isValidTransfer($transfer) !== true) {
+	if (tfb_isValidTransfer($transfer) !== true) {
 		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
 		Image::paintNoOp();
 	}
@@ -300,12 +300,12 @@ function image_pieServerDrivespace() {
 function image_mrtg() {
 	global $cfg;
 	// filename
-	$fileName = getRequestVar('f');
+	$fileName = tfb_getRequestVar('f');
 	if (empty($fileName))
 		Image::paintNoOp();
 	$targetFile = $cfg["path"].'.mrtg/'.$fileName;
 	// validate file
-	if (!((isValidPath($targetFile) === true)
+	if (!((tfb_isValidPath($targetFile) === true)
 		&& (preg_match('/^[0-9a-zA-Z_]+(-day|-week|-month|-year)(.png)$/D', $fileName))
 		&& (@is_file($targetFile))
 		)) {

@@ -1440,7 +1440,7 @@ function getTransferLog($transfer) {
 	global $cfg;
 	$emptyLog = "log empty";
 	// sanity-check
-	if (!isset($transfer) || (isValidTransfer($transfer) !== true))
+	if (!isset($transfer) || (tfb_isValidTransfer($transfer) !== true))
 		return "invalid transfer";
 	// log-file
 	$transferLogFile = $cfg["transfer_file_path"].$transfer.".log";
@@ -1568,7 +1568,7 @@ function deleteTransferData($transfer) {
 		$datapath = getTransferDatapath($transfer);
 		if (($datapath != "") && ($datapath != ".")) {
 			$targetPath = getTransferSavepath($transfer).$datapath;
-			if (isValidPath($targetPath)) {
+			if (tfb_isValidPath($targetPath)) {
 				if ((@is_dir($targetPath)) || (@is_file($targetPath))) {
 					avddelete($targetPath);
 					AuditAction($cfg["constants"]["fm_delete"], $targetPath);
@@ -1753,7 +1753,7 @@ function setFilePriority($transfer) {
         }
         // if there are files to get then process and create a prio file.
         if (count($files) > 0) {
-            for ($i=0; $i < getRequestVar('count'); $i++) {
+            for ($i=0; $i < tfb_getRequestVar('count'); $i++) {
                 if (in_array($i,$files)) {
                     array_push($result, 1);
                 } else {
@@ -1763,7 +1763,7 @@ function setFilePriority($transfer) {
             }
             if ($okToCreate) {
                 $fp = fopen($fileName, "w");
-                fwrite($fp,getRequestVar('filecount').",");
+                fwrite($fp,tfb_getRequestVar('filecount').",");
                 fwrite($fp,implode($result,','));
                 fclose($fp);
             } else {

@@ -65,24 +65,24 @@ switch ($cfg['auth_type']) {
 	case 1: /* Form-Auth + Cookie */
 		$cookieDelim = '|';
 		// check if login-request
-		$isCookieLoginRequest = getRequestVar('docookielogin');
+		$isCookieLoginRequest = tfb_getRequestVar('docookielogin');
 		if ($isCookieLoginRequest == "true") {
 			$isLoginRequest = true;
-			$user = strtolower(getRequestVar('username'));
+			$user = strtolower(tfb_getRequestVar('username'));
 			$iamhim = "";
-			$md5password = getRequestVar('md5pass');
+			$md5password = tfb_getRequestVar('md5pass');
 			// set new cookie
 			setcookie("autologin", $user.$cookieDelim.$md5password, time() + 60 * 60 * 24 * 30);
 		} else {
 			// is a form-login-request ?
-			$docookieloginnew = getRequestVar('docookieloginnew');
+			$docookieloginnew = tfb_getRequestVar('docookieloginnew');
 			if ($docookieloginnew == "true") {
 				$isLoginRequest = true;
-				$user = strtolower(getRequestVar('username'));
-				$requestPW = getRequestVar('iamhim');
+				$user = strtolower(tfb_getRequestVar('username'));
+				$requestPW = tfb_getRequestVar('iamhim');
 				$iamhim = addslashes($requestPW);
 				$md5password = "";
-				$setcookie = getRequestVar('setcookie');
+				$setcookie = tfb_getRequestVar('setcookie');
 				// set cookie if wanted
 				if ($setcookie == "true")
 					setcookie("autologin", $user.$cookieDelim.md5($requestPW), time() + 60 * 60 * 24 * 30);
@@ -101,16 +101,16 @@ switch ($cfg['auth_type']) {
 	case 4: /* Form-Auth + Image-Validation */
 		// Image class
 		require_once('inc/classes/Image.php');
-		$user = strtolower(getRequestVar('username'));
-		$iamhim = addslashes(getRequestVar('iamhim'));
+		$user = strtolower(tfb_getRequestVar('username'));
+		$iamhim = addslashes(tfb_getRequestVar('iamhim'));
 		$md5password = "";
 		$isImageSupported = Image::isSupported();
 		if (!empty($user)) {
 			$isLoginRequest = true;
 			// image-validation
 			if ($isImageSupported) {
-				$secCode = getRequestVar('security');
-				$rndChk = getRequestVar('rnd_chk');
+				$secCode = tfb_getRequestVar('security');
+				$rndChk = tfb_getRequestVar('rnd_chk');
 				if ($secCode !== loginImageCode($cfg["db_user"], $rndChk)) {
 					// log this
 					AuditAction($cfg["constants"]["access_denied"], "FAILED IMAGE-VALIDATION: ".$user);
@@ -132,8 +132,8 @@ switch ($cfg['auth_type']) {
 		break;
 	case 0: /* Form-Based Auth Standard */
 	default:
-		$user = strtolower(getRequestVar('username'));
-		$iamhim = addslashes(getRequestVar('iamhim'));
+		$user = strtolower(tfb_getRequestVar('username'));
+		$iamhim = addslashes(tfb_getRequestVar('iamhim'));
 		$md5password = "";
 		if (!empty($user))
 			$isLoginRequest = true;

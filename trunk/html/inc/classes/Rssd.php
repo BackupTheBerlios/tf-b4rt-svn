@@ -372,15 +372,15 @@ class Rssd
 			$filename = SimpleHTTP::getFilename();
 			if ($filename != "") {
 				$filename = ((strpos($filename, ".torrent") !== false))
-					? cleanFileName($filename)
-					: cleanFileName($filename.".torrent");
+					? tfb_cleanFileName($filename)
+					: tfb_cleanFileName($filename.".torrent");
 			}
 			if (($filename == "") || ($filename === false) || (transferExists($filename))) {
-				$filename = cleanFileName($title.".torrent");
+				$filename = tfb_cleanFileName($title.".torrent");
 				if (($filename === false) || (transferExists($filename))) {
-					$filename = cleanFileName($url.".torrent");
+					$filename = tfb_cleanFileName($url.".torrent");
 					if (($filename === false) || (transferExists($filename))) {
-						$filename = cleanFileName(md5($url.strval(@microtime())).".torrent");
+						$filename = tfb_cleanFileName(md5($url.strval(@microtime())).".torrent");
 						if (($filename === false) || (transferExists($filename))) {
 							// Error
 							$msg = "failed to get a valid transfer-filename for ".$url;

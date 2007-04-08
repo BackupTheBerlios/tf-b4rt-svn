@@ -29,12 +29,12 @@ if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
 
 /******************************************************************************/
 
-$min = getRequestVar('min');
+$min = tfb_getRequestVar('min');
 if (empty($min))
 	$min = 0;
-$user_id = getRequestVar('user_id');
-$srchFile = getRequestVar('srchFile');
-$srchAction = getRequestVar('srchAction');
+$user_id = tfb_getRequestVar('user_id');
+$srchFile = tfb_getRequestVar('srchFile');
+$srchAction = tfb_getRequestVar('srchAction');
 
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.admin.showUserActivity.tmpl");

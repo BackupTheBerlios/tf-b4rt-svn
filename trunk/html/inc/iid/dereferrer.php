@@ -40,7 +40,7 @@ if (!(isset($_REQUEST["u"]))) {
 	@header("location: index.php?iid=index");
 	exit();
 } else {
-	$url = getRequestVarRaw("u");
+	$url = tfb_getRequestVarRaw("u");
 }
 
 // init template-instance

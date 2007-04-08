@@ -47,10 +47,10 @@ tmplInitializeInstance($cfg["theme"], "page.move.tmpl");
 // set vars
 if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 	$path = stripslashes($_REQUEST['path']);
-	$dir = getRequestVar('path');
+	$dir = tfb_getRequestVar('path');
 	$source = $cfg["path"].$dir;
 	// only valid paths + entries with permission
-	if (!((isValidPath($source)) &&
+	if (!((tfb_isValidPath($source)) &&
 		(isValidEntry(basename($source))) &&
 		(hasPermission($dir, $cfg["user"], 'w')))) {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL MOVE: ".$cfg["user"]." tried to move ".$dir);
@@ -87,8 +87,8 @@ if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 		 }
 	}
 	// only valid dirs + entries with permission
-	if (!((isValidPath($cfg["path"].$file)) &&
-		(isValidPath($targetDir)) &&
+	if (!((tfb_isValidPath($cfg["path"].$file)) &&
+		(tfb_isValidPath($targetDir)) &&
 		(isValidEntry(basename($cfg["path"].$file))) &&
 		(hasPermission($file, $cfg["user"], 'w')))) {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL MOVE: ".$cfg["user"]." tried to move ".$file." to ".$targetDir);

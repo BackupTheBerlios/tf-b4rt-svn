@@ -36,7 +36,7 @@ require_once("inc/searchEngines/SearchEngineBase.php");
 tmplInitializeInstance($cfg["theme"], "page.admin.searchSettings.tmpl");
 
 // set vars
-$searchEngine = getRequestVar('searchEngine');
+$searchEngine = tfb_getRequestVar('searchEngine');
 if (empty($searchEngine))
 	$searchEngine = $cfg["searchEngine"];
 if (is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {

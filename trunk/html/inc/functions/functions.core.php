@@ -1076,7 +1076,7 @@ function getTransferArray($sortOrder = '') {
 				case '.cmd':
 					break;
 				default:
-					if (isValidTransfer($transfer))
+					if (tfb_isValidTransfer($transfer))
 						$retVal[filemtime($cfg["transfer_file_path"].$transfer).md5($transfer)] = $transfer;
 					else
 						AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
@@ -1172,7 +1172,7 @@ function getTransferListArray() {
 	// settings
 	$settings = convertIntegerToArray($cfg["index_page_settings"]);
 	// sortOrder
-	$sortOrder = getRequestVar("so");
+	$sortOrder = tfb_getRequestVar("so");
 	if ($sortOrder == "")
 		$sortOrder = $cfg["index_page_sortorder"];
 	// t-list
@@ -1665,9 +1665,8 @@ function getTransferDetails($transfer, $full) {
  * @param $varName
  * @return string
  */
-function getRequestVar($varName) {
-	$return="";
-
+function tfb_getRequestVar($varName) {
+	$return = "";
 	if(array_key_exists($varName, $_REQUEST)){
 		// If magic quoting on, strip magic quotes:
 		/**
@@ -1676,14 +1675,12 @@ function getRequestVar($varName) {
 		* calls before uncommenting this.  Also using this really means
 		* checking any addslashes() calls to see if they're really needed
 		* when magic quotes is on.
-
 		if(ini_get('magic_quotes_gpc')){
 			tfb_strip_quotes($_REQUEST[$varName]);
 		}
 		*/
 		$return = htmlentities(trim($_REQUEST[$varName]), ENT_QUOTES);
 	}
-
 	return $return;
 }
 
@@ -1698,13 +1695,11 @@ function getRequestVar($varName) {
  * @param $varName
  * @return string
  */
-function getRequestVarRaw($varName) {
+function tfb_getRequestVarRaw($varName) {
 	// Note: CANNOT use tfb_strip_quotes directly on $_REQUEST
 	// here, because it works in-place, i.e. would break other
-	// future uses of getRequestVarRaw on the same variables.
-
-	$return='';
-
+	// future uses of tfb_getRequestVarRaw on the same variables.
+	$return = '';
 	if (array_key_exists($varName, $_REQUEST)){
 		$return = $_REQUEST[$varName];
 		// Seems get_magic_quotes_gpc is deprecated
@@ -1712,7 +1707,6 @@ function getRequestVarRaw($varName) {
 		if (ini_get('magic_quotes_gpc'))
 			tfb_strip_quotes($return);
 	}
-
 	return $return;
 }
 
@@ -1725,11 +1719,10 @@ function getRequestVarRaw($varName) {
 function tfb_strip_quotes(&$var){
 	if (is_array($var)) {
 		foreach ($var as $k => $v) {
-			if (is_array($v)) {
+			if (is_array($v))
 				array_walk($var[$k], 'tfb_strip_quotes');
-			} else {
+			else
 				$var[$k] = stripslashes($v);
-			}
 		}
 	} else {
 		$var = stripslashes($var);
@@ -2172,7 +2165,7 @@ function IsForceReadMsg() {
  * @param $ext
  * @return boolean
  */
-function isValidPath($path, $ext = "") {
+function tfb_isValidPath($path, $ext = "") {
 	if (preg_match("/\\\/", $path)) return false;
 	if (preg_match("/\.\.\//", $path)) return false;
 	if ($ext != "") {
@@ -2189,7 +2182,7 @@ function isValidPath($path, $ext = "") {
  * @param $transfer
  * @return boolean
  */
-function isValidTransfer($transfer) {
+function tfb_isValidTransfer($transfer) {
 	global $cfg;
 	return (preg_match('/^[0-9a-zA-Z._-]+('.$cfg["file_types_regexp"].')$/D', $transfer) == 1);
 }
@@ -2200,7 +2193,7 @@ function isValidTransfer($transfer) {
  * @param $transfer
  * @return string
  */
-function getCleanTransferName($transfer) {
+function tfb_cleanTransferName($transfer) {
 	global $cfg;
 	return str_replace($cfg["file_types_array"], "", preg_replace("/[^0-9a-zA-Z.-]+/",'_', $transfer));
 }
@@ -2211,7 +2204,7 @@ function getCleanTransferName($transfer) {
  * @param $inName
  * @return string or false
  */
-function cleanFileName($inName) {
+function tfb_cleanFileName($inName) {
 	global $cfg;
 	$outName = preg_replace("/[^0-9a-zA-Z.-]+/",'_', $inName);
 	$stringLength = strlen($outName);
@@ -2230,7 +2223,7 @@ function cleanFileName($inName) {
  * @param $url
  * @return string
  */
-function cleanURL($url) {
+function tfb_cleanURL($url) {
 	$arURL = explode("*", $url);
 	return (sizeof($arURL) > 1) ? $arURL[1] : $url;
 }

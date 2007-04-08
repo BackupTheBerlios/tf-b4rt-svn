@@ -33,7 +33,7 @@ if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
 require_once('inc/functions/functions.common.php');
 
 // to-user
-$to_user = getRequestVar('to_user');
+$to_user = tfb_getRequestVar('to_user');
 if (empty($to_user) or empty($cfg["user"])) {
 	 // the user probably hit this page direct
 	@header("location: index.php?iid=index");
@@ -41,10 +41,10 @@ if (empty($to_user) or empty($cfg["user"])) {
 }
 
 // message
-$message = getRequestVar('message');
+$message = tfb_getRequestVar('message');
 if (!empty($message)) {
-	$to_all_r = getRequestVar('to_all');
-	$force_read_r = getRequestVar('force_read');
+	$to_all_r = tfb_getRequestVar('to_all');
+	$force_read_r = tfb_getRequestVar('force_read');
 	$message = check_html($message, "nohtml");
 	SaveMessage($to_user, $cfg["user"], htmlentities($message), (empty($to_all_r)) ? 0 : 1, (!empty($force_read_r) && $cfg['isAdmin']) ? 1 : 0);
 	@header("location: index.php?iid=readmsg");
@@ -53,7 +53,7 @@ if (!empty($message)) {
 
 // rmid
 if (isset($_REQUEST['rmid'])) {
-	$rmid = getRequestVar('rmid');
+	$rmid = tfb_getRequestVar('rmid');
 	if (!empty($rmid)) {
 		list($from_user, $message, $ip, $time) = GetMessage($rmid);
 		$message = $cfg['_DATE'].": ".date($cfg['_DATETIMEFORMAT'], $time)."\n".$from_user." ".$cfg['_WROTE'].":\n\n".$message;

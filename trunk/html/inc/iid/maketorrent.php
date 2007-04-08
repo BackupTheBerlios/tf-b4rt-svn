@@ -64,16 +64,16 @@ if (@file_exists($cfg['pythonCmd']) !== true) {
  ******************************************************************************/
 
 // file + torrent vars
-$path = getRequestVar('path');
+$path = tfb_getRequestVar('path');
 $torrent = "";
 if (!empty($path)) {
-	$torrent = cleanFileName(StripFolders($path).".torrent");
+	$torrent = tfb_cleanFileName(StripFolders($path).".torrent");
 	if ($torrent === false)
 		@error("Invalid torrent-name", "", "", array($path));
 }
 
 // only valid dirs + entries with permission
-if (!((isValidPath($cfg["path"].$path)) &&
+if (!((tfb_isValidPath($cfg["path"].$path)) &&
 	(hasPermission($path, $cfg["user"], 'w')))) {
 	AuditAction($cfg["constants"]["error"], "ILLEGAL MAKETORRENT: ".$cfg["user"]." tried to maketorrent with ".$path);
 	@error("Illegal maketorrent. Action has been logged.", "", "");
@@ -83,8 +83,8 @@ if (!((isValidPath($cfg["path"].$path)) &&
 $client = (isset($_REQUEST["client"])) ? $_REQUEST["client"] : $cfg["dir_maketorrent_default"];
 
 // client-generic vars
-$tfile = getRequestVar('torrent');
-$comment = getRequestVar('comments');
+$tfile = tfb_getRequestVar('torrent');
+$comment = tfb_getRequestVar('comments');
 $alert = (isset($_POST["alert"])) ? 1 : 0;
 
 // client-switch
@@ -92,10 +92,10 @@ switch ($client) {
 	default:
 	case "tornado":
 		$announce = (isset($_POST['announce'])) ? $_POST['announce'] : "http://";
-		$ancelist = getRequestVar('announcelist');
+		$ancelist = tfb_getRequestVar('announcelist');
 		$private = @ ($_POST['Private'] == "Private") ? true : false;
 		$dht = @ ($_POST['DHT'] == "DHT") ? true : false;
-		$piece = getRequestVar('piecesize');
+		$piece = tfb_getRequestVar('piecesize');
 		break;
 	case "mainline":
 		$use_tracker = (isset($_POST['use_tracker'])) ? $_POST['use_tracker'] : 1;

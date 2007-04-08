@@ -36,7 +36,7 @@ define('_DEFAULT_TYPE', 'all');
 tmplInitializeInstance($cfg["theme"], "page.serverStats.tmpl");
 
 // request-vars
-$type = (isset($_REQUEST['type'])) ? getRequestVar('type') : _DEFAULT_TYPE;
+$type = (isset($_REQUEST['type'])) ? tfb_getRequestVar('type') : _DEFAULT_TYPE;
 
 // types
 $type_list = array();

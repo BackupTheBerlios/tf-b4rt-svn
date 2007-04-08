@@ -85,12 +85,12 @@ tmplInitializeInstance($cfg["theme"], "page.uncomp.tmpl");
 
 // process
 if ((isset($_POST['exec'])) && ($_POST['exec'] == true)) {
-	$file = getRequestVar('file');
-	$dir = getRequestVar('dir');
+	$file = tfb_getRequestVar('file');
+	$dir = tfb_getRequestVar('dir');
 	// only valid dirs + entries with permission
 	$fileS = str_replace($cfg["path"], '', $file);
 	$dirS = str_replace($cfg["path"], '', $dir);
-	if (!((isValidPath($file)) &&
+	if (!((tfb_isValidPath($file)) &&
 		(isValidEntry(basename($file))) &&
 		(hasPermission($fileS, $cfg["user"], 'r')) &&
 		(hasPermission($dirS, $cfg["user"], 'w')))) {
@@ -104,7 +104,7 @@ if ((isset($_POST['exec'])) && ($_POST['exec'] == true)) {
 	$cmd = $cfg['bin_php']." bin/uncompress.php";
 	$cmd .= " ".tfb_shellencode($file);
 	$cmd .= " ".tfb_shellencode($dir);
-	$cmd .= " ".tfb_shellencode(getRequestVar('type'));
+	$cmd .= " ".tfb_shellencode(tfb_getRequestVar('type'));
 	if (strcasecmp('rar', $_REQUEST['type']) == 0)
 		$cmd .= " ".$cfg['bin_unrar'];
 	else if (strcasecmp('zip', $_REQUEST['type']) == 0)
@@ -130,13 +130,13 @@ if ((isset($_POST['exec'])) && ($_POST['exec'] == true)) {
 
 // set vars
 if ((isset($_REQUEST['file'])) && ($_REQUEST['file'] != "")) {
-	$file = getRequestVar('file');
-	$dir = getRequestVar('dir');
+	$file = tfb_getRequestVar('file');
+	$dir = tfb_getRequestVar('dir');
 	$file = str_replace($cfg["path"], '', $file);
 	$dir = str_replace($cfg["path"], '', $dir);
 	$targetFile = $cfg["path"].$file;
 	// only valid dirs + entries with permission
-	if (!((isValidPath($targetFile)) &&
+	if (!((tfb_isValidPath($targetFile)) &&
 		(isValidEntry(basename($targetFile))) &&
 		(hasPermission($file, $cfg["user"], 'r')) &&
 		(hasPermission($dir, $cfg["user"], 'w')))) {

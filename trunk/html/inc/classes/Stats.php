@@ -226,7 +226,7 @@ class Stats
 				if (empty($this->_transferID))
 					@error("missing params", "stats.php", "", array('i'));
 				// validate transfer
-				if (isValidTransfer($this->_transferID) !== true) {
+				if (tfb_isValidTransfer($this->_transferID) !== true) {
 					AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$this->_transferID);
 					@error("Invalid Transfer", "", "", array($this->_transferID));
 				}

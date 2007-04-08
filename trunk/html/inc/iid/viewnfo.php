@@ -42,11 +42,11 @@ if ($cfg["enable_view_nfo"] != 1) {
 }
 
 // target
-$file = UrlHTMLSlashesDecode(getRequestVar("path"));
+$file = UrlHTMLSlashesDecode(tfb_getRequestVar("path"));
 $path = $cfg["path"].$file;
 
 // only valid dirs + entries with permission
-if (!((isValidPath($path, ".nfo") || isValidPath($path, ".txt") || isValidPath($path, ".log")) &&
+if (!((tfb_isValidPath($path, ".nfo") || tfb_isValidPath($path, ".txt") || tfb_isValidPath($path, ".log")) &&
 	(isValidEntry($file)) &&
 	(hasPermission($file, $cfg["user"], 'r')))) {
 	AuditAction($cfg["constants"]["error"], "ILLEGAL NFO-ACCESS: ".$cfg["user"]." tried to view ".$file);

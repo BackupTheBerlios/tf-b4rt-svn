@@ -93,7 +93,7 @@ class SearchEngineBase
     function Initialize($cfg) {
 		$rtnValue = false;
 		$this->cfg = unserialize($cfg);
-		$this->pg = getRequestVar('pg');
+		$this->pg = tfb_getRequestVar('pg');
 		if (empty($this->altURL))
 			$this->altURL = $this->mainURL;
 		if (empty($this->cfg)) {
