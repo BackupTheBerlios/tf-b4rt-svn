@@ -352,7 +352,7 @@ class Fluxd
             	return false;
 			}
 			// start it
-            $startCommand = "cd ".$cfg["docroot"]." ; HOME=".$cfg["path"].";";
+            $startCommand = "cd ".tfb_shellencode($cfg["docroot"])."; HOME=".tfb_shellencode($cfg["path"]).";";
             $startCommand .= " export HOME;";
             $startCommand .= " nohup " . $cfg["perlCmd"];
             $startCommand .= " -I ".tfb_shellencode($cfg["docroot"]."bin/fluxd");

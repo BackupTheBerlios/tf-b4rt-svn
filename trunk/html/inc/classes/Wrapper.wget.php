@@ -328,8 +328,8 @@ class WrapperWget
 		$this->_outputMessage("starting up wget-client...\n");
 
 		// command-string
-		$command = "cd ".$this->_path.";";
-		$command .= " HOME=".$this->_path."; export HOME;";
+		$command = "cd ".tfb_shellencode($this->_path).";";
+		$command .= " HOME=".tfb_shellencode($this->_path)."; export HOME;";
 		if ($cfg["enable_umask"] != 0)
 		    $command .= " umask 0000;";
 		if ($cfg["nice_adjust"] != 0)
@@ -344,7 +344,7 @@ class WrapperWget
 			$command .= " --passive-ftp";
 		$command .= " -i ".tfb_shellencode($cfg['transfer_file_path'].$this->_transfer);
 		$command .= " 2>&1"; // direct STDERR to STDOUT
-		$command .= " & echo $! > ".$cfg['transfer_file_path'].$this->_transfer.".pid"; // write pid-file
+		$command .= " & echo $! > ".tfb_shellencode($cfg['transfer_file_path'].$this->_transfer.".pid"); // write pid-file
 
 		// print startup
 		$this->_outputMessage("executing command : \n".$command."\n", true);

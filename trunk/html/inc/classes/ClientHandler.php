@@ -441,7 +441,7 @@ class ClientHandler
 	function runningProcesses() {
 		global $cfg;
 		$retAry = array();
-	    $screenStatus = shell_exec("ps x -o pid='' -o ppid='' -o command='' -ww | ".$cfg['bin_grep']." ".$this->binClient." | ".$cfg['bin_grep']." ".$cfg["transfer_file_path"]." | ".$cfg['bin_grep']." -v grep");
+	    $screenStatus = shell_exec("ps x -o pid='' -o ppid='' -o command='' -ww | ".$cfg['bin_grep']." ".tfb_shellencode($this->binClient)." | ".$cfg['bin_grep']." ".tfb_shellencode($cfg["transfer_file_path"])." | ".$cfg['bin_grep']." -v grep");
 	    $arScreen = array();
 	    $tok = strtok($screenStatus, "\n");
 	    while ($tok) {
@@ -476,7 +476,7 @@ class ClientHandler
 	function runningProcessInfo() {
 		global $cfg;
 	    // ps-string
-	    $screenStatus = shell_exec("ps x -o pid='' -o ppid='' -o command='' -ww | ".$cfg['bin_grep']." ". $this->binClient ." | ".$cfg['bin_grep']." ".$cfg["transfer_file_path"]." | ".$cfg['bin_grep']." -v grep");
+	    $screenStatus = shell_exec("ps x -o pid='' -o ppid='' -o command='' -ww | ".$cfg['bin_grep']." ".tfb_shellencode($this->binClient)." | ".$cfg['bin_grep']." ".tfb_shellencode($cfg["transfer_file_path"])." | ".$cfg['bin_grep']." -v grep");
 	    $arScreen = array();
 	    $tok = strtok($screenStatus, "\n");
 	    while ($tok) {

@@ -354,7 +354,7 @@ class FluAzu
             	return false;
 			}
 			// start it
-            $startCommand = "cd ".$cfg["docroot"]."bin/clients/fluazu/ ; HOME=".$cfg["path"].";";
+            $startCommand = "cd ".tfb_shellencode($cfg["docroot"]."bin/clients/fluazu/")."; HOME=".tfb_shellencode($cfg["path"]).";";
             $startCommand .= " export HOME;";
             $startCommand .= " nohup";
             $startCommand .= " ".$cfg["pythonCmd"]." -OO";

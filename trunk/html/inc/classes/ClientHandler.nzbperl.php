@@ -107,7 +107,7 @@ class ClientHandlerNzbperl extends ClientHandler
 		$this->command .= " nohup ";
 		$this->command .= $this->nice;
 		$this->command .= $cfg['perlCmd'];
-		$this->command .= " -I ".$cfg["docroot"]."bin/lib";
+		$this->command .= " -I ".tfb_shellencode($cfg["docroot"]."bin/lib");
 		$this->command .= " ".tfb_shellencode($this->nzbbin);
 		$this->command .= " --conn ".tfb_shellencode($cfg['nzbperl_conn']);
 		$this->command .= " --uudeview ".tfb_shellencode($cfg["bin_uudeview"]);
