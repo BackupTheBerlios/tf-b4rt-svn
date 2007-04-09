@@ -507,24 +507,13 @@ class Fluxd
      */
     function instance_modListPoll() {
     	if ($this->state == FLUXD_STATE_RUNNING) {
-			$modsAry = explode(FLUXD_DELIM_MOD, trim($this->instance_sendCommand('modlist', 1)), 6);
-			return array(
-				substr($modsAry[0], 0, -2) => substr($modsAry[0], -1),
-				substr($modsAry[1], 0, -2) => substr($modsAry[1], -1),
-				substr($modsAry[2], 0, -2) => substr($modsAry[2], -1),
-				substr($modsAry[3], 0, -2) => substr($modsAry[3], -1),
-				substr($modsAry[4], 0, -2) => substr($modsAry[4], -1),
-				substr($modsAry[5], 0, -2) => substr($modsAry[5], -1)
-			);
+			$modsAry = explode(FLUXD_DELIM_MOD, trim($this->instance_sendCommand('modlist', 1)));
+			$retVal = array();
+			foreach ($modsAry as $mod)
+				$retVal[substr($mod, 0, -2)] = substr($mod, -1);
+			return $retVal;
     	} else {
-			return array(
-				'Fluxinet' => 0,
-				'Qmgr' => 0,
-				'Rssad' => 0,
-				'Watch' => 0,
-				'Maintenance' => 0,
-				'Trigger' => 0
-			);
+    		return FluxdServiceMod::getServiceModList();
     	}
     }
 

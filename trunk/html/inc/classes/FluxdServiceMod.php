@@ -89,6 +89,22 @@ class FluxdServiceMod
     /**
      * initialize a Fluxd-Service-mod.
      *
+     * @return array
+     */
+    function getServiceModList() {
+		return array(
+			'Fluxinet'    => 0,
+			'Qmgr'        => 0,
+			'Rssad'       => 0,
+			'Watch'       => 0,
+			'Maintenance' => 0,
+			'Trigger'     => 0
+		);
+    }
+
+    /**
+     * initialize a Fluxd-Service-mod.
+     *
      * @param $type
      */
     function initializeServiceMod($type) {
