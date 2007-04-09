@@ -53,6 +53,7 @@ my $path_socket = "fluxd.sock";
 my $log_error = "fluxd-error.log";
 my $log = "fluxd.log";
 my $file_pid = "fluxd.pid";
+my $file_conf = "fluxd.conf";
 
 # defaults
 my $loglevel = 0;
@@ -78,32 +79,7 @@ my $loop = 1;
 my $fluxDB;
 
 # service-modules
-my %serviceModules = (
-	1 => {
-		name    => "Fluxinet",
-		timeout => 3
-	},
-	2 => {
-		name    => "Qmgr",
-		timeout => 20
-	},
-	3 => {
-		name    => "Rssad",
-		timeout => 20
-	},
-	4 => {
-		name    => "Watch",
-		timeout => 20
-	},
-	5 => {
-		name    => "Maintenance",
-		timeout => 20
-	},
-	6 => {
-		name    => "Trigger",
-		timeout => 20
-	}
-);
+our %serviceModules;
 my %serviceModuleObjects;
 
 ################################################################################
@@ -144,6 +120,12 @@ sub initialize {
 	($DIR=$0) =~ s/([^\/\\]*)$//;
 	($PROG=$1) =~ s/\.([^\.]*)$//;
 	$EXTENSION = $1;
+	# load fluxd-conf
+	eval 'require "'.$file_conf.'";';
+	if ($@) {
+		print STDERR "failed to load config-file ".$file_conf."\n";
+		exit;
+	}
 }
 
 #------------------------------------------------------------------------------#
