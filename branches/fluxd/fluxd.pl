@@ -80,6 +80,7 @@ my $fluxDB;
 
 # service-modules
 our %serviceModules;
+our %serviceModuleNames;
 my %serviceModuleObjects;
 
 ################################################################################
@@ -125,6 +126,10 @@ sub initialize {
 	if ($@) {
 		print STDERR "failed to load config-file ".$file_conf."\n";
 		exit;
+	}
+	# fill name-list
+	foreach my $smod (sort keys %serviceModules) {
+		$serviceModuleNames{$serviceModules{$smod}{"name"}} = 1;
 	}
 }
 
@@ -644,17 +649,9 @@ sub serviceModulesLoad {
 			push(@cmdmodlist, $serviceModules{$smod}{"name"});
 		}
 	}
-	my $cmdmodliststr = "No Modules Loaded";
-	my $modCount = scalar(@cmdmodlist);
-	if ($modCount > 0) {
-		$cmdmodliststr = "";
-		for (my $i = 0; $i < $modCount; $i++) {
-			if ($i > 0) {
-				$cmdmodliststr .= " ";
-			}
-			$cmdmodliststr .= $cmdmodlist[$i];
-		}
-	}
+	my $cmdmodliststr = (scalar(@cmdmodlist) > 0)
+		? join(" ", @cmdmodlist)
+		: "No service-modules loaded";
 	$0 = '[ fluxd running ('.$path_docroot.') ('.$cmdmodliststr.') ]';
 
 	# print
@@ -859,14 +856,15 @@ sub processRequest {
 			my $mod = $1;
 			my $command = $2;
 			$return = "";
-			if ($mod !~/Fluxinet|Qmgr|Rssad|Watch|Maintenance|Trigger/) {
-				$return = "Unknown Module";
-			} else {
+			if (exists $serviceModuleNames{$mod}) {
 				if ((exists $serviceModuleObjects{$mod}) &&
 					($serviceModuleObjects{$mod}->getState() == MOD_STATE_OK)) {
 					$return = $serviceModuleObjects{$mod}->command($command);
 				}
+			} else {
+				$return = "Unknown Module";
 			}
+			last SWITCH;
 		};
 		# Default case.
 		$return = printUsage(1);
@@ -887,13 +885,13 @@ sub set {
 	if ($variable =~/::/) {
 		# setting/getting package variable
 		my @pair = split(/::/, $variable);
-		if ($pair[0] !~/Fluxinet|Qmgr|Rssad|Watch|Maintenance|Trigger/) {
-			$return = "Unknown Module";
-		} else {
+		if (exists $serviceModuleNames{$pair[0]}) {
 			if ((exists $serviceModuleObjects{$pair[0]}) &&
 				($serviceModuleObjects{$pair[0]}->getState() == MOD_STATE_OK)) {
 				$return = $serviceModuleObjects{$pair[0]}-->set($pair[1], $value);
 			}
+		} else {
+			$return = "Unknown Module";
 		}
 	}
 	return $return;
