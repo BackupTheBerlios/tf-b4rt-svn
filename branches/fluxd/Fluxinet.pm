@@ -46,7 +46,7 @@ my $state = Fluxd::MOD_STATE_NULL;
 my $message = "";
 
 # loglevel
-my $loglevel = 2;
+my $loglevel = 0;
 
 # port
 my $port = 3150;
@@ -96,7 +96,7 @@ sub destroy {
 #------------------------------------------------------------------------------#
 # Sub: initialize. this is separated from constructor to call it independent   #
 #      from object-creation.                                                   #
-# Arguments: loglevel,port                                                     #
+# Arguments: null                                                              #
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub initialize {
@@ -104,7 +104,7 @@ sub initialize {
 	shift; # class
 
 	# loglevel
-	$loglevel = shift;
+	$loglevel = Fluxd::getLoglevel();
 	if (!(defined $loglevel)) {
 		# message
 		$message = "loglevel not defined";
@@ -115,7 +115,7 @@ sub initialize {
 	}
 
 	# $port
-	$port = shift;
+	$port = FluxDB->getFluxConfig("fluxd_Fluxinet_port");
 	if (!(defined $port)) {
 		# message
 		$message = "port not defined";

@@ -40,7 +40,7 @@ my $state = Fluxd::MOD_STATE_NULL;
 my $message = "";
 
 # loglevel
-my $loglevel = 2;
+my $loglevel = 0;
 
 # run-interval
 my $interval;
@@ -90,7 +90,7 @@ sub destroy {
 #------------------------------------------------------------------------------#
 # Sub: initialize. this is separated from constructor to call it independent   #
 #      from object-creation.                                                   #
-# Arguments: loglevel, data-dir, interval, jobs                                #
+# Arguments: null                                                              #
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub initialize {
@@ -98,7 +98,7 @@ sub initialize {
 	shift; # class
 
 	# loglevel
-	$loglevel = shift;
+	$loglevel = Fluxd::getLoglevel();
 	if (!(defined $loglevel)) {
 		# message
 		$message = "loglevel not defined";
@@ -109,7 +109,7 @@ sub initialize {
 	}
 
 	# data-dir
-	my $ddir = shift;
+	my $ddir = Fluxd::getPathDataDir();
 	if (!(defined $ddir)) {
 		# message
 		$message = "data-dir not defined";
@@ -134,7 +134,7 @@ sub initialize {
 	}
 
 	# interval
-	$interval = shift;
+	$interval = FluxDB->getFluxConfig("fluxd_Rssad_interval");
 	if (!(defined $interval)) {
 		# message
 		$message = "interval not defined";
@@ -145,7 +145,7 @@ sub initialize {
 	}
 
 	# jobs
-	my $jobs = shift;
+	my $jobs = FluxDB->getFluxConfig("fluxd_Rssad_jobs");
 	if (!(defined $jobs)) {
 		# message
 		$message = "jobs not defined";

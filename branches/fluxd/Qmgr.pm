@@ -40,7 +40,7 @@ my $state = Fluxd::MOD_STATE_NULL;
 my $message = "";
 
 # loglevel
-my $loglevel = 2;
+my $loglevel = 0;
 
 # run-interval
 my $interval;
@@ -126,7 +126,7 @@ sub destroy {
 #------------------------------------------------------------------------------#
 # Sub: initialize. this is separated from constructor to call it independent   #
 #      from object-creation.                                                   #
-# Arguments: loglevel,data-dir,transfers-dir,interval,limit-sys,limit-user     #
+# Arguments: null                                                              #
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub initialize {
@@ -134,7 +134,7 @@ sub initialize {
 	shift; # class
 
 	# loglevel
-	$loglevel = shift;
+	$loglevel = Fluxd::getLoglevel();
 	if (!(defined $loglevel)) {
 		# message
 		$message = "loglevel not defined";
@@ -145,7 +145,7 @@ sub initialize {
 	}
 
 	# data-dir
-	my $ddir = shift;
+	my $ddir = Fluxd::getPathDataDir();
 	if (!(defined $ddir)) {
 		# message
 		$message = "data-dir not defined";
@@ -172,7 +172,7 @@ sub initialize {
 	$fileQueue = $dataDir . $path_fileQueue;
 
 	# transfers-dir
-	$transfersDir = shift;
+	$transfersDir = Fluxd::getPathTransferDir();
 	if (!(defined $transfersDir)) {
 		# message
 		$message = "transfers-dir not defined";
@@ -191,7 +191,7 @@ sub initialize {
 	}
 
 	# interval
-	$interval = shift;
+	$interval = FluxDB->getFluxConfig("fluxd_Qmgr_interval");
 	if (!(defined $interval)) {
 		# message
 		$message = "interval not defined";
@@ -202,7 +202,7 @@ sub initialize {
 	}
 
 	# global-limit
-	my $limitGlobal = shift;
+	my $limitGlobal = FluxDB->getFluxConfig("fluxd_Qmgr_maxTotalTransfers");
 	if (!(defined $limitGlobal)) {
 		# message
 		$message = "global-limit not defined";
@@ -213,7 +213,7 @@ sub initialize {
 	}
 
 	# user-limit
-	my $limitUser = shift;
+	my $limitUser = FluxDB->getFluxConfig("fluxd_Qmgr_maxUserTransfers");
 	if (!(defined $limitUser)) {
 		# message
 		$message = "user-limit not defined";

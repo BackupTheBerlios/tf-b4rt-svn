@@ -55,7 +55,7 @@ my $log = "fluxd.log";
 my $file_pid = "fluxd.pid";
 
 # defaults
-my $loglevel = 2;
+my $loglevel = 0;
 my $path_docroot = "/var/www/";
 my $path_path = "/usr/local/torrentflux/";
 my $bin_php = "/usr/bin/php";
@@ -350,6 +350,9 @@ sub daemonize {
 		socketRemove();
 	}
 
+	# load perl-modules
+	loadModules();
+
 	# print
 	printMessage("CORE", "initialize FluxDB...\n");
 
@@ -371,9 +374,6 @@ sub daemonize {
 
 	# chdir
 	#chdir($path_docroot) or die "Can't chdir to docroot: $!";
-
-	# load perl-modules
-	loadModules();
 
 	# fork
 	if ($loglevel > 1) {
@@ -571,192 +571,36 @@ sub loadModules {
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub serviceModuleLoad {
-	$_ = shift;
-	if (exists $serviceModuleObjects{$_}) {
+	my $modName = shift;
+	if (exists $serviceModuleObjects{$modName}) {
 		return 1;
 	}
 	if ($loglevel > 1) {
-		printMessage("CORE", "loading service-module ".$_." ...\n");
+		printMessage("CORE", "loading service-module ".$modName." ...\n");
 	}
-	SWITCH: {
-		/Fluxinet/ && do {
-			if (eval "require Fluxinet") {
-				eval {
-					$serviceModuleObjects{"Fluxinet"} = Fluxinet->new();
-					$serviceModuleObjects{"Fluxinet"}->initialize(
-						$loglevel,
-						FluxDB->getFluxConfig("fluxd_Fluxinet_port")
-					);
-					if ($serviceModuleObjects{"Fluxinet"}->getState() != MOD_STATE_OK) {
-						my $msg = "error initializing service-module Fluxinet :\n";
-						$msg .= " ".$serviceModuleObjects{"Fluxinet"}->getMessage()."\n";
-						printError("CORE", $msg);
-					}
-				};
-				if ($@) {
-					printError("CORE", "error loading service-module Fluxinet : $@\n");
-				} else {
-					# everything ok
-					if ($loglevel > 0) {
-						printMessage("CORE", "Fluxinet loaded\n");
-					}
-					return 1;
-				}
-			} else {
-				printError("CORE", "error loading service-module Fluxinet : $@\n");
+	# create and initialize
+	if (eval "require ".$modName) {
+		eval {
+			$serviceModuleObjects{$modName} = eval $modName."->new();";
+			$serviceModuleObjects{$modName}->initialize();
+			if ($serviceModuleObjects{$modName}->getState() != MOD_STATE_OK) {
+				my $msg = "error initializing service-module ".$modName." :\n";
+				$msg .= " ".$serviceModuleObjects{$modName}->getMessage()."\n";
+				printError("CORE", $msg);
 			}
-			last SWITCH;
 		};
-		/Qmgr/ && do {
-			if (eval "require Qmgr") {
-				eval {
-					$serviceModuleObjects{"Qmgr"} = Qmgr->new();
-					$serviceModuleObjects{"Qmgr"}->initialize(
-						$loglevel,
-						$path_data_dir,
-						$path_transfer_dir,
-						FluxDB->getFluxConfig("fluxd_Qmgr_interval"),
-						FluxDB->getFluxConfig("fluxd_Qmgr_maxTotalTransfers"),
-						FluxDB->getFluxConfig("fluxd_Qmgr_maxUserTransfers")
-					);
-					if ($serviceModuleObjects{"Qmgr"}->getState() != MOD_STATE_OK) {
-						my $msg = "error initializing service-module Qmgr :\n";
-						$msg .= " ".$serviceModuleObjects{"Qmgr"}->getMessage()."\n";
-						printError("CORE", $msg);
-					}
-				};
-				if ($@) {
-					printError("CORE", "error loading service-module Qmgr : $@\n");
-				} else {
-					# everything ok
-					if ($loglevel > 0) {
-						printMessage("CORE", "Qmgr loaded\n");
-					}
-					return 1;
-				}
-			} else {
-				printError("CORE", "error loading service-module Qmgr : $@\n");
+		if ($@) {
+			printError("CORE", "error loading service-module ".$modName." : ".$@."\n");
+		} else {
+			# everything ok
+			if ($loglevel > 0) {
+				printMessage("CORE", $modName." loaded\n");
 			}
-			last SWITCH;
-		};
-		/Rssad/ && do {
-			if (eval "require Rssad") {
-				eval {
-					$serviceModuleObjects{"Rssad"} = Rssad->new();
-					$serviceModuleObjects{"Rssad"}->initialize(
-						$loglevel,
-						$path_data_dir,
-						FluxDB->getFluxConfig("fluxd_Rssad_interval"),
-						FluxDB->getFluxConfig("fluxd_Rssad_jobs")
-					);
-					if ($serviceModuleObjects{"Rssad"}->getState() != MOD_STATE_OK) {
-						my $msg = "error initializing service-module Rssad :\n";
-						$msg .= " ".$serviceModuleObjects{"Rssad"}->getMessage()."\n";
-						printError("CORE", $msg);
-					}
-				};
-				if ($@) {
-					printError("CORE", "error loading service-module Rssad : $@\n");
-				} else {
-					# everything ok
-					if ($loglevel > 0) {
-						printMessage("CORE", "Rssad loaded\n");
-					}
-					return 1;
-				}
-			} else {
-				printError("CORE", "error loading service-module Rssad : $@\n");
-			}
-			last SWITCH;
-		};
-		/Watch/ && do {
-			if (eval "require Watch") {
-				eval {
-					$serviceModuleObjects{"Watch"} = Watch->new();
-					$serviceModuleObjects{"Watch"}->initialize(
-						$loglevel,
-						FluxDB->getFluxConfig("fluxd_Watch_interval"),
-						FluxDB->getFluxConfig("fluxd_Watch_jobs")
-					);
-					if ($serviceModuleObjects{"Watch"}->getState() != MOD_STATE_OK) {
-						my $msg = "error initializing service-module Watch :\n";
-						$msg .= " ".$serviceModuleObjects{"Watch"}->getMessage()."\n";
-						printError("CORE", $msg);
-					}
-				};
-				if ($@) {
-					printError("CORE", "error loading service-module Watch : $@\n");
-				} else {
-					# everything ok
-					if ($loglevel > 0) {
-						printMessage("CORE", "Watch loaded\n");
-					}
-					return 1;
-				}
-			} else {
-				printError("CORE", "error loading service-module Watch : $@\n");
-			}
-			last SWITCH;
-		};
-		/Maintenance/ && do {
-			if (eval "require Maintenance") {
-				eval {
-					$serviceModuleObjects{"Maintenance"} = Maintenance->new();
-					$serviceModuleObjects{"Maintenance"}->initialize(
-						$loglevel,
-						FluxDB->getFluxConfig("fluxd_Maintenance_interval"),
-						FluxDB->getFluxConfig("fluxd_Maintenance_trestart")
-					);
-					if ($serviceModuleObjects{"Maintenance"}->getState() != MOD_STATE_OK) {
-						my $msg = "error initializing service-module Maintenance :\n";
-						$msg .= " ".$serviceModuleObjects{"Maintenance"}->getMessage()."\n";
-						printError("CORE", $msg);
-					}
-				};
-				if ($@) {
-					printError("CORE", "error loading service-module Maintenance : $@\n");
-				} else {
-					# everything ok
-					if ($loglevel > 0) {
-						printMessage("CORE", "Maintenance loaded\n");
-					}
-					return 1;
-				}
-			} else {
-				printError("CORE", "error loading service-module Maintenance : $@\n");
-			}
-			last SWITCH;
-		};
-		/Trigger/ && do {
-			if (eval "require Trigger") {
-				eval {
-					$serviceModuleObjects{"Trigger"} = Trigger->new();
-					$serviceModuleObjects{"Trigger"}->initialize(
-						$loglevel,
-						FluxDB->getFluxConfig("fluxd_Trigger_interval")
-					);
-					if ($serviceModuleObjects{"Trigger"}->getState() != MOD_STATE_OK) {
-						my $msg = "error initializing service-module Trigger :\n";
-						$msg .= " ".$serviceModuleObjects{"Trigger"}->getMessage()."\n";
-						printError("CORE", $msg);
-					}
-				};
-				if ($@) {
-					printError("CORE", "error loading service-module Trigger : $@\n");
-				} else {
-					# everything ok
-					if ($loglevel > 0) {
-						printMessage("CORE", "Trigger loaded\n");
-					}
-					return 1;
-				}
-			} else {
-				printError("CORE", "error loading service-module Trigger : $@\n");
-			}
-			last SWITCH;
-		};
+			return 1;
+		}
+	} else {
+		printError("CORE", "error loading service-module ".$modName." : ".$@."\n");
 	}
-	return 0;
 }
 
 #------------------------------------------------------------------------------#
@@ -765,22 +609,22 @@ sub serviceModuleLoad {
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub serviceModuleUnload {
-	$_ = shift;
-	if (exists $serviceModuleObjects{$_}) {
+	my $modName = shift;
+	if (exists $serviceModuleObjects{$modName}) {
 		if ($loglevel > 1) {
-			printMessage("CORE", "unloading service-module ".$_." ...\n");
+			printMessage("CORE", "unloading service-module ".$modName." ...\n");
 		}
 		eval {
-			$serviceModuleObjects{$_}->destroy();
-			delete($serviceModuleObjects{$_});
+			$serviceModuleObjects{$modName}->destroy();
+			delete($serviceModuleObjects{$modName});
 		};
 		if ($@) {
-			printError("CORE", "error unloading service-module ".$_." : ".$@."\n");
+			printError("CORE", "error unloading service-module ".$modName." : ".$@."\n");
 			return 0;
 		} else {
 			# everything ok
 			if ($loglevel > 0) {
-				printMessage("CORE", $_." unloaded\n");
+				printMessage("CORE", $modName." unloaded\n");
 			}
 		}
 	}
@@ -893,9 +737,9 @@ sub serviceModuleList {
 # Returns: state of service-module                                             #
 #------------------------------------------------------------------------------#
 sub serviceModuleState {
-	$_ = shift;
-	if (exists $serviceModuleObjects{$_}) {
-		return $serviceModuleObjects{$_}->getState();
+	my $modName = shift;
+	if (exists $serviceModuleObjects{$modName}) {
+		return $serviceModuleObjects{$modName}->getState();
 	} else {
 		return MOD_STATE_NULL;
 	}
@@ -1507,6 +1351,33 @@ sub debug {
 	# bail out
 	printMessage("CORE", "debug is missing an operation.\n");
 	exit;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: getLoglevel                                                             #
+# Arguments: null                                                              #
+# Returns: loglevel-int                                                        #
+#------------------------------------------------------------------------------#
+sub getLoglevel {
+	return $loglevel;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: getPathDataDir                                                          #
+# Arguments: null                                                              #
+# Returns: path-string                                                         #
+#------------------------------------------------------------------------------#
+sub getPathDataDir {
+	return $path_data_dir;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: getPathTransferDir                                                      #
+# Arguments: null                                                              #
+# Returns: path-string                                                         #
+#------------------------------------------------------------------------------#
+sub getPathTransferDir {
+	return $path_transfer_dir;
 }
 
 #------------------------------------------------------------------------------#

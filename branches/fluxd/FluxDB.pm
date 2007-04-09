@@ -48,7 +48,7 @@ my $state = Fluxd::MOD_STATE_NULL;
 my $message = "";
 
 # loglevel
-my $loglevel = 2;
+my $loglevel = 0;
 
 # operation-mode : dbi / php
 my $mode = "dbi";
