@@ -61,7 +61,6 @@ my $path_docroot = "/var/www/";
 my $path_path = "/usr/local/torrentflux/";
 my $bin_php = "/usr/bin/php";
 my $dbMode = "dbi";
-my $pwd = ".";
 
 # delims of modList
 my $delimMod = ";";
@@ -377,12 +376,8 @@ sub daemonize {
 		exit;
 	}
 
-	# get cwd
-	$pwd = qx(pwd);
-	chop $pwd;
-
 	# log
-	printMessage("CORE", "daemon starting with docroot ".$path_docroot." (pid: ".$$." ; pwd: ".$pwd.")\n");
+	printMessage("CORE", "daemon starting with docroot ".$path_docroot." (pid: ".$$.")\n");
 
 	# set up our signal handlers
 	if ($loglevel > 1) {
@@ -1070,7 +1065,7 @@ sub status {
 	$head .= "socket : ".$path_socket."\n";
 	$head .= "transfers-dir : ".$path_transfer_dir."\n";
 	$head .= "docroot : ".$path_docroot."\n";
-	$head .= "fluxcli : ".$pwd."/bin/".$bin_fluxcli."\n";
+	$head .= "fluxcli : ".$path_docroot."/bin/".$bin_fluxcli."\n";
 	$head .= "php : ".$bin_php."\n";
 	$head .= "db-mode : ".$dbMode."\n";
 	$head .= "loglevel : ".$loglevel."\n";
