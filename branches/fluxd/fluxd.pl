@@ -80,27 +80,27 @@ my $fluxDB;
 # service-modules
 my %serviceModules = (
 	1 => {
-		name => "Fluxinet",
+		name    => "Fluxinet",
 		timeout => 3
 	},
 	2 => {
-		name => "Qmgr",
+		name    => "Qmgr",
 		timeout => 20
 	},
 	3 => {
-		name => "Rssad",
+		name    => "Rssad",
 		timeout => 20
 	},
 	4 => {
-		name => "Watch",
+		name    => "Watch",
 		timeout => 20
 	},
 	5 => {
-		name => "Maintenance",
+		name    => "Maintenance",
 		timeout => 20
 	},
 	6 => {
-		name => "Trigger",
+		name    => "Trigger",
 		timeout => 20
 	}
 );
@@ -929,7 +929,7 @@ sub fluxcli {
 	my $Arg3 = shift;
 	my $Arg4 = shift;
 	# qx
-	if ($Command =~/^torrents|^netstat/) {
+	if ($Command =~/^transfers|^netstat/) {
 		if ((defined $Arg1) || (defined $Arg2)) {
 			return printUsage();
 		} else {
@@ -1128,47 +1128,15 @@ sub printVersion {
 	} else {
 		print "cant load module\n";
 	}
-	# Fluxinet
-	print "Fluxinet Version : ";
-	if (eval "require Fluxinet") {
-		print Fluxinet->getVersion()."\n";
-	} else {
-		print "cant load module\n";
-	}
-	# Qmgr
-	print "Qmgr Version : ";
-	if (eval "require Qmgr") {
-		print Qmgr->getVersion()."\n";
-	} else {
-		print "cant load module\n";
-	}
-	# Rssad
-	print "Rssad Version : ";
-	if (eval "require Rssad") {
-		print Rssad->getVersion()."\n";
-	} else {
-		print "cant load module\n";
-	}
-	# Watch
-	print "Watch Version : ";
-	if (eval "require Watch") {
-		print Watch->getVersion()."\n";
-	} else {
-		print "cant load module\n";
-	}
-	# Maintenance
-	print "Maintenance Version : ";
-	if (eval "require Maintenance") {
-		print Maintenance->getVersion()."\n";
-	} else {
-		print "cant load module\n";
-	}
-	# Trigger
-	print "Trigger Version : ";
-	if (eval "require Trigger") {
-		print Trigger->getVersion()."\n";
-	} else {
-		print "cant load module\n";
+	# service-mods
+	foreach my $smod (sort keys %serviceModules) {
+		print $serviceModules{$smod}{"name"}." Version : ";
+		if (eval "require ".$serviceModules{$smod}{"name"}) {
+			my $modversion =  eval $serviceModules{$smod}{"name"}."->getVersion();";
+			print $modversion."\n";
+		} else {
+			print "cant load module\n";
+		}
 	}
 }
 
