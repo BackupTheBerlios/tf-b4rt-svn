@@ -29,6 +29,9 @@ define('FLUXD_STATE_ERROR', -1);                                        // error
 define('FLUXD_DELIM_MOD', ';');
 define('FLUXD_DELIM_STATE', ':');
 
+// config
+require_once('inc/config/config.fluxd.php');
+
 /**
  * class Fluxd for integration of fluxd
  */
@@ -506,15 +509,17 @@ class Fluxd
      * @return array with mod-list
      */
     function instance_modListPoll() {
+    	$retVal = array();
     	if ($this->state == FLUXD_STATE_RUNNING) {
 			$modsAry = explode(FLUXD_DELIM_MOD, trim($this->instance_sendCommand('modlist', 1)));
-			$retVal = array();
 			foreach ($modsAry as $mod)
 				$retVal[substr($mod, 0, -2)] = substr($mod, -1);
-			return $retVal;
     	} else {
-    		return FluxdServiceMod::getServiceModList();
+    		global $cfg;
+			foreach ($cfg['fluxdServiceModList'] as $mod)
+				$retVal[$mod] = 0;
     	}
+    	return $retVal;
     }
 
     /**
