@@ -415,7 +415,7 @@ sub getDatabaseDSN {
 sub getFluxConfig {
 	shift; # class
 	my $key = shift;
-	return $fluxConf{$key};
+	return (exists $fluxConf{$key}) ? $fluxConf{$key} : "";
 }
 
 #------------------------------------------------------------------------------#
