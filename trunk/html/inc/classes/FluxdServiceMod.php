@@ -92,32 +92,11 @@ class FluxdServiceMod
      * @param $type
      */
     function initializeServiceMod($type) {
-        switch ($type) {
-            case "Qmgr":
-            	require_once('inc/classes/FluxdServiceMod.Qmgr.php');
-            	FluxdQmgr::initialize();
-            	return;
-            case "Fluxinet":
-            	require_once('inc/classes/FluxdServiceMod.Fluxinet.php');
-                FluxdFluxinet::initialize();
-                return;
-            case "Watch":
-            	require_once('inc/classes/FluxdServiceMod.Watch.php');
-                FluxdWatch::initialize();
-                return;
-            case "Rssad":
-            	require_once('inc/classes/FluxdServiceMod.Rssad.php');
-                FluxdRssad::initialize();
-                return;
-            case "Trigger":
-            	require_once('inc/classes/FluxdServiceMod.Trigger.php');
-                FluxdTrigger::initialize();
-                return;
-            case "Maintenance":
-            	require_once('inc/classes/FluxdServiceMod.Maintenance.php');
-                FluxdMaintenance::initialize();
-                return;
-        }
+    	global $cfg;
+    	if (in_array($type, $cfg['fluxdServiceModList'])) {
+			require_once('inc/classes/FluxdServiceMod.'.$type.'.php');
+			eval('Fluxd'.$type.'::initialize();');
+    	}
     }
 
 	// =========================================================================
