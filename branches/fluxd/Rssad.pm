@@ -40,7 +40,7 @@ my $state = Fluxd::MOD_STATE_NULL;
 my $message = "";
 
 # loglevel
-my $LOGLEVEL = 2;
+my $loglevel = 2;
 
 # run-interval
 my $interval;
@@ -98,8 +98,8 @@ sub initialize {
 	shift; # class
 
 	# loglevel
-	$LOGLEVEL = shift;
-	if (!(defined $LOGLEVEL)) {
+	$loglevel = shift;
+	if (!(defined $loglevel)) {
 		# message
 		$message = "loglevel not defined";
 		# set state
@@ -155,7 +155,7 @@ sub initialize {
 		return 0;
 	}
 
-	Fluxd::printMessage("Rssad", "initializing (loglevel: ".$LOGLEVEL." ; data-dir: ".$dataDir." ; interval: ".$interval." ; jobs: ".$jobs.")\n");
+	Fluxd::printMessage("Rssad", "initializing (loglevel: ".$loglevel." ; data-dir: ".$dataDir." ; interval: ".$interval." ; jobs: ".$jobs.")\n");
 
 	# parse jobs
 	# job1|job2|job3
@@ -171,7 +171,7 @@ sub initialize {
 		my $filter = shift @jobAry;
 		chomp $filter;
 		# job-entry
-		if ($LOGLEVEL > 1) {
+		if ($loglevel > 1) {
 			Fluxd::printMessage("Rssad", "job : savedir=".$savedir.", url=".$url.", filter=".$filter."\n");
 		}
 		# add to jobs-array
@@ -242,7 +242,7 @@ sub main {
 		# exec tfrss-jobs
 		my $jobCount = scalar(@jobs);
 		for (my $i = 0; $i < $jobCount; $i++) {
-			if ($LOGLEVEL > 1) {
+			if ($loglevel > 1) {
 				my $msg = "executing job :\n";
 				$msg .= " savedir: ".$jobs[$i]{"savedir"}."\n";
 				$msg .= " filter: ".$dataDir.$jobs[$i]{"filter"}."\n";

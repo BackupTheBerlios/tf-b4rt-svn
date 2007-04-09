@@ -40,7 +40,7 @@ my $state = Fluxd::MOD_STATE_NULL;
 my $message = "";
 
 # loglevel
-my $LOGLEVEL = 2;
+my $loglevel = 2;
 
 # run-interval
 my $interval;
@@ -93,8 +93,8 @@ sub initialize {
 	shift; # class
 
 	# loglevel
-	$LOGLEVEL = shift;
-	if (!(defined $LOGLEVEL)) {
+	$loglevel = shift;
+	if (!(defined $loglevel)) {
 		# message
 		$message = "loglevel not defined";
 		# set state
@@ -126,7 +126,7 @@ sub initialize {
 	}
 
 	# print
-	Fluxd::printMessage("Maintenance", "initializing (loglevel: ".$LOGLEVEL." ; interval: ".$interval." ; trestart: ".$trestart.")\n");
+	Fluxd::printMessage("Maintenance", "initializing (loglevel: ".$loglevel." ; interval: ".$interval." ; trestart: ".$trestart.")\n");
 
 	# reset last run time
 	$time_last_run = time();
@@ -183,7 +183,7 @@ sub main {
 	if ((time() - $time_last_run) >= $interval) {
 
 		# print
-		if ($LOGLEVEL > 1) {
+		if ($loglevel > 1) {
 			Fluxd::printMessage("Maintenance", "executing maintenance (trestart: ".$trestart."):\n");
 		}
 

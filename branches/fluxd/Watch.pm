@@ -40,7 +40,7 @@ my $state = Fluxd::MOD_STATE_NULL;
 my $message = "";
 
 # loglevel
-my $LOGLEVEL = 2;
+my $loglevel = 2;
 
 # run-interval
 my $interval;
@@ -95,8 +95,8 @@ sub initialize {
 	shift; # class
 
 	# loglevel
-	$LOGLEVEL = shift;
-	if (!(defined $LOGLEVEL)) {
+	$loglevel = shift;
+	if (!(defined $loglevel)) {
 		# message
 		$message = "loglevel not defined";
 		# set state
@@ -127,7 +127,7 @@ sub initialize {
 		return 0;
 	}
 
-	Fluxd::printMessage("Watch", "initializing (loglevel: ".$LOGLEVEL." ; interval: ".$interval." ; jobs: ".$jobs.")\n");
+	Fluxd::printMessage("Watch", "initializing (loglevel: ".$loglevel." ; interval: ".$interval." ; jobs: ".$jobs.")\n");
 
 	# parse jobs
 	my (@jobsAry) = split(/;/,$jobs);
@@ -139,7 +139,7 @@ sub initialize {
 		my $dir = shift @jobAry;
 		chomp $dir;
 		if ((!($user eq "")) && (-d $dir)) {
-			if ($LOGLEVEL > 1) {
+			if ($loglevel > 1) {
 				Fluxd::printMessage("Watch", "job : user=".$user.", dir=".$dir."\n");
 			}
 			$jobs{$user} = $dir;
@@ -204,7 +204,7 @@ sub main {
 		foreach my $user (sort keys %jobs) {
 			my $dir = $jobs{$user};
 			if ((!($user eq "")) && (-d $dir)) {
-				if ($LOGLEVEL > 1) {
+				if ($loglevel > 1) {
 					my $msg = "executing job :\n";
 					$msg .= " user: ".$user."\n";
 					$msg .= " dir: ".$dir."\n";

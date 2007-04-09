@@ -40,7 +40,7 @@ my $state = Fluxd::MOD_STATE_NULL;
 my $message = "";
 
 # loglevel
-my $LOGLEVEL = 2;
+my $loglevel = 2;
 
 # run-interval
 my $interval;
@@ -90,8 +90,8 @@ sub initialize {
 	shift; # class
 
 	# loglevel
-	$LOGLEVEL = shift;
-	if (!(defined $LOGLEVEL)) {
+	$loglevel = shift;
+	if (!(defined $loglevel)) {
 		# message
 		$message = "loglevel not defined";
 		# set state
@@ -111,7 +111,7 @@ sub initialize {
 		return 0;
 	}
 
-	Fluxd::printMessage("Trigger", "initializing (loglevel: ".$LOGLEVEL." ; interval: ".$interval.")\n");
+	Fluxd::printMessage("Trigger", "initializing (loglevel: ".$loglevel." ; interval: ".$interval.")\n");
 
 	# reset last run time
 	$time_last_run = time();

@@ -46,19 +46,19 @@ use constant MOD_STATE_NULL => 0;
 use constant MOD_STATE_OK => 1;
 
 # files and dirs
-my $PATH_DATA_DIR = ".fluxd";
-my $PATH_TRANSFER_DIR = ".transfers";
-my $BIN_FLUXCLI = "fluxcli.php";
-my $PATH_SOCKET = "fluxd.sock";
-my $ERROR_LOG = "fluxd-error.log";
-my $LOG = "fluxd.log";
-my $PID_FILE = "fluxd.pid";
+my $path_data_dir = ".fluxd";
+my $path_transfer_dir = ".transfers";
+my $bin_fluxcli = "fluxcli.php";
+my $path_socket = "fluxd.sock";
+my $log_error = "fluxd-error.log";
+my $log = "fluxd.log";
+my $file_pid = "fluxd.pid";
 
 # defaults
-my $LOGLEVEL = 2;
-my $PATH_DOCROOT = "/var/www/";
-my $PATH_PATH = "/usr/local/torrentflux/";
-my $BIN_PHP = "/usr/bin/php";
+my $loglevel = 2;
+my $path_docroot = "/var/www/";
+my $path_path = "/usr/local/torrentflux/";
+my $bin_php = "/usr/bin/php";
 my $dbMode = "dbi";
 my $pwd = ".";
 
@@ -68,8 +68,8 @@ my $delimState = ":";
 
 # internal vars
 my ($VERSION, $DIR, $PROG, $EXTENSION);
-my $SERVER;
-my $Select;
+my $server;
+my $select;
 my $start_time = time();
 my $start_time_local = localtime();
 my $loop = 1;
@@ -180,7 +180,7 @@ sub processArguments {
 	};
 	# daemon-stop
 	if ($temp =~ /stop/) {
-		# $PATH_DOCROOT
+		# path_docroot
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
 			printUsage();
@@ -189,8 +189,8 @@ sub processArguments {
 		if (!((substr $temp, -1) eq "/")) {
 			$temp .= "/";
 		}
-		$PATH_DOCROOT = $temp;
-		# PATH_PATH
+		$path_docroot = $temp;
+		# path_path
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
 			printUsage();
@@ -199,15 +199,15 @@ sub processArguments {
 		if (!((substr $temp, -1) eq "/")) {
 			$temp .= "/";
 		}
-		$PATH_PATH = $temp;
-		# $BIN_PHP
+		$path_path = $temp;
+		# bin_php
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
 			printUsage();
 			exit;
 		}
-		$BIN_PHP = $temp;
-		# $dbMode
+		$bin_php = $temp;
+		# dbMode
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
 			printUsage();
@@ -217,29 +217,29 @@ sub processArguments {
 		# init paths
 		initPaths();
 		# check if running
-		if (daemonIsRunning($PATH_DOCROOT) == 0) {
+		if (daemonIsRunning($path_docroot) == 0) {
 			printError("CORE", "daemon not running.\n");
 			exit;
 		}
 		printMessage("CORE", "Stopping daemon...\n");
 		# shutdown
-		if (-f $PID_FILE) {
+		if (-f $file_pid) {
 			# get pid
-			open(PIDFILE,"< $PID_FILE");
+			open(PIDFILE,"< $file_pid");
 			my $daemonPid = <PIDFILE>;
 			close(PIDFILE);
 			chomp $daemonPid;
 			# send TERM to daemon
 			kill 'SIGTERM', $daemonPid;
 		} else {
-			printError("CORE", "Error : cant find pid-file (".$PID_FILE."), daemon running ?\n");
+			printError("CORE", "Error : cant find pid-file (".$file_pid."), daemon running ?\n");
 		}
 		# exit
 		exit;
 	};
 	# start
 	if ($temp =~ /start/) {
-		# $PATH_DOCROOT
+		# path_docroot
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
 			printUsage();
@@ -248,8 +248,8 @@ sub processArguments {
 		if (!((substr $temp, -1) eq "/")) {
 			$temp .= "/";
 		}
-		$PATH_DOCROOT = $temp;
-		# PATH_PATH
+		$path_docroot = $temp;
+		# path_path
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
 			printUsage();
@@ -258,15 +258,15 @@ sub processArguments {
 		if (!((substr $temp, -1) eq "/")) {
 			$temp .= "/";
 		}
-		$PATH_PATH = $temp;
-		# $BIN_PHP
+		$path_path = $temp;
+		# bin_php
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
 			printUsage();
 			exit;
 		}
-		$BIN_PHP = $temp;
-		# $dbMode
+		$bin_php = $temp;
+		# dbMode
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
 			printUsage();
@@ -322,31 +322,31 @@ sub daemonize {
 		exit;
 	}
 	# STDOUT
-	unless (open STDOUT, ">>$LOG") {
+	unless (open STDOUT, ">>$log") {
 		logError("CORE", "failed to open STDOUT: ".$!."\n");
 		exit;
 	}
 	# STDERR
-	unless (open STDERR, ">>$ERROR_LOG") {
+	unless (open STDERR, ">>$log_error") {
 		logError("CORE", "failed to open STDERR: ".$!."\n");
 		exit;
 	}
 
 	# check if already running
-	if (daemonIsRunning($PATH_DOCROOT) == 1) {
+	if (daemonIsRunning($path_docroot) == 1) {
 		printError("CORE", "daemon already running.\n");
 		exit;
 	}
 
 	# check for pid-file
-	if (-f $PID_FILE) {
-		printMessage("CORE", "pid-file (".$PID_FILE.") exists but daemon not running. deleting...\n");
+	if (-f $file_pid) {
+		printMessage("CORE", "pid-file (".$file_pid.") exists but daemon not running. deleting...\n");
 		pidFileDelete();
 	}
 
 	# check for socket
-	if (-r $PATH_SOCKET) {
-		printMessage("CORE", "socket (".$PATH_SOCKET.") exists but daemon not running. deleting...\n");
+	if (-r $path_socket) {
+		printMessage("CORE", "socket (".$path_socket.") exists but daemon not running. deleting...\n");
 		socketRemove();
 	}
 
@@ -360,23 +360,23 @@ sub daemonize {
 	$fluxDB = FluxDB->new();
 
 	# initialize
-	$fluxDB->initialize($PATH_DOCROOT, $BIN_PHP, $dbMode);
+	$fluxDB->initialize($path_docroot, $bin_php, $dbMode);
 	if ($fluxDB->getState() != MOD_STATE_OK) {
 		printError("CORE", "Error : initializing FluxDB : ".$fluxDB->getMessage()."\n");
 		exit;
 	}
 
 	# loglevel
-	$LOGLEVEL = FluxDB->getFluxConfig("fluxd_loglevel");
+	$loglevel = FluxDB->getFluxConfig("fluxd_loglevel");
 
 	# chdir
-	#chdir($PATH_DOCROOT) or die "Can't chdir to docroot: $!";
+	#chdir($path_docroot) or die "Can't chdir to docroot: $!";
 
 	# load perl-modules
 	loadModules();
 
 	# fork
-	if ($LOGLEVEL > 1) {
+	if ($loglevel > 1) {
 		printMessage("CORE", "forking and starting a new session...\n");
 	}
 	my $pid = fork;
@@ -395,10 +395,10 @@ sub daemonize {
 	chop $pwd;
 
 	# log
-	printMessage("CORE", "daemon starting with docroot ".$PATH_DOCROOT." (pid: ".$$." ; pwd: ".$pwd.")\n");
+	printMessage("CORE", "daemon starting with docroot ".$path_docroot." (pid: ".$$." ; pwd: ".$pwd.")\n");
 
 	# set up our signal handlers
-	if ($LOGLEVEL > 1) {
+	if ($loglevel > 1) {
 		printMessage("CORE", "setting up signal handlers...\n");
 	}
 	$SIG{HUP} = \&gotSigHup;
@@ -507,15 +507,15 @@ sub daemonIsRunning {
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
 sub initPaths {
-	$PATH_TRANSFER_DIR = $PATH_PATH.$PATH_TRANSFER_DIR."/";
-	$PATH_DATA_DIR = $PATH_PATH.$PATH_DATA_DIR."/";
-	$PATH_SOCKET = $PATH_DATA_DIR.$PATH_SOCKET;
-	$LOG = $PATH_DATA_DIR.$LOG;
-	$ERROR_LOG = $PATH_DATA_DIR.$ERROR_LOG;
-	$PID_FILE = $PATH_DATA_DIR.$PID_FILE;
+	$path_transfer_dir = $path_path.$path_transfer_dir."/";
+	$path_data_dir = $path_path.$path_data_dir."/";
+	$path_socket = $path_data_dir.$path_socket;
+	$log = $path_data_dir.$log;
+	$log_error = $path_data_dir.$log_error;
+	$file_pid = $path_data_dir.$file_pid;
 	# check if our main-dir exists. try to create if it doesnt
-	if (! -d $PATH_DATA_DIR) {
-		mkdir($PATH_DATA_DIR, 0700);
+	if (! -d $path_data_dir) {
+		mkdir($path_data_dir, 0700);
 	}
 }
 
@@ -526,11 +526,11 @@ sub initPaths {
 #------------------------------------------------------------------------------#
 sub loadModules {
 	# print
-	if ($LOGLEVEL > 1) {
+	if ($loglevel > 1) {
 		printMessage("CORE", "loading Perl-modules...\n");
 	}
 	# load IO::Socket::UNIX
-	if ($LOGLEVEL > 2) {
+	if ($loglevel > 2) {
 		printMessage("CORE", "loading Perl-module IO::Socket::UNIX\n");
 	}
 	if (eval "require IO::Socket::UNIX")  {
@@ -540,7 +540,7 @@ sub loadModules {
 		exit;
 	}
 	# load IO::Select
-	if ($LOGLEVEL > 2) {
+	if ($loglevel > 2) {
 		printMessage("CORE", "loading Perl-module IO::Select\n");
 	}
 	if (eval "require IO::Select")  {
@@ -550,7 +550,7 @@ sub loadModules {
 		exit;
 	}
 	# load POSIX
-	if ($LOGLEVEL > 2) {
+	if ($loglevel > 2) {
 		printMessage("CORE", "loading Perl-module POSIX\n");
 	}
 	if (eval "require POSIX")  {
@@ -560,7 +560,7 @@ sub loadModules {
 		exit;
 	}
 	# print
-	if ($LOGLEVEL > 1) {
+	if ($loglevel > 1) {
 		printMessage("CORE", "Perl-modules loaded.\n");
 	}
 }
@@ -575,7 +575,7 @@ sub serviceModuleLoad {
 	if (exists $serviceModuleObjects{$_}) {
 		return 1;
 	}
-	if ($LOGLEVEL > 1) {
+	if ($loglevel > 1) {
 		printMessage("CORE", "loading service-module ".$_." ...\n");
 	}
 	SWITCH: {
@@ -584,7 +584,7 @@ sub serviceModuleLoad {
 				eval {
 					$serviceModuleObjects{"Fluxinet"} = Fluxinet->new();
 					$serviceModuleObjects{"Fluxinet"}->initialize(
-						$LOGLEVEL,
+						$loglevel,
 						FluxDB->getFluxConfig("fluxd_Fluxinet_port")
 					);
 					if ($serviceModuleObjects{"Fluxinet"}->getState() != MOD_STATE_OK) {
@@ -597,7 +597,7 @@ sub serviceModuleLoad {
 					printError("CORE", "error loading service-module Fluxinet : $@\n");
 				} else {
 					# everything ok
-					if ($LOGLEVEL > 0) {
+					if ($loglevel > 0) {
 						printMessage("CORE", "Fluxinet loaded\n");
 					}
 					return 1;
@@ -612,9 +612,9 @@ sub serviceModuleLoad {
 				eval {
 					$serviceModuleObjects{"Qmgr"} = Qmgr->new();
 					$serviceModuleObjects{"Qmgr"}->initialize(
-						$LOGLEVEL,
-						$PATH_DATA_DIR,
-						$PATH_TRANSFER_DIR,
+						$loglevel,
+						$path_data_dir,
+						$path_transfer_dir,
 						FluxDB->getFluxConfig("fluxd_Qmgr_interval"),
 						FluxDB->getFluxConfig("fluxd_Qmgr_maxTotalTransfers"),
 						FluxDB->getFluxConfig("fluxd_Qmgr_maxUserTransfers")
@@ -629,7 +629,7 @@ sub serviceModuleLoad {
 					printError("CORE", "error loading service-module Qmgr : $@\n");
 				} else {
 					# everything ok
-					if ($LOGLEVEL > 0) {
+					if ($loglevel > 0) {
 						printMessage("CORE", "Qmgr loaded\n");
 					}
 					return 1;
@@ -644,8 +644,8 @@ sub serviceModuleLoad {
 				eval {
 					$serviceModuleObjects{"Rssad"} = Rssad->new();
 					$serviceModuleObjects{"Rssad"}->initialize(
-						$LOGLEVEL,
-						$PATH_DATA_DIR,
+						$loglevel,
+						$path_data_dir,
 						FluxDB->getFluxConfig("fluxd_Rssad_interval"),
 						FluxDB->getFluxConfig("fluxd_Rssad_jobs")
 					);
@@ -659,7 +659,7 @@ sub serviceModuleLoad {
 					printError("CORE", "error loading service-module Rssad : $@\n");
 				} else {
 					# everything ok
-					if ($LOGLEVEL > 0) {
+					if ($loglevel > 0) {
 						printMessage("CORE", "Rssad loaded\n");
 					}
 					return 1;
@@ -674,7 +674,7 @@ sub serviceModuleLoad {
 				eval {
 					$serviceModuleObjects{"Watch"} = Watch->new();
 					$serviceModuleObjects{"Watch"}->initialize(
-						$LOGLEVEL,
+						$loglevel,
 						FluxDB->getFluxConfig("fluxd_Watch_interval"),
 						FluxDB->getFluxConfig("fluxd_Watch_jobs")
 					);
@@ -688,7 +688,7 @@ sub serviceModuleLoad {
 					printError("CORE", "error loading service-module Watch : $@\n");
 				} else {
 					# everything ok
-					if ($LOGLEVEL > 0) {
+					if ($loglevel > 0) {
 						printMessage("CORE", "Watch loaded\n");
 					}
 					return 1;
@@ -703,7 +703,7 @@ sub serviceModuleLoad {
 				eval {
 					$serviceModuleObjects{"Maintenance"} = Maintenance->new();
 					$serviceModuleObjects{"Maintenance"}->initialize(
-						$LOGLEVEL,
+						$loglevel,
 						FluxDB->getFluxConfig("fluxd_Maintenance_interval"),
 						FluxDB->getFluxConfig("fluxd_Maintenance_trestart")
 					);
@@ -717,7 +717,7 @@ sub serviceModuleLoad {
 					printError("CORE", "error loading service-module Maintenance : $@\n");
 				} else {
 					# everything ok
-					if ($LOGLEVEL > 0) {
+					if ($loglevel > 0) {
 						printMessage("CORE", "Maintenance loaded\n");
 					}
 					return 1;
@@ -732,7 +732,7 @@ sub serviceModuleLoad {
 				eval {
 					$serviceModuleObjects{"Trigger"} = Trigger->new();
 					$serviceModuleObjects{"Trigger"}->initialize(
-						$LOGLEVEL,
+						$loglevel,
 						FluxDB->getFluxConfig("fluxd_Trigger_interval")
 					);
 					if ($serviceModuleObjects{"Trigger"}->getState() != MOD_STATE_OK) {
@@ -745,7 +745,7 @@ sub serviceModuleLoad {
 					printError("CORE", "error loading service-module Trigger : $@\n");
 				} else {
 					# everything ok
-					if ($LOGLEVEL > 0) {
+					if ($loglevel > 0) {
 						printMessage("CORE", "Trigger loaded\n");
 					}
 					return 1;
@@ -767,7 +767,7 @@ sub serviceModuleLoad {
 sub serviceModuleUnload {
 	$_ = shift;
 	if (exists $serviceModuleObjects{$_}) {
-		if ($LOGLEVEL > 1) {
+		if ($loglevel > 1) {
 			printMessage("CORE", "unloading service-module ".$_." ...\n");
 		}
 		eval {
@@ -779,7 +779,7 @@ sub serviceModuleUnload {
 			return 0;
 		} else {
 			# everything ok
-			if ($LOGLEVEL > 0) {
+			if ($loglevel > 0) {
 				printMessage("CORE", $_." unloaded\n");
 			}
 		}
@@ -795,7 +795,7 @@ sub serviceModuleUnload {
 sub serviceModulesLoad {
 
 	# print
-	if ($LOGLEVEL > 0) {
+	if ($loglevel > 0) {
 		printMessage("CORE", "loading service-modules...\n");
 	}
 
@@ -829,10 +829,10 @@ sub serviceModulesLoad {
 			$cmdmodliststr .= $cmdmodlist[$i];
 		}
 	}
-	$0 = '[ fluxd running ('.$PATH_DOCROOT.') ('.$cmdmodliststr.') ]';
+	$0 = '[ fluxd running ('.$path_docroot.') ('.$cmdmodliststr.') ]';
 
 	# print
-	if ($LOGLEVEL > 0) {
+	if ($loglevel > 0) {
 		printMessage("CORE", "done loading service-modules.\n");
 	}
 
@@ -846,7 +846,7 @@ sub serviceModulesLoad {
 sub serviceModulesUnload {
 
 	# print
-	if ($LOGLEVEL > 0) {
+	if ($loglevel > 0) {
 		printMessage("CORE", "unloading service-modules...\n");
 	}
 
@@ -856,7 +856,7 @@ sub serviceModulesUnload {
 	}
 
 	# print
-	if ($LOGLEVEL > 0) {
+	if ($loglevel > 0) {
 		printMessage("CORE", "done unloading service-modules.\n");
 	}
 
@@ -882,7 +882,7 @@ sub serviceModuleList {
 		}
 		$modList .= $delimMod;
 	}
-	
+
 	# return
 	return (substr ($modList, 0, (length($modList)) - 1));
 }
@@ -960,11 +960,11 @@ sub checkConnections {
 	# Get the readable handles. timeout is 0, only process stuff that can be
 	# read NOW.
 	my $return = "";
-	my @ready = $Select->can_read(0);
+	my @ready = $select->can_read(0);
 	foreach my $socket (@ready) {
-		if ($socket == $SERVER) {
+		if ($socket == $server) {
 			my $new = $socket->accept();
-			$Select->add($new);
+			$select->add($new);
 		} else {
 			my $buf = "";
 			my $char = getc($socket);
@@ -974,7 +974,7 @@ sub checkConnections {
 			}
 			$return = processRequest($buf);
 			$socket->send($return);
-			$Select->remove($socket);
+			$select->remove($socket);
 			close($socket);
 		}
 	}
@@ -1089,7 +1089,7 @@ sub fluxcli {
 		if ((defined $Arg1) || (defined $Arg2)) {
 			return printUsage();
 		} else {
-			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".quotemeta($Command)." 2>> ".$ERROR_LOG;
+			my $shellCmd = $bin_php." bin/".$bin_fluxcli." ".quotemeta($Command)." 2>> ".$log_error;
 			return qx($shellCmd);
 		}
 	}
@@ -1097,7 +1097,7 @@ sub fluxcli {
 		if ((!(defined $Arg1)) || (defined $Arg2)) {;
 			return printUsage();
 		} else {
-			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".quotemeta($Command)." ".quotemeta($Arg1)." 2>> ".$ERROR_LOG;
+			my $shellCmd = $bin_php." bin/".$bin_fluxcli." ".quotemeta($Command)." ".quotemeta($Arg1)." 2>> ".$log_error;
 			return qx($shellCmd);
 		}
 	}
@@ -1106,7 +1106,7 @@ sub fluxcli {
 		if ((defined $Arg1) || (defined $Arg2)) {
 			return 0;
 		} else {
-			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".quotemeta($Command);
+			my $shellCmd = $bin_php." bin/".$bin_fluxcli." ".quotemeta($Command);
 			return doSysCall($shellCmd);
 		}
 	}
@@ -1114,7 +1114,7 @@ sub fluxcli {
 		if ((!(defined $Arg1)) || (defined $Arg2)) {;
 			return 0;
 		} else {
-			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".quotemeta($Command)." ".quotemeta($Arg1);
+			my $shellCmd = $bin_php." bin/".$bin_fluxcli." ".quotemeta($Command)." ".quotemeta($Arg1);
 			return doSysCall($shellCmd);
 		}
 	}
@@ -1122,7 +1122,7 @@ sub fluxcli {
 		if ((!(defined $Arg1)) || (!(defined $Arg2))) {
 			return 0;
 		} else {
-			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".quotemeta($Command)." ".quotemeta($Arg1)." ".quotemeta($Arg2);
+			my $shellCmd = $bin_php." bin/".$bin_fluxcli." ".quotemeta($Command)." ".quotemeta($Arg1)." ".quotemeta($Arg2);
 			return doSysCall($shellCmd);
 		}
 	}
@@ -1130,7 +1130,7 @@ sub fluxcli {
 		if ((!(defined $Arg1)) || (!(defined $Arg2)) || (!(defined $Arg3)) || (!(defined $Arg4))) {
 			return 0;
 		} else {
-			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".quotemeta($Command)." ".quotemeta($Arg1)." ".quotemeta($Arg2)." ".quotemeta($Arg3)." ".quotemeta($Arg4);
+			my $shellCmd = $bin_php." bin/".$bin_fluxcli." ".quotemeta($Command)." ".quotemeta($Arg1)." ".quotemeta($Arg2)." ".quotemeta($Arg3)." ".quotemeta($Arg4);
 			return doSysCall($shellCmd);
 		}
 	}
@@ -1143,14 +1143,14 @@ sub fluxcli {
 #------------------------------------------------------------------------------#
 sub doSysCall {
 	my $command = shift;
-	$command .= " 1>> ".$LOG." 2>> ".$ERROR_LOG." &";
+	$command .= " 1>> ".$log." 2>> ".$log_error." &";
     system($command);
     if ($? == -1) {
 		printError("CORE", "failed to execute: ".$!."; command:\n".$command."\n");
     } elsif ($? & 127) {
 		printError("CORE", (sprintf "child died with signal %d, %s coredump; command:\n%s\n", ($? & 127),  ($? & 128) ? 'with' : 'without'), $command);
     } else {
-		if ($LOGLEVEL > 2) {
+		if ($loglevel > 2) {
 			printMessage("CORE", (sprintf "child exited with value %d; command:\n%s\n", $? >> 8, $command));
 		}
 		return 1;
@@ -1164,29 +1164,29 @@ sub doSysCall {
 # Returns: null                                                                #
 #------------------------------------------------------------------------------#
 sub socketInitialize {
-	$SERVER = IO::Socket::UNIX->new(
+	$server = IO::Socket::UNIX->new(
 			Type    => IO::Socket::UNIX->SOCK_STREAM,
-			Local   => $PATH_SOCKET,
+			Local   => $path_socket,
 			Listen  => 16,
 			Reuse   => 1,
 			);
 
 	# check socket
-	unless ($SERVER) {
+	unless ($server) {
 		printError("CORE", "could not create socket: ".$!."\n");
 		exit;
 	}
 
 	# print
-	if ($LOGLEVEL > 0) {
-		printMessage("CORE", "created socket ".$PATH_SOCKET."\n");
+	if ($loglevel > 0) {
+		printMessage("CORE", "created socket ".$path_socket."\n");
 	}
 
 	# create select
-	$Select = new IO::Select();
+	$select = new IO::Select();
 
 	# Add our server socket to the select read set.
-	$Select->add($SERVER);
+	$select->add($server);
 }
 
 #------------------------------------------------------------------------------#
@@ -1195,10 +1195,10 @@ sub socketInitialize {
 # Returns: null                                                                #
 #------------------------------------------------------------------------------#
 sub socketRemove {
-	if ($LOGLEVEL > 0) {
-		printMessage("CORE", "removing socket ".$PATH_SOCKET."\n");
+	if ($loglevel > 0) {
+		printMessage("CORE", "removing socket ".$path_socket."\n");
 	}
-	unlink($PATH_SOCKET);
+	unlink($path_socket);
 }
 
 #------------------------------------------------------------------------------#
@@ -1211,10 +1211,10 @@ sub pidFileWrite {
 	if (!(defined $pid)) {
 		$pid = $$;
 	}
-	if ($LOGLEVEL > 0) {
-		printMessage("CORE", "writing pid-file ".$PID_FILE." (pid: ".$pid.")\n");
+	if ($loglevel > 0) {
+		printMessage("CORE", "writing pid-file ".$file_pid." (pid: ".$pid.")\n");
 	}
-	open(PIDFILE,">$PID_FILE");
+	open(PIDFILE,">$file_pid");
 	print PIDFILE $pid."\n";
 	close(PIDFILE);
 }
@@ -1225,10 +1225,10 @@ sub pidFileWrite {
 # Returns: return-val of delete                                                #
 #------------------------------------------------------------------------------#
 sub pidFileDelete {
-	if ($LOGLEVEL > 0) {
-		printMessage("CORE", "deleting pid-file ".$PID_FILE."\n");
+	if ($loglevel > 0) {
+		printMessage("CORE", "deleting pid-file ".$file_pid."\n");
 	}
-	return unlink($PID_FILE);
+	return unlink($file_pid);
 }
 
 #------------------------------------------------------------------------------#
@@ -1239,17 +1239,17 @@ sub pidFileDelete {
 sub status {
 	my $head = "";
 	$head .= "\n\nfluxd has been up since ".$start_time_local." (".FluxCommon::niceTimeString($start_time).")\n\n";
-	$head .= "data-dir : ".$PATH_DATA_DIR."\n";
-	$head .= "log : ".$LOG."\n";
-	$head .= "error-log : ".$ERROR_LOG."\n";
-	$head .= "pid : ".$PID_FILE."\n";
-	$head .= "socket : ".$PATH_SOCKET."\n";
-	$head .= "transfers-dir : ".$PATH_TRANSFER_DIR."\n";
-	$head .= "docroot : ".$PATH_DOCROOT."\n";
-	$head .= "fluxcli : ".$pwd."/bin/".$BIN_FLUXCLI."\n";
-	$head .= "php : ".$BIN_PHP."\n";
+	$head .= "data-dir : ".$path_data_dir."\n";
+	$head .= "log : ".$log."\n";
+	$head .= "error-log : ".$log_error."\n";
+	$head .= "pid : ".$file_pid."\n";
+	$head .= "socket : ".$path_socket."\n";
+	$head .= "transfers-dir : ".$path_transfer_dir."\n";
+	$head .= "docroot : ".$path_docroot."\n";
+	$head .= "fluxcli : ".$pwd."/bin/".$bin_fluxcli."\n";
+	$head .= "php : ".$bin_php."\n";
 	$head .= "db-mode : ".$dbMode."\n";
-	$head .= "loglevel : ".$LOGLEVEL."\n";
+	$head .= "loglevel : ".$loglevel."\n";
 	$head .= "\n";
 	my $status = "";
 	my $modules = "- Loaded Modules -\n";
@@ -1414,7 +1414,7 @@ sub debug {
 
 	# database-debug
 	if ($debug =~ /db/) {
-		# $PATH_DOCROOT
+		# $path_docroot
 		my $temp = shift @ARGV;
 		if (!(defined $temp)) {
 			printMessage("CORE", "debug database is missing an argument : path to docroot\n");
@@ -1423,7 +1423,7 @@ sub debug {
 		if (!((substr $temp, -1) eq "/")) {
 			$temp .= "/";
 		}
-		$PATH_DOCROOT = $temp;
+		$path_docroot = $temp;
 		# PATH_PATH
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
@@ -1433,14 +1433,14 @@ sub debug {
 		if (!((substr $temp, -1) eq "/")) {
 			$temp .= "/";
 		}
-		$PATH_PATH = $temp;
-		# $BIN_PHP
+		$path_path = $temp;
+		# $bin_php
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
 			printMessage("CORE", "debug database is missing an argument : path to php\n");
 			exit;
 		}
-		$BIN_PHP = $temp;
+		$bin_php = $temp;
 		printMessage("CORE", "debugging database...\n");
 		# require
 		require FluxDB;
@@ -1450,7 +1450,7 @@ sub debug {
 		# PHP
 		# initialize
 		printMessage("CORE", "initializing \$fluxDB (php)\n");
-		$fluxDB->initialize($PATH_DOCROOT, $BIN_PHP, "php");
+		$fluxDB->initialize($path_docroot, $bin_php, "php");
 		if ($fluxDB->getState() != MOD_STATE_OK) {
 			printMessage("CORE", "error : ".$fluxDB->getMessage()."\n");
 			exit;
@@ -1471,7 +1471,7 @@ sub debug {
 		# DBI
 		# initialize
 		printMessage("CORE", "initializing \$fluxDB (dbi)\n");
-		$fluxDB->initialize($PATH_DOCROOT, $BIN_PHP, "dbi");
+		$fluxDB->initialize($path_docroot, $bin_php, "dbi");
 		if ($fluxDB->getState() != MOD_STATE_OK) {
 			printMessage("CORE", "error : ".$fluxDB->getMessage()."\n");
 			# db-settings
@@ -1539,7 +1539,7 @@ sub printError {
 sub logMessage {
 	my $module = shift;
 	my $message = shift;
-	logToFile($LOG, FluxCommon::getTimeStamp()."[".$module."] ".$message);
+	logToFile($log, FluxCommon::getTimeStamp()."[".$module."] ".$message);
 }
 
 #------------------------------------------------------------------------------#
@@ -1550,7 +1550,7 @@ sub logMessage {
 sub logError {
 	my $module = shift;
 	my $message = shift;
-	logToFile($ERROR_LOG, FluxCommon::getTimeStamp()."[".$module."] ".$message);
+	logToFile($log_error, FluxCommon::getTimeStamp()."[".$module."] ".$message);
 }
 
 #------------------------------------------------------------------------------#
