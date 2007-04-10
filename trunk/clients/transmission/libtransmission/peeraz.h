@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peeraz.h 1607 2007-03-30 00:12:39Z joshe $
+ * $Id: peeraz.h 1650 2007-04-03 18:22:58Z joshe $
  *
  * Copyright (c) 2006-2007 Transmission authors and contributors
  *
@@ -359,6 +359,29 @@ parseAZHandshake( tr_peer_t * peer, uint8_t * buf, int len )
         return TR_ERROR;
     }
 
+#if 0 /* ugh, we have to deal with encoding if we do this */
+    /* get peer's client name */
+    sub  = tr_bencDictFind( &val, "client" );
+    sub2 = tr_bencDictFind( &val, "version" );
+    if( NULL != sub  && TYPE_STR == sub->type &&
+        NULL != sub2 && TYPE_STR == sub->type )
+    {
+        if( NULL == peer->client ||
+            ( 0 != strncmp( peer->client, sub->val.s.s, sub->val.s.i ) ||
+              ' ' != peer->client[sub->val.s.i] ||
+              0 != strcmp( peer->client + sub->val.s.i + 1, sub2->val.s.s ) ) )
+        {
+            client = NULL;
+            asprintf( &client, "%s %s", sub->val.s.s, sub2->val.s.s );
+            if( NULL != client )
+            {
+                free( peer->client );
+                peer->client = client;
+            }
+        }
+    }
+#endif
+
     /* get the peer's listening port */
     sub = tr_bencDictFind( &val, "tcp_port" );
     if( NULL != sub )
@@ -382,9 +405,9 @@ parseAZHandshake( tr_peer_t * peer, uint8_t * buf, int len )
 
     /* fill bitmask with supported message info */
     msgs = tr_bitfieldNew( azmsgCount() );
-    ii = -1;
-    while( NULL != ( dict = tr_bencListIter( sub, &ii ) ) )
+    for( ii = 0; ii < sub->val.l.count; ii++ )
     {
+        dict = &sub->val.l.vals[ii];
         if( TYPE_DICT != dict->type )
         {
             continue;
@@ -475,9 +498,10 @@ parseAZPex( tr_torrent_t * tor, tr_peer_t * peer, uint8_t * buf, int len )
         return TR_OK;
     }
 
-    ii = used = 0;
-    while( NULL != ( pair = tr_bencListIter( list, &ii ) ) )
+    used = 0;
+    for( ii = 0; ii < list->val.l.count; ii++ )
     {
+        pair = &list->val.l.vals[ii];
         if( TYPE_STR == pair->type && 6 == pair->val.s.i )
         {
             used += tr_torrentAddCompact( tor, TR_PEER_FROM_PEX,

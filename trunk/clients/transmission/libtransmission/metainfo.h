@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: metainfo.h 1564 2007-03-13 06:56:50Z joshe $
+ * $Id: metainfo.h 1636 2007-04-02 20:38:23Z joshe $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -27,8 +27,11 @@
 
 #include "transmission.h"
 
-int tr_metainfoParse( tr_info_t *, const char * tag, const char * path,
-                      const char * savedHash, int saveCopy );
+int tr_metainfoParseFile( tr_info_t *, const char * tag,
+                          const char * path, int save );
+int tr_metainfoParseData( tr_info_t *, const char * tag,
+                          uint8_t * data, size_t size, int save );
+int tr_metainfoParseHash( tr_info_t *, const char * tag, const char * hash );
 void tr_metainfoFree( tr_info_t * inf );
 void tr_metainfoRemoveSaved( const char * hashString, const char * tag );
 

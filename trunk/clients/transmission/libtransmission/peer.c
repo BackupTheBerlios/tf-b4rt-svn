@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peer.c 1600 2007-03-28 06:28:34Z joshe $
+ * $Id: peer.c 1653 2007-04-03 18:43:26Z joshe $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -135,6 +135,8 @@ struct tr_peer_s
 
     tr_ratecontrol_t  * download;
     tr_ratecontrol_t  * upload;
+
+    char              * client;
 };
 
 #define peer_dbg( a... ) __peer_dbg( peer, ## a )
@@ -218,12 +220,44 @@ void tr_peerDestroy( tr_peer_t * peer )
     }
     tr_rcClose( peer->download );
     tr_rcClose( peer->upload );
+    free( peer->client );
     free( peer );
+}
+
+const char *
+tr_peerClient( tr_peer_t * peer )
+{
+    if( PEER_STATUS_HANDSHAKE >= peer->status )
+    {
+        return "not connected";
+    }
+
+    if( NULL == peer->client )
+    {
+        peer->client = tr_clientForId( peer->id );
+    }
+
+    return peer->client;
 }
 
 void tr_peerSetPrivate( tr_peer_t * peer, int private )
 {
+    if( peer->private == private )
+    {
+        return;
+    }
+
     peer->private = private;
+
+    if( !private )
+    {
+        peer->lastPex = 0;
+    }
+
+    if( EXTENDED_HANDSHAKE == peer->extStatus )
+    {
+        sendExtended( peer->tor, peer, EXTENDED_HANDSHAKE_ID );
+    }
 }
 
 void tr_peerSetTorrent( tr_peer_t * peer, tr_torrent_t * tor )

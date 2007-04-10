@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peerext.h 1606 2007-03-29 21:02:59Z joshe $
+ * $Id: peerext.h 1650 2007-04-03 18:22:58Z joshe $
  *
  * Copyright (c) 2006-2007 Transmission authors and contributors
  *
@@ -136,16 +136,14 @@ makeExtendedHandshake( tr_torrent_t * tor, tr_peer_t * peer, int * len )
     /* create dict of supported extended messages */
     msgsval  = tr_bencDictAdd( &val, "m" );
     tr_bencInit( msgsval, TYPE_DICT );
-    if( !peer->private )
+    if( tr_bencDictReserve( msgsval, 1 ) )
     {
-        /* for public torrents, advertise utorrent pex message */
-        if( tr_bencDictReserve( msgsval, 1 ) )
-        {
-            tr_bencFree( &val );
-            return NULL;
-        }
-        tr_bencInitInt( tr_bencDictAdd( msgsval, "ut_pex" ), EXTENDED_PEX_ID );
+        tr_bencFree( &val );
+        return NULL;
     }
+    /* for public torrents advertise utorrent pex message */
+    tr_bencInitInt( tr_bencDictAdd( msgsval, "ut_pex" ),
+                    ( peer->private ? 0 : EXTENDED_PEX_ID ) );
 
     /* our listening port */
     if( 0 < tor->publicPort )
@@ -221,7 +219,7 @@ static inline int
 parseExtendedHandshake( tr_peer_t * peer, uint8_t * buf, int len )
 {
     benc_val_t val, * sub;
-    int dbgport, dbgpex;
+    int        dbgport, dbgpex;
 
     if( tr_bencLoad( buf, len, &val, NULL ) )
     {
@@ -244,13 +242,28 @@ parseExtendedHandshake( tr_peer_t * peer, uint8_t * buf, int len )
         if( NULL != sub && TYPE_INT == sub->type )
         {
             peer->pexStatus = 0;
-            if( !peer->private && 0x0 < sub->val.i && 0xff >= sub->val.i )
+            if( 0x0 < sub->val.i && 0xff >= sub->val.i )
             {
                 peer->pexStatus = sub->val.i;
                 dbgpex = sub->val.i;
             }
         }
     }
+
+#if 0 /* ugh, we have to deal with encoding if we do this */
+    /* get peer's client name */
+    sub = tr_bencDictFind( &val, "v" );
+    if( NULL != sub && TYPE_STR == sub->type &&
+        ( NULL == peer->client || 0 != strcmp( sub->val.s.s, peer->client ) ) )
+    {
+        client = tr_bencStealStr( sub );
+        if( NULL != client )
+        {
+            free( peer->client );
+            peer->client = client;
+        }
+    }
+#endif
 
     /* get peer's listening port */
     sub = tr_bencDictFind( &val, "p" );

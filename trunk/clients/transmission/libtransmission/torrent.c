@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: torrent.c 1604 2007-03-29 01:09:03Z joshe $
+ * $Id: torrent.c 1655 2007-04-04 00:55:53Z joshe $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -53,14 +53,22 @@ void tr_setDownloadLimit( tr_torrent_t * tor, int limit )
     tr_rcSetLimit( tor->download, limit );
 }
 
-tr_torrent_t * tr_torrentInit( tr_handle_t * h, const char * path,
-                               uint8_t * hash, int flags, int * error )
+tr_torrent_t *
+tr_torrentInit( tr_handle_t * h, const char * path,
+                uint8_t * hash, int flags, int * error )
 {
-    tr_torrent_t  * tor = calloc( sizeof( tr_torrent_t ), 1 );
-    int             saveCopy = ( TR_FLAG_SAVE & flags );
+    tr_torrent_t * tor;
+
+    tor  = calloc( 1, sizeof *tor );
+    if( NULL == tor )
+    {
+        *error = TR_EOTHER;
+        return NULL;
+    }
 
     /* Parse torrent file */
-    if( tr_metainfoParse( &tor->info, h->tag, path, NULL, saveCopy ) )
+    if( tr_metainfoParseFile( &tor->info, h->tag, path,
+                              TR_FLAG_SAVE & flags ) )
     {
         *error = TR_EINVALID;
         free( tor );
@@ -70,13 +78,46 @@ tr_torrent_t * tr_torrentInit( tr_handle_t * h, const char * path,
     return torrentRealInit( h, tor, hash, flags, error );
 }
 
-tr_torrent_t * tr_torrentInitSaved( tr_handle_t * h, const char * hashStr,
-                                    int flags, int * error )
+tr_torrent_t *
+tr_torrentInitData( tr_handle_t * h, uint8_t * data, size_t size,
+                    uint8_t * hash, int flags, int * error )
 {
-    tr_torrent_t  * tor = calloc( sizeof( tr_torrent_t ), 1 );
+    tr_torrent_t * tor;
+
+    tor  = calloc( 1, sizeof *tor );
+    if( NULL == tor )
+    {
+        *error = TR_EOTHER;
+        return NULL;
+    }
 
     /* Parse torrent file */
-    if( tr_metainfoParse( &tor->info, h->tag, NULL, hashStr, 0 ) )
+    if( tr_metainfoParseData( &tor->info, h->tag, data, size,
+                              TR_FLAG_SAVE & flags ) )
+    {
+        *error = TR_EINVALID;
+        free( tor );
+        return NULL;
+    }
+
+    return torrentRealInit( h, tor, hash, flags, error );
+}
+
+tr_torrent_t *
+tr_torrentInitSaved( tr_handle_t * h, const char * hashStr,
+                     int flags, int * error )
+{
+    tr_torrent_t * tor;
+
+    tor  = calloc( 1, sizeof *tor );
+    if( NULL == tor )
+    {
+        *error = TR_EOTHER;
+        return NULL;
+    }
+
+    /* Parse torrent file */
+    if( tr_metainfoParseHash( &tor->info, h->tag, hashStr ) )
     {
         *error = TR_EINVALID;
         free( tor );
@@ -136,6 +177,8 @@ static tr_torrent_t * torrentRealInit( tr_handle_t * h, tr_torrent_t * tor,
                   sizeof( tor->escapedHashString ) - 3 * i,
                   "%%%02x", inf->hash[i] );
     }
+
+    tor->pexDisabled = 0;
 
     /* Block size: usually 16 ko, or less if we have to */
     tor->blockSize  = MIN( inf->pieceSize, 1 << 14 );
@@ -270,6 +313,32 @@ static void torrentReallyStop( tr_torrent_t * tor )
     tr_lockUnlock( &tor->lock );
 }
 
+void tr_torrentDisablePex( tr_torrent_t * tor, int disable )
+{
+    int ii;
+
+    if( TR_FLAG_PRIVATE & tor->info.flags )
+    {
+        return;
+    }
+
+    tr_lockLock( &tor->lock );
+
+    if( tor->pexDisabled == disable )
+    {
+        tr_lockUnlock( &tor->lock );
+        return;
+    }
+
+    tor->pexDisabled = disable;
+    for( ii = 0; ii < tor->peerCount; ii++ )
+    {
+        tr_peerSetPrivate( tor->peers[ii], disable );
+    }
+
+    tr_lockUnlock( &tor->lock );
+}
+
 int tr_getFinished( tr_torrent_t * tor )
 {
     if( tor->finished )
@@ -356,6 +425,7 @@ tr_stat_t * tr_torrentStat( tr_torrent_t * tor )
     }
 
     s->progress = tr_cpCompletionAsFloat( tor->completion );
+    s->left     = tr_cpLeftBytes( tor->completion );
     if( tor->status & TR_STATUS_DOWNLOAD )
     {
         s->rateDownload = tr_rcRate( tor->download );
@@ -428,8 +498,7 @@ tr_peer_stat_t * tr_torrentPeers( tr_torrent_t * tor, int * peerCount )
                            sizeof( peers[i].addr ) );
             }
             
-            peers[i].client = tr_clientForId(tr_peerId(peer));
-            
+            peers[i].client        = tr_peerClient( peer );
             peers[i].isConnected   = tr_peerIsConnected( peer );
             peers[i].from          = tr_peerIsFrom( peer );
             peers[i].progress      = tr_peerProgress( peer );
@@ -452,15 +521,10 @@ tr_peer_stat_t * tr_torrentPeers( tr_torrent_t * tor, int * peerCount )
     return peers;
 }
 
-void tr_torrentPeersFree( tr_peer_stat_t * peers, int peerCount )
+void tr_torrentPeersFree( tr_peer_stat_t * peers, int peerCount UNUSED )
 {
-    int i;
-
     if (peers == NULL)
         return;
-
-    for (i = 0; i < peerCount; i++)
-        free( peers[i].client );
 
     free( peers );
 }
@@ -637,7 +701,8 @@ int tr_torrentAttachPeer( tr_torrent_t * tor, tr_peer_t * peer )
         }
     }
 
-    tr_peerSetPrivate( peer, tor->info.flags & TR_FLAG_PRIVATE );
+    tr_peerSetPrivate( peer, tor->info.flags & TR_FLAG_PRIVATE ||
+                       tor->pexDisabled );
     tr_peerSetTorrent( peer, tor );
     tor->peers[tor->peerCount++] = peer;
 

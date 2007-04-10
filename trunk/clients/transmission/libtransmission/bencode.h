@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: bencode.h 1607 2007-03-30 00:12:39Z joshe $
+ * $Id: bencode.h 1612 2007-03-31 17:40:28Z joshe $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -59,8 +59,6 @@ void         tr_bencPrint( benc_val_t * val );
 void         tr_bencFree( benc_val_t * val );
 benc_val_t * tr_bencDictFind( benc_val_t * val, const char * key );
 benc_val_t * tr_bencDictFindFirst( benc_val_t * val, ... );
-
-benc_val_t * tr_bencListIter( benc_val_t * list, int * pos );
 
 /* marks a string as 'do not free' and returns it */
 char *       tr_bencStealStr( benc_val_t * val );

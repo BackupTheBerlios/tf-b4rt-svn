@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.h 1595 2007-03-26 19:21:25Z joshe $
+ * $Id: transmission.h 1655 2007-04-04 00:55:53Z joshe $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -214,6 +214,16 @@ tr_torrent_t * tr_torrentInit( tr_handle_t *, const char * path,
                                uint8_t * hash, int flags, int * error );
 
 /***********************************************************************
+ * tr_torrentInitData
+ ***********************************************************************
+ * Like tr_torrentInit, except the actual torrent data is passed in
+ * instead of the filename.
+ **********************************************************************/
+tr_torrent_t * tr_torrentInitData( tr_handle_t *, uint8_t * data,
+                                   size_t size, uint8_t * hash,
+                                   int flags, int * error );
+
+/***********************************************************************
  * tr_torrentInitSaved
  ***********************************************************************
  * Opens and parses a torrent file as with tr_torrentInit, only taking
@@ -223,6 +233,20 @@ tr_torrent_t * tr_torrentInit( tr_handle_t *, const char * path,
 tr_torrent_t * tr_torrentInitSaved( tr_handle_t *, const char * hashStr,
                                     int flags, int * error );
 
+/***********************************************************************
+ * tr_torrentDisablePex
+ ***********************************************************************
+ * Disable or enable peer exchange for this torrent. Peer exchange is
+ * enabled by default, except for private torrents where pex is
+ * disabled and cannot be enabled.
+ **********************************************************************/
+void tr_torrentDisablePex( tr_torrent_t *, int disable );
+
+/***********************************************************************
+ * tr_torrentScrape
+ ***********************************************************************
+ * Return torrent metainfo.
+ **********************************************************************/
 typedef struct tr_info_s tr_info_t;
 tr_info_t * tr_torrentInfo( tr_torrent_t * );
 
@@ -416,6 +440,7 @@ struct tr_stat_s
     int                 leechers;
     int                 completedFromTracker;
 
+    uint64_t            left;
     uint64_t            downloaded;
     uint64_t            uploaded;
     float               swarmspeed;
@@ -428,7 +453,7 @@ struct tr_stat_s
 struct tr_peer_stat_s
 {
     char    addr[INET_ADDRSTRLEN];
-    char *  client;
+    const char * client;
     
     int     isConnected;
     int     from;

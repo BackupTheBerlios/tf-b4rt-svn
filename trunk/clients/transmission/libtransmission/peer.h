@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peer.h 1579 2007-03-23 08:28:01Z joshe $
+ * $Id: peer.h 1650 2007-04-03 18:22:58Z joshe $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -31,6 +31,7 @@ typedef struct tr_peer_s tr_peer_t;
 
 tr_peer_t * tr_peerInit          ( struct in_addr, in_port_t, int sock, int );
 void        tr_peerDestroy       ( tr_peer_t * );
+const char *tr_peerClient        ( tr_peer_t * );
 void        tr_peerSetPrivate    ( tr_peer_t *, int );
 void        tr_peerSetTorrent    ( tr_peer_t *, tr_torrent_t * );
 int         tr_peerRead          ( tr_peer_t * );

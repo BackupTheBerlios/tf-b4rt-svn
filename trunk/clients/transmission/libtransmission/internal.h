@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: internal.h 1603 2007-03-29 00:19:09Z joshe $
+ * $Id: internal.h 1685 2007-04-08 05:41:44Z joshe $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -41,6 +41,7 @@ int vasprintf( char **, const char *, va_list );
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <ctype.h>
 #include <errno.h>
 #include <limits.h>
 #include <signal.h>
@@ -130,6 +131,8 @@ typedef struct tr_bitfield_s tr_bitfield_t;
 
 typedef enum { TR_NET_OK, TR_NET_ERROR, TR_NET_WAIT } tr_tristate_t;
 
+#include "bsdqueue.h"
+#include "bsdtree.h"
 #include "platform.h"
 #include "bencode.h"
 #include "metainfo.h"
@@ -200,6 +203,8 @@ struct tr_torrent_s
     uint64_t          downloadedPrev;
     uint64_t          uploadedCur;
     uint64_t          uploadedPrev;
+
+    uint8_t           pexDisabled;
 
     tr_stat_t         stats[2];
     int               statCur;
