@@ -138,7 +138,7 @@ function tfb_cleanTransferName($transfer) {
  */
 function tfb_cleanURL($url) {
 	$arURL = explode("*", $url);
-	return (sizeof($arURL) > 1) ? $arURL[1] : $url;
+	return ((is_array($arURL)) && (count($arURL)) > 1) ? $arURL[1] : $url;
 }
 
 /**
