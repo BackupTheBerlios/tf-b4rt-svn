@@ -1,0 +1,9 @@
+This folder contains an ispell resource file - .ispell - specific to the
+torrentflux b4rt project.  Avoids the hellishly tedious job of skipping
+word after word when ispell complains of all the tech words not in
+regular dictionary!
+
+To use it, copy to your ~ dir or set WORDLIST env vbl and then run
+'ispell' on the files to be spell checked.
+
+http://www.gnu.org/software/ispell/ispell.html
