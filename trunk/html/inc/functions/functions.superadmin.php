@@ -265,7 +265,7 @@ function sa_maintenance($action = "") {
 		case "2": // Maintenance-Kill
 			$htmlTitle = "Maintenance - Kill";
 			$htmlMain .= '<br>';
-			$htmlMain .= '<font color="red"><strong>DONT</strong> do this or you will screw up things for sure !</font><br><br>';
+			$htmlMain .= '<font color="red"><strong>DON\'T</strong> do this or you will screw up things for sure !</font><br><br>';
 			$htmlMain .= 'This is only meant as emergency-break if things go terrible wrong already.<br>Please use this only if you know what you are doing.';
 			$htmlMain .= '<p>';
 			$htmlMain .= '<strong>php</strong><br>';
@@ -561,7 +561,7 @@ function sa_maintenance($action = "") {
 		case "4": // Maintenance : Repair
 			$htmlTitle = "Maintenance - Repair";
 			$htmlMain .= '<br>';
-			$htmlMain .= '<font color="red"><strong>DONT</strong> do this if your system is running as it should. You WILL break something.</font>';
+			$htmlMain .= '<font color="red"><strong>DON\'T</strong> do this if your system is running as it should. You WILL break something.</font>';
 			$htmlMain .= '<br>use this after server-reboot, if transfers were killed or if there are other problems with the webapp.';
 			$htmlMain .= '<br><a href="' . _FILE_THIS . '?m=41"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Repair" border="0"> Repair</a>';
 			$htmlMain .= '<br><br>';
@@ -707,7 +707,7 @@ function sa_backup($action = "") {
 			$htmlMain .= 'In case you choose "Backup on Server" the archive will be located in : <br>';
 			$htmlMain .= '<em>'.tfb_htmlencodekeepspaces($cfg["path"] . _DIR_BACKUP).'/</em>';
 			$htmlMain .= '<br><br>';
-			$htmlMain .= 'Be patient until "its done" and dont click stuff while backup is created.<br>';
+			$htmlMain .= 'Be patient until "its done" and don\'t click stuff while backup is created.<br>';
 			$htmlMain .= 'This script will tell you if things go wrong so no need to stress it.<br>';
 			printPage();
 			exit();
@@ -1059,7 +1059,7 @@ function sa_tfb($action = "") {
     					$htmlMain .= '<br><br>';
     					$htmlMain .= '<strong>Homepage : </strong>';
     					$htmlMain .= '<br>';
-    					$htmlMain .= '<a href="'._URL_HOME.'" target="_blank"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Homepage on berliOS" border="0"> '._URL_HOME.'</a>';
+    					$htmlMain .= '<a href="'._URL_HOME.'" target="_blank"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Homepage on BerliOS" border="0"> '._URL_HOME.'</a>';
     					$htmlMain .= '<br>';
     				} else {
     					$htmlMain .= '<strong>This Version : </strong>'._VERSION;
@@ -1083,7 +1083,7 @@ function sa_tfb($action = "") {
 				$htmlMain .= '<br><br>';
 				$htmlMain .= '<strong>Homepage : </strong>';
 				$htmlMain .= '<br>';
-				$htmlMain .= '<a href="'._URL_HOME.'" target="_blank"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Homepage on berliOS" border="0"> '._URL_HOME.'</a>';
+				$htmlMain .= '<a href="'._URL_HOME.'" target="_blank"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Homepage on BerliOS" border="0"> '._URL_HOME.'</a>';
 				$htmlMain .= '<br>';
 			}
 			break;

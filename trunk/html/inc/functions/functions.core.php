@@ -279,7 +279,7 @@ function error($msg, $link = "", $linklabel = "", $msgs = array()) {
 }
 
 /**
- * checks if a path-string has a trailing slash. concat if it hasnt
+ * checks if a path-string has a trailing slash. concat if it hasn't
  *
  * @param $dirPath
  * @return string with dirPath

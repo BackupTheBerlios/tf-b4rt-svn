@@ -772,7 +772,7 @@ function tmplSetUserSection() {
 }
 
 /**
- * Validates the existance of a file and returns the status image
+ * Validates the existence of a file and returns the status image
  *
  * @param $the_file
  * @return string
@@ -785,7 +785,7 @@ function validateFile($the_file) {
 }
 
 /**
- * Validates existance + exec of a file and returns the status image
+ * Validates existence + exec of a file and returns the status image
  *
  * @param $the_file
  * @return string
@@ -810,7 +810,7 @@ function setUserState() {
 	// check params
 	if (!(isset($user_id)) && (isset($user_state)))
 		return false;
-	// sanity-check, dont allow setting state of superadmin to 0
+	// sanity-check, don't allow setting state of superadmin to 0
 	if (($user_state == 0) && (IsSuperAdmin($user_id))) {
 		AuditAction($cfg["constants"]["error"], "Invalid try to deactivate superadmin account.");
 		return false;

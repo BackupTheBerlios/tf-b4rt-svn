@@ -142,7 +142,7 @@ function createTorrentMainline() {
 	$command .= " --tracker_name ".tfb_shellencode($tracker_name);
 	// Set the target torrent field
 	$command .= " --target ".tfb_shellencode($cfg["transfer_file_path"].$tfile);
-	// tracker (i dont know...)
+	// tracker (i don't know...)
 	$command .= " ".tfb_shellencode($tracker_name);
 	// input
 	$command .= " ".tfb_shellencode($cfg["path"].$path);

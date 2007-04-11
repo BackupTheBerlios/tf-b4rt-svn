@@ -100,7 +100,7 @@ function transferListXferUpdate1($entry, $transferowner, $client, $hash, $uptota
 	sumUsage($transferowner, ($transferTotalsCurrent["downtotal"]), ($transferTotalsCurrent["uptotal"]), 'week');
 	sumUsage($transferowner, ($transferTotalsCurrent["downtotal"]), ($transferTotalsCurrent["uptotal"]), 'day');
 	//XFER: if new day add upload/download totals to last date on record and
-	// substract from today in SQL
+	// subtract from today in SQL
 	if ($cfg['xfer_newday'] > 0) {
 		$cfg['xfer_newday'] = 2;
 		$lastDate = $db->GetOne('SELECT date FROM tf_xfer ORDER BY date DESC');
