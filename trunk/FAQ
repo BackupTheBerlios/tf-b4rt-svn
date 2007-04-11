@@ -49,7 +49,7 @@ Q.	I get the following error when trying to start fluxd:
 A.	This error indicates that your PHP commandline binary (php-cli) is
 	not built with support for the database you're using.  You can check
 	the supported modules you have built into your php-cli binary by
-	issing the command 'php -m' in a shell:
+	issuing the command 'php -m' in a shell:
 
 		root@users /root# php -m
 		[PHP Modules]
@@ -120,7 +120,7 @@ A.	The BSD operating systems use 'make' as part of the base operating
 	build and install the modified transmission client for use with
 	torrentflux-b4rt:
 
-	# Change into the dir containing the modified transmision client:
+	# Change into the dir containing the modified transmission client:
 	root@users /root# cd ~tfbdev/svn/tf-b4rt/trunk/clients/transmission/
 
 	# Set env variables for CXXFLAGS, LDFLAGS and CFLAGS.

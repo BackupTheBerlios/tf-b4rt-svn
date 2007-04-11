@@ -104,7 +104,7 @@ Torrentflux-b4rt FEATURES file
 
 		- Check up on the status of transfers directly from a Unix shell
 
-	o Fluxd - background perl daemon toperform scheduled tasks:
+	o Fluxd - background perl daemon to perform scheduled tasks:
 
 		- Qmgr module handles queueing of transfers with per-user and
 		  global limits.  Add transfers to the queue and Qmgr will

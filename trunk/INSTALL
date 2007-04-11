@@ -69,7 +69,7 @@ Installation with "setup.php"
    chown -R www-data /var/www
 
 3. ensure the dir "inc/config/" in your torrentflux-docroot is
-   writeable by your webserver-user.
+   writable by your webserver-user.
 
 4. open "setup.php" in a browser and complete it step by step.
 
@@ -165,7 +165,7 @@ Upgrade from TorrentFlux 2.1-b4rt-9x with "upgrade.php"
    chown -R www-data /var/www
 
 6. ensure the dir "inc/config/" in your torrentflux-docroot is
-   writeable by your webserver-user.
+   writable by your webserver-user.
 
 7. copy the file "upgrade.php" from the dir "upgrade/v9x_1.0/" to
    your torrentflux-docroot. choose the appropriate version.
@@ -266,7 +266,7 @@ Upgrade from official TorrentFlux 2.1/2.2/2.3 with "upgrade.php"
    chown -R www-data /var/www
 
 6. ensure the dir "inc/config/" in your torrentflux-docroot is
-   writeable by your webserver-user.
+   writable by your webserver-user.
 
 7. copy the file "upgrade.php" from the dir "upgrade/TF21_1.0/" or
    "upgrade/TF22_1.0/" or "upgrade/TF23_1.0/" to your docroot.
