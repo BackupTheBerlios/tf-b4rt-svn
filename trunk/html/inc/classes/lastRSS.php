@@ -6,7 +6,7 @@
  ======================================================================
  lastRSS 0.9.1
 
- Simple yet powerfull PHP class to parse RSS files.
+ Simple yet powerful PHP class to parse RSS files.
 
  by Vojtech Semecky, webmaster @ webdot . cz
 
@@ -32,7 +32,7 @@
 
 /**
 * lastRSS
-* Simple yet powerfull PHP class to parse RSS files.
+* Simple yet powerful PHP class to parse RSS files.
 */
 class lastRSS {
 
@@ -88,11 +88,11 @@ class lastRSS {
 	}
 
 	// -------------------------------------------------------------------
-	// Modification of preg_match(); return trimed field with index 1
+	// Modification of preg_match(); return trimmed field with index 1
 	// from 'classic' preg_match() array output
 	// -------------------------------------------------------------------
 	function my_preg_match($pattern, $subject) {
-		// start regullar expression
+		// start regular expression
 		preg_match($pattern, $subject, $out);
 
 		// if there is some result... process it and return it
@@ -173,7 +173,7 @@ class lastRSS {
 		// Parse TEXTINPUT info
 		preg_match("'<textinput(|[^>]*[^/])>(.*?)</textinput>'si", $rss_content, $out_textinfo);
 		// This a little strange regexp means:
-		// Look for tag <textinput> with or without any attributes, but skip truncated version <textinput /> (it's not beggining tag)
+		// Look for tag <textinput> with or without any attributes, but skip truncated version <textinput /> (it's not beginning tag)
 		if (isset($out_textinfo[2])) {
 			foreach($this->_textinputtags as $textinputtag) {
 				$temp = $this->my_preg_match("'<$textinputtag.*?>(.*?)</$textinputtag>'si", $out_textinfo[2]);

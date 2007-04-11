@@ -422,7 +422,7 @@ class FluxCLI
 		$cfg["user"] = getOwner($transfer);
 		// output
 		$this->_outputMessage("Starting ".$transfer." for user ".$cfg["user"]."...\n");
-		// force start, dont queue
+		// force start, don't queue
 		$ch = ClientHandler::getInstance(getTransferClient($transfer));
 		$ch->start($transfer, false, false);
 		if ($ch->state == CLIENTHANDLER_STATE_OK) { /* hooray */
@@ -490,7 +490,7 @@ class FluxCLI
 		$cfg["user"] = getOwner($transfer);
 		// output
 		$this->_outputMessage("Enqueue ".$transfer." for user ".$cfg["user"]."...\n");
-		// force start, dont queue
+		// force start, don't queue
 		$ch = ClientHandler::getInstance(getTransferClient($transfer));
 		$ch->start($transfer, false, true);
 		if ($ch->state == CLIENTHANDLER_STATE_OK) { /* hooray */
@@ -1160,7 +1160,7 @@ class FluxCLI
 		. "                extra-arg 5 : use cookies from this torrentflux user (optional, default: superadmin)\n"
 		. "  xfer        : xfer-Limit-Shutdown. stop all transfers if xfer-limit is met.\n"
 		. "                extra-arg 1 : time-delta of xfer to use : (all/total/month/week/day)\n"
-		. "  repair      : repair of torrentflux. DONT do this unless you have to.\n"
+		. "  repair      : repair of torrentflux. DON'T do this unless you have to.\n"
 		. "                Doing this on a running ok flux _will_ screw up things.\n"
 		. "  maintenance : call maintenance and repair all died transfers.\n"
 		. "                extra-arg 1 : restart died transfers (true/false. optional, default: false)\n"

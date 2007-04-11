@@ -195,7 +195,7 @@ class ClientHandlerWget extends ClientHandler
     }
 
 	/**
-	 * injects a atorrent
+	 * injects a torrent
 	 *
 	 * @param $url
 	 * @return boolean

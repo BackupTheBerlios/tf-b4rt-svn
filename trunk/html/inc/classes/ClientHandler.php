@@ -143,7 +143,7 @@ class ClientHandler
      * ctor
      */
     function ClientHandler() {
-        die('base class -- dont do this');
+        die('base class -- don\'t do this');
     }
 
 	// =========================================================================

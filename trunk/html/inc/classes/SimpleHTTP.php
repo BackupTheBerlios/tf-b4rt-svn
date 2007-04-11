@@ -81,7 +81,7 @@ class SimpleHTTP
 	var $gotResponseLine = false;
 
 	/**
-	 * Status code of webserver resonse
+	 * Status code of webserver response
 	 * @param	string	$status
 	 */
 	var $status = "";
@@ -662,7 +662,7 @@ class SimpleHTTP
 				}
 			// download.asp
 			} elseif (strpos(strtolower($durl), "download.asp?") !== false) {
-				// Sample (TF's TorrenySpy Search):
+				// Sample (TF's TorrentSpy Search):
 				// http://www.torrentspy.com/download.asp?id=519793
 				$treferer = "http://" . $domain["host"] . "/download.asp?id=";
 				$data = $this->instance_getData($durl, $treferer);
@@ -783,7 +783,7 @@ class SimpleHTTP
 				}
 			// download.asp
 			} elseif (strpos(strtolower($durl), "download.asp?") !== false) {
-				// Sample (TF's TorrenySpy Search):
+				// Sample (TF's TorrentSpy Search):
 				// http://www.torrentspy.com/download.asp?id=519793
 				$treferer = "http://" . $domain["host"] . "/download.asp?id=";
 				$data = $this->instance_getData($durl, $treferer);
