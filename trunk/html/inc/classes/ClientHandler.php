@@ -785,6 +785,12 @@ class ClientHandler
 		CommandHandler::send($this->transfer);
         // wait until transfer is down
         waitForTransfer($this->transfer, false, 25);
+        // one more second
+        sleep(1);
+        // flag the transfer as stopped (in db)
+        stopTransferSettings($this->transfer);
+		// set transfers-cache
+		cacheTransfersSet();
         // see if the transfer process is hung.
         $running = $this->runningProcesses();
         $isHung = false;
@@ -795,10 +801,6 @@ class ClientHandler
                 AuditAction($cfg["constants"]["error"], "Possible Hung Process for ".$rt->transferFile." (".$rt->processId.")");
             }
         }
-        // flag the transfer as stopped (in db)
-        stopTransferSettings($this->transfer);
-		// set transfers-cache
-		cacheTransfersSet();
         // kill-request
         if ($kill && $isHung) {
         	AuditAction($cfg["constants"]["kill_transfer"], $this->transfer);
