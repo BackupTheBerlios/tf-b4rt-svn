@@ -99,7 +99,7 @@ if ($isSave) {                                                        /* save */
 		'minport' => 'Min-Port',
 		'maxport' => 'Max-Port',
 		'maxcons' => 'Max Cons',
-		'rerequest' => 'Rerequest Intervall'
+		'rerequest' => 'Rerequest Interval'
 	);
 
 	// current settings
@@ -258,7 +258,7 @@ if ($isSave) {                                                        /* save */
 			// set message-var
 			$tmpl->setvar('message', "settings saved + changes sent to client");
 
-		} else { /* dont send changes or no changes to send */
+		} else { /* don't send changes or no changes to send */
 
 			// set message-var
 			$tmpl->setvar('message', "settings saved");

@@ -95,7 +95,7 @@ if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 		@error("Illegal move. Action has been logged.", "", "");
 	}
 	// we need absolute paths or stuff will end up in docroot
-	// inform user .. dont move it into a fallback-dir which may be a hastle
+	// inform user .. don't move it into a fallback-dir which may be a hassle
 	$dirValid = true;
 	if (strlen($targetDir) <= 0) {
 		 $dirValid = false;

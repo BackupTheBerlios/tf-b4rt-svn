@@ -94,7 +94,7 @@ foreach ($arURL as $rid => $url) {
 					$rs["items"][$i]["title"] = "Unknown feed item title: $link";
 				} elseif(strlen($rs["items"][$i]["title"]) >= 67){
 					// if title string is longer than 70, truncate it:
-					// Note this is a quick hack, link title's will also be truncated as well
+					// Note this is a quick hack, link titles will also be truncated as well
 					// as the feed's display title in the table.
 					$rs["items"][$i]["title"] = substr($rs["items"][$i]["title"], 0, 64)."...";
 				}

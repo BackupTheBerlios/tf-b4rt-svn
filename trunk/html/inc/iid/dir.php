@@ -22,7 +22,7 @@
 
 /*
 munk TODO:
-Check each of these items for correct functionality with enoding/decoding
+Check each of these items for correct functionality with encoding/decoding
 of HTML and URLs, including inc/iid/item.php and any templates associated with
 the item:
 
