@@ -227,7 +227,7 @@ sub status {
 #------------------------------------------------------------------------------#
 sub tfmaintenance {
 	# fluxcli-call
-	return Fluxd::fluxcli("maintenance", "true", ($trestart == 1) ? "true" : "false");
+	return Fluxd::fluxcli("maintenance", ($trestart == 1) ? "true" : "false");
 }
 
 ################################################################################

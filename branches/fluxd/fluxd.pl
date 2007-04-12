@@ -929,7 +929,7 @@ sub fluxcli {
 			return doSysCall($shellCmd);
 		}
 	}
-	if ($Command =~/^start|^stop|^reset|^delete|^wipe|^xfer/) {
+	if ($Command =~/^start|^stop|^reset|^delete|^wipe|^xfer|^maintenance/) {
 		if ((!(defined $Arg1)) || (defined $Arg2)) {;
 			return 0;
 		} else {
@@ -937,7 +937,7 @@ sub fluxcli {
 			return doSysCall($shellCmd);
 		}
 	}
-	if ($Command =~/^inject|^watch|^maintenance/) {
+	if ($Command =~/^inject|^watch/) {
 		if ((!(defined $Arg1)) || (!(defined $Arg2))) {
 			return 0;
 		} else {
