@@ -36,3 +36,4 @@ A:hover         {BACKGROUND: none; COLOR: #363636; FONT-SIZE: 12px; FONT-FAMILY:
 	border-right-color: #000000;
 }
 hr{ color: #94ABC0; noshade }
+/* #transferList { overflow: auto; } */

@@ -532,7 +532,7 @@ if (isset($_REQUEST["1"])) {                                                    
 			$dbCon->Close();
 			if ($tf_settings !== false) {
 				send("<p>Please enter the path to the directory you want "._NAME." to save your user downloads into below.</p>");
-				send("<p><strong>Important:</strong> this path <b>must</b> be writeable by the webserver user</p>");
+				send("<p><strong>Important:</strong> this path <b>must</b> be writable by the webserver user</p>");
 				send('<form name="setup" action="' . _FILE_THIS . '" method="post">');
 				send('<table border="0">');
 
@@ -590,9 +590,9 @@ if (isset($_REQUEST["1"])) {                                                    
 	if(empty($serverSettingsTestEror)){
 		// path
 		if (!(@is_dir($path) === true)) {
-			// dir doesnt exist, try to create
+			// dir doesn't exist, try to create
 			if (!((@mkdir($path, 0777)) === true))
-				$serverSettingsTestError .= "path <em>".$path."</em> does not exist and cannot be created.  Check that the path is writeable by the webserver user.";
+				$serverSettingsTestError .= "path <em>".$path."</em> does not exist and cannot be created.  Check that the path is writable by the webserver user.";
 			else
 				$pathExists = true;
 		} else {
@@ -601,7 +601,7 @@ if (isset($_REQUEST["1"])) {                                                    
 
 		if ($pathExists) {
 			if (!(@is_writable($path) === true))
-				$serverSettingsTestError .= "path <em>".$path."</em> is not writable. Check that the path is writeable by the webserver user.";
+				$serverSettingsTestError .= "path <em>".$path."</em> is not writable. Check that the path is writable by the webserver user.";
 			else
 				$serverSettingsTestCtr++;
 		}
@@ -660,7 +660,7 @@ if (isset($_REQUEST["1"])) {                                                    
 			// stop:
 			displaySetupMessage($databaseError, false);
 		} else {
-			// extra non-standard binary paths to check installed binarys:
+			// extra non-standard binary paths to check installed binaries:
 			$binPaths = array(
 				// FreeBSD:
 				'/usr/local/bin',
