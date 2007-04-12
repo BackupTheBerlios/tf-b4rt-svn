@@ -221,7 +221,7 @@ $cfg["free_space"] = @disk_free_space($cfg["path"]) / 1048576;
 // drive space var
 $cfg['driveSpace'] = getDriveSpace($cfg["path"]);
 
-// free space fromatted var
+// free space formatted var
 $cfg['freeSpaceFormatted'] = formatFreeSpace($cfg["free_space"]);
 
 // Fluxd
