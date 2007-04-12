@@ -119,7 +119,7 @@ sub initialize {
 		return 0;
 	}
 	$dataDir = $ddir . $dataDir;
-	# check if our main-dir exists. try to create if it doesnt
+	# check if our main-dir exists. try to create if it doesn't
 	if (! -d $dataDir) {
 		Fluxd::printMessage("Rssad", "creating data-dir : ".$dataDir."\n");
 		mkdir($dataDir, 0700);

@@ -155,7 +155,7 @@ sub initialize {
 		return 0;
 	}
 	$dataDir = $ddir . $PATH_dataDir;
-	# check if our main-dir exists. try to create if it doesnt
+	# check if our main-dir exists. try to create if it doesn't
 	if (! -d $dataDir) {
 		Fluxd::printMessage("Qmgr", "creating data-dir : ".$dataDir."\n");
 		mkdir($dataDir, 0700);
@@ -378,7 +378,7 @@ sub queueProcess {
 			my $nextTransfer = $queue[$queueIdx];
 			my $nextUser = $jobs{"queued"}{$nextTransfer};
 			# check if this queue-entry exists in running-jobs.
-			# dont try to start what is already running.
+			# don't try to start what is already running.
 			# this may be after a restart or transfer was started outside.
 			if (exists $jobs{"running"}{$nextTransfer}) {                       # already running
 				# remove job from queue
@@ -459,7 +459,7 @@ sub queueProcess {
 					}
 					last QUEUE;
 				}
-			} # end already runnin
+			} # end already running
 		} # queue-while-loop
 	} else {
 		if ($LOGLEVEL > 1) {

@@ -251,7 +251,7 @@ sub processArguments {
 		# return
 		return 1;
 	};
-	# hmmm dont know this arg, show usage screen
+	# hmmm don't know this arg, show usage screen
 	printUsage();
 	exit;
 }
@@ -553,7 +553,7 @@ sub initPaths {
 	$LOG = $PATH_DATA_DIR.$LOG;
 	$ERROR_LOG = $PATH_DATA_DIR.$ERROR_LOG;
 	$PID_FILE = $PATH_DATA_DIR.$PID_FILE;
-	# check if our main-dir exists. try to create if it doesnt
+	# check if our main-dir exists. try to create if it doesn't
 	if (! -d $PATH_DATA_DIR) {
 		mkdir($PATH_DATA_DIR, 0700);
 	}
