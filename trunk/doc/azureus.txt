@@ -95,14 +95,14 @@ Check that the Azureus-plugin is working and we can communicate with it
    dopal.interact.main()
 
 4. you are prompted to enter the Azureus-server-settings, do so.
-   looks like (each one submited with enter):
+   looks like (each one submitted with enter):
 
    Enter host: localhost
    Enter port (default is 6884): 6884
    Enter user name (leave blank if not applicable):
 
    Now you either got a connection (settings correct and Azureus-server + plugin
-   setup correct) or you dont.
+   setup correct) or you don't.
 
 5. Connection Established
    Looks like:
