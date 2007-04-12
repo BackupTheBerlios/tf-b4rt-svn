@@ -125,7 +125,7 @@ define("_DOWNLOADDETAILS","Stats");
 define("_PERCENTDONE","Percent Done");
 define("_RETURNTOTRANSFERS","Return to Transfers"); // Link at the bottom of each page
 define("_DATE","Date");
-define("_WROTE","wrote");  // Used in a reply to tag what the user had writen
+define("_WROTE","wrote");  // Used in a reply to tag what the user had written
 define("_SENDMESSAGETITLE","Send a Message");  // Title of page
 define("_TO","To");
 define("_FROM","From");
@@ -187,7 +187,7 @@ define('_REN_STRING','Rename File/Folder to: ');
 define('_DIR_REN_LINK', 'Rename File/Folder');
 define('_REN_FILE', 'File/Folder: ');
 define('_REN_DONE', 'Done!');
-define('_REN_ERROR', 'An error accured, please try again!');
+define('_REN_ERROR', 'An error accrued, please try again!');
 define('_REN_ERR_ARG', 'Wrong argument supplied!');
 define('_REN_TITLE', 'Rename');
 define('_ID_PORT','Port');
