@@ -20,7 +20,7 @@
 #                                                                              #
 #                                                                              #
 ################################################################################
-package Maintenance;
+package ServiceModule;
 use strict;
 use warnings;
 ################################################################################
@@ -30,26 +30,13 @@ use warnings;
 ################################################################################
 
 # version in a var
-my $VERSION = do {
-	my @r = (q$Revision$ =~ /\d+/g); sprintf "%d"."%02d" x $#r, @r };
+my $VERSION = "0.2";
 
 # state
 my $state = Fluxd::MOD_STATE_NULL;
 
 # message, error etc. keep it in one string for simplicity atm.
 my $message = "";
-
-# loglevel
-my $loglevel = 0;
-
-# run-interval
-my $interval;
-
-# time of last run
-my $time_last_run = 0;
-
-# transfer-restart
-my $trestart = 0;
 
 ################################################################################
 # constructor + destructor                                                     #
@@ -74,8 +61,8 @@ sub new {
 sub destroy {
 	# set state
 	$state = Fluxd::MOD_STATE_NULL;
-	# print
-	Fluxd::printMessage("Maintenance", "shutdown\n");
+	# log
+	Fluxd::printMessage("ServiceModule", "shutdown\n");
 }
 
 ################################################################################
@@ -89,51 +76,9 @@ sub destroy {
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub initialize {
-
-	shift; # class
-
-	# loglevel
-	$loglevel = Fluxd::getLoglevel();
-	if (!(defined $loglevel)) {
-		# message
-		$message = "loglevel not defined";
-		# set state
-		$state = Fluxd::MOD_STATE_ERROR;
-		# return
-		return 0;
-	}
-
-	# interval
-	$interval = FluxDB->getFluxConfig("fluxd_Maintenance_interval");
-	if (!(defined $interval)) {
-		# message
-		$message = "interval not defined";
-		# set state
-		$state = Fluxd::MOD_STATE_ERROR;
-		# return
-		return 0;
-	}
-
-	# transfer-restart
-	$trestart = FluxDB->getFluxConfig("fluxd_Maintenance_trestart");
-	if (!(defined $trestart)) {
-		# message
-		$message = "transfer-restart not defined";
-		# set state
-		$state = Fluxd::MOD_STATE_ERROR;
-		# return
-		return 0;
-	}
-
-	# print
-	Fluxd::printMessage("Maintenance", "initializing (loglevel: ".$loglevel." ; interval: ".$interval." ; trestart: ".$trestart.")\n");
-
-	# reset last run time
-	$time_last_run = time();
-
+	Fluxd::printMessage("ServiceModule", "initializing\n");
 	# set state
 	$state = Fluxd::MOD_STATE_OK;
-
 	# return
 	return 1;
 }
@@ -176,23 +121,10 @@ sub set {
 #------------------------------------------------------------------------------#
 # Sub: main                                                                    #
 # Arguments: Null                                                              #
-# Returns: Info String                                                         #
+# Returns:                                                                     #
 #------------------------------------------------------------------------------#
 sub main {
-
-	if ((time() - $time_last_run) >= $interval) {
-
-		# print
-		if ($loglevel > 1) {
-			Fluxd::printMessage("Maintenance", "executing maintenance (trestart: ".$trestart."):\n");
-		}
-
-		# exec
-		tfmaintenance();
-
-		# set last run time
-		$time_last_run = time();
-	}
+	Fluxd::printMessage("ServiceModule", "main\n");
 }
 
 #------------------------------------------------------------------------------#
@@ -201,9 +133,6 @@ sub main {
 # Returns: result-string                                                       #
 #------------------------------------------------------------------------------#
 sub command {
-	shift; # class
-	my $command = shift;
-	# TODO
 	return "";
 }
 
@@ -213,21 +142,7 @@ sub command {
 # Returns: Status information                                                  #
 #------------------------------------------------------------------------------#
 sub status {
-	my $return = "";
-	$return .= "\n-= Maintenance Revision ".$VERSION." =-\n";
-	$return .= "interval : ".$interval." s \n";
-	$return .= "trestart : ".$trestart."\n";
-	return $return;
-}
-
-#------------------------------------------------------------------------------#
-# Sub: tfmaintenance                                                           #
-# Arguments: null                                                              #
-# Returns: 0|1                                                                 #
-#------------------------------------------------------------------------------#
-sub tfmaintenance {
-	# fluxcli-call
-	return Fluxd::fluxcli("maintenance", ($trestart == 1) ? "true" : "false");
+	return "\n-= ServiceModule Revision ".$VERSION." =-\n";
 }
 
 ################################################################################

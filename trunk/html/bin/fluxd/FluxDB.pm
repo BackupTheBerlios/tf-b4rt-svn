@@ -48,7 +48,7 @@ my $state = Fluxd::MOD_STATE_NULL;
 my $message = "";
 
 # loglevel
-my $LOGLEVEL = 2;
+my $loglevel = 0;
 
 # operation-mode : dbi / php
 my $mode = "dbi";
@@ -296,7 +296,7 @@ sub initialize {
 	}
 
 	# loglevel
-	$LOGLEVEL = $fluxConf{"fluxd_loglevel"};
+	$loglevel = $fluxConf{"fluxd_loglevel"};
 
 	# print
 	Fluxd::printMessage("FluxDB", "data loaded and cached, FluxDB ready.\n");
@@ -415,7 +415,7 @@ sub getDatabaseDSN {
 sub getFluxConfig {
 	shift; # class
 	my $key = shift;
-	return $fluxConf{$key};
+	return (exists $fluxConf{$key}) ? $fluxConf{$key} : "";
 }
 
 #------------------------------------------------------------------------------#
@@ -455,7 +455,7 @@ sub getFluxUsers {
 sub reload {
 
 	# print
-	if ($LOGLEVEL > 0) {
+	if ($loglevel > 0) {
 		Fluxd::printMessage("FluxDB", "reloading DB-Cache...\n");
 	}
 
@@ -519,7 +519,7 @@ sub reload {
 	}
 
 	# print
-	if ($LOGLEVEL > 0) {
+	if ($loglevel > 0) {
 		Fluxd::printMessage("FluxDB", "done reloading DB-Cache.\n");
 	}
 

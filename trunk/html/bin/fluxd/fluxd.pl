@@ -46,21 +46,21 @@ use constant MOD_STATE_NULL => 0;
 use constant MOD_STATE_OK => 1;
 
 # files and dirs
-my $PATH_DATA_DIR = ".fluxd";
-my $PATH_TRANSFER_DIR = ".transfers";
-my $BIN_FLUXCLI = "fluxcli.php";
-my $PATH_SOCKET = "fluxd.sock";
-my $ERROR_LOG = "fluxd-error.log";
-my $LOG = "fluxd.log";
-my $PID_FILE = "fluxd.pid";
+my $path_data_dir = ".fluxd";
+my $path_transfer_dir = ".transfers";
+my $bin_fluxcli = "fluxcli.php";
+my $path_socket = "fluxd.sock";
+my $log_error = "fluxd-error.log";
+my $log = "fluxd.log";
+my $file_pid = "fluxd.pid";
+my $file_conf = "fluxd.conf";
 
 # defaults
-my $LOGLEVEL = 2;
-my $PATH_DOCROOT = "/var/www/";
-my $PATH_PATH = "/usr/local/torrentflux/";
-my $BIN_PHP = "/usr/bin/php";
+my $loglevel = 0;
+my $path_docroot = "/var/www/";
+my $path_path = "/usr/local/torrentflux/";
+my $bin_php = "/usr/bin/php";
 my $dbMode = "dbi";
-my $pwd = ".";
 
 # delims of modList
 my $delimMod = ";";
@@ -68,16 +68,19 @@ my $delimState = ":";
 
 # internal vars
 my ($VERSION, $DIR, $PROG, $EXTENSION);
-my $SERVER;
-my $Select;
+my $server;
+my $select;
 my $start_time = time();
 my $start_time_local = localtime();
 my $loop = 1;
 
-#------------------------------------------------------------------------------#
-# Class reference variables                                                    #
-#------------------------------------------------------------------------------#
-use vars qw($fluxDB $qmgr $fluxinet $rssad $watch $maintenance $trigger);
+# db-bean
+my $fluxDB;
+
+# service-modules
+our %serviceModules;
+our %serviceModuleNames;
+my %serviceModuleObjects;
 
 ################################################################################
 # main                                                                         #
@@ -117,6 +120,16 @@ sub initialize {
 	($DIR=$0) =~ s/([^\/\\]*)$//;
 	($PROG=$1) =~ s/\.([^\.]*)$//;
 	$EXTENSION = $1;
+	# load fluxd-conf
+	eval 'require "'.$file_conf.'";';
+	if ($@) {
+		print STDERR "failed to load config-file ".$file_conf."\n";
+		exit;
+	}
+	# fill name-list
+	foreach my $smod (sort keys %serviceModules) {
+		$serviceModuleNames{$serviceModules{$smod}{"name"}} = 1;
+	}
 }
 
 #------------------------------------------------------------------------------#
@@ -153,7 +166,7 @@ sub processArguments {
 	};
 	# daemon-stop
 	if ($temp =~ /stop/) {
-		# $PATH_DOCROOT
+		# path_docroot
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
 			printUsage();
@@ -162,8 +175,8 @@ sub processArguments {
 		if (!((substr $temp, -1) eq "/")) {
 			$temp .= "/";
 		}
-		$PATH_DOCROOT = $temp;
-		# PATH_PATH
+		$path_docroot = $temp;
+		# path_path
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
 			printUsage();
@@ -172,15 +185,15 @@ sub processArguments {
 		if (!((substr $temp, -1) eq "/")) {
 			$temp .= "/";
 		}
-		$PATH_PATH = $temp;
-		# $BIN_PHP
+		$path_path = $temp;
+		# bin_php
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
 			printUsage();
 			exit;
 		}
-		$BIN_PHP = $temp;
-		# $dbMode
+		$bin_php = $temp;
+		# dbMode
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
 			printUsage();
@@ -190,29 +203,29 @@ sub processArguments {
 		# init paths
 		initPaths();
 		# check if running
-		if (daemonIsRunning($PATH_DOCROOT) == 0) {
+		if (daemonIsRunning($path_docroot) == 0) {
 			printError("CORE", "daemon not running.\n");
 			exit;
 		}
 		printMessage("CORE", "Stopping daemon...\n");
 		# shutdown
-		if (-f $PID_FILE) {
+		if (-f $file_pid) {
 			# get pid
-			open(PIDFILE,"< $PID_FILE");
+			open(PIDFILE,"< $file_pid");
 			my $daemonPid = <PIDFILE>;
 			close(PIDFILE);
 			chomp $daemonPid;
 			# send TERM to daemon
 			kill 'SIGTERM', $daemonPid;
 		} else {
-			printError("CORE", "Error : cant find pid-file (".$PID_FILE."), daemon running ?\n");
+			printError("CORE", "Error : cant find pid-file (".$file_pid."), daemon running ?\n");
 		}
 		# exit
 		exit;
 	};
 	# start
 	if ($temp =~ /start/) {
-		# $PATH_DOCROOT
+		# path_docroot
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
 			printUsage();
@@ -221,8 +234,8 @@ sub processArguments {
 		if (!((substr $temp, -1) eq "/")) {
 			$temp .= "/";
 		}
-		$PATH_DOCROOT = $temp;
-		# PATH_PATH
+		$path_docroot = $temp;
+		# path_path
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
 			printUsage();
@@ -231,15 +244,15 @@ sub processArguments {
 		if (!((substr $temp, -1) eq "/")) {
 			$temp .= "/";
 		}
-		$PATH_PATH = $temp;
-		# $BIN_PHP
+		$path_path = $temp;
+		# bin_php
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
 			printUsage();
 			exit;
 		}
-		$BIN_PHP = $temp;
-		# $dbMode
+		$bin_php = $temp;
+		# dbMode
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
 			printUsage();
@@ -251,7 +264,7 @@ sub processArguments {
 		# return
 		return 1;
 	};
-	# hmmm don't know this arg, show usage screen
+	# hmmm dont know this arg, show usage screen
 	printUsage();
 	exit;
 }
@@ -295,33 +308,36 @@ sub daemonize {
 		exit;
 	}
 	# STDOUT
-	unless (open STDOUT, ">>$LOG") {
+	unless (open STDOUT, ">>$log") {
 		logError("CORE", "failed to open STDOUT: ".$!."\n");
 		exit;
 	}
 	# STDERR
-	unless (open STDERR, ">>$ERROR_LOG") {
+	unless (open STDERR, ">>$log_error") {
 		logError("CORE", "failed to open STDERR: ".$!."\n");
 		exit;
 	}
 
 	# check if already running
-	if (daemonIsRunning($PATH_DOCROOT) == 1) {
+	if (daemonIsRunning($path_docroot) == 1) {
 		printError("CORE", "daemon already running.\n");
 		exit;
 	}
 
 	# check for pid-file
-	if (-f $PID_FILE) {
-		printMessage("CORE", "pid-file (".$PID_FILE.") exists but daemon not running. deleting...\n");
+	if (-f $file_pid) {
+		printMessage("CORE", "pid-file (".$file_pid.") exists but daemon not running. deleting...\n");
 		pidFileDelete();
 	}
 
 	# check for socket
-	if (-r $PATH_SOCKET) {
-		printMessage("CORE", "socket (".$PATH_SOCKET.") exists but daemon not running. deleting...\n");
+	if (-r $path_socket) {
+		printMessage("CORE", "socket (".$path_socket.") exists but daemon not running. deleting...\n");
 		socketRemove();
 	}
+
+	# load perl-modules
+	loadModules();
 
 	# print
 	printMessage("CORE", "initialize FluxDB...\n");
@@ -333,23 +349,20 @@ sub daemonize {
 	$fluxDB = FluxDB->new();
 
 	# initialize
-	$fluxDB->initialize($PATH_DOCROOT, $BIN_PHP, $dbMode);
+	$fluxDB->initialize($path_docroot, $bin_php, $dbMode);
 	if ($fluxDB->getState() != MOD_STATE_OK) {
 		printError("CORE", "Error : initializing FluxDB : ".$fluxDB->getMessage()."\n");
 		exit;
 	}
 
 	# loglevel
-	$LOGLEVEL = FluxDB->getFluxConfig("fluxd_loglevel");
+	$loglevel = FluxDB->getFluxConfig("fluxd_loglevel");
 
 	# chdir
-	#chdir($PATH_DOCROOT) or die "Can't chdir to docroot: $!";
-
-	# load perl-modules
-	loadModules();
+	#chdir($path_docroot) or die "Can't chdir to docroot: $!";
 
 	# fork
-	if ($LOGLEVEL > 1) {
+	if ($loglevel > 1) {
 		printMessage("CORE", "forking and starting a new session...\n");
 	}
 	my $pid = fork;
@@ -363,15 +376,11 @@ sub daemonize {
 		exit;
 	}
 
-	# get cwd
-	$pwd = qx(pwd);
-	chop $pwd;
-
 	# log
-	printMessage("CORE", "daemon starting with docroot ".$PATH_DOCROOT." (pid: ".$$." ; pwd: ".$pwd.")\n");
+	printMessage("CORE", "daemon starting with docroot ".$path_docroot." (pid: ".$$.")\n");
 
 	# set up our signal handlers
-	if ($LOGLEVEL > 1) {
+	if ($loglevel > 1) {
 		printMessage("CORE", "setting up signal handlers...\n");
 	}
 	$SIG{HUP} = \&gotSigHup;
@@ -399,87 +408,20 @@ sub daemonMain {
 		# check Connections
 		checkConnections();
 
-		# Fluxinet
-		if ((defined $fluxinet) && ($fluxinet->getState() == MOD_STATE_OK)) {
-			eval {
-				local $SIG{ALRM} = sub {die "alarm\n"};
-				alarm 3;
-				$fluxinet->main();
-				alarm 0;
-			};
-			# Check for alarm (timeout) condition
-			if ($@) {
-				printError("CORE", "Fluxinet Timed out:\n ".$@."\n");
-			}
-		}
-
-		# Qmgr
-		if ((defined $qmgr) && ($qmgr->getState() == MOD_STATE_OK)) {
-			eval {
-				local $SIG{ALRM} = sub { die "alarm\n" };
-				alarm 20;
-				$qmgr->main();
-				alarm 0;
-			};
-			# Check for alarm (timeout) condition
-			if ($@) {
-				printError("CORE", "Qmgr Timed out:\n ".$@."\n");
-			}
-		}
-
-		# Rssad
-		if ((defined $rssad) && ($rssad->getState() == MOD_STATE_OK)) {
-			eval {
-				local $SIG{ALRM} = sub {die "alarm\n"};
-				alarm 20;
-				$rssad->main();
-				alarm 0;
-			};
-			# Check for alarm (timeout) condition
-			if ($@) {
-				printError("CORE", "Rssad Timed out:\n ".$@."\n");
-			}
-		}
-
-		# Watch
-		if ((defined $watch) && ($watch->getState() == MOD_STATE_OK)) {
-			eval {
-				local $SIG{ALRM} = sub {die "alarm\n"};
-				alarm 20;
-				$watch->main();
-				alarm 0;
-			};
-			# Check for alarm (timeout) condition
-			if ($@) {
-				printError("CORE", "Watch Timed out:\n ".$@."\n");
-			}
-		}
-
-		# Maintenance
-		if ((defined $maintenance) && ($maintenance->getState() == MOD_STATE_OK)) {
-			eval {
-				local $SIG{ALRM} = sub {die "alarm\n"};
-				alarm 5;
-				$maintenance->main();
-				alarm 0;
-			};
-			# Check for alarm (timeout) condition
-			if ($@) {
-				printError("CORE", "Maintenance Timed out:\n ".$@."\n");
-			}
-		}
-
-		# Trigger
-		if ((defined $trigger) && ($trigger->getState() == MOD_STATE_OK)) {
-			eval {
-				local $SIG{ALRM} = sub {die "alarm\n"};
-				alarm 5;
-				$trigger->main();
-				alarm 0;
-			};
-			# Check for alarm (timeout) condition
-			if ($@) {
-				printError("CORE", "Trigger Timed out:\n ".$@."\n");
+		# service-modules main-methods
+		foreach my $smod (sort keys %serviceModules) {
+			if ((exists $serviceModuleObjects{$serviceModules{$smod}{"name"}}) &&
+				($serviceModuleObjects{$serviceModules{$smod}{"name"}}->getState() == MOD_STATE_OK)) {
+				eval {
+					local $SIG{ALRM} = sub {die "alarm\n"};
+					alarm $serviceModules{$smod}{"timeout"};
+					$serviceModuleObjects{$serviceModules{$smod}{"name"}}->main();
+					alarm 0;
+				};
+				# Check for alarm (timeout) condition
+				if ($@) {
+					printError("CORE", $serviceModules{$smod}{"name"}." Timed out:\n ".$@."\n");
+				}
 			}
 		}
 
@@ -547,15 +489,15 @@ sub daemonIsRunning {
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
 sub initPaths {
-	$PATH_TRANSFER_DIR = $PATH_PATH.$PATH_TRANSFER_DIR."/";
-	$PATH_DATA_DIR = $PATH_PATH.$PATH_DATA_DIR."/";
-	$PATH_SOCKET = $PATH_DATA_DIR.$PATH_SOCKET;
-	$LOG = $PATH_DATA_DIR.$LOG;
-	$ERROR_LOG = $PATH_DATA_DIR.$ERROR_LOG;
-	$PID_FILE = $PATH_DATA_DIR.$PID_FILE;
-	# check if our main-dir exists. try to create if it doesn't
-	if (! -d $PATH_DATA_DIR) {
-		mkdir($PATH_DATA_DIR, 0700);
+	$path_transfer_dir = $path_path.$path_transfer_dir."/";
+	$path_data_dir = $path_path.$path_data_dir."/";
+	$path_socket = $path_data_dir.$path_socket;
+	$log = $path_data_dir.$log;
+	$log_error = $path_data_dir.$log_error;
+	$file_pid = $path_data_dir.$file_pid;
+	# check if our main-dir exists. try to create if it doesnt
+	if (! -d $path_data_dir) {
+		mkdir($path_data_dir, 0700);
 	}
 }
 
@@ -566,11 +508,11 @@ sub initPaths {
 #------------------------------------------------------------------------------#
 sub loadModules {
 	# print
-	if ($LOGLEVEL > 1) {
+	if ($loglevel > 1) {
 		printMessage("CORE", "loading Perl-modules...\n");
 	}
 	# load IO::Socket::UNIX
-	if ($LOGLEVEL > 2) {
+	if ($loglevel > 2) {
 		printMessage("CORE", "loading Perl-module IO::Socket::UNIX\n");
 	}
 	if (eval "require IO::Socket::UNIX")  {
@@ -580,7 +522,7 @@ sub loadModules {
 		exit;
 	}
 	# load IO::Select
-	if ($LOGLEVEL > 2) {
+	if ($loglevel > 2) {
 		printMessage("CORE", "loading Perl-module IO::Select\n");
 	}
 	if (eval "require IO::Select")  {
@@ -590,7 +532,7 @@ sub loadModules {
 		exit;
 	}
 	# load POSIX
-	if ($LOGLEVEL > 2) {
+	if ($loglevel > 2) {
 		printMessage("CORE", "loading Perl-module POSIX\n");
 	}
 	if (eval "require POSIX")  {
@@ -600,9 +542,75 @@ sub loadModules {
 		exit;
 	}
 	# print
-	if ($LOGLEVEL > 1) {
+	if ($loglevel > 1) {
 		printMessage("CORE", "Perl-modules loaded.\n");
 	}
+}
+
+#------------------------------------------------------------------------------#
+# Sub: serviceModuleLoad                                                       #
+# Arguments: name of module                                                    #
+# Returns: 0|1                                                                 #
+#------------------------------------------------------------------------------#
+sub serviceModuleLoad {
+	my $modName = shift;
+	if (exists $serviceModuleObjects{$modName}) {
+		return 1;
+	}
+	if ($loglevel > 1) {
+		printMessage("CORE", "loading service-module ".$modName." ...\n");
+	}
+	# create and initialize
+	if (eval "require ".$modName) {
+		eval {
+			$serviceModuleObjects{$modName} = eval $modName."->new();";
+			$serviceModuleObjects{$modName}->initialize();
+			if ($serviceModuleObjects{$modName}->getState() != MOD_STATE_OK) {
+				my $msg = "error initializing service-module ".$modName." :\n";
+				$msg .= " ".$serviceModuleObjects{$modName}->getMessage()."\n";
+				printError("CORE", $msg);
+			}
+		};
+		if ($@) {
+			printError("CORE", "error loading service-module ".$modName." : ".$@."\n");
+		} else {
+			# everything ok
+			if ($loglevel > 0) {
+				printMessage("CORE", $modName." loaded\n");
+			}
+			return 1;
+		}
+	} else {
+		printError("CORE", "error loading service-module ".$modName." : ".$@."\n");
+	}
+}
+
+#------------------------------------------------------------------------------#
+# Sub: serviceModuleUnload                                                     #
+# Arguments: name of module                                                    #
+# Returns: 0|1                                                                 #
+#------------------------------------------------------------------------------#
+sub serviceModuleUnload {
+	my $modName = shift;
+	if (exists $serviceModuleObjects{$modName}) {
+		if ($loglevel > 1) {
+			printMessage("CORE", "unloading service-module ".$modName." ...\n");
+		}
+		eval {
+			$serviceModuleObjects{$modName}->destroy();
+			delete($serviceModuleObjects{$modName});
+		};
+		if ($@) {
+			printError("CORE", "error unloading service-module ".$modName." : ".$@."\n");
+			return 0;
+		} else {
+			# everything ok
+			if ($loglevel > 0) {
+				printMessage("CORE", $modName." unloaded\n");
+			}
+		}
+	}
+	return 1;
 }
 
 #------------------------------------------------------------------------------#
@@ -613,335 +621,36 @@ sub loadModules {
 sub serviceModulesLoad {
 
 	# print
-	if ($LOGLEVEL > 0) {
+	if ($loglevel > 0) {
 		printMessage("CORE", "loading service-modules...\n");
 	}
 
-	# Fluxinet
-	if (FluxDB->getFluxConfig("fluxd_Fluxinet_enabled") == 1) {
-		# Load up module, unless it is already
-		if (!(defined $fluxinet)) {
-			if (eval "require Fluxinet") {
-				eval {
-					$fluxinet = Fluxinet->new();
-					$fluxinet->initialize(
-						$LOGLEVEL,
-						FluxDB->getFluxConfig("fluxd_Fluxinet_port")
-					);
-					if ($fluxinet->getState() != MOD_STATE_OK) {
-						my $msg = "error initializing service-module Fluxinet :\n";
-						$msg .= " ".$fluxinet->getMessage()."\n";
-						printError("CORE", $msg);
-					}
-				};
-				if ($@) {
-					printError("CORE", "error loading service-module Fluxinet : $@\n");
-				} else {
-					# everything ok
-					if ($LOGLEVEL > 0) {
-						printMessage("CORE", "Fluxinet loaded\n");
-					}
-				}
-			} else {
-				printError("CORE", "error loading service-module Fluxinet : $@\n");
-			}
-		}
-	} else {
-		# Unload module, if it is loaded
-		if (defined $fluxinet) {
-			eval {
-				$fluxinet->destroy();
-				undef $fluxinet;
-			};
-			if ($@) {
-				printError("CORE", "error unloading service-module Fluxinet : $@\n");
-			} else {
-				# everything ok
-				if ($LOGLEVEL > 0) {
-					printMessage("CORE", "Fluxinet unloaded\n");
-				}
-			}
+	# load/unload
+	foreach my $smod (sort keys %serviceModules) {
+		if (FluxDB->getFluxConfig("fluxd_".$serviceModules{$smod}{"name"}."_enabled") == 1) {
+			# Load up module, unless it is already
+			serviceModuleLoad($serviceModules{$smod}{"name"});
+		} else {
+			# Unload module, if it is loaded
+			serviceModuleUnload($serviceModules{$smod}{"name"});
 		}
 	}
-
-	# Qmgr
-	if (FluxDB->getFluxConfig("fluxd_Qmgr_enabled") == 1) {
-		# Load up module, unless it is already
-		if (!(defined $qmgr)) {
-			if (eval "require Qmgr") {
-				eval {
-					$qmgr = Qmgr->new();
-					$qmgr->initialize(
-						$LOGLEVEL,
-						$PATH_DATA_DIR,
-						$PATH_TRANSFER_DIR,
-						FluxDB->getFluxConfig("fluxd_Qmgr_interval"),
-						FluxDB->getFluxConfig("fluxd_Qmgr_maxTotalTransfers"),
-						FluxDB->getFluxConfig("fluxd_Qmgr_maxUserTransfers")
-					);
-					if ($qmgr->getState() != MOD_STATE_OK) {
-						my $msg = "error initializing service-module Qmgr :\n";
-						$msg .= " ".$qmgr->getMessage()."\n";
-						printError("CORE", $msg);
-					}
-				};
-				if ($@) {
-					printError("CORE", "error loading service-module Qmgr : $@\n");
-				} else {
-					# everything ok
-					if ($LOGLEVEL > 0) {
-						printMessage("CORE", "Qmgr loaded\n");
-					}
-				}
-			} else {
-				printError("CORE", "error loading service-module Qmgr : $@\n");
-			}
-		}
-	} else {
-		# Unload module, if it is loaded
-		if (defined $qmgr) {
-			eval {
-				$qmgr->destroy();
-				undef $qmgr;
-			};
-			if ($@) {
-				printError("CORE", "error unloading service-module Qmgr : $@\n");
-			} else {
-				# everything ok
-				if ($LOGLEVEL > 0) {
-					printMessage("CORE", "Qmgr unloaded\n");
-				}
-			}
-		}
-	}
-
-	# Rssad
-	if (FluxDB->getFluxConfig("fluxd_Rssad_enabled") == 1) {
-		# Load up module, unless it is already
-		if (!(defined $rssad)) {
-			if (eval "require Rssad") {
-				eval {
-					$rssad = Rssad->new();
-					$rssad->initialize(
-						$LOGLEVEL,
-						$PATH_DATA_DIR,
-						FluxDB->getFluxConfig("fluxd_Rssad_interval"),
-						FluxDB->getFluxConfig("fluxd_Rssad_jobs")
-					);
-					if ($rssad->getState() != MOD_STATE_OK) {
-						my $msg = "error initializing service-module Rssad :\n";
-						$msg .= " ".$rssad->getMessage()."\n";
-						printError("CORE", $msg);
-					}
-				};
-				if ($@) {
-					printError("CORE", "error loading service-module Rssad : $@\n");
-				} else {
-					# everything ok
-					if ($LOGLEVEL > 0) {
-						printMessage("CORE", "Rssad loaded\n");
-					}
-				}
-			} else {
-				printError("CORE", "error loading service-module Rssad : $@\n");
-			}
-		}
-	} else {
-		# Unload module, if it is loaded
-		if (defined $rssad) {
-			eval {
-				$rssad->destroy();
-				undef $rssad;
-			};
-			if ($@) {
-				printError("CORE", "error unloading service-module Rssad : $@\n");
-			} else {
-				# everything ok
-				if ($LOGLEVEL > 0) {
-					printMessage("CORE", "Rssad unloaded\n");
-				}
-			}
-		}
-	}
-
-	# Watch
-	if (FluxDB->getFluxConfig("fluxd_Watch_enabled") == 1) {
-		# Load up module, unless it is already
-		if (!(defined $watch)) {
-			if (eval "require Watch") {
-				eval {
-					$watch = Watch->new();
-					$watch->initialize(
-						$LOGLEVEL,
-						FluxDB->getFluxConfig("fluxd_Watch_interval"),
-						FluxDB->getFluxConfig("fluxd_Watch_jobs")
-					);
-					if ($watch->getState() != MOD_STATE_OK) {
-						my $msg = "error initializing service-module Watch :\n";
-						$msg .= " ".$watch->getMessage()."\n";
-						printError("CORE", $msg);
-					}
-				};
-				if ($@) {
-					printError("CORE", "error loading service-module Watch : $@\n");
-				} else {
-					# everything ok
-					if ($LOGLEVEL > 0) {
-						printMessage("CORE", "Watch loaded\n");
-					}
-				}
-			} else {
-				printError("CORE", "error loading service-module Watch : $@\n");
-			}
-		}
-	} else {
-		# Unload module, if it is loaded
-		if (defined $watch) {
-			eval {
-				$watch->destroy();
-				undef $watch;
-			};
-			if ($@) {
-				printError("CORE", "error unloading service-module Watch : $@\n");
-			} else {
-				# everything ok
-				if ($LOGLEVEL > 0) {
-					printMessage("CORE", "Watch unloaded\n");
-				}
-			}
-		}
-	}
-
-	# Maintenance
-	if (FluxDB->getFluxConfig("fluxd_Maintenance_enabled") == 1) {
-		# Load up module, unless it is already
-		if (!(defined $maintenance)) {
-			if (eval "require Maintenance") {
-				eval {
-					$maintenance = Maintenance->new();
-					$maintenance->initialize(
-						$LOGLEVEL,
-						FluxDB->getFluxConfig("fluxd_Maintenance_interval"),
-						FluxDB->getFluxConfig("fluxd_Maintenance_trestart")
-					);
-					if ($maintenance->getState() != MOD_STATE_OK) {
-						my $msg = "error initializing service-module Maintenance :\n";
-						$msg .= " ".$maintenance->getMessage()."\n";
-						printError("CORE", $msg);
-					}
-				};
-				if ($@) {
-					printError("CORE", "error loading service-module Maintenance : $@\n");
-				} else {
-					# everything ok
-					if ($LOGLEVEL > 0) {
-						printMessage("CORE", "Maintenance loaded\n");
-					}
-				}
-			} else {
-				printError("CORE", "error loading service-module Maintenance : $@\n");
-			}
-		}
-	} else {
-		# Unload module, if it is loaded
-		if (defined $maintenance) {
-			eval {
-				$maintenance->destroy();
-				undef $maintenance;
-			};
-			if ($@) {
-				printError("CORE", "error unloading service-module Maintenance : $@\n");
-			} else {
-				# everything ok
-				if ($LOGLEVEL > 0) {
-					printMessage("CORE", "Maintenance unloaded\n");
-				}
-			}
-		}
-	}
-
-	# Trigger
-	if (FluxDB->getFluxConfig("fluxd_Trigger_enabled") == 1) {
-		# Load up module, unless it is already
-		if (!(defined $trigger)) {
-			if (eval "require Trigger") {
-				eval {
-					$trigger = Trigger->new();
-					$trigger->initialize(
-						$LOGLEVEL,
-						FluxDB->getFluxConfig("fluxd_Trigger_interval")
-					);
-					if ($trigger->getState() != MOD_STATE_OK) {
-						my $msg = "error initializing service-module Trigger :\n";
-						$msg .= " ".$trigger->getMessage()."\n";
-						printError("CORE", $msg);
-					}
-				};
-				if ($@) {
-					printError("CORE", "error loading service-module Trigger : $@\n");
-				} else {
-					# everything ok
-					if ($LOGLEVEL > 0) {
-						printMessage("CORE", "Trigger loaded\n");
-					}
-				}
-			} else {
-				printError("CORE", "error loading service-module Trigger : $@\n");
-			}
-		}
-	} else {
-		# Unload module, if it is loaded
-		if (defined $trigger) {
-			eval {
-				$trigger->destroy;
-				undef $trigger;
-			};
-			if ($@) {
-				printError("CORE", "error unloading service-module Trigger : $@\n");
-			} else {
-				# everything ok
-				if ($LOGLEVEL > 0) {
-					printMessage("CORE", "Trigger unloaded\n");
-				}
-			}
-		}
-	}
-
 
 	# set command line
 	my @cmdmodlist = ();
-	if ((defined $fluxinet) && ($fluxinet->getState() == MOD_STATE_OK)) {
-		push(@cmdmodlist, "Fluxinet");
-	}
-	if ((defined $qmgr) && ($qmgr->getState() == MOD_STATE_OK)) {
-		push(@cmdmodlist, "Qmgr");
-	}
-	if ((defined $rssad) && ($rssad->getState() == MOD_STATE_OK)) {
-		push(@cmdmodlist, "Rssad");
-	}
-	if ((defined $watch) && ($watch->getState() == MOD_STATE_OK)) {
-		push(@cmdmodlist, "Watch");
-	}
-	if ((defined $maintenance) && ($maintenance->getState() == MOD_STATE_OK)) {
-		push(@cmdmodlist, "Maintenance");
-	}
-	if ((defined $trigger) && ($trigger->getState() == MOD_STATE_OK)) {
-		push(@cmdmodlist, "Trigger");
-	}
-	my $cmdmodliststr = "";
-	my $modCount = scalar(@cmdmodlist);
-	if ($modCount > 0) {
-		for (my $i = 0; $i < $modCount; $i++) {
-			if ($i > 0) {
-				$cmdmodliststr .= " ";
-			}
-			$cmdmodliststr .= $cmdmodlist[$i];
+	foreach my $smod (sort keys %serviceModules) {
+		if ((exists $serviceModuleObjects{$serviceModules{$smod}{"name"}}) &&
+			($serviceModuleObjects{$serviceModules{$smod}{"name"}}->getState() == MOD_STATE_OK)) {
+			push(@cmdmodlist, $serviceModules{$smod}{"name"});
 		}
 	}
-	$0 = '[ fluxd running ('.$PATH_DOCROOT.') ('.$cmdmodliststr.') ]';
+	my $cmdmodliststr = (scalar(@cmdmodlist) > 0)
+		? join(" ", @cmdmodlist)
+		: "No service-modules loaded";
+	$0 = '[ fluxd running ('.$path_docroot.') ('.$cmdmodliststr.') ]';
 
 	# print
-	if ($LOGLEVEL > 0) {
+	if ($loglevel > 0) {
 		printMessage("CORE", "done loading service-modules.\n");
 	}
 
@@ -955,114 +664,21 @@ sub serviceModulesLoad {
 sub serviceModulesUnload {
 
 	# print
-	if ($LOGLEVEL > 0) {
+	if ($loglevel > 0) {
 		printMessage("CORE", "unloading service-modules...\n");
 	}
 
-	# Fluxinet
-	if (defined $fluxinet) {
-		eval {
-			$fluxinet->destroy();
-			undef $fluxinet;
-		};
-		if ($@) {
-			printError("CORE", "error unloading service-module Fluxinet : $@\n");
-		} else {
-			# everything ok
-			if ($LOGLEVEL > 0) {
-				printMessage("CORE", "Fluxinet unloaded\n");
-			}
-		}
-	}
-
-	# Qmgr
-	if (defined $qmgr) {
-		eval {
-			$qmgr->destroy();
-			undef $qmgr;
-		};
-		if ($@) {
-			printError("CORE", "error unloading service-module Qmgr : $@\n");
-		} else {
-			# everything ok
-			if ($LOGLEVEL > 0) {
-				printMessage("CORE", "Qmgr unloaded\n");
-			}
-		}
-	}
-
-	# Rssad
-	if (defined $rssad) {
-		eval {
-			$rssad->destroy();
-			undef $rssad;
-		};
-		if ($@) {
-			printError("CORE", "error unloading service-module Rssad : $@\n");
-		} else {
-			# everything ok
-			if ($LOGLEVEL > 0) {
-				printMessage("CORE", "Rssad unloaded\n");
-			}
-		}
-	}
-
-	# Watch
-	if (defined $watch) {
-		eval {
-			$watch->destroy();
-			undef $watch;
-		};
-		if ($@) {
-			printError("CORE", "error unloading service-module Watch : $@\n");
-		} else {
-			# everything ok
-			if ($LOGLEVEL > 0) {
-				printMessage("CORE", "Watch unloaded\n");
-			}
-		}
-	}
-
-	# Maintenance
-	if (defined $maintenance) {
-		eval {
-			$maintenance->destroy();
-			undef $maintenance;
-		};
-		if ($@) {
-			printError("CORE", "error unloading service-module Maintenance : $@\n");
-		} else {
-			# everything ok
-			if ($LOGLEVEL > 0) {
-				printMessage("CORE", "Maintenance unloaded\n");
-			}
-		}
-	}
-
-	# Trigger
-	if (defined $trigger) {
-		eval {
-			$trigger->destroy;
-			undef $trigger;
-		};
-		if ($@) {
-			printError("CORE", "error unloading service-module Trigger : $@\n");
-		} else {
-			# everything ok
-			if ($LOGLEVEL > 0) {
-				printMessage("CORE", "Trigger unloaded\n");
-			}
-		}
+	# unload
+	foreach my $smod (sort keys %serviceModules) {
+		serviceModuleUnload($serviceModules{$smod}{"name"});
 	}
 
 	# print
-	if ($LOGLEVEL > 0) {
+	if ($loglevel > 0) {
 		printMessage("CORE", "done unloading service-modules.\n");
 	}
 
 }
-
-
 
 #------------------------------------------------------------------------------#
 # Sub: serviceModuleList                                                       #
@@ -1074,56 +690,19 @@ sub serviceModuleList {
 	# retval
 	my $modList = "";
 
-	# Fluxinet
-	$modList .= "Fluxinet".$delimState;
-	if (defined $fluxinet) {
-		$modList .= $fluxinet->getState();
-	} else {
-		$modList .= MOD_STATE_NULL;
-	}
-
-	# Qmgr
-	$modList .= $delimMod."Qmgr".$delimState;
-	if (defined $qmgr) {
-		$modList .= $qmgr->getState();
-	} else {
-		$modList .= MOD_STATE_NULL;
-	}
-
-	# Rssad
-	$modList .= $delimMod."Rssad".$delimState;
-	if (defined $rssad) {
-		$modList .= $rssad->getState();
-	} else {
-		$modList .= MOD_STATE_NULL;
-	}
-
-	# Watch
-	$modList .= $delimMod."Watch".$delimState;
-	if (defined $watch) {
-		$modList .= $watch->getState();
-	} else {
-		$modList .= MOD_STATE_NULL;
-	}
-
-	# Maintenance
-	$modList .= $delimMod."Maintenance".$delimState;
-	if (defined $maintenance) {
-		$modList .= $maintenance->getState();
-	} else {
-		$modList .= MOD_STATE_NULL;
-	}
-
-	# Trigger
-	$modList .= $delimMod."Trigger".$delimState;
-	if (defined $trigger) {
-		$modList .= $trigger->getState();
-	} else {
-		$modList .= MOD_STATE_NULL;
+	# build list
+	foreach my $smod (sort keys %serviceModules) {
+		$modList .= $serviceModules{$smod}{"name"}.$delimState;
+		if (exists $serviceModuleObjects{$serviceModules{$smod}{"name"}}) {
+			$modList .= $serviceModuleObjects{$serviceModules{$smod}{"name"}}->getState();
+		} else {
+			$modList .= MOD_STATE_NULL;
+		}
+		$modList .= $delimMod;
 	}
 
 	# return
-	return $modList;
+	return (substr ($modList, 0, (length($modList)) - 1));
 }
 
 #------------------------------------------------------------------------------#
@@ -1132,52 +711,11 @@ sub serviceModuleList {
 # Returns: state of service-module                                             #
 #------------------------------------------------------------------------------#
 sub serviceModuleState {
-	$_ = shift;
-	if (!(defined $_)) {
-		return 0;
+	my $modName = shift;
+	if (exists $serviceModuleObjects{$modName}) {
+		return $serviceModuleObjects{$modName}->getState();
 	} else {
-		/Qmgr/ && do {
-			if (defined $qmgr) {
-				return $qmgr->getState();
-			} else {
-				return MOD_STATE_NULL;
-			}
-		};
-		/Watch/ && do {
-			if (defined $watch) {
-				return $watch->getState();
-			} else {
-				return MOD_STATE_NULL;
-			}
-		};
-		/Rssad/ && do {
-			if (defined $rssad) {
-				return $rssad->getState();
-			} else {
-				return MOD_STATE_NULL;
-			}
-		};
-		/Fluxinet/ && do {
-			if (defined $fluxinet) {
-				return $fluxinet->getState();
-			} else {
-				return MOD_STATE_NULL;
-			}
-		};
-		/Maintenance/ && do {
-			if (defined $maintenance) {
-				return $maintenance->getState();
-			} else {
-				return MOD_STATE_NULL;
-			}
-		};
-		/Trigger/ && do {
-			if (defined $trigger) {
-				return $trigger->getState();
-			} else {
-				return MOD_STATE_NULL;
-			}
-		};
+		return MOD_STATE_NULL;
 	}
 }
 
@@ -1240,11 +778,11 @@ sub checkConnections {
 	# Get the readable handles. timeout is 0, only process stuff that can be
 	# read NOW.
 	my $return = "";
-	my @ready = $Select->can_read(0);
+	my @ready = $select->can_read(0);
 	foreach my $socket (@ready) {
-		if ($socket == $SERVER) {
+		if ($socket == $server) {
 			my $new = $socket->accept();
-			$Select->add($new);
+			$select->add($new);
 		} else {
 			my $buf = "";
 			my $char = getc($socket);
@@ -1254,7 +792,7 @@ sub checkConnections {
 			}
 			$return = processRequest($buf);
 			$socket->send($return);
-			$Select->remove($socket);
+			$select->remove($socket);
 			close($socket);
 		}
 	}
@@ -1313,45 +851,15 @@ sub processRequest {
 			my $mod = $1;
 			my $command = $2;
 			$return = "";
-			$_ = $mod;
-			MODCALL: {
-				/Fluxinet/ && do {
-					if ((defined $fluxinet) && ($fluxinet->getState() == MOD_STATE_OK)) {
-						$return = $fluxinet->command($command);
-					}
-					last SWITCH;
-				};
-				/Qmgr/ && do {
-					if ((defined $qmgr) && ($qmgr->getState() == MOD_STATE_OK)) {
-						$return = $qmgr->command($command);
-					}
-					last SWITCH;
-				};
-				/Rssad/ && do {
-					if ((defined $rssad) && ($rssad->getState() == MOD_STATE_OK)) {
-						$return = $rssad->command($command);
-					}
-					last SWITCH;
-				};
-				/Watch/ && do {
-					if ((defined $watch) && ($watch->getState() == MOD_STATE_OK)) {
-						$return = $watch->command($command);
-					}
-					last SWITCH;
-				};
-				/Maintenance/ && do {
-					if ((defined $maintenance) && ($maintenance->getState() == MOD_STATE_OK)) {
-						$return = $maintenance->command($command);
-					}
-					last SWITCH;
-				};
-				/Trigger/ && do {
-					if ((defined $trigger) && ($trigger->getState() == MOD_STATE_OK)) {
-						$return = $trigger->command($command);
-					}
-					last SWITCH;
-				};
+			if (exists $serviceModuleNames{$mod}) {
+				if ((exists $serviceModuleObjects{$mod}) &&
+					($serviceModuleObjects{$mod}->getState() == MOD_STATE_OK)) {
+					$return = $serviceModuleObjects{$mod}->command($command);
+				}
+			} else {
+				$return = "Unknown Module";
 			}
+			last SWITCH;
 		};
 		# Default case.
 		$return = printUsage(1);
@@ -1372,37 +880,14 @@ sub set {
 	if ($variable =~/::/) {
 		# setting/getting package variable
 		my @pair = split(/::/, $variable);
-		next if ($pair[0] !~/Fluxinet|Qmgr|Rssad|Watch|Maintenance|Trigger/);
-		SWITCH: {
-			$_ = $pair[0];
-			/Fluxinet/ && do {
-				$return = $fluxinet->set($pair[1], $value) if(defined $fluxinet);
-				last SWITCH;
-			};
-			/Qmgr/ && do {
-				$return = $qmgr->set($pair[1], $value) if (defined $qmgr);
-				last SWITCH;
-			};
-			/Rssad/ && do {
-				$return = $rssad->set($pair[1], $value) if(defined $rssad);
-				last SWITCH;
-			};
-			/Watch/ && do {
-				$return = $watch->set($pair[1], $value) if(defined $watch);
-				last SWITCH;
-			};
-			/Maintenance/ && do {
-				$return = $maintenance->set($pair[1], $value) if(defined $maintenance);
-				last SWITCH;
-			};
-			/Trigger/ && do {
-				$return = $trigger->set($pair[1], $value) if(defined $trigger);
-				last SWITCH;
-			};
-			$return = "Unknown package\n";
+		if (exists $serviceModuleNames{$pair[0]}) {
+			if ((exists $serviceModuleObjects{$pair[0]}) &&
+				($serviceModuleObjects{$pair[0]}->getState() == MOD_STATE_OK)) {
+				$return = $serviceModuleObjects{$pair[0]}-->set($pair[1], $value);
+			}
+		} else {
+			$return = "Unknown Module";
 		}
-	} else {
-		# setting/getting internal variable
 	}
 	return $return;
 }
@@ -1419,11 +904,11 @@ sub fluxcli {
 	my $Arg3 = shift;
 	my $Arg4 = shift;
 	# qx
-	if ($Command =~/^torrents|^netstat/) {
+	if ($Command =~/^transfers|^netstat/) {
 		if ((defined $Arg1) || (defined $Arg2)) {
 			return printUsage();
 		} else {
-			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".quotemeta($Command)." 2>> ".$ERROR_LOG;
+			my $shellCmd = $bin_php." bin/".$bin_fluxcli." ".quotemeta($Command)." 2>> ".$log_error;
 			return qx($shellCmd);
 		}
 	}
@@ -1431,7 +916,7 @@ sub fluxcli {
 		if ((!(defined $Arg1)) || (defined $Arg2)) {;
 			return printUsage();
 		} else {
-			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".quotemeta($Command)." ".quotemeta($Arg1)." 2>> ".$ERROR_LOG;
+			my $shellCmd = $bin_php." bin/".$bin_fluxcli." ".quotemeta($Command)." ".quotemeta($Arg1)." 2>> ".$log_error;
 			return qx($shellCmd);
 		}
 	}
@@ -1440,23 +925,23 @@ sub fluxcli {
 		if ((defined $Arg1) || (defined $Arg2)) {
 			return 0;
 		} else {
-			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".quotemeta($Command);
+			my $shellCmd = $bin_php." bin/".$bin_fluxcli." ".quotemeta($Command);
 			return doSysCall($shellCmd);
 		}
 	}
-	if ($Command =~/^start|^stop|^reset|^delete|^wipe|^xfer/) {
+	if ($Command =~/^start|^stop|^reset|^delete|^wipe|^xfer|^maintenance/) {
 		if ((!(defined $Arg1)) || (defined $Arg2)) {;
 			return 0;
 		} else {
-			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".quotemeta($Command)." ".quotemeta($Arg1);
+			my $shellCmd = $bin_php." bin/".$bin_fluxcli." ".quotemeta($Command)." ".quotemeta($Arg1);
 			return doSysCall($shellCmd);
 		}
 	}
-	if ($Command =~/^inject|^watch|^maintenance/) {
+	if ($Command =~/^inject|^watch/) {
 		if ((!(defined $Arg1)) || (!(defined $Arg2))) {
 			return 0;
 		} else {
-			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".quotemeta($Command)." ".quotemeta($Arg1)." ".quotemeta($Arg2);
+			my $shellCmd = $bin_php." bin/".$bin_fluxcli." ".quotemeta($Command)." ".quotemeta($Arg1)." ".quotemeta($Arg2);
 			return doSysCall($shellCmd);
 		}
 	}
@@ -1464,7 +949,7 @@ sub fluxcli {
 		if ((!(defined $Arg1)) || (!(defined $Arg2)) || (!(defined $Arg3)) || (!(defined $Arg4))) {
 			return 0;
 		} else {
-			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".quotemeta($Command)." ".quotemeta($Arg1)." ".quotemeta($Arg2)." ".quotemeta($Arg3)." ".quotemeta($Arg4);
+			my $shellCmd = $bin_php." bin/".$bin_fluxcli." ".quotemeta($Command)." ".quotemeta($Arg1)." ".quotemeta($Arg2)." ".quotemeta($Arg3)." ".quotemeta($Arg4);
 			return doSysCall($shellCmd);
 		}
 	}
@@ -1477,14 +962,14 @@ sub fluxcli {
 #------------------------------------------------------------------------------#
 sub doSysCall {
 	my $command = shift;
-	$command .= " 1>> ".$LOG." 2>> ".$ERROR_LOG." &";
+	$command .= " 1>> ".$log." 2>> ".$log_error." &";
     system($command);
     if ($? == -1) {
 		printError("CORE", "failed to execute: ".$!."; command:\n".$command."\n");
     } elsif ($? & 127) {
 		printError("CORE", (sprintf "child died with signal %d, %s coredump; command:\n%s\n", ($? & 127),  ($? & 128) ? 'with' : 'without'), $command);
     } else {
-		if ($LOGLEVEL > 2) {
+		if ($loglevel > 2) {
 			printMessage("CORE", (sprintf "child exited with value %d; command:\n%s\n", $? >> 8, $command));
 		}
 		return 1;
@@ -1498,29 +983,29 @@ sub doSysCall {
 # Returns: null                                                                #
 #------------------------------------------------------------------------------#
 sub socketInitialize {
-	$SERVER = IO::Socket::UNIX->new(
+	$server = IO::Socket::UNIX->new(
 			Type    => IO::Socket::UNIX->SOCK_STREAM,
-			Local   => $PATH_SOCKET,
+			Local   => $path_socket,
 			Listen  => 16,
 			Reuse   => 1,
 			);
 
 	# check socket
-	unless ($SERVER) {
+	unless ($server) {
 		printError("CORE", "could not create socket: ".$!."\n");
 		exit;
 	}
 
 	# print
-	if ($LOGLEVEL > 0) {
-		printMessage("CORE", "created socket ".$PATH_SOCKET."\n");
+	if ($loglevel > 0) {
+		printMessage("CORE", "created socket ".$path_socket."\n");
 	}
 
 	# create select
-	$Select = new IO::Select();
+	$select = new IO::Select();
 
 	# Add our server socket to the select read set.
-	$Select->add($SERVER);
+	$select->add($server);
 }
 
 #------------------------------------------------------------------------------#
@@ -1529,10 +1014,10 @@ sub socketInitialize {
 # Returns: null                                                                #
 #------------------------------------------------------------------------------#
 sub socketRemove {
-	if ($LOGLEVEL > 0) {
-		printMessage("CORE", "removing socket ".$PATH_SOCKET."\n");
+	if ($loglevel > 0) {
+		printMessage("CORE", "removing socket ".$path_socket."\n");
 	}
-	unlink($PATH_SOCKET);
+	unlink($path_socket);
 }
 
 #------------------------------------------------------------------------------#
@@ -1545,10 +1030,10 @@ sub pidFileWrite {
 	if (!(defined $pid)) {
 		$pid = $$;
 	}
-	if ($LOGLEVEL > 0) {
-		printMessage("CORE", "writing pid-file ".$PID_FILE." (pid: ".$pid.")\n");
+	if ($loglevel > 0) {
+		printMessage("CORE", "writing pid-file ".$file_pid." (pid: ".$pid.")\n");
 	}
-	open(PIDFILE,">$PID_FILE");
+	open(PIDFILE,">$file_pid");
 	print PIDFILE $pid."\n";
 	close(PIDFILE);
 }
@@ -1559,10 +1044,10 @@ sub pidFileWrite {
 # Returns: return-val of delete                                                #
 #------------------------------------------------------------------------------#
 sub pidFileDelete {
-	if ($LOGLEVEL > 0) {
-		printMessage("CORE", "deleting pid-file ".$PID_FILE."\n");
+	if ($loglevel > 0) {
+		printMessage("CORE", "deleting pid-file ".$file_pid."\n");
 	}
-	return unlink($PID_FILE);
+	return unlink($file_pid);
 }
 
 #------------------------------------------------------------------------------#
@@ -1573,49 +1058,26 @@ sub pidFileDelete {
 sub status {
 	my $head = "";
 	$head .= "\n\nfluxd has been up since ".$start_time_local." (".FluxCommon::niceTimeString($start_time).")\n\n";
-	$head .= "data-dir : ".$PATH_DATA_DIR."\n";
-	$head .= "log : ".$LOG."\n";
-	$head .= "error-log : ".$ERROR_LOG."\n";
-	$head .= "pid : ".$PID_FILE."\n";
-	$head .= "socket : ".$PATH_SOCKET."\n";
-	$head .= "transfers-dir : ".$PATH_TRANSFER_DIR."\n";
-	$head .= "docroot : ".$PATH_DOCROOT."\n";
-	$head .= "fluxcli : ".$pwd."/bin/".$BIN_FLUXCLI."\n";
-	$head .= "php : ".$BIN_PHP."\n";
+	$head .= "data-dir : ".$path_data_dir."\n";
+	$head .= "log : ".$log."\n";
+	$head .= "error-log : ".$log_error."\n";
+	$head .= "pid : ".$file_pid."\n";
+	$head .= "socket : ".$path_socket."\n";
+	$head .= "transfers-dir : ".$path_transfer_dir."\n";
+	$head .= "docroot : ".$path_docroot."\n";
+	$head .= "fluxcli : ".$path_docroot."/bin/".$bin_fluxcli."\n";
+	$head .= "php : ".$bin_php."\n";
 	$head .= "db-mode : ".$dbMode."\n";
-	$head .= "loglevel : ".$LOGLEVEL."\n";
+	$head .= "loglevel : ".$loglevel."\n";
 	$head .= "\n";
 	my $status = "";
 	my $modules = "- Loaded Modules -\n";
-	# Fluxinet
-	if ((defined $fluxinet) && ($fluxinet->getState() == MOD_STATE_OK)) {
-		$modules .= "  * Fluxinet\n";
-		$status .= eval { $fluxinet->status(); };
-	}
-	# Qmgr
-	if ((defined $qmgr) && ($qmgr->getState() == MOD_STATE_OK)) {
-		$modules .= "  * Qmgr\n";
-		$status .= $qmgr->status();
-	}
-	# Rssad
-	if ((defined $rssad) && ($rssad->getState() == MOD_STATE_OK)) {
-		$modules .= "  * Rssad\n";
-		$status .= eval { $rssad->status(); };
-	}
-	# Watch
-	if ((defined $watch) && ($watch->getState() == MOD_STATE_OK)) {
-		$modules .= "  * Watch\n";
-		$status .= eval { $watch->status(); };
-	}
-	# Maintenance
-	if ((defined $maintenance) && ($maintenance->getState() == MOD_STATE_OK)) {
-		$modules .= "  * Maintenance\n";
-		$status .= eval { $maintenance->status(); };
-	}
-	# Trigger
-	if ((defined $trigger) && ($trigger->getState() == MOD_STATE_OK)) {
-		$modules .= "  * Trigger\n";
-		$status .= eval { $trigger->status(); };
+	foreach my $smod (sort keys %serviceModules) {
+		if ((exists $serviceModuleObjects{$serviceModules{$smod}{"name"}}) &&
+			($serviceModuleObjects{$serviceModules{$smod}{"name"}}->getState() == MOD_STATE_OK)) {
+			$modules .= "  * ".$serviceModules{$smod}{"name"}."\n";
+			$status .= eval { $serviceModuleObjects{$serviceModules{$smod}{"name"}}->status(); };
+		}
 	}
 	# return
 	return $head.$modules.$status;
@@ -1641,47 +1103,15 @@ sub printVersion {
 	} else {
 		print "cant load module\n";
 	}
-	# Fluxinet
-	print "Fluxinet Version : ";
-	if (eval "require Fluxinet") {
-		print Fluxinet->getVersion()."\n";
-	} else {
-		print "cant load module\n";
-	}
-	# Qmgr
-	print "Qmgr Version : ";
-	if (eval "require Qmgr") {
-		print Qmgr->getVersion()."\n";
-	} else {
-		print "cant load module\n";
-	}
-	# Rssad
-	print "Rssad Version : ";
-	if (eval "require Rssad") {
-		print Rssad->getVersion()."\n";
-	} else {
-		print "cant load module\n";
-	}
-	# Watch
-	print "Watch Version : ";
-	if (eval "require Watch") {
-		print Watch->getVersion()."\n";
-	} else {
-		print "cant load module\n";
-	}
-	# Maintenance
-	print "Maintenance Version : ";
-	if (eval "require Maintenance") {
-		print Maintenance->getVersion()."\n";
-	} else {
-		print "cant load module\n";
-	}
-	# Trigger
-	print "Trigger Version : ";
-	if (eval "require Trigger") {
-		print Trigger->getVersion()."\n";
-	} else {
-		print "cant load module\n";
+	# service-mods
+	foreach my $smod (sort keys %serviceModules) {
+		print $serviceModules{$smod}{"name"}." Version : ";
+		if (eval "require ".$serviceModules{$smod}{"name"}) {
+			my $modversion =  eval $serviceModules{$smod}{"name"}."->getVersion();";
+			print $modversion."\n";
+		} else {
+			print "cant load module\n";
+		}
 	}
 }
 
@@ -1771,7 +1201,7 @@ sub debug {
 
 	# database-debug
 	if ($debug =~ /db/) {
-		# $PATH_DOCROOT
+		# $path_docroot
 		my $temp = shift @ARGV;
 		if (!(defined $temp)) {
 			printMessage("CORE", "debug database is missing an argument : path to docroot\n");
@@ -1780,7 +1210,7 @@ sub debug {
 		if (!((substr $temp, -1) eq "/")) {
 			$temp .= "/";
 		}
-		$PATH_DOCROOT = $temp;
+		$path_docroot = $temp;
 		# PATH_PATH
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
@@ -1790,14 +1220,14 @@ sub debug {
 		if (!((substr $temp, -1) eq "/")) {
 			$temp .= "/";
 		}
-		$PATH_PATH = $temp;
-		# $BIN_PHP
+		$path_path = $temp;
+		# $bin_php
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
 			printMessage("CORE", "debug database is missing an argument : path to php\n");
 			exit;
 		}
-		$BIN_PHP = $temp;
+		$bin_php = $temp;
 		printMessage("CORE", "debugging database...\n");
 		# require
 		require FluxDB;
@@ -1807,7 +1237,7 @@ sub debug {
 		# PHP
 		# initialize
 		printMessage("CORE", "initializing \$fluxDB (php)\n");
-		$fluxDB->initialize($PATH_DOCROOT, $BIN_PHP, "php");
+		$fluxDB->initialize($path_docroot, $bin_php, "php");
 		if ($fluxDB->getState() != MOD_STATE_OK) {
 			printMessage("CORE", "error : ".$fluxDB->getMessage()."\n");
 			exit;
@@ -1828,7 +1258,7 @@ sub debug {
 		# DBI
 		# initialize
 		printMessage("CORE", "initializing \$fluxDB (dbi)\n");
-		$fluxDB->initialize($PATH_DOCROOT, $BIN_PHP, "dbi");
+		$fluxDB->initialize($path_docroot, $bin_php, "dbi");
 		if ($fluxDB->getState() != MOD_STATE_OK) {
 			printMessage("CORE", "error : ".$fluxDB->getMessage()."\n");
 			# db-settings
@@ -1867,6 +1297,33 @@ sub debug {
 }
 
 #------------------------------------------------------------------------------#
+# Sub: getLoglevel                                                             #
+# Arguments: null                                                              #
+# Returns: loglevel-int                                                        #
+#------------------------------------------------------------------------------#
+sub getLoglevel {
+	return $loglevel;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: getPathDataDir                                                          #
+# Arguments: null                                                              #
+# Returns: path-string                                                         #
+#------------------------------------------------------------------------------#
+sub getPathDataDir {
+	return $path_data_dir;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: getPathTransferDir                                                      #
+# Arguments: null                                                              #
+# Returns: path-string                                                         #
+#------------------------------------------------------------------------------#
+sub getPathTransferDir {
+	return $path_transfer_dir;
+}
+
+#------------------------------------------------------------------------------#
 # Sub: printMessage                                                            #
 # Arguments: module, message                                                   #
 # Return: null                                                                 #
@@ -1896,7 +1353,7 @@ sub printError {
 sub logMessage {
 	my $module = shift;
 	my $message = shift;
-	logToFile($LOG, FluxCommon::getTimeStamp()."[".$module."] ".$message);
+	logToFile($log, FluxCommon::getTimeStamp()."[".$module."] ".$message);
 }
 
 #------------------------------------------------------------------------------#
@@ -1907,7 +1364,7 @@ sub logMessage {
 sub logError {
 	my $module = shift;
 	my $message = shift;
-	logToFile($ERROR_LOG, FluxCommon::getTimeStamp()."[".$module."] ".$message);
+	logToFile($log_error, FluxCommon::getTimeStamp()."[".$module."] ".$message);
 }
 
 #------------------------------------------------------------------------------#

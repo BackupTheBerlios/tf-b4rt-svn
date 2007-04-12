@@ -46,13 +46,13 @@ my $state = Fluxd::MOD_STATE_NULL;
 my $message = "";
 
 # loglevel
-my $LOGLEVEL = 2;
+my $loglevel = 0;
 
 # port
 my $port = 3150;
 
 # server-socket
-my ($SERVER, $Select);
+my ($server, $select);
 
 # modules loaded
 my $modsLoaded = 0;
@@ -83,8 +83,8 @@ sub destroy {
 	# log
 	Fluxd::printMessage("Fluxinet", "shutdown\n");
 	# remove
-	foreach my $handle ($Select->handles) {
-		$Select->remove($handle);
+	foreach my $handle ($select->handles) {
+		$select->remove($handle);
 		$handle->close;
 	}
 }
@@ -96,7 +96,7 @@ sub destroy {
 #------------------------------------------------------------------------------#
 # Sub: initialize. this is separated from constructor to call it independent   #
 #      from object-creation.                                                   #
-# Arguments: loglevel,port                                                     #
+# Arguments: null                                                              #
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub initialize {
@@ -104,8 +104,8 @@ sub initialize {
 	shift; # class
 
 	# loglevel
-	$LOGLEVEL = shift;
-	if (!(defined $LOGLEVEL)) {
+	$loglevel = Fluxd::getLoglevel();
+	if (!(defined $loglevel)) {
 		# message
 		$message = "loglevel not defined";
 		# set state
@@ -115,7 +115,7 @@ sub initialize {
 	}
 
 	# $port
-	$port = shift;
+	$port = FluxDB->getFluxConfig("fluxd_Fluxinet_port");
 	if (!(defined $port)) {
 		# message
 		$message = "port not defined";
@@ -125,7 +125,7 @@ sub initialize {
 		return 0;
 	}
 
-	Fluxd::printMessage("Fluxinet", "initializing (loglevel: ".$LOGLEVEL." ; port: ".$port.")\n");
+	Fluxd::printMessage("Fluxinet", "initializing (loglevel: ".$loglevel." ; port: ".$port.")\n");
 
 	# load modules
 	if ($modsLoaded == 0) {
@@ -135,15 +135,15 @@ sub initialize {
 	}
 
 	# Create the read set
-	$Select = new IO::Select();
+	$select = new IO::Select();
 
 	# Create the server socket
-	$SERVER = IO::Socket::INET->new(
+	$server = IO::Socket::INET->new(
 		LocalPort       => $port,
 		Proto           => 'tcp',
 		Listen          => 16,
 		Reuse           => 1);
-	if (!(defined $SERVER)) {
+	if (!(defined $server)) {
 		# message
 		$message = "could not create server socket";
 		# set state
@@ -151,10 +151,10 @@ sub initialize {
 		# return
 		return 0;
 	}
-	$Select->add($SERVER);
+	$select->add($server);
 
 	# log
-	if ($LOGLEVEL > 1) {
+	if ($loglevel > 1) {
 		Fluxd::printMessage("Fluxinet", "tcp-server-socket setup on port ".$port."\n");
 	}
 
@@ -173,7 +173,7 @@ sub initialize {
 sub loadModules {
 
 	# load IO::Select
-	if ($LOGLEVEL > 2) {
+	if ($loglevel > 2) {
 		Fluxd::printMessage("Fluxinet", "loading Perl-module IO::Select\n");
 	}
 	if (eval "require IO::Select")  {
@@ -188,7 +188,7 @@ sub loadModules {
 	}
 
 	# load IO::Socket::INET
-	if ($LOGLEVEL > 2) {
+	if ($loglevel > 2) {
 		Fluxd::printMessage("Fluxinet", "loading Perl-module IO::Socket\n");
 	}
 	if (eval "require IO::Socket::INET")  {
@@ -253,11 +253,11 @@ sub main {
 	# Get the readable handles. timeout is 0, only process stuff that can be
 	# read NOW.
 	my $return = "";
-	my @ready = $Select->can_read(0);
+	my @ready = $select->can_read(0);
 	foreach my $socket (@ready) {
-		if ($socket == $SERVER) {
+		if ($socket == $server) {
 			my $new = $socket->accept();
-			$Select->add($new);
+			$select->add($new);
 		} else {
 			my $buf = "";
 			my $char = getc($socket);
@@ -267,7 +267,7 @@ sub main {
 			}
 			$return = Fluxd::processRequest($buf);
 			$socket->send($return);
-			$Select->remove($socket);
+			$select->remove($socket);
 			close($socket);
 		}
 	}
