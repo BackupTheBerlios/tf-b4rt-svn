@@ -311,7 +311,6 @@ class FluxCLI
 	        /* maintenance */
 			case "maintenance":
 				return $this->_maintenance(((isset($this->_args[0])) && (strtolower($this->_args[0]) == "true")) ? true : false);
-	        	return true;
 
 	        /* dump */
 			case "dump":
