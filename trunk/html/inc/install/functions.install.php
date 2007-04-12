@@ -204,7 +204,7 @@ function send($string = "") {
  * @param $msg - message to display
  * @param $status - boolean, true for 'Ok:', false for 'Error:'
  */
-function displaySetupMessage($msg="A problem occured.", $status=false){
+function displaySetupMessage($msg="A problem occurred.", $status=false){
 	$thisMsg='<p><font color="'.($status ? "green" : "red").'"><strong>';
 	$thisMsg.= ($status ? "Ok" : "Error").': </strong></font>'.$msg.'</p>';
 	send($thisMsg);
