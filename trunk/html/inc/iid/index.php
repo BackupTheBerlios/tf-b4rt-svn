@@ -141,9 +141,9 @@ foreach ($arList as $transfer) {
 	$detailsLinkString = "<a style=\"font-size:9px; text-decoration:none;\" href=\"JavaScript:showTransfer('index.php?iid=".$cfg["transfer_window_default"]."&transfer=".urlencode($transfer)."')\">";
 
 	// ---------------------------------------------------------------------
-	//XFER: add upload/download stats to the xfer array
+	//XFER: update1: add upload/download stats to the xfer array
 	if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
-		@transferListXferUpdate1($transfer, $transferowner, $settingsAry['client'], $settingsAry['hash'], $sf->uptotal, $sf->downtotal);
+		@Xfer::update1($transfer, $transferowner, $settingsAry['client'], $settingsAry['hash'], $sf->uptotal, $sf->downtotal);
 
 	// ---------------------------------------------------------------------
 	// injects
@@ -362,10 +362,9 @@ foreach ($arList as $transfer) {
 $tmpl->setloop('arUserTorrent', $arUserTorrent);
 $tmpl->setloop('arListTorrent', $arListTorrent);
 
-//XFER: if a new day but no .stat files where found put blank entry into the
-//      DB for today to indicate accounting has been done for the new day
+//XFER: update 2
 if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
-	@transferListXferUpdate2();
+	@Xfer::update2();
 
 $tmpl->setvar('settings_0', $settings[0]);
 $tmpl->setvar('settings_1', $settings[1]);
@@ -411,7 +410,7 @@ if ($isAjaxUpdate) {
 			$isFirst = false;
 		else
 			$content .= "|";
-		$xferStats = getXferStats();
+		$xferStats = Xfer::getStatsFormatted();
 		$xferCount = count($xferStats);
 		for ($i = 0; $i < $xferCount; $i++) {
 			$content .= $xferStats[$i];
@@ -608,6 +607,7 @@ if ($cfg['enable_xfer'] == 1) {
 	if ($cfg['enable_public_xfer'] == 1)
 		$tmpl->setvar('enable_xfer', 1);
 	if ($cfg['xfer_realtime'] == 1) {
+		$xfer_total = Xfer::getStatsTotal();
 		$tmpl->setvar('xfer_realtime', 1);
 		if ($cfg['xfer_day'])
 			$tmpl->setvar('xfer_day', tmplGetXferBar($cfg['xfer_day'],$xfer_total['day']['total'],$cfg['_XFERTHRU'].' Today:'));
@@ -637,12 +637,25 @@ if ($cfg['index_page_stats'] != 0) {
 		$cfg["total_download"] = 0;
 	if (!array_key_exists("total_upload",$cfg))
 		$cfg["total_upload"] = 0;
+	// xfer
 	if (($cfg['enable_xfer'] != 0) && ($cfg['xfer_realtime'] != 0)) {
+		$tmpl->setvar('_SERVERXFERSTATS', $cfg['_SERVERXFERSTATS']);
+		$tmpl->setvar('_TOTALXFER', $cfg['_TOTALXFER']);
+		$tmpl->setvar('_MONTHXFER', $cfg['_MONTHXFER']);
+		$tmpl->setvar('_WEEKXFER', $cfg['_WEEKXFER']);
+		$tmpl->setvar('_DAYXFER', $cfg['_DAYXFER']);
+		$tmpl->setvar('_YOURXFERSTATS', $cfg['_YOURXFERSTATS']);
 		$tmpl->setvar('totalxfer1', @formatFreeSpace($xfer_total['total']['total'] / 1048576));
 		$tmpl->setvar('monthxfer1', @formatFreeSpace($xfer_total['month']['total'] / 1048576));
 		$tmpl->setvar('weekxfer1', @formatFreeSpace($xfer_total['week']['total'] / 1048576));
 		$tmpl->setvar('dayxfer1', @formatFreeSpace($xfer_total['day']['total'] / 1048576));
+		$xfer = Xfer::getStats();
+		$tmpl->setvar('total2', @formatFreeSpace($xfer[$cfg["user"]]['total']['total'] / 1048576));
+		$tmpl->setvar('month2', @formatFreeSpace($xfer[$cfg["user"]]['month']['total'] / 1048576));
+		$tmpl->setvar('week2', @formatFreeSpace($xfer[$cfg["user"]]['week']['total'] / 1048576));
+		$tmpl->setvar('day2', @formatFreeSpace($xfer[$cfg["user"]]['day']['total'] / 1048576));
 	}
+	// queue
 	if (FluxdQmgr::isRunning()) {
 		$tmpl->setvar('_QUEUEMANAGER', $cfg['_QUEUEMANAGER']);
 		$tmpl->setvar('runningTransferCount', getRunningTransferCount());
@@ -650,6 +663,7 @@ if ($cfg['index_page_stats'] != 0) {
 		$tmpl->setvar('limitGlobal', $cfg["fluxd_Qmgr_maxTotalTransfers"]);
 		$tmpl->setvar('limitUser', $cfg["fluxd_Qmgr_maxUserTransfers"]);
 	}
+	// other
 	$tmpl->setvar('_OTHERSERVERSTATS', $cfg['_OTHERSERVERSTATS']);
 	$tmpl->setvar('downloadspeed1', @number_format($cfg["total_download"], 2));
 	$tmpl->setvar('downloadspeed11', @number_format($transfers['sum']['drate'], 2));
@@ -661,13 +675,6 @@ if ($cfg['index_page_stats'] != 0) {
 	$tmpl->setvar('id_connections11', $netstatConnectionsMax);
 	$tmpl->setvar('drivespace1', $cfg['freeSpaceFormatted']);
 	$tmpl->setvar('serverload1', $loadavgString);
-	if (($cfg['enable_xfer'] != 0) && ($cfg['xfer_realtime'] != 0)) {
-		$tmpl->setvar('_YOURXFERSTATS', $cfg['_YOURXFERSTATS']);
-		$tmpl->setvar('total2', @formatFreeSpace($xfer[$cfg["user"]]['total']['total'] / 1048576));
-		$tmpl->setvar('month2', @formatFreeSpace($xfer[$cfg["user"]]['month']['total'] / 1048576));
-		$tmpl->setvar('week2', @formatFreeSpace($xfer[$cfg["user"]]['week']['total'] / 1048576));
-		$tmpl->setvar('day2', @formatFreeSpace($xfer[$cfg["user"]]['day']['total'] / 1048576));
-	}
 }
 
 // pm
@@ -732,12 +739,7 @@ $tmpl->setvar('_OFFLINE', $cfg['_OFFLINE']);
 $tmpl->setvar('_ID_IMAGES', $cfg['_ID_IMAGES']);
 $tmpl->setvar('_DIRECTORYLIST', $cfg['_DIRECTORYLIST']);
 $tmpl->setvar('_DRIVESPACEUSED', $cfg['_DRIVESPACEUSED']);
-$tmpl->setvar('_SERVERXFERSTATS', $cfg['_SERVERXFERSTATS']);
 $tmpl->setvar('_ADMINMESSAGE', $cfg['_ADMINMESSAGE']);
-$tmpl->setvar('_TOTALXFER', $cfg['_TOTALXFER']);
-$tmpl->setvar('_MONTHXFER', $cfg['_MONTHXFER']);
-$tmpl->setvar('_WEEKXFER', $cfg['_WEEKXFER']);
-$tmpl->setvar('_DAYXFER', $cfg['_DAYXFER']);
 $tmpl->setvar('_DRIVESPACE', $cfg['_DRIVESPACE']);
 
 //

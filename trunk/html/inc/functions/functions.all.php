@@ -38,9 +38,6 @@ require_once("inc/functions/functions.dir.php");
 // maketorrent
 require_once("inc/functions/functions.maketorrent.php");
 
-// xfer
-require_once('inc/functions/functions.xfer.php');
-
 // readrss
 require_once('inc/functions/functions.readrss.php');
 

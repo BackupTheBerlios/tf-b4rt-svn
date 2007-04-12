@@ -562,9 +562,9 @@ function getTransferListArray() {
 		$percentDone = $sf->percent_done;
 
 		// ---------------------------------------------------------------------
-		//XFER: add upload/download stats to the xfer array
+		//XFER: update1: add upload/download stats to the xfer array
 		if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
-			@transferListXferUpdate1($transfer, $transferowner, $settingsAry['client'], $settingsAry['hash'], $sf->uptotal, $sf->downtotal);
+			@Xfer::update1($transfer, $transferowner, $settingsAry['client'], $settingsAry['hash'], $sf->uptotal, $sf->downtotal);
 
 		// ---------------------------------------------------------------------
 		// injects
@@ -742,10 +742,9 @@ function getTransferListArray() {
 			array_push($arListTransfers, $transferAry);
 	}
 
-	//XFER: if a new day but no .stat files where found put blank entry into the
-	//      DB for today to indicate accounting has been done for the new day
+	//XFER: update 2
 	if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
-		@transferListXferUpdate2();
+		@Xfer::update2();
 
 	// -------------------------------------------------------------------------
 	// build output-array

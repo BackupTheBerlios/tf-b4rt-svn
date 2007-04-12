@@ -43,11 +43,6 @@ class Xfer
     var $xfer = array();
     var $xfer_total = array();
 
-    // private fields
-
-    // pid
-    var $_pid = "";
-
 	// =========================================================================
 	// public static methods
 	// =========================================================================
@@ -73,6 +68,21 @@ class Xfer
     	// create instance
     	if (!isset($instanceXfer))
     		$instanceXfer = new Xfer();
+    }
+
+    /**
+     * init Xfer (login-task).
+     */
+    function init() {
+    	global $db;
+		// if xfer is empty, insert a zero record for today
+		$xferRecord = $db->GetRow("SELECT 1 FROM tf_xfer");
+		if (empty($xferRecord)) {
+			$rec = array('user_id'=>'', 'date'=>$db->DBDate(time()));
+			$sTable = 'tf_xfer';
+			$sql = $db->GetInsertSql($sTable, $rec);
+			$db->Execute($sql);
+		}
     }
 
     /**
@@ -113,6 +123,7 @@ class Xfer
 
 	/**
 	 * xfer update 1
+	 * add upload/download stats to the xfer array
 	 *
 	 * @param $entry
 	 * @param $transferowner
@@ -122,55 +133,24 @@ class Xfer
 	 * @param $downtotal
 	 */
 	function update1($entry, $transferowner, $client, $hash, $uptotal, $downtotal) {
-		global $cfg, $db;
+		global $instanceXfer;
  		// initialize if needed
 		if (!isset($instanceXfer))
 			Xfer::initialize();
-		/*
-		$ch = ClientHandler::getInstance($client);
-		$transferTotalsCurrent = $ch->getTransferCurrentOP($entry, $hash, $uptotal, $downtotal);
-		sumUsage($transferowner, ($transferTotalsCurrent["downtotal"]), ($transferTotalsCurrent["uptotal"]), 'total');
-		sumUsage($transferowner, ($transferTotalsCurrent["downtotal"]), ($transferTotalsCurrent["uptotal"]), 'month');
-		sumUsage($transferowner, ($transferTotalsCurrent["downtotal"]), ($transferTotalsCurrent["uptotal"]), 'week');
-		sumUsage($transferowner, ($transferTotalsCurrent["downtotal"]), ($transferTotalsCurrent["uptotal"]), 'day');
-		//XFER: if new day add upload/download totals to last date on record and
-		// subtract from today in SQL
-		if ($cfg['xfer_newday'] > 0) {
-			$cfg['xfer_newday'] = 2;
-			$lastDate = $db->GetOne('SELECT date FROM tf_xfer ORDER BY date DESC');
-			$sql = ($db->GetOne("SELECT 1 FROM tf_xfer WHERE user_id = '".$transferowner."' AND date = '".$lastDate."'"))
-				? "UPDATE tf_xfer SET download = download+".@($transferTotalsCurrent["downtotal"] + 0).", upload = upload+".@($transferTotalsCurrent["uptotal"] + 0)." WHERE user_id = '".$transferowner."' AND date = '".$lastDate."'"
-				: "INSERT INTO tf_xfer (user_id,date,download,upload) values ('".$transferowner."','".$lastDate."',".@($transferTotalsCurrent["downtotal"] + 0).",".@($transferTotalsCurrent["uptotal"] + 0).")";
-			$db->Execute($sql);
-			$sql = ($db->GetOne("SELECT 1 FROM tf_xfer WHERE user_id = '".$transferowner."' AND date = ".$db->DBDate(time())))
-				? "UPDATE tf_xfer SET download = download-".@($transferTotalsCurrent["downtotal"] + 0).", upload = upload-".@($transferTotalsCurrent["uptotal"] + 0)." WHERE user_id = '".$transferowner."' AND date = ".$db->DBDate(time())
-				: "INSERT INTO tf_xfer (user_id,date,download,upload) values ('".$transferowner."',".$db->DBDate(time()).",-".@($transferTotalsCurrent["downtotal"] + 0).",-".@($transferTotalsCurrent["uptotal"] + 0).")";
-			$db->Execute($sql);
-		}
-		*/
+		// call instance-method
+		$instanceXfer->instance_update1($entry, $transferowner, $client, $hash, $uptotal, $downtotal);
 	}
 
 	/**
-	 * transferListXferUpdate2
+	 * xfer update 2
 	 */
 	function update2() {
-		global $cfg, $db;
+		global $instanceXfer;
  		// initialize if needed
 		if (!isset($instanceXfer))
 			Xfer::initialize();
-		/*
-		//XFER: if a new day but no .stat files where found put blank entry into the
-		// DB for today to indicate accounting has been done for the new day
-		if ($cfg['xfer_newday'] == 1)
-			$db->Execute("INSERT INTO tf_xfer (user_id,date) values ('',".$db->DBDate(time()).")");
-		getUsage('0001-01-01', 'total');
-		$month_start = (date('j')>=$cfg['month_start']) ? date('Y-m-').$cfg['month_start'] : date('Y-m-',strtotime('-1 Month')).$cfg['month_start'];
-		getUsage($month_start, 'month');
-		$week_start = date('Y-m-d', strtotime('last '.$cfg['week_start']));
-		getUsage($week_start, 'week');
-		$day_start = date('Y-m-d');
-		getUsage($day_start, 'day');
-		*/
+		// call instance-method
+		$instanceXfer->instance_update2();
 	}
 
 	/**
@@ -244,18 +224,74 @@ class Xfer
     }
 
 	/**
+	 * xfer update 1
+	 * add upload/download stats to the xfer array
+	 *
+	 * @param $entry
+	 * @param $transferowner
+	 * @param $client
+	 * @param $hash
+	 * @param $uptotal
+	 * @param $downtotal
+	 */
+	function instance_update1($entry, $transferowner, $client, $hash, $uptotal, $downtotal) {
+		global $cfg, $db;
+		$ch = ClientHandler::getInstance($client);
+		$transferTotalsCurrent = $ch->getTransferCurrentOP($entry, $hash, $uptotal, $downtotal);
+		$this->_sumUsage($transferowner, $transferTotalsCurrent["downtotal"], $transferTotalsCurrent["uptotal"], 'total');
+		$this->_sumUsage($transferowner, $transferTotalsCurrent["downtotal"], $transferTotalsCurrent["uptotal"], 'month');
+		$this->_sumUsage($transferowner, $transferTotalsCurrent["downtotal"], $transferTotalsCurrent["uptotal"], 'week');
+		$this->_sumUsage($transferowner, $transferTotalsCurrent["downtotal"], $transferTotalsCurrent["uptotal"], 'day');
+		//XFER: if new day add upload/download totals to last date on record and subtract from today in SQL
+		if ($cfg['xfer_newday'] > 0) {
+			$cfg['xfer_newday'] = 2;
+			$lastDate = $db->GetOne('SELECT date FROM tf_xfer ORDER BY date DESC');
+			$sql = ($db->GetOne("SELECT 1 FROM tf_xfer WHERE user_id = '".$transferowner."' AND date = '".$lastDate."'"))
+				? "UPDATE tf_xfer SET download = download+".@($transferTotalsCurrent["downtotal"] + 0).", upload = upload+".@($transferTotalsCurrent["uptotal"] + 0)." WHERE user_id = '".$transferowner."' AND date = '".$lastDate."'"
+				: "INSERT INTO tf_xfer (user_id,date,download,upload) values ('".$transferowner."','".$lastDate."',".@($transferTotalsCurrent["downtotal"] + 0).",".@($transferTotalsCurrent["uptotal"] + 0).")";
+			$db->Execute($sql);
+			$sql = ($db->GetOne("SELECT 1 FROM tf_xfer WHERE user_id = '".$transferowner."' AND date = ".$db->DBDate(time())))
+				? "UPDATE tf_xfer SET download = download-".@($transferTotalsCurrent["downtotal"] + 0).", upload = upload-".@($transferTotalsCurrent["uptotal"] + 0)." WHERE user_id = '".$transferowner."' AND date = ".$db->DBDate(time())
+				: "INSERT INTO tf_xfer (user_id,date,download,upload) values ('".$transferowner."',".$db->DBDate(time()).",-".@($transferTotalsCurrent["downtotal"] + 0).",-".@($transferTotalsCurrent["uptotal"] + 0).")";
+			$db->Execute($sql);
+		}
+	}
+
+	/**
+	 * xfer update 2
+	 */
+	function instance_update2() {
+		global $cfg, $db;
+		//XFER: if a new day but no .stat files where found put blank entry into the
+		// DB for today to indicate accounting has been done for the new day
+		if ($cfg['xfer_newday'] == 1)
+			$db->Execute("INSERT INTO tf_xfer (user_id,date) values ('',".$db->DBDate(time()).")");
+		$this->_getUsage('0001-01-01', 'total');
+		$month_start = (date('j')>=$cfg['month_start']) ? date('Y-m-').$cfg['month_start'] : date('Y-m-',strtotime('-1 Month')).$cfg['month_start'];
+		$this->_getUsage($month_start, 'month');
+		$week_start = date('Y-m-d', strtotime('last '.$cfg['week_start']));
+		$this->_getUsage($week_start, 'week');
+		$day_start = date('Y-m-d');
+		$this->_getUsage($day_start, 'day');
+	}
+
+    // =========================================================================
+	// private methods
+	// =========================================================================
+
+	/**
 	 * Gets upload/download usage for all users starting at timestamp from SQL
 	 *
 	 * @param $start
 	 * @param $period
 	 */
-	function instance_getUsage($start, $period) {
+	function _getUsage($start, $period) {
 		global $db;
 		$sql = "SELECT user_id, SUM(download) AS download, SUM(upload) AS upload FROM tf_xfer WHERE date >= '".$start."' AND user_id != '' GROUP BY user_id";
 		$rtnValue = $db->GetAll($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
 		foreach ($rtnValue as $row)
-			$this->instance_sumUsage($row[0], $row[1], $row[2], $period);
+			$this->_sumUsage($row[0], $row[1], $row[2], $period);
 	}
 
 	/**
@@ -266,7 +302,7 @@ class Xfer
 	 * @param $upload
 	 * @param $period
 	 */
-	function instance_sumUsage($user, $download, $upload, $period) {
+	function _sumUsage($user, $download, $upload, $period) {
 		@ $this->xfer[$user][$period]['download'] += $download;
 		@ $this->xfer[$user][$period]['upload'] += $upload;
 		@ $this->xfer[$user][$period]['total'] += $download + $upload;

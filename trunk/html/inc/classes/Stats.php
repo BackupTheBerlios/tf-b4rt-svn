@@ -617,7 +617,7 @@ class Stats
 			'User : '.$cfg['_WEEKXFER'],
 			'User : '.$cfg['_DAYXFER']
 		);
-		$this->_xferStats = getXferStats();
+		$this->_xferStats = Xfer::getStatsFormatted();
 	}
 
 	/**

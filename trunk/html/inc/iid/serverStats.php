@@ -129,8 +129,8 @@ switch ($type) {
 			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use xfer");
 			@error("xfer is disabled", "index.php?iid=serverStats", "");
 		}
-		// xfer functions
-		require_once('inc/functions/functions.xfer.php');
+		// xfer class
+		require_once("inc/classes/Xfer.php");
 		// set vars
 		$tmpl->setvar('is_xfer', 1);
 		// getTransferListArray to update xfer-stats
@@ -139,6 +139,7 @@ switch ($type) {
 		$cfg['xfer_newday'] = 0;
 		$cfg['xfer_newday'] = !$db->GetOne('SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time()));
 		getTransferListArray();
+		$xfer_total = Xfer::getStatsTotal();
 		if ($cfg['xfer_day'])
 			$tmpl->setvar('xfer_day', tmplGetXferBar($cfg['xfer_day'],$xfer_total['day']['total'],$cfg['_XFERTHRU'].' Today:'));
 		if ($cfg['xfer_week'])
@@ -154,6 +155,7 @@ switch ($type) {
 			$sql = 'SELECT user_id FROM tf_users ORDER BY user_id';
 			$rtnValue = $db->GetCol($sql);
 			if ($db->ErrorNo() != 0) dbError($sql);
+			$xfer = Xfer::getStats();
 			$user_list = array();
 			foreach ($rtnValue as $user_id) {
 				array_push($user_list, array(

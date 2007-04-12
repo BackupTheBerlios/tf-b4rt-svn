@@ -908,7 +908,7 @@ class FluxCLI
 	 * @return mixed
 	 */
 	function _xfer($delta) {
-		global $cfg, $db, $xfer_total;
+		global $cfg, $db;
 		// check xfer
 		if ($cfg['enable_xfer'] != 1) {
 			$this->_outputError("xfer must be enabled.\n");
@@ -920,12 +920,16 @@ class FluxCLI
 			return false;
 		}
 		$this->_outputMessage('checking xfer-limit(s) for "'.$delta.'" ...'."\n");
+		// xfer class
+		require_once("inc/classes/Xfer.php");
     	// xfer-init
 		$cfg['xfer_realtime'] = 1;
 		$cfg['xfer_newday'] = 0;
 		$cfg['xfer_newday'] = !$db->GetOne('SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time()));
     	// getTransferListArray to update xfer-stats
 		$transferList = @getTransferListArray();
+		// get xfer-totals
+		$xfer_total = Xfer::getStatsTotal();
 		// check if break needed
 		// total
 		if (($delta == "total") || ($delta == "all")) {

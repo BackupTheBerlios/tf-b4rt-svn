@@ -694,7 +694,7 @@ class ClientHandler
 		$transferTotals = $this->getTransferCurrent($this->transfer);
         //XFER: before a transfer start/restart save upload/download xfer to SQL
         if ($cfg['enable_xfer'] == 1)
-        	saveXfer($this->owner,($transferTotals["downtotal"]),($transferTotals["uptotal"]));
+        	Xfer::save($this->owner,($transferTotals["downtotal"]),($transferTotals["uptotal"]));
         // update totals for this transfer
         $this->_updateTotals();
         // set state
@@ -839,7 +839,7 @@ class ClientHandler
 			// XFER: before deletion save upload/download xfer data to SQL
 			if ($cfg['enable_xfer'] == 1) {
 				$transferTotals = $this->getTransferCurrent($this->transfer);
-				saveXfer($this->owner, $transferTotals["downtotal"], $transferTotals["uptotal"]);
+				Xfer::save($this->owner, $transferTotals["downtotal"], $transferTotals["uptotal"]);
 			}
 			// update totals
 			$this->_updateTotals();
