@@ -252,7 +252,7 @@ class Xfer
 			$db->Execute($sql);
 			$sql = ($db->GetOne("SELECT 1 FROM tf_xfer WHERE user_id = '".$transferowner."' AND date = ".$db->DBDate(time())))
 				? "UPDATE tf_xfer SET download = download-".@($transferTotalsCurrent["downtotal"] + 0).", upload = upload-".@($transferTotalsCurrent["uptotal"] + 0)." WHERE user_id = '".$transferowner."' AND date = ".$db->DBDate(time())
-				: "INSERT INTO tf_xfer (user_id,date,download,upload) values ('".$transferowner."',".$db->DBDate(time()).",-".@($transferTotalsCurrent["downtotal"] + 0).",-".@($transferTotalsCurrent["uptotal"] + 0).")";
+				: "INSERT INTO tf_xfer (user_id,date,download,upload) values ('".$transferowner."',".$db->DBDate(time()).",".@($transferTotalsCurrent["downtotal"] + 0).",".@($transferTotalsCurrent["uptotal"] + 0).")";
 			$db->Execute($sql);
 		}
 	}
