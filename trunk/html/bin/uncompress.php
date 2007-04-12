@@ -50,7 +50,7 @@ require_once('inc/functions/functions.core.php');
 
 $logfile = 'error.log';
 
-//convert and set varibles
+//convert and set variables
 $arg1 = urldecode($argv[1]);
 $arg2 = urldecode($argv[2]);
 $arg3 = $argv[3];
