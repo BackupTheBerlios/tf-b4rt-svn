@@ -179,7 +179,7 @@ function completed(downpath, alertme, timetaken) {
  */
 function failed(downpath, alertme) {
 	document.getElementById('output').innerHTML	 = "<b style='color: #AA0000;'>Creation failed!</b><BR /><BR />";
-	document.getElementById('output').innerHTML += "An error occured while trying to create the torrent.<BR />";
+	document.getElementById('output').innerHTML += "An error occurred while trying to create the torrent.<BR />";
 	if(alertme === 1)
 		alert('Creation of torrent failed!');
 }

@@ -71,19 +71,19 @@ function validateProfile(isCreate, _USERIDREQUIRED, _PASSWORDLENGTH, _PASSWORDNO
 function validateSettings() {
 	var msg = "";
 	if (isNumber(document.settingsForm.page_refresh.value) == false ) {
-		msg = msg + "* Page Refresh Intervalll must be a valid number.\n";
+		msg = msg + "* Page Refresh Interval must be a valid number.\n";
 		document.settingsForm.page_refresh.focus();
 	}
 	if (isNumber(document.settingsForm.index_ajax_update.value) == false ) {
-		msg = msg + "* AJAX Update Intervall must be a valid number.\n";
+		msg = msg + "* AJAX Update Interval must be a valid number.\n";
 		document.settingsForm.index_ajax_update.focus();
 	}
 	if (isNumber(document.settingsForm.transferStatsUpdate.value) == false) {
-		msg = msg + "* Download-Details Update Intervall must be a valid number.\n";
+		msg = msg + "* Download-Details Update Interval must be a valid number.\n";
 		document.settingsForm.transferStatsUpdate.focus();
 	}
 	if (isNumber(document.settingsForm.servermon_update.value) == false) {
-		msg = msg + "* Server Monitor Update Intervall must be a valid number.\n";
+		msg = msg + "* Server Monitor Update Interval must be a valid number.\n";
 		document.settingsForm.servermon_update.focus();
 	}
 	if (msg != "") {
