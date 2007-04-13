@@ -35,8 +35,10 @@ class StatFile(object):
     """ __init__                                                             """
     """ -------------------------------------------------------------------- """
     def __init__(self, file):
+
         # file
         self.file = file
+
         # stat-fields
         self.running = 1
         self.percent_done = "0.0"
@@ -51,6 +53,7 @@ class StatFile(object):
         self.uptotal = ""
         self.downtotal = ""
         self.size = ""
+
         # init
         if self.file is not '':
             self.initialize(self.file)
@@ -66,10 +69,12 @@ class StatFile(object):
         # read in stat-file + set fields
         if os.path.isfile(self.file):
             try:
+
                 # read file to mem
                 f = open(self.file, 'r')
                 data = f.read()
                 f.close()
+
                 # set fields
                 content = data.split("\n")
                 if len(content) > 12:
@@ -89,6 +94,7 @@ class StatFile(object):
                     return True
                 else:
                     printError("Failed to parse statfile %s " % self.file)
+
             except:
                 printError("Failed to read statfile %s " % self.file)
         return False
@@ -120,4 +126,3 @@ class StatFile(object):
         except:
             printError("Failed to write statfile %s " % self.file)
         return False
-

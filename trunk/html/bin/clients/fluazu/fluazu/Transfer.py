@@ -208,18 +208,22 @@ class Transfer(object):
     """ -------------------------------------------------------------------- """
     def processCommandStack(self, download):
         if os.path.isfile(self.fileCommand):
+
             # process file
             self.log("Processing command-file %s ..." % self.fileCommand)
             try:
+
                 # read file to mem
                 f = open(self.fileCommand, 'r')
                 data = f.read()
                 f.close()
+
                 # delete file
                 try:
                     os.remove(self.fileCommand)
                 except:
                     self.log("Failed to delete command-file : %s" % self.fileCommand)
+
                 # exec commands
                 if len(data) > 0:
                     commands = data.split("\n")
@@ -236,6 +240,7 @@ class Transfer(object):
                         self.log("No commands found.")
                 else:
                     self.log("No commands found.")
+
             except:
                 self.log("Failed to read command-file : %s" % self.fileCommand)
         return False
@@ -416,37 +421,45 @@ class Transfer(object):
                     self.sf.percent_done = str(pctf)
                 except:
                     printException()
+
                 # time_left
                 try:
                     self.sf.time_left = str(stats.getETA())
                 except:
                     self.sf.time_left = '-'
+
                 # down_speed
                 try:
                     self.sf.down_speed = "%.1f kB/s" % ((float(stats.getDownloadAverage())) / 1024)
                 except:
                     printException()
+
                 # up_speed
                 try:
                     self.sf.up_speed = "%.1f kB/s" % ((float(stats.getUploadAverage())) / 1024)
                 except:
                     printException()
+
                 # uptotal
                 try:
                     self.sf.uptotal = str(stats.getUploaded())
                 except:
                     printException()
+
                 # downtotal
                 try:
                     self.sf.downtotal = str(stats.getDownloaded())
                 except:
                     printException()
+
             except:
                 printException()
+
             # hosts
             try:
                 ps = download.getPeerManager().getStats()
                 scrape = download.getLastScrapeResult()
+
                 # seeds
                 try:
                     countS = int(scrape.getSeedCount())
@@ -458,6 +471,7 @@ class Transfer(object):
                     self.sf.seeds = "%d (%d)" % (countSC, countS)
                 except:
                     printException()
+
                 # peers
                 try:
                     countP = int(scrape.getNonSeedCount())
@@ -469,10 +483,13 @@ class Transfer(object):
                     self.sf.peers = "%d (%d)" % (countPC, countP)
                 except:
                     printException()
+
             except:
                 printException()
+
             # write
             return self.sf.write()
+
         except:
             printException()
             return False
@@ -481,6 +498,7 @@ class Transfer(object):
     """ statShutdown                                                         """
     """ -------------------------------------------------------------------- """
     def statShutdown(self, download, error = None):
+
         # set some values
         self.sf.running = Transfer.TF_STOPPED
         self.sf.down_speed = "0.00 kB/s"
@@ -491,13 +509,16 @@ class Transfer(object):
         self.sf.sharing = ""
         self.sf.seedlimit = ""
         try:
+
             # stats
             try:
                 stats = download.getStats()
+
                 # done
                 if download.isComplete():
                     self.sf.percent_done = 100
                     self.sf.time_left = "Download Succeeded!"
+
                 # not done
                 else:
                     try:
@@ -510,11 +531,13 @@ class Transfer(object):
                     except:
                         printException()
                     self.sf.time_left = "Transfer Stopped"
+
                 # uptotal
                 try:
                     self.sf.uptotal = str(stats.getUploaded())
                 except:
                     printException()
+
                 # downtotal
                 try:
                     self.sf.downtotal = str(stats.getDownloaded())
@@ -522,16 +545,20 @@ class Transfer(object):
                     printException()
             except:
                 printException()
+
             # size
             try:
                 self.sf.size = str(download.getTorrent().getSize())
             except:
                 printException()
+
             # error
             if error is not None:
                 self.sf.time_left = "Error: %s" % error
+
             # write
             return self.sf.write()
+
         except:
             printException()
             return False

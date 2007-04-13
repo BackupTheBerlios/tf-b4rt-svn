@@ -35,8 +35,10 @@ class TransferFile(object):
     """ __init__                                                             """
     """ -------------------------------------------------------------------- """
     def __init__(self, file):
+
         # file
         self.file = file
+
         # fields
         self.transferowner = ""
         self.savepath = ""
@@ -50,6 +52,7 @@ class TransferFile(object):
         self.maxport = ""
         self.maxcons = ""
         self.rerequest = ""
+
         # init
         if self.file is not '':
             self.initialize(self.file)
@@ -65,10 +68,12 @@ class TransferFile(object):
         # read in transfer-file + set fields
         if os.path.isfile(self.file):
             try:
+
                 # read file to mem
                 f = open(self.file, 'r')
                 data = f.read()
                 f.close()
+
                 # set fields
                 content = data.split("\n")
                 if len(content) > 11:
@@ -87,6 +92,7 @@ class TransferFile(object):
                     return True
                 else:
                     printError("Failed to parse transfer-file %s " % self.file)
+
             except:
                 printError("Failed to read transfer-file %s " % self.file)
         return False

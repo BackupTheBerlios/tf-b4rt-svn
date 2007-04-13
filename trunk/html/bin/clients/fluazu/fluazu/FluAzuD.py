@@ -49,9 +49,11 @@ class FluAzuD(object):
         self.transfers = []
         self.downloads = {}
         self.pid = '0'
+
         # tf-settings
         self.tf_path = ''
         self.tf_pathTransfers = ''
+
         # flu-settings
         self.flu_path = ''
         self.flu_pathTransfers = ''
@@ -60,6 +62,7 @@ class FluAzuD(object):
         self.flu_fileCommand = ''
         self.flu_filePid = ''
         self.flu_fileStat = ''
+
         # azu-settings
         self.azu_host = '127.0.0.1'
         self.azu_port = 6884
@@ -67,6 +70,7 @@ class FluAzuD(object):
         self.azu_user = ''
         self.azu_pass = ''
         self.azu_version_str = ''
+
         # dopal
         self.connection = None
         self.interface = None
@@ -97,7 +101,7 @@ class FluAzuD(object):
         self.azu_user = username
         self.azu_pass = password
 
-        # vars
+        # more vars
         printMessage("flu-path: %s" % str(self.flu_path))
         printMessage("azu-host: %s" % str(self.azu_host))
         printMessage("azu-port: %s" % str(self.azu_port))
@@ -195,19 +199,21 @@ class FluAzuD(object):
     def shutdown(self):
         printMessage("fluazu shutting down...")
 
-        # delete stat-file
-        printMessage("deleting stat-file %s ..." % self.flu_fileStat)
-        try:
-            os.remove(self.flu_fileStat)
-        except:
-            printError("Failed to delete stat-file %s " % self.flu_fileStat)
+        # delete stat-file if exists
+        if os.path.isfile(self.flu_fileStat):
+            try:
+                printMessage("deleting stat-file %s ..." % self.flu_fileStat)
+                os.remove(self.flu_fileStat)
+            except:
+                printError("Failed to delete stat-file %s " % self.flu_fileStat)
 
-        # delete pid-file
-        printMessage("deleting pid-file %s ..." % self.flu_filePid)
-        try:
-            os.remove(self.flu_filePid)
-        except:
-            printError("Failed to delete pid-file %s " % self.flu_filePid)
+        # delete pid-file if exists
+        if os.path.isfile(self.flu_filePid):
+            try:
+                printMessage("deleting pid-file %s ..." % self.flu_filePid)
+                os.remove(self.flu_filePid)
+            except:
+                printError("Failed to delete pid-file %s " % self.flu_filePid)
 
     """ -------------------------------------------------------------------- """
     """ main                                                                 """
@@ -278,6 +284,7 @@ class FluAzuD(object):
     """ -------------------------------------------------------------------- """
     def processDeleteRequests(self):
         printMessage("processing delete-requests...")
+
         # read requests
         requests = []
         try:
@@ -292,6 +299,7 @@ class FluAzuD(object):
                     printError("Failed to delete file : %s" % delFile)
         except:
             return False
+
         # process requests
         if len(requests) > 0:
             for fileName in requests:
@@ -309,6 +317,7 @@ class FluAzuD(object):
                     os.remove(delFile)
                 except:
                     printError("Failed to delete file : %s" % delFile)
+
         # return
         return True
 
@@ -317,6 +326,7 @@ class FluAzuD(object):
     """ -------------------------------------------------------------------- """
     def processRunRequests(self):
         printMessage("processing run-requests...")
+
         # read requests
         requests = []
         try:
@@ -342,6 +352,7 @@ class FluAzuD(object):
                     printError("Failed to move file : %s" % inputFile)
         except:
             return False
+
         # process requests
         if len(requests) > 0:
             try:
@@ -379,6 +390,7 @@ class FluAzuD(object):
             except:
                 printMessage("exception when processing run-requests:")
                 printException()
+
         # return
         return True
 
@@ -401,6 +413,7 @@ class FluAzuD(object):
             # add
             self.dm.addDownload(torrent, fileSource, fileTarget)
 
+            # return
             return True
         except:
             printMessage("exception when adding transfer:")
@@ -412,7 +425,6 @@ class FluAzuD(object):
     """ -------------------------------------------------------------------- """
     def removeTransfer(self, tname):
         printMessage("removing transfer %s ..." % tname)
-        # call azu-method
         try:
             self.downloads[tname].remove()
             return True
@@ -448,22 +460,26 @@ class FluAzuD(object):
     """ -------------------------------------------------------------------- """
     def processCommandStack(self):
         if os.path.isfile(self.flu_fileCommand):
+
             # process file
             printMessage("Processing command-file %s ..." % self.flu_fileCommand)
             try:
+
+                # read file to mem
                 try:
-                    # read file to mem
                     f = open(self.flu_fileCommand, 'r')
                     data = f.read()
                     f.close()
                 except:
                     printError("Failed to read command-file : %s" % self.flu_fileCommand)
                     raise
+
                 # delete file
                 try:
                     os.remove(self.flu_fileCommand)
                 except:
                     printError("Failed to delete command-file : %s" % self.flu_fileCommand)
+
                 # exec commands
                 if len(data) > 0:
                     commands = data.split("\n")
@@ -480,6 +496,7 @@ class FluAzuD(object):
                         printMessage("No commands found.")
                 else:
                     printMessage("No commands found.")
+
             except:
                 printError("Failed to process command-stack : %s" % self.flu_fileCommand)
         return False
@@ -541,6 +558,7 @@ class FluAzuD(object):
             except:
                 printMessage("invalid setting.")
                 return False
+
         # default
         else:
             printMessage("op-code unknown: %s" % opCode)
@@ -601,8 +619,10 @@ class FluAzuD(object):
     """ -------------------------------------------------------------------- """
     def changeSetting(self, key, val):
         try:
+
             # get plugin-config
             config_object = self.interface.getPluginconfig()
+
             # core-keys
             coreKeys = { \
                 'CORE_PARAM_INT_MAX_ACTIVE': config_object.CORE_PARAM_INT_MAX_ACTIVE, \
@@ -619,6 +639,7 @@ class FluAzuD(object):
             if key not in coreKeys:
                 printMessage("settings-key unknown: %s" % key)
                 return False
+
             # change setting
             try:
                 config_object.setIntParameter(coreKeys[key], int(val))
@@ -627,6 +648,7 @@ class FluAzuD(object):
                 printMessage("Failed to change setting %s to %s" % (key, val))
                 printException()
                 return False
+
         except:
             printMessage("Failed to get Plugin-Config.")
             printException()
@@ -637,8 +659,10 @@ class FluAzuD(object):
     """ -------------------------------------------------------------------- """
     def writeStatFile(self):
         try:
+
             # get plugin-config
             config_object = self.interface.getPluginconfig()
+
             # get vars
             coreVars = [ \
                 config_object.CORE_PARAM_INT_MAX_ACTIVE, \
@@ -659,6 +683,7 @@ class FluAzuD(object):
                 except:
                     coreParams[coreVar] = 0
                     printException()
+
             # write file
             try:
                 f = open(self.flu_fileStat, 'w')
@@ -673,6 +698,7 @@ class FluAzuD(object):
             except:
                 printError("Failed to write statfile %s " % self.flu_fileStat)
                 printException()
+
         except:
             printMessage("Failed to get Plugin-Config.")
             printException()
