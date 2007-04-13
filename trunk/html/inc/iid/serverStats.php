@@ -55,6 +55,12 @@ array_push($type_list, array(
 	'selected' => ($type == "who") ? 1 : 0
 	)
 );
+if ($cfg['isAdmin'] == 1)
+	array_push($type_list, array(
+		'name' => "ps",
+		'selected' => ($type == "ps") ? 1 : 0
+		)
+	);
 if ($cfg['enable_xfer'] == 1)
 	array_push($type_list, array(
 		'name' => "xfer",
@@ -102,6 +108,13 @@ switch ($type) {
 		// set vars
 		$tmpl->setvar('who_w', shell_exec("w"));
 		$tmpl->setvar('who_free', shell_exec("free -mo"));
+		// drivespace-bar
+		tmplSetDriveSpaceBar();
+		break;
+
+	// ps
+	case "ps":
+		// set vars
 		if ($cfg['isAdmin']) {
 			// array with all clients
 			$clients = array('tornado', 'transmission', 'mainline', 'wget', 'nzbperl', 'azureus');

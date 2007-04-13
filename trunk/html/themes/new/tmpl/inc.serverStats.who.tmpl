@@ -12,18 +12,4 @@
 <br><hr><br>
 <tmpl_var name="who_free">
 </pre>
-<tmpl_if name="isAdmin">
-<br><hr><br>
-<pre>
-<tmpl_loop name="process_list">
----=== <tmpl_var name="client"> ===---
-<br>
-<tmpl_var name="RunningProcessInfo">
-<br>
---- Process-List ---
-<tmpl_var name="pinfo">
-<br>
-</tmpl_loop>
-</pre>
-</tmpl_if>
 </div>
