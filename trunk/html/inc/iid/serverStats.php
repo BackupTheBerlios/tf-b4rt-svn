@@ -143,7 +143,6 @@ switch ($type) {
 			$tmpl->setvar('netstatConnectionsSum', netstatConnectionsSum());
 			$tmpl->setvar('netstatPortList', netstatPortList());
 			$tmpl->setvar('netstatHostList', netstatHostList());
-
 		}
 		// language
 		$tmpl->setvar('_ID_HOSTS', $cfg['_ID_HOSTS']);
