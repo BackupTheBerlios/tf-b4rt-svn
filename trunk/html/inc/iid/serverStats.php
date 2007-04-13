@@ -61,6 +61,12 @@ if ($cfg['isAdmin'] == 1)
 		'selected' => ($type == "ps") ? 1 : 0
 		)
 	);
+if ($cfg['isAdmin'] == 1)
+	array_push($type_list, array(
+		'name' => "netstat",
+		'selected' => ($type == "netstat") ? 1 : 0
+		)
+	);
 if ($cfg['enable_xfer'] == 1)
 	array_push($type_list, array(
 		'name' => "xfer",
@@ -79,14 +85,8 @@ switch ($type) {
 		$tmpl->setvar('all_du', shell_exec("du -sh ".$cfg["path"]."*"));
 		$tmpl->setvar('all_w', shell_exec("w"));
 		$tmpl->setvar('all_free', shell_exec("free -mo"));
-		$tmpl->setvar('netstatConnectionsSum', netstatConnectionsSum());
-		$tmpl->setvar('netstatPortList', netstatPortList());
-		$tmpl->setvar('netstatHostList', netstatHostList());
 		// language
 		$tmpl->setvar('_DRIVESPACE', $cfg['_DRIVESPACE']);
-		$tmpl->setvar('_ID_HOSTS', $cfg['_ID_HOSTS']);
-		$tmpl->setvar('_ID_PORTS', $cfg['_ID_PORTS']);
-		$tmpl->setvar('_ID_CONNECTIONS', $cfg['_ID_CONNECTIONS']);
 		$tmpl->setvar('_SERVERSTATS', $cfg['_SERVERSTATS']);
 		// drivespace-bar
 		tmplSetDriveSpaceBar();
@@ -131,6 +131,24 @@ switch ($type) {
 			}
 			$tmpl->setloop('process_list', $process_list);
 		}
+		// drivespace-bar
+		tmplSetDriveSpaceBar();
+		break;
+
+	// netstat
+	case "netstat":
+		// set vars
+		if ($cfg['isAdmin']) {
+			// set vars
+			$tmpl->setvar('netstatConnectionsSum', netstatConnectionsSum());
+			$tmpl->setvar('netstatPortList', netstatPortList());
+			$tmpl->setvar('netstatHostList', netstatHostList());
+
+		}
+		// language
+		$tmpl->setvar('_ID_HOSTS', $cfg['_ID_HOSTS']);
+		$tmpl->setvar('_ID_PORTS', $cfg['_ID_PORTS']);
+		$tmpl->setvar('_ID_CONNECTIONS', $cfg['_ID_CONNECTIONS']);
 		// drivespace-bar
 		tmplSetDriveSpaceBar();
 		break;

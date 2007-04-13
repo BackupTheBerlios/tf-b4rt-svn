@@ -26,6 +26,8 @@
 	<tmpl_include name="inc.serverStats.who.tmpl">
 <tmpl_elseif name="type" value="ps">
 	<tmpl_include name="inc.serverStats.ps.tmpl">
+<tmpl_elseif name="type" value="netstat">
+	<tmpl_include name="inc.serverStats.netstat.tmpl">
 <tmpl_elseif name="type" value="xfer">
 	<tmpl_include name="inc.serverStats.xfer.tmpl">
 </tmpl_if>
