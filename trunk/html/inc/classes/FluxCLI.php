@@ -920,10 +920,10 @@ class FluxCLI
 			return false;
 		}
 		$this->_outputMessage('checking xfer-limit(s) for "'.$delta.'" ...'."\n");
-    	// xfer-init
+    	// set xfer-realtime
 		$cfg['xfer_realtime'] = 1;
-		$cfg['xfer_newday'] = 0;
-		$cfg['xfer_newday'] = !$db->GetOne('SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time()));
+		// set xfer-newday
+		Xfer::setNewday();
     	// getTransferListArray to update xfer-stats
 		$transferList = @getTransferListArray();
 		// get xfer-totals

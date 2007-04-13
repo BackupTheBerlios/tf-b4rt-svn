@@ -43,6 +43,9 @@ class Xfer
     var $xfer = array();
     var $xfer_total = array();
 
+    // newday-flag
+    var $xfer_newday = 0;
+
 	// =========================================================================
 	// public static methods
 	// =========================================================================
@@ -84,6 +87,31 @@ class Xfer
 			$db->Execute($sql);
 		}
     }
+
+	/**
+	 * gets new-day
+	 *
+	 * @return int
+	 */
+	function getNewday() {
+    	global $instanceXfer;
+    	return (isset($instanceXfer))
+    		? $instanceXfer->xfer_newday
+    		: 0;
+	}
+
+	/**
+	 * sets new-day
+	 */
+	function setNewday() {
+    	global $instanceXfer, $db;
+    	// create instance
+    	if (!isset($instanceXfer))
+    		$instanceXfer = new Xfer();
+		// set new-day
+		$instanceXfer->xfer_newday = 0;
+		$instanceXfer->xfer_newday = !$db->GetOne('SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time()));
+	}
 
     /**
      * getStats
@@ -243,8 +271,8 @@ class Xfer
 		$this->_sumUsage($transferowner, $transferTotalsCurrent["downtotal"], $transferTotalsCurrent["uptotal"], 'week');
 		$this->_sumUsage($transferowner, $transferTotalsCurrent["downtotal"], $transferTotalsCurrent["uptotal"], 'day');
 		//XFER: if new day add upload/download totals to last date on record and subtract from today in SQL
-		if ($cfg['xfer_newday'] > 0) {
-			$cfg['xfer_newday'] = 2;
+		if ($this->xfer_newday > 0) {
+			$this->xfer_newday = 2;
 			$lastDate = $db->GetOne('SELECT date FROM tf_xfer ORDER BY date DESC');
 			$sql = ($db->GetOne("SELECT 1 FROM tf_xfer WHERE user_id = '".$transferowner."' AND date = '".$lastDate."'"))
 				? "UPDATE tf_xfer SET download = download+".@($transferTotalsCurrent["downtotal"] + 0).", upload = upload+".@($transferTotalsCurrent["uptotal"] + 0)." WHERE user_id = '".$transferowner."' AND date = '".$lastDate."'"
@@ -264,7 +292,7 @@ class Xfer
 		global $cfg, $db;
 		//XFER: if a new day but no .stat files where found put blank entry into the
 		// DB for today to indicate accounting has been done for the new day
-		if ($cfg['xfer_newday'] == 1)
+		if ($this->xfer_newday == 1)
 			$db->Execute("INSERT INTO tf_xfer (user_id,date) values ('',".$db->DBDate(time()).")");
 		$this->_getUsage('0001-01-01', 'total');
 		$month_start = (date('j')>=$cfg['month_start']) ? date('Y-m-').$cfg['month_start'] : date('Y-m-',strtotime('-1 Month')).$cfg['month_start'];

@@ -162,10 +162,10 @@ switch ($type) {
 		// set vars
 		$tmpl->setvar('is_xfer', 1);
 		// getTransferListArray to update xfer-stats
-		// xfer-init
+		// set xfer-realtime
 		$cfg['xfer_realtime'] = 1;
-		$cfg['xfer_newday'] = 0;
-		$cfg['xfer_newday'] = !$db->GetOne('SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time()));
+		// set xfer-newday
+		Xfer::setNewday();
 		getTransferListArray();
 		$xfer_total = Xfer::getStatsTotal();
 		if ($cfg['xfer_day'])

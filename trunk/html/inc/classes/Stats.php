@@ -191,8 +191,8 @@ class Stats
 		    	// xfer-init
 		    	if ($cfg['xfer_realtime'] == 0) {
 					$cfg['xfer_realtime'] = 1;
-					$cfg['xfer_newday'] = 0;
-					$cfg['xfer_newday'] = !$db->GetOne('SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time()));
+					// set xfer-newday
+					Xfer::setNewday();
 		    	}
 		    	$this->_transferList = getTransferListArray();
 		    	$this->_initServerStats();
@@ -209,8 +209,8 @@ class Stats
 		    	// xfer-init
 		    	if ($cfg['xfer_realtime'] == 0) {
 					$cfg['xfer_realtime'] = 1;
-					$cfg['xfer_newday'] = 0;
-					$cfg['xfer_newday'] = !$db->GetOne('SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time()));
+					// set xfer-newday
+					Xfer::setNewday();
 		    	}
 		    	$this->_transferList = getTransferListArray();
 		    	$this->_initXferStats();
