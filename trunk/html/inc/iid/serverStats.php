@@ -159,8 +159,6 @@ switch ($type) {
 			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use xfer");
 			@error("xfer is disabled", "index.php?iid=serverStats", "");
 		}
-		// xfer class
-		require_once("inc/classes/Xfer.php");
 		// set vars
 		$tmpl->setvar('is_xfer', 1);
 		// getTransferListArray to update xfer-stats

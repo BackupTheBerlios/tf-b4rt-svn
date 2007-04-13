@@ -920,8 +920,6 @@ class FluxCLI
 			return false;
 		}
 		$this->_outputMessage('checking xfer-limit(s) for "'.$delta.'" ...'."\n");
-		// xfer class
-		require_once("inc/classes/Xfer.php");
     	// xfer-init
 		$cfg['xfer_realtime'] = 1;
 		$cfg['xfer_newday'] = 0;

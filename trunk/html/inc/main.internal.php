@@ -202,8 +202,6 @@ if (!(cacheIsSet($currentUser))) {
 
 	// xfer
 	if ($cfg['enable_xfer'] == 1) {
-		// xfer class
-		require_once("inc/classes/Xfer.php");
 		// xfer-init
 		Xfer::init();
 	}
@@ -226,8 +224,6 @@ FluxdServiceMod::initializeServiceMod('Qmgr');
 
 // xfer
 if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1)) {
-	// xfer class
-	require_once("inc/classes/Xfer.php");
 	// xfer-newday
 	$cfg['xfer_newday'] = 0;
 	$cfg['xfer_newday'] = !$db->GetOne('SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time()));

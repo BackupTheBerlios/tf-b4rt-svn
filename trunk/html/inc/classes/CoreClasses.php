@@ -38,6 +38,9 @@ require_once("inc/classes/Fluxd.php");
 // FluxdServiceMod
 require_once("inc/classes/FluxdServiceMod.php");
 
+// Xfer
+require_once("inc/classes/Xfer.php");
+
 /**
  * class ProcessInfo
  */

@@ -61,9 +61,6 @@ if ((isset($_SESSION['user'])) && (cacheIsSet($_SESSION['user']))) {
 // public-stats-switch
 switch ($cfg['stats_enable_public']) {
 	case 1:
-		// xfer class
-		if ($cfg['enable_xfer'] == 1)
-			require_once("inc/classes/Xfer.php");
 		// load default-language and transfers if cache not set
 		if ((!isset($_SESSION['user'])) || (!(cacheIsSet($_SESSION['user'])))) {
 			// common functions
