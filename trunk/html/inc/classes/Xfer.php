@@ -80,12 +80,8 @@ class Xfer
     	global $db;
 		// if xfer is empty, insert a zero record for today
 		$xferRecord = $db->GetRow("SELECT 1 FROM tf_xfer");
-		if (empty($xferRecord)) {
-			$rec = array('user_id'=>'', 'date'=>$db->DBDate(time()));
-			$sTable = 'tf_xfer';
-			$sql = $db->GetInsertSql($sTable, $rec);
-			$db->Execute($sql);
-		}
+		if (empty($xferRecord))
+			$db->Execute("INSERT INTO tf_xfer (user_id,date) values ('',".$db->DBDate(time()).")");
     }
 
 	/**
@@ -105,16 +101,16 @@ class Xfer
 	 */
 	function setNewday() {
     	global $instanceXfer, $db;
-    	// create instance
-    	if (!isset($instanceXfer))
-    		$instanceXfer = new Xfer();
+ 		// initialize if needed
+		if (!isset($instanceXfer))
+			Xfer::initialize();
 		// set new-day
 		$instanceXfer->xfer_newday = 0;
 		$instanceXfer->xfer_newday = !$db->GetOne('SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time()));
 	}
 
     /**
-     * getStats
+     * get Stats
      *
      * @return array
      */
@@ -126,7 +122,7 @@ class Xfer
     }
 
     /**
-     * getStatsTotal
+     * get Stats Total
      *
      * @return array
      */
@@ -138,15 +134,40 @@ class Xfer
     }
 
     /**
-     * getStatsFormatted
+     * get Stats Formatted
      *
      * @return array
      */
     function getStatsFormatted() {
-    	global $instanceXfer;
-    	return (isset($instanceXfer))
-    		? $instanceXfer->instance_getStatsFormatted()
-    		: array();
+		global $cfg, $instanceXfer;
+		return array(
+			/* global */
+			(isset($instanceXfer->xfer_total['total']['total']))
+				? @formatFreeSpace($instanceXfer->xfer_total['total']['total'] / 1048576)
+				: 0,
+			(isset($instanceXfer->xfer_total['month']['total']))
+				? @formatFreeSpace($instanceXfer->xfer_total['month']['total'] / 1048576)
+				: 0,
+			(isset($instanceXfer->xfer_total['month']['total']))
+				? @formatFreeSpace($instanceXfer->xfer_total['week']['total'] / 1048576)
+				: 0,
+			(isset($instanceXfer->xfer_total['month']['total']))
+				? @formatFreeSpace($instanceXfer->xfer_total['day']['total'] / 1048576)
+				: 0,
+			/* user */
+			(isset($instanceXfer->xfer[$cfg["user"]]['total']['total']))
+				? @formatFreeSpace($instanceXfer->xfer[$cfg["user"]]['total']['total'] / 1048576)
+				: 0,
+			(isset($instanceXfer->xfer[$cfg["user"]]['total']['total']))
+				? @formatFreeSpace($instanceXfer->xfer[$cfg["user"]]['month']['total'] / 1048576)
+				: 0,
+			(isset($instanceXfer->xfer[$cfg["user"]]['total']['total']))
+				? @formatFreeSpace($instanceXfer->xfer[$cfg["user"]]['week']['total'] / 1048576)
+				: 0,
+			(isset($instanceXfer->xfer[$cfg["user"]]['total']['total']))
+				? @formatFreeSpace($instanceXfer->xfer[$cfg["user"]]['day']['total'] / 1048576)
+				: 0
+		);
     }
 
 	/**
@@ -260,9 +281,9 @@ class Xfer
 		// just to be safe..
 		if (empty($down)) $down = "0";
 		if (empty($up)) $up = "0";
-		$sql = ($db->GetRow("SELECT 1 FROM tf_xfer WHERE user_id = '".$user."' AND date = ".$db->DBDate(time())))
-			? "UPDATE tf_xfer SET download = download+".$down.", upload = upload+".$up." WHERE user_id = '".$user."' AND date = ".$db->DBDate(time())
-			: "INSERT INTO tf_xfer (user_id,date,download,upload) values ('".$user."',".$db->DBDate(time()).",".$down.",".$up.")";
+		$sql = ($db->GetRow("SELECT 1 FROM tf_xfer WHERE user_id = ".$db->qstr($user)." AND date = ".$db->DBDate(time())))
+			? "UPDATE tf_xfer SET download = download+".$down.", upload = upload+".$up." WHERE user_id = ".$db->qstr($user)." AND date = ".$db->DBDate(time())
+			: "INSERT INTO tf_xfer (user_id,date,download,upload) values (".$db->qstr($user).",".$db->DBDate(time()).",".$down.",".$up.")";
 		$db->Execute($sql);
 	}
 
@@ -279,44 +300,6 @@ class Xfer
 	// =========================================================================
 	// public methods
 	// =========================================================================
-
-    /**
-     * getStatsFormatted
-     *
-     * @return array
-     */
-    function instance_getStatsFormatted() {
-		global $cfg;
-		$xferStats = array();
-		// global
-	    $xferGlobalTotal = "n/a";
-		$xferGlobalTotal =  @formatFreeSpace($this->xfer_total['total']['total'] / 1048576);
-		array_push($xferStats, $xferGlobalTotal);
-	    $xferGlobalMonth = "n/a";
-		$xferGlobalMonth =  @formatFreeSpace($this->xfer_total['month']['total'] / 1048576);
-		array_push($xferStats, $xferGlobalMonth);
-	    $xferGlobalWeek = "n/a";
-		$xferGlobalWeek =  @formatFreeSpace($this->xfer_total['week']['total'] / 1048576);
-		array_push($xferStats, $xferGlobalWeek);
-	    $xferGlobalDay = "n/a";
-		$xferGlobalDay =  @formatFreeSpace($this->xfer_total['day']['total'] / 1048576);
-		array_push($xferStats, $xferGlobalDay);
-		// user
-	    $xferUserTotal = "n/a";
-		$xferUserTotal =  @formatFreeSpace($this->xfer[$cfg["user"]]['total']['total'] / 1048576);
-		array_push($xferStats, $xferUserTotal);
-	    $xferUserMonth = "n/a";
-		$xferUserMonth =  @formatFreeSpace($this->xfer[$cfg["user"]]['month']['total'] / 1048576);
-		array_push($xferStats, $xferUserMonth);
-	    $xferUserWeek = "n/a";
-		$xferUserWeek =  @formatFreeSpace($this->xfer[$cfg["user"]]['week']['total'] / 1048576);
-		array_push($xferStats, $xferUserWeek);
-	    $xferUserDay = "n/a";
-		$xferUserDay =  @formatFreeSpace($this->xfer[$cfg["user"]]['day']['total'] / 1048576);
-		array_push($xferStats, $xferUserDay);
-		// return
-		return $xferStats;
-    }
 
 	/**
 	 * xfer update 1
@@ -341,13 +324,13 @@ class Xfer
 		if ($this->xfer_newday != 0) {
 			$this->xfer_newday = 2;
 			$lastDate = $db->GetOne('SELECT date FROM tf_xfer ORDER BY date DESC');
-			$sql = ($db->GetOne("SELECT 1 FROM tf_xfer WHERE user_id = '".$transferowner."' AND date = '".$lastDate."'"))
-				? "UPDATE tf_xfer SET download = download+".@($transferTotalsCurrent["downtotal"] + 0).", upload = upload+".@($transferTotalsCurrent["uptotal"] + 0)." WHERE user_id = '".$transferowner."' AND date = '".$lastDate."'"
-				: "INSERT INTO tf_xfer (user_id,date,download,upload) values ('".$transferowner."','".$lastDate."',".@($transferTotalsCurrent["downtotal"] + 0).",".@($transferTotalsCurrent["uptotal"] + 0).")";
+			$sql = ($db->GetOne("SELECT 1 FROM tf_xfer WHERE user_id = ".$db->qstr($transferowner)." AND date = ".$db->qstr($lastDate)))
+				? "UPDATE tf_xfer SET download = download+".@($transferTotalsCurrent["downtotal"] + 0).", upload = upload+".@($transferTotalsCurrent["uptotal"] + 0)." WHERE user_id = ".$db->qstr($transferowner)." AND date = ".$db->qstr($lastDate)
+				: "INSERT INTO tf_xfer (user_id,date,download,upload) values (".$db->qstr($transferowner).",".$db->qstr($lastDate).",".@($transferTotalsCurrent["downtotal"] + 0).",".@($transferTotalsCurrent["uptotal"] + 0).")";
 			$db->Execute($sql);
-			$sql = ($db->GetOne("SELECT 1 FROM tf_xfer WHERE user_id = '".$transferowner."' AND date = ".$db->DBDate(time())))
-				? "UPDATE tf_xfer SET download = download-".@($transferTotalsCurrent["downtotal"] + 0).", upload = upload-".@($transferTotalsCurrent["uptotal"] + 0)." WHERE user_id = '".$transferowner."' AND date = ".$db->DBDate(time())
-				: "INSERT INTO tf_xfer (user_id,date,download,upload) values ('".$transferowner."',".$db->DBDate(time()).",".@($transferTotalsCurrent["downtotal"] + 0).",".@($transferTotalsCurrent["uptotal"] + 0).")";
+			$sql = ($db->GetOne("SELECT 1 FROM tf_xfer WHERE user_id = ".$db->qstr($transferowner)." AND date = ".$db->DBDate(time())))
+				? "UPDATE tf_xfer SET download = download-".@($transferTotalsCurrent["downtotal"] + 0).", upload = upload-".@($transferTotalsCurrent["uptotal"] + 0)." WHERE user_id = ".$db->qstr($transferowner)." AND date = ".$db->DBDate(time())
+				: "INSERT INTO tf_xfer (user_id,date,download,upload) values (".$db->qstr($transferowner).",".$db->DBDate(time()).",".@($transferTotalsCurrent["downtotal"] + 0).",".@($transferTotalsCurrent["uptotal"] + 0).")";
 			$db->Execute($sql);
 		}
 	}
@@ -382,7 +365,7 @@ class Xfer
 	 */
 	function _getUsage($start, $period) {
 		global $db;
-		$sql = "SELECT user_id, SUM(download) AS download, SUM(upload) AS upload FROM tf_xfer WHERE date >= '".$start."' AND user_id != '' GROUP BY user_id";
+		$sql = "SELECT user_id, SUM(download) AS download, SUM(upload) AS upload FROM tf_xfer WHERE date >= ".$db->qstr($start)." AND user_id != '' GROUP BY user_id";
 		$rtnValue = $db->GetAll($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
 		foreach ($rtnValue as $row)
