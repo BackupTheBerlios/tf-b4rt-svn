@@ -150,6 +150,73 @@ class Xfer
     }
 
 	/**
+	 * reset Xfer-Stats
+	 *
+	 * @return true or function exits with error
+	 */
+	function resetStats() {
+		global $db;
+		// exec delete
+		$db->Execute("DELETE FROM tf_xfer");
+		// set transfers-cache
+		cacheTransfersSet();
+		//return
+		return ($db->ErrorNo() == 0)
+			? true
+			: $db->ErrorMsg();
+	}
+
+	/**
+	 * get Xfer-Usage
+	 *
+	 * @param $username
+	 * @return number
+	 */
+	function getUsage($username = "") {
+		global $db;
+		// sql-state
+		$sql = "SELECT SUM(download) AS download, SUM(upload) AS upload FROM tf_xfer";
+		if ($username != "")
+			$sql .= " WHERE user_id LIKE ".$db->qstr($username);
+		// exec state
+		$result = $db->Execute($sql);
+		// error-check
+		if ($db->ErrorNo() != 0) dbError($sql);
+		// get usage
+		$row = $result->FetchRow();
+		$rtnValue = "0";
+		if (!empty($row))
+			$rtnValue = @formatFreeSpace($row["download"] / 1048576 + $row["upload"] / 1048576);
+		// return
+		return $rtnValue;
+	}
+
+	/**
+	 * get Xfer-Usage by date
+	 *
+	 * @param $username
+	 * @param $dateBegin
+	 * @param $dateEnd
+	 * @return array
+	 */
+	function getUsageByDate($username = "", $dateBegin = "", $dateEnd = "") {
+		global $db;
+		// sql-state
+		$sql = "SELECT SUM(download) AS download, SUM(upload) AS upload, date FROM tf_xfer";
+		if ($username != "")
+			$sql .= " WHERE user_id LIKE ".$db->qstr($username);
+		if (($dateBegin != "") && ($dateEnd != ""))
+			$sql .= " AND date >= ".$db->qstr($dateBegin)." AND date < ".$db->qstr($dateEnd);
+		$sql .= " GROUP BY date ORDER BY date";
+		// exec state
+		$rtnValue = $db->GetAll($sql);
+		// error-check
+		if ($db->ErrorNo() != 0) dbError($sql);
+		// return
+		return $rtnValue;
+	}
+
+	/**
 	 * xfer update 1
 	 * add upload/download stats to the xfer array
 	 *
@@ -271,7 +338,7 @@ class Xfer
 		$this->_sumUsage($transferowner, $transferTotalsCurrent["downtotal"], $transferTotalsCurrent["uptotal"], 'week');
 		$this->_sumUsage($transferowner, $transferTotalsCurrent["downtotal"], $transferTotalsCurrent["uptotal"], 'day');
 		//XFER: if new day add upload/download totals to last date on record and subtract from today in SQL
-		if ($this->xfer_newday > 0) {
+		if ($this->xfer_newday != 0) {
 			$this->xfer_newday = 2;
 			$lastDate = $db->GetOne('SELECT date FROM tf_xfer ORDER BY date DESC');
 			$sql = ($db->GetOne("SELECT 1 FROM tf_xfer WHERE user_id = '".$transferowner."' AND date = '".$lastDate."'"))

@@ -671,7 +671,6 @@ function tmplSetUserSection() {
 		@getTransferListArray();
 	} else {
 		$tmpl->setvar('userSection_colspan', 7);
-		$xfer_usage = "";
 	}
 	// activity-prepare
 	$total_activity = GetActivityCount();
@@ -697,18 +696,9 @@ function tmplSetUserSection() {
 			$disk_usage = array_shift($dusize);
 		}
 		// xfer-usage
-		if ($cfg['enable_xfer'] == 1) {
-			$sql = "SELECT SUM(download) AS download, SUM(upload) AS upload FROM tf_xfer WHERE user_id LIKE '".$user_id."'";
-			$result2 = $db->Execute($sql);
-			if ($db->ErrorNo() != 0) dbError($sql);
-			$row = $result2->FetchRow();
-			if (!empty($row)) {
-				$xfer_usage = "0";
-				$xfer_usage = @formatFreeSpace(($row["download"] / (1024 * 1024)) + ($row["upload"] / (1024 * 1024)));
-			} else {
-				$xfer_usage = "0";
-			}
-		}
+		$xfer_usage = ($cfg['enable_xfer'] == 1)
+			? Xfer::getUsage($user_id)
+			: 0;
 		// activity
 		$user_activity = GetActivityCount($user_id);
 		$user_percent = ($user_activity == 0)
@@ -1109,21 +1099,6 @@ function setWebappLock($lock) {
 function resetAllTransferTotals() {
 	global $db;
 	$db->Execute("DELETE FROM tf_transfer_totals");
-	// set transfers-cache
-	cacheTransfersSet();
-	return ($db->ErrorNo() == 0)
-		? true
-		: $db->ErrorMsg();
-}
-
-/**
- * reset Xfer-Stats
- *
- * @return true or function exits with error
- */
-function resetXferStats() {
-	global $db;
-	$db->Execute("DELETE FROM tf_xfer");
 	// set transfers-cache
 	cacheTransfersSet();
 	return ($db->ErrorNo() == 0)

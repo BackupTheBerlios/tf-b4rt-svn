@@ -166,7 +166,9 @@ switch ($type) {
 		$cfg['xfer_realtime'] = 1;
 		// set xfer-newday
 		Xfer::setNewday();
+		// transferlist-array to update stats
 		getTransferListArray();
+		// xfer-totals
 		$xfer_total = Xfer::getStatsTotal();
 		if ($cfg['xfer_day'])
 			$tmpl->setvar('xfer_day', tmplGetXferBar($cfg['xfer_day'],$xfer_total['day']['total'],$cfg['_XFERTHRU'].' Today:'));
@@ -217,14 +219,12 @@ switch ($type) {
 					$wend = $mend;
 				}
 				// month stats
-				$sql = "SELECT SUM(download) AS download, SUM(upload) AS upload, date FROM tf_xfer WHERE user_id LIKE '".$_REQUEST["user"]."' GROUP BY date ORDER BY date";
-				$rtnValue = $db->GetAll($sql);
-				if ($db->ErrorNo() != 0) dbError($sql);
+				$xferStats = Xfer::getUsageByDate(tfb_getRequestVar('user'));
 				$start = '';
 				$download = 0;
 				$upload = 0;
 				$month_list = array();
-				foreach ($rtnValue as $row) {
+				foreach ($xferStats as $row) {
 					$rtime = strtotime($row[2]);
 					$newstart = $cfg['month_start'].' ';
 					$newstart .= (date('j',$rtime) < $cfg['month_start']) ? date('M Y',strtotime('-1 Month',$rtime)) : date('M Y',$rtime);
@@ -243,8 +243,7 @@ switch ($type) {
 						$download = $row[0];
 						$upload = $row[1];
 						$start = $newstart;
-					}
-					else {
+					} else {
 						$download += $row[0];
 						$upload += $row[1];
 					}
@@ -262,15 +261,14 @@ switch ($type) {
 				}
 				$tmpl->setloop('month_list', $month_list);
 				// weekly stats
-				$period_query = ($mstart) ? "and date >= '".$mstart."' and date < '".$mend."'" : "";
-				$sql = "SELECT SUM(download) AS download, SUM(upload) AS upload, date FROM tf_xfer WHERE user_id LIKE '".$_REQUEST["user"]."' ".$period_query." GROUP BY date ORDER BY date";
-				$rtnValue = $db->GetAll($sql);
-				if ($db->ErrorNo() != 0) dbError($sql);
+				$xferStats = ($mstart)
+					? Xfer::getUsageByDate(tfb_getRequestVar('user'), $mstart, $mend)
+					: Xfer::getUsageByDate(tfb_getRequestVar('user'));
 				$start = '';
 				$download = 0;
 				$upload = 0;
 				$week_list = array();
-				foreach ($rtnValue as $row) {
+				foreach ($xferStats as $row) {
 					$rtime = strtotime($row[2]);
 					$newstart = date('d M Y',strtotime('+1 Day last '.$cfg['week_start'],$rtime));
 					if ($start != $newstart) {
@@ -289,8 +287,7 @@ switch ($type) {
 						$download = $row[0];
 						$upload = $row[1];
 						$start = $newstart;
-					}
-					else {
+					} else {
 						$download += $row[0];
 						$upload += $row[1];
 					}
@@ -309,15 +306,14 @@ switch ($type) {
 				}
 				$tmpl->setloop('week_list', $week_list);
 				// daily stats
-				$period_query = ($wstart) ? "and date >= '".$wstart."' and date < '".$wend."'" : "";
-				$sql = "SELECT SUM(download) AS download, SUM(upload) AS upload, date FROM tf_xfer WHERE user_id LIKE '".$_REQUEST["user"]."' ".$period_query." GROUP BY date ORDER BY date";
-				$rtnValue = $db->GetAll($sql);
-				if ($db->ErrorNo() != 0) dbError($sql);
+				$xferStats = ($wstart)
+					? Xfer::getUsageByDate(tfb_getRequestVar('user'), $wstart, $wend)
+					: Xfer::getUsageByDate(tfb_getRequestVar('user'));
 				$start = '';
 				$download = 0;
 				$upload = 0;
 				$day_list = array();
-				foreach ($rtnValue as $row) {
+				foreach ($xferStats as $row) {
 					$rtime = strtotime($row[2]);
 					$newstart = $row[2];
 					if ($row[2] == date('Y-m-d')) {

@@ -609,7 +609,7 @@ function sa_maintenance($action = "") {
 			$htmlTitle = "Maintenance - Reset - xfer";
 			$htmlMain .= '<br>';
 			$htmlMain .= 'Reset of xfer-stats';
-			$result = resetXferStats();
+			$result = Xfer::resetStats();
 			$htmlMain .= ($result === true)
 				? ' <font color="green">done</font>'
 				: '<br><font color="red">Error :</font><br>'.$result;
