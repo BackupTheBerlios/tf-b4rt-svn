@@ -745,9 +745,7 @@ $tmpl->setvar('_DRIVESPACE', $cfg['_DRIVESPACE']);
 //
 tmplSetTitleBar($cfg["pagetitle"]);
 tmplSetDriveSpaceBar();
-//
-$tmpl->setvar('iid', $_REQUEST["iid"]);
-$tmpl->setvar('mainMenu', mainMenu($_REQUEST["iid"]));
+tmplSetIidVars();
 
 // parse template
 $tmpl->pparse();

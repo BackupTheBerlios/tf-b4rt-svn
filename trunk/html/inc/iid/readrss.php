@@ -130,8 +130,7 @@ $tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 $tmpl->setvar('enable_multiupload', $cfg["enable_multiupload"]);
 tmplSetTitleBar($cfg["pagetitle"].' - RSS Torrents');
 tmplSetFoot();
-$tmpl->setvar('iid', $_REQUEST["iid"]);
-$tmpl->setvar('mainMenu', mainMenu($_REQUEST["iid"]));
+tmplSetIidVars();
 
 // parse template
 $tmpl->pparse();

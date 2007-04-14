@@ -79,8 +79,7 @@ $tmpl->setvar('_FORCEUSERSTOREAD', $cfg['_FORCEUSERSTOREAD']);
 //
 tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_SENDMESSAGETITLE']);
 tmplSetFoot();
-$tmpl->setvar('iid', $_REQUEST["iid"]);
-$tmpl->setvar('mainMenu', mainMenu($_REQUEST["iid"]));
+tmplSetIidVars();
 
 // parse template
 $tmpl->pparse();

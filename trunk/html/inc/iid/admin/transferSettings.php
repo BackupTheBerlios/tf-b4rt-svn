@@ -107,10 +107,7 @@ $tmpl->setloop('nice_list', $nice_list);
 tmplSetTitleBar("Administration - Transfer Settings");
 tmplSetAdminMenu();
 tmplSetFoot();
-
-// set iid-var
-$tmpl->setvar('iid', $_REQUEST["iid"]);
-$tmpl->setvar('mainMenu', mainMenu($_REQUEST["iid"]));
+tmplSetIidVars();
 
 // parse template
 $tmpl->pparse();

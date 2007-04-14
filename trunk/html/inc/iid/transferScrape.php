@@ -64,8 +64,7 @@ tmplSetFoot(false);
 tmplSetTitleBar($transferLabel." - Scrape", false);
 
 // iid
-$tmpl->setvar('iid', $_REQUEST["iid"]);
-$tmpl->setvar('mainMenu', mainMenu($_REQUEST["iid"]));
+tmplSetIidVars();
 
 // parse template
 $tmpl->pparse();

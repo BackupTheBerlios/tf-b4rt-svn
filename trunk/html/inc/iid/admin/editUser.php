@@ -105,10 +105,7 @@ tmplSetTitleBar("Administration - Edit User");
 tmplSetAdminMenu();
 tmplSetUserSection();
 tmplSetFoot();
-
-// set iid-var
-$tmpl->setvar('iid', $_REQUEST["iid"]);
-$tmpl->setvar('mainMenu', mainMenu($_REQUEST["iid"]));
+tmplSetIidVars();
 
 // parse template
 $tmpl->pparse();

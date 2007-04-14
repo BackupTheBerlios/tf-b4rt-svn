@@ -107,8 +107,7 @@ $tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 //
 tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_UPLOADHISTORY']);
 tmplSetFoot();
-$tmpl->setvar('iid', $_REQUEST["iid"]);
-$tmpl->setvar('mainMenu', mainMenu($_REQUEST["iid"]));
+tmplSetIidVars();
 
 // parse template
 $tmpl->pparse();

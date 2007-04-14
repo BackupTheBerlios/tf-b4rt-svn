@@ -79,10 +79,7 @@ if ((isset($transfer_hosts)) && ($transfer_hosts != "")) {
 // title + foot
 tmplSetTitleBar($transferLabel." - ".$cfg['_ID_HOSTS'], false);
 tmplSetFoot(false);
-
-// iid
-$tmpl->setvar('iid', $_REQUEST["iid"]);
-$tmpl->setvar('mainMenu', mainMenu($_REQUEST["iid"]));
+tmplSetIidVars();
 
 // parse template
 $tmpl->pparse();

@@ -202,8 +202,7 @@ $tmpl->setvar('_STOPTRANSFER', $cfg['_STOPTRANSFER']);
 $tmpl->setvar('_DELQUEUE', $cfg['_DELQUEUE']);
 
 // iid
-$tmpl->setvar('iid', $_REQUEST["iid"]);
-$tmpl->setvar('mainMenu', mainMenu($_REQUEST["iid"]));
+tmplSetIidVars();
 
 // parse template
 $tmpl->pparse();

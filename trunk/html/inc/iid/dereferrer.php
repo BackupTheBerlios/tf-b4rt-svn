@@ -53,8 +53,7 @@ $tmpl->setvar('meta_refresh', '0;URL='.$url2);
 //
 tmplSetTitleBar($cfg["pagetitle"].' - dereferrer', false);
 tmplSetFoot(false);
-$tmpl->setvar('iid', $_REQUEST["iid"]);
-$tmpl->setvar('mainMenu', mainMenu($_REQUEST["iid"]));
+tmplSetIidVars();
 $tmpl->pparse();
 
 ?>

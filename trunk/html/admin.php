@@ -117,7 +117,7 @@ switch ($op) {
 
 	default:
 		// set iid-var
-		$_REQUEST['iid'] = "admin";
+		$_REQUEST["iid"] = "admin";
 		// include page
 		@require_once("inc/iid/admin/".$op.".php");
 }

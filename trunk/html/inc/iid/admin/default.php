@@ -181,9 +181,8 @@ $tmpl->setvar('db_pcon', ($cfg["db_pcon"]) ? "true" : "false");
 // foot
 tmplSetFoot();
 
-// set iid-var
-$tmpl->setvar('iid', $_REQUEST["iid"]);
-$tmpl->setvar('mainMenu', mainMenu($_REQUEST["iid"]));
+// set iid-vars
+tmplSetIidVars();
 
 // parse template
 $tmpl->pparse();

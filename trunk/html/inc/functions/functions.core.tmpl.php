@@ -112,6 +112,17 @@ function tmplSetFoot($showReturn = true) {
 }
 
 /**
+ * set iid vars
+ */
+function tmplSetIidVars() {
+	global $cfg, $tmpl;
+	// set some vars
+	$_iid = tfb_getRequestVar('iid');
+	$tmpl->setvar('iid', $_iid);
+	$tmpl->setvar('mainMenu', (isset($cfg['mainMenu'][$_iid])) ? $cfg['mainMenu'][$_iid] : "home");
+}
+
+/**
  * set vars for Search Engine Drop Down List
  *
  * @param $selectedEngine
@@ -330,19 +341,6 @@ function getStatusImage($sf) {
 function getImagesPath() {
 	global $cfg;
 	return "themes/".$cfg['theme']."/images/";
-}
-
-/**
- * main menu
- *
- * @param $iid
- * @return string
- */
-function mainMenu($iid) {
-	global $cfg;
-	return (isset($cfg['mainMenu'][$iid]))
-		? $cfg['mainMenu'][$iid]
-		: "home";
 }
 
 ?>

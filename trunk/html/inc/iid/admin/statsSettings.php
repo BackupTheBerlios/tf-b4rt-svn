@@ -54,10 +54,7 @@ $tmpl->setvar('stats_default_attach', $cfg["stats_default_attach"]);
 tmplSetTitleBar("Administration - Stats Settings");
 tmplSetAdminMenu();
 tmplSetFoot();
-
-// set iid-var
-$tmpl->setvar('iid', $_REQUEST["iid"]);
-$tmpl->setvar('mainMenu', mainMenu($_REQUEST["iid"]));
+tmplSetIidVars();
 
 // parse template
 $tmpl->pparse();

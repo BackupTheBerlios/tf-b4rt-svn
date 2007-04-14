@@ -44,7 +44,6 @@ if ($cfg["auth_type"] == 2) { /* Basic-Auth */
     @ob_end_clean();
 } else {
     @header('location: login.php');
-$tmpl->setvar('mainMenu', mainMenu($_REQUEST["iid"]));
 }
 exit();
 
