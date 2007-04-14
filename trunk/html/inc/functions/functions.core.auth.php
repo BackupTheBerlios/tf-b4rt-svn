@@ -100,7 +100,7 @@ function isAuthenticated() {
 	$cfg["uid"] = $uid;
 	// increment hit-counter
 	$hits++;
-	$db->Execute("UPDATE tf_users SET hits = '".$hits."', last_visit = '".$create_time."' WHERE uid = '".$uid."'");
+	$db->Execute("UPDATE tf_users SET hits = ".$db->qstr($hits).", last_visit = ".$db->qstr($create_time)." WHERE uid = ".$db->qstr($uid));
 	// return auth suc.
 	return 1;
 }

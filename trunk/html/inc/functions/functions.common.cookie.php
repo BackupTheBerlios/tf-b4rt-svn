@@ -54,9 +54,9 @@ function deleteCookieInfo($cid) {
 function addCookieInfo( $newCookie ) {
 	global $db, $cfg;
 	// Get uid of user
-	$sql = "SELECT uid FROM tf_users WHERE user_id = '" . $cfg["user"] . "'";
+	$sql = "SELECT uid FROM tf_users WHERE user_id = ".$db->qstr($cfg["user"]);
 	$uid = $db->GetOne( $sql );
-	$sql = "INSERT INTO tf_cookies ( cid, uid, host, data ) VALUES ( '', '" . $uid . "', '" . $newCookie["host"] . "', '" . $newCookie["data"] . "' )";
+	$sql = "INSERT INTO tf_cookies ( cid, uid, host, data ) VALUES ( '', ".$db->qstr($uid).", ".$db->qstr($newCookie["host"]).", ".$db->qstr($newCookie["data"])." )";
 	$db->Execute( $sql );
 	if ($db->ErrorNo() != 0) dbError($sql);
 }
@@ -69,7 +69,7 @@ function addCookieInfo( $newCookie ) {
  */
 function modCookieInfo($cid, $newCookie) {
 	global $db;
-	$sql = "UPDATE tf_cookies SET host='" . $newCookie["host"] . "', data='" . $newCookie["data"] . "' WHERE cid='" . $cid . "'";
+	$sql = "UPDATE tf_cookies SET host=".$db->qstr($newCookie["host"]).", data=".$db->qstr($newCookie["data"])." WHERE cid=".$db->qstr($cid);
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 }

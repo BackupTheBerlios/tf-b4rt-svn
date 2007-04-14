@@ -55,7 +55,7 @@ function insertSetting($dbTable, $key, $value) {
 	// flush session-cache
 	cacheFlush();
     $insert_value = (is_array($value)) ? serialize($value) : $value;
-    $sql = "INSERT INTO ".$dbTable." VALUES ('".$key."', '".$insert_value."')";
+    $sql = "INSERT INTO ".$dbTable." VALUES (".$db->qstr($key).", ".$db->qstr($insert_value).")";
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	// update the Config.
@@ -74,7 +74,7 @@ function updateSetting($dbTable, $key, $value) {
 	// flush session-cache
 	cacheFlush();
     $update_value = (is_array($value)) ? serialize($value) : $value;
-    $sql = "UPDATE ".$dbTable." SET tf_value = '".$update_value."' WHERE tf_key = '".$key."'";
+    $sql = "UPDATE ".$dbTable." SET tf_value = ".$db->qstr($update_value)." WHERE tf_key = ".$db->qstr($key);
     $db->Execute($sql);
     if ($db->ErrorNo() != 0) dbError($sql);
     // update the Config.
@@ -149,7 +149,7 @@ function insertUserSettingPair($uid, $key, $value) {
 		if ($cfg[$key] == $value)
 			return true;
 	}
-	$sql = "INSERT INTO tf_settings_user VALUES ('".$uid."', '".$key."', '".$insert_value."')";
+	$sql = "INSERT INTO tf_settings_user VALUES (".$db->qstr($uid).", ".$db->qstr($key).", ".$db->qstr($insert_value).")";
 	$result = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	// update the Config.
@@ -166,7 +166,7 @@ function insertUserSettingPair($uid, $key, $value) {
 function deleteUserSettings($uid) {
 	global $cfg, $db;
 	// delete from db
-	$sql = "DELETE FROM tf_settings_user WHERE uid = '".$uid."'";
+	$sql = "DELETE FROM tf_settings_user WHERE uid = ".$db->qstr($uid);
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	// flush session-cache
@@ -199,7 +199,7 @@ function deleteAllUserSettings() {
 function loadUserSettingsToConfig($uid) {
 	global $cfg, $db;
 	// get user-settings from db and set in global cfg-array
-	$sql = "SELECT tf_key, tf_value FROM tf_settings_user WHERE uid = '".$uid."'";
+	$sql = "SELECT tf_key, tf_value FROM tf_settings_user WHERE uid = ".$db->qstr($uid);
 	$recordset = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	if ((isset($recordset)) && ($recordset->NumRows() > 0)) {

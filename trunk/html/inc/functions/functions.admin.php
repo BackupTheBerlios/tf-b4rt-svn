@@ -451,13 +451,13 @@ function admin_moveLink() {
 		@header("location: admin.php?op=editLinks");
 		exit();
 	}
-	$idx=getLinkSortOrder($lid);
+	$idx = getLinkSortOrder($lid);
 	$position = array("up"=>-1, "down"=>1);
 	$new_idx = $idx + $position[$direction];
-	$sql = "UPDATE tf_links SET sort_order = $idx WHERE sort_order = $new_idx";
+	$sql = "UPDATE tf_links SET sort_order = ".$idx." WHERE sort_order = ".$new_idx;
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
-	$sql = "UPDATE tf_links SET sort_order = $new_idx WHERE lid = $lid";
+	$sql = "UPDATE tf_links SET sort_order = ".$new_idx." WHERE lid = ".$lid;
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	// flush session-cache
@@ -560,13 +560,13 @@ function tmplSetActivity($min = 0, $user = "", $srchFile = "", $srchAction = "")
 	$sqlForSearch = "";
 	$userdisplay = $user;
 	if ($user != "")
-		$sqlForSearch .= "user_id='".$user."' AND ";
+		$sqlForSearch .= "user_id=".$db->qstr($user)." AND ";
 	else
 		$userdisplay = $cfg['_ALLUSERS'];
 	if ($srchFile != "")
-		$sqlForSearch .= "file like '%".$srchFile."%' AND ";
+		$sqlForSearch .= "file like ".$db->qstr("%".$srchFile."%")." AND ";
 	if ($srchAction != "")
-		$sqlForSearch .= "action like '%".$srchAction."%' AND ";
+		$sqlForSearch .= "action like ".$db->qstr("%".$srchAction."%")." AND ";
 	$offset = 50;
 	$inx = 0;
 	if (!isset($min))
@@ -806,7 +806,7 @@ function setUserState() {
 		return false;
 	}
 	// set new state
-	$sql='SELECT * FROM tf_users WHERE user_id = '.$db->qstr($user_id);
+	$sql = "SELECT * FROM tf_users WHERE user_id = ".$db->qstr($user_id);
 	$rs = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	$rec = array('state'=>$user_state);
@@ -834,18 +834,18 @@ function addNewLink($newLink,$newSite) {
 	global $db;
 	//$rec = array('url'=>$newLink);
 	// Link sort order index:
-	$idx=-1;
+	$idx = -1;
 	// Get current highest link index:
-	$sql="SELECT sort_order FROM tf_links ORDER BY sort_order DESC";
-	$result=$db->SelectLimit($sql, 1);
+	$sql = "SELECT sort_order FROM tf_links ORDER BY sort_order DESC";
+	$result = $db->SelectLimit($sql, 1);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	$idx = ($result->fields === false)
 		? 0 /* No links currently in db */
 		: $result->fields["sort_order"] + 1;
 	$rec = array(
-		'url'=>$newLink,
-		'sitename'=>$newSite,
-		'sort_order'=>$idx
+		'url' => $newLink,
+		'sitename' => $newSite,
+		'sort_order' => $idx
 	);
 	$sTable = 'tf_links';
 	$sql = $db->GetInsertSql($sTable, $rec);
@@ -864,7 +864,7 @@ function addNewLink($newLink,$newSite) {
  */
 function alterLink($lid,$newLink,$newSite) {
 	global $cfg, $db;
-	$sql = "UPDATE tf_links SET url='".$newLink."',sitename='".$newSite."' WHERE lid = ".$lid;
+	$sql = "UPDATE tf_links SET url=".$db->qstr($newLink).",sitename=".$db->qstr($newSite)." WHERE lid = ".$lid;
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	// flush session-cache
@@ -1083,7 +1083,7 @@ function changeUserLevel($user_id, $level) {
  */
 function setWebappLock($lock) {
 	global $db;
-	$db->Execute("UPDATE tf_settings SET tf_value = '".$lock."' WHERE tf_key = 'webapp_locked'");
+	$db->Execute("UPDATE tf_settings SET tf_value = ".$db->qstr($lock)." WHERE tf_key = 'webapp_locked'");
 	// set transfers-cache
 	cacheTransfersSet();
 	return ($db->ErrorNo() == 0)

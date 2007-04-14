@@ -64,7 +64,7 @@ function getTransferClient($transfer) {
 	if (isset($transfers['settings'][$transfer]['client'])) {
 		return $transfers['settings'][$transfer]['client'];
 	} else {
-		$client = $db->GetOne("SELECT client FROM tf_transfers WHERE transfer = '".$transfer."'");
+		$client = $db->GetOne("SELECT client FROM tf_transfers WHERE transfer = ".$db->qstr($transfer));
 		if (empty($client)) {
 			if (substr($transfer, -8) == ".torrent") {
 				// this is a torrent-client
@@ -153,7 +153,7 @@ function getTransferHash($transfer) {
 	if (isset($transfers['settings'][$transfer]['hash'])) {
 		return $transfers['settings'][$transfer]['hash'];
 	} else {
-		$hash = $db->GetOne("SELECT hash FROM tf_transfers WHERE transfer = '".$transfer."'");
+		$hash = $db->GetOne("SELECT hash FROM tf_transfers WHERE transfer = ".$db->qstr($transfer));
 		if (empty($hash)) {
 			if (substr($transfer, -8) == ".torrent") {
 				// this is a torrent-client

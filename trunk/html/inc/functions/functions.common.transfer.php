@@ -61,7 +61,7 @@ function getTransferLog($transfer) {
  */
 function deleteTransferSettings($transfer) {
 	global $db;
-	$sql = "DELETE FROM tf_transfers WHERE transfer = '".$transfer."'";
+	$sql = "DELETE FROM tf_transfers WHERE transfer = ".$db->qstr($transfer);
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	// set transfers-cache
@@ -76,7 +76,7 @@ function deleteTransferSettings($transfer) {
  */
 function stopTransferSettings($transfer) {
 	global $db;
-	$db->Execute("UPDATE tf_transfers SET running = '0' WHERE transfer = '".$transfer."'");
+	$db->Execute("UPDATE tf_transfers SET running = '0' WHERE transfer = ".$db->qstr($transfer));
 	// set transfers-cache
 	cacheTransfersSet();
 	return true;
@@ -133,7 +133,7 @@ function resetTransferTotals($transfer, $delete = false) {
 		$sf->write();
 	}
 	// reset in db
-	$sql = "DELETE FROM tf_transfer_totals WHERE tid = '".$tid."'";
+	$sql = "DELETE FROM tf_transfer_totals WHERE tid = ".$db->qstr($tid);
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	// set transfers-cache
@@ -204,7 +204,7 @@ function getTransferDatapath($transfer) {
 	if (isset($transfers['settings'][$transfer]['datapath'])) {
 		return $transfers['settings'][$transfer]['datapath'];
 	} else {
-		$datapath = $db->GetOne("SELECT datapath FROM tf_transfers WHERE transfer = '".$transfer."'");
+		$datapath = $db->GetOne("SELECT datapath FROM tf_transfers WHERE transfer = ".$db->qstr($transfer));
 		if (empty($datapath)) {
 			if (substr($transfer, -8) == ".torrent") {
 				// this is a torrent-client
@@ -242,7 +242,7 @@ function getTransferSavepath($transfer) {
 	if (isset($transfers['settings'][$transfer]['savepath'])) {
 		return $transfers['settings'][$transfer]['savepath'];
 	} else {
-		$savepath = $db->GetOne("SELECT savepath FROM tf_transfers WHERE transfer = '".$transfer."'");
+		$savepath = $db->GetOne("SELECT savepath FROM tf_transfers WHERE transfer = ".$db->qstr($transfer));
 		if (empty($savepath))
 			$savepath = ($cfg["enable_home_dirs"] != 0)
 				? $cfg["path"].getOwner($transfer).'/'

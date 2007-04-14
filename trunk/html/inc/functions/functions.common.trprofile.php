@@ -30,7 +30,7 @@
 function GetProfiles($user, $profile) {
 	global $cfg, $db;
 	$profiles_array = array();
-	$sql = "SELECT name FROM tf_trprofiles WHERE owner LIKE '".$user."' AND public='0'";
+	$sql = "SELECT name FROM tf_trprofiles WHERE owner LIKE ".$db->qstr($user)." AND public='0'";
 	$rs = $db->GetCol($sql);
 	if ($rs) {
 		foreach($rs as $arr) {
@@ -77,7 +77,7 @@ function GetPublicProfiles($profile) {
  */
 function GetProfileSettings($profile) {
 	global $cfg, $db;
-	$sql = "SELECT minport, maxport, maxcons, rerequest, rate, maxuploads, drate, runtime, sharekill, superseeder from tf_trprofiles where name like '".$profile."'";
+	$sql = "SELECT minport, maxport, maxcons, rerequest, rate, maxuploads, drate, runtime, sharekill, superseeder from tf_trprofiles where name like ".$db->qstr($profile);
 	$settings = $db->GetRow($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	return $settings;
@@ -90,7 +90,21 @@ function GetProfileSettings($profile) {
  */
 function AddProfileInfo( $newProfile ) {
 	global $db, $cfg;
-	$sql = 'INSERT INTO tf_trprofiles ( name , owner , minport , maxport , maxcons , rerequest , rate , maxuploads , drate , runtime , sharekill , superseeder , public )'." VALUES ('".$newProfile["name"]."', '".$cfg['uid']."', '".$newProfile["minport"]."', '".$newProfile["maxport"]."', '".$newProfile["maxcons"]."', '".$newProfile["rerequest"]."', '".$newProfile["rate"]."', '".$newProfile["maxuploads"]."', '".$newProfile["drate"]."', '".$newProfile["runtime"]."', '".$newProfile["sharekill"]."', '".$newProfile["superseeder"]."', '".$newProfile["public"]."')";
+	$sql = 'INSERT INTO tf_trprofiles ( name , owner , minport , maxport , maxcons , rerequest , rate , maxuploads , drate , runtime , sharekill , superseeder , public )'
+		." VALUES ("
+		.$db->qstr($newProfile["name"])
+		.", ".$db->qstr($cfg['uid'])
+		.", ".$db->qstr($newProfile["minport"])
+		.", ".$db->qstr($newProfile["maxport"])
+		.", ".$db->qstr($newProfile["maxcons"])
+		.", ".$db->qstr($newProfile["rerequest"])
+		.", ".$db->qstr($newProfile["rate"])
+		.", ".$db->qstr($newProfile["maxuploads"])
+		.", ".$db->qstr($newProfile["drate"])
+		.", ".$db->qstr($newProfile["runtime"])
+		.", ".$db->qstr($newProfile["sharekill"])
+		.", ".$db->qstr($newProfile["superseeder"])
+		.", ".$db->qstr($newProfile["public"]).")";
 	$db->Execute( $sql );
 	if ($db->ErrorNo() != 0) dbError($sql);
 }
@@ -104,7 +118,7 @@ function AddProfileInfo( $newProfile ) {
 function getProfile($pid) {
 	global $cfg, $db;
 	$rtnValue = "";
-	$sql = "SELECT id , name , minport , maxport , maxcons , rerequest , rate , maxuploads , drate , runtime , sharekill , superseeder , public FROM tf_trprofiles WHERE id LIKE '".$pid."'";
+	$sql = "SELECT id , name , minport , maxport , maxcons , rerequest , rate , maxuploads , drate , runtime , sharekill , superseeder , public FROM tf_trprofiles WHERE id LIKE ".$db->qstr($pid);
 	$rtnValue = $db->GetAll($sql);
 	return $rtnValue[0];
 }
@@ -117,7 +131,20 @@ function getProfile($pid) {
  */
 function modProfileInfo($pid, $newProfile) {
 	global $cfg, $db;
-	$sql = "UPDATE tf_trprofiles SET owner = '".$cfg['uid']."', name = '".$newProfile["name"]."', minport = '".$newProfile["minport"]."', maxport = '".$newProfile["maxport"]."', maxcons = '".$newProfile["maxcons"]."', rerequest = '".$newProfile["rerequest"]."', rate = '".$newProfile["rate"]."', maxuploads = '".$newProfile["maxuploads"]."', drate = '".$newProfile["drate"]."', runtime = '".$newProfile["runtime"]."', sharekill = '".$newProfile["sharekill"]."', superseeder = '".$newProfile["superseeder"]."', public = '".$newProfile["public"]."' WHERE id = '".$pid."'";
+	$sql = "UPDATE tf_trprofiles SET owner = ".$db->qstr($cfg['uid'])
+	.", name = ".$db->qstr($newProfile["name"])
+	.", minport = ".$db->qstr($newProfile["minport"])
+	.", maxport = ".$db->qstr($newProfile["maxport"])
+	.", maxcons = ".$db->qstr($newProfile["maxcons"])
+	.", rerequest = ".$db->qstr($newProfile["rerequest"])
+	.", rate = ".$db->qstr($newProfile["rate"])
+	.", maxuploads = ".$db->qstr($newProfile["maxuploads"])
+	.", drate = ".$db->qstr($newProfile["drate"])
+	.", runtime = ".$db->qstr($newProfile["runtime"])
+	.", sharekill = ".$db->qstr($newProfile["sharekill"])
+	.", superseeder = ".$db->qstr($newProfile["superseeder"])
+	.", public = ".$db->qstr($newProfile["public"])
+	." WHERE id = ".$db->qstr($pid);
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 }
@@ -129,7 +156,7 @@ function modProfileInfo($pid, $newProfile) {
  */
 function deleteProfileInfo($pid) {
 	global $db;
-	$sql = "DELETE FROM tf_trprofiles WHERE id=".$pid;
+	$sql = "DELETE FROM tf_trprofiles WHERE id=".$db->qstr($pid);
 	$result = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 }

@@ -56,10 +56,10 @@ function performAuthentication($username = '', $password = '', $md5password = ''
 		$rs = $db->Execute($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
 		$rec = array(
-						'hits'=>$hits,
-						'last_visit'=>$db->DBDate(time()),
-						'theme'=>$cfg['theme'],
-						'language_file'=>$cfg['language_file']
+						'hits' => $hits,
+						'last_visit' => $db->DBDate(time()),
+						'theme' => $cfg['theme'],
+						'language_file' => $cfg['language_file']
 					);
 		$sql = $db->GetUpdateSQL($rs, $rec);
 		$result = $db->Execute($sql);
