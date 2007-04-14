@@ -509,15 +509,18 @@ class Fluxd
      * @return array with mod-list
      */
     function instance_modListPoll() {
+		global $cfg;
     	$retVal = array();
+		// make sure retVal contains cfg modules, even if modlist command fails
+		foreach ($cfg['fluxdServiceModList'] as $mod)
+			$retVal[$mod] = 0;
     	if ($this->state == FLUXD_STATE_RUNNING) {
-			$modsAry = explode(FLUXD_DELIM_MOD, trim($this->instance_sendCommand('modlist', 1)));
-			foreach ($modsAry as $mod)
-				$retVal[substr($mod, 0, -2)] = substr($mod, -1);
-    	} else {
-    		global $cfg;
-			foreach ($cfg['fluxdServiceModList'] as $mod)
-				$retVal[$mod] = 0;
+			$mods = trim($this->instance_sendCommand('modlist', 1));
+			if (strlen($mods) > 0) {
+				$modsAry = explode(FLUXD_DELIM_MOD, $mods);
+				foreach ($modsAry as $mod)
+					$retVal[substr($mod, 0, -2)] = substr($mod, -1);
+			}
     	}
     	return $retVal;
     }
@@ -592,31 +595,45 @@ class Fluxd
     function instance_sendCommand($command, $read = 0) {
         if ($this->state == FLUXD_STATE_RUNNING) {
         	// create socket
-        	$socket = -1;
             $socket = @socket_create(AF_UNIX, SOCK_STREAM, 0);
-            if ($socket < 0) {
-            	array_push($this->messages , "socket_create() failed: reason: ".@socket_strerror($socket));
+            if ($socket === false) {
+            	array_push($this->messages , "socket_create() failed: reason: ".@socket_strerror(@socket_last_error()));
             	$this->state = FLUXD_STATE_ERROR;
                 return null;
             }
             //timeout after n seconds
     		@socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, array('sec' => $this->_socketTimeout, 'usec' => 0));
             // connect
-            $result = -1;
             $result = @socket_connect($socket, $this->_pathSocket);
-            if ($result < 0) {
-            	array_push($this->messages , "socket_connect() failed: reason: ".@socket_strerror($result));
+            if ($result === false) {
+            	array_push($this->messages , "socket_connect() failed: reason: ".@socket_strerror(@socket_last_error()));
             	$this->state = FLUXD_STATE_ERROR;
+            	@socket_close($socket);
                 return null;
             }
             // write command
-            @socket_write($socket, $command."\n");
+            $result = @socket_write($socket, $command."\n");
+            if ($result === false) {
+            	array_push($this->messages , "socket_write() failed: reason: ".@socket_strerror(@socket_last_error()));
+            	$this->state = FLUXD_STATE_ERROR;
+            	@socket_close($socket);
+            	return null;
+            }
             // read retval
             $return = "";
             if ($read != 0) {
 				do {
 					// read data
 					$data = @socket_read($socket, 4096, PHP_BINARY_READ);
+					if ($data === false) {
+						array_push($this->messages , "socket_read() failed: reason: ".@socket_strerror(@socket_last_error()));
+						// Don't set global error in case of failure,
+						// other calls might still succeed (e.g. in
+						// case error was just a read timeout).
+						//$this->state = FLUXD_STATE_ERROR;
+						@socket_close($socket);
+						return null;
+					}
 					$return .= $data;
 				} while (isset($data) && ($data != ""));
             }
