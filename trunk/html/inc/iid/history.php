@@ -44,7 +44,7 @@ if ($cfg['enable_restrictivetview'] == 0) {
 } else {
 	$sql = ($cfg['isAdmin'])
 		? "SELECT user_id, file, time FROM tf_log WHERE action=".$db->qstr($cfg["constants"]["url_upload"])." OR action=".$db->qstr($cfg["constants"]["file_upload"])." ORDER BY time desc"
-		: "SELECT user_id, file, time FROM tf_log WHERE user_id='".$cfg["user"]."' AND ( action=".$db->qstr($cfg["constants"]["url_upload"])." OR action=".$db->qstr($cfg["constants"]["file_upload"])." ) ORDER BY time desc";
+		: "SELECT user_id, file, time FROM tf_log WHERE user_id=".$db->qstr($cfg["user"])." AND ( action=".$db->qstr($cfg["constants"]["url_upload"])." OR action=".$db->qstr($cfg["constants"]["file_upload"])." ) ORDER BY time desc";
 }
 $result = $db->SelectLimit($sql, $offset, $min);
 $file_result = array();
@@ -54,7 +54,7 @@ while (list($user_id, $file, $time) = $result->FetchRow()) {
 		'user_id' => $user_id,
 		'user_icon' => $user_icon,
 		'file' => $file,
-		'date' => date($cfg['_DATETIMEFORMAT'], $time),
+		'date' => date($cfg['_DATETIMEFORMAT'], $time)
 		)
 	);
 	$inx++;
