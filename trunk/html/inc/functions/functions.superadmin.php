@@ -717,7 +717,7 @@ function sa_backup($action = "") {
 			$htmlTitle = "Backup - Create - Server";
 			printPageStart(1);
 			echo $htmlMain;
-			$backupArchive = backupCreate(true,$_REQUEST["c"]);
+			$backupArchive = backupCreate(true, tfb_getRequestVar('c'));
 			if ($backupArchive == "") {
 				sendLine('<br>');
 				sendLine('<font color="red"><strong>Backup - Error</strong></font><br><br>');
@@ -733,7 +733,7 @@ function sa_backup($action = "") {
 			exit();
 
 		case "2": // client-backup
-			$backupArchive = backupCreate(false,$_REQUEST["c"]);
+			$backupArchive = backupCreate(false, tfb_getRequestVar('c'));
 			if ($backupArchive == "") {
 				buildPage("-b");
 				$htmlTitle = "Backup - Create - Client";
@@ -755,7 +755,7 @@ function sa_backup($action = "") {
 			exit();
 
 		case "4": // download backup
-			$backupArchive = trim($_REQUEST["f"]);
+			$backupArchive = tfb_getRequestVar('f');
 			if (backupParamCheck($backupArchive)) {
 				backupSend($backupArchive,false);
 			} else {
@@ -769,7 +769,7 @@ function sa_backup($action = "") {
 			exit();
 
 		case "5": // delete backup
-			$backupArchive = trim($_REQUEST["f"]);
+			$backupArchive = tfb_getRequestVar('f');
 			if (backupParamCheck($backupArchive)) {
 				backupDelete($backupArchive);
 				buildPage("b");
