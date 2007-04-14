@@ -147,7 +147,7 @@ if ((isset($_REQUEST['file'])) && ($_REQUEST['file'] != "")) {
 	$tmpl->setvar('is_file', 1);
 	$tmpl->setvar('url_file', str_replace('%2F', '/', urlencode($cfg["path"].$file)));
 	$tmpl->setvar('url_dir', str_replace('%2F', '/', urlencode($cfg["path"].$dir)));
-	$tmpl->setvar('type', $_REQUEST['type']);
+	$tmpl->setvar('type', tfb_getRequestVar('type'));
 } else {
 	$tmpl->setvar('is_file', 0);
 }

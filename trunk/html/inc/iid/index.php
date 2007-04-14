@@ -31,7 +31,7 @@ if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
 
 if (isset($_REQUEST['ajax_update'])) {
 	$isAjaxUpdate = true;
-	$ajaxUpdateParams = $_REQUEST['ajax_update'];
+	$ajaxUpdateParams = tfb_getRequestVar('ajax_update');
 	// init template-instance
 	tmplInitializeInstance($cfg["theme"], "inc.transferList.tmpl");
 } else {

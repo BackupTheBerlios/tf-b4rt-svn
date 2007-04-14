@@ -67,7 +67,7 @@ if ($cfg['isAdmin'] == 1)
 		'selected' => ($type == "netstat") ? 1 : 0
 		)
 	);
-if ($cfg['enable_xfer'] == 1)
+if (($cfg['enable_xfer'] == 1) && (($cfg['enable_public_xfer'] == 1 ) || $cfg['isAdmin']))
 	array_push($type_list, array(
 		'name' => "xfer",
 		'selected' => ($type == "xfer") ? 1 : 0
@@ -202,131 +202,84 @@ switch ($type) {
 			$tmpl->setvar('total_month', formatFreeSpace(@ $xfer_total['month']['total'] / (1048576)));
 			$tmpl->setvar('total_week', formatFreeSpace(@ $xfer_total['week']['total'] / (1048576)));
 			$tmpl->setvar('total_day', formatFreeSpace(@ $xfer_total['day']['total'] / (1048576)));
-			if (isset($_REQUEST['user']) && ($_REQUEST['user'] != "%")) {
-				$tmpl->setvar('user', $_REQUEST['user']);
-				if (isset($_REQUEST['month'])) {
-					$mstart = $_REQUEST['month'].'-'.$cfg['month_start'];
-					$mend = date('Y-m-d',strtotime('+1 Month',strtotime($mstart)));
-				} else {
-					$mstart = 0;
-					$mend = 0;
-				}
-				if (isset($_REQUEST['week'])) {
-					$wstart = $_REQUEST['week'];
-					$wend = date('Y-m-d',strtotime('+1 Week',strtotime($_REQUEST['week'])));
-				} else {
-					$wstart = $mstart;
-					$wend = $mend;
-				}
-				// month stats
-				$xferStats = Xfer::getUsageByDate(tfb_getRequestVar('user'));
-				$start = '';
-				$download = 0;
-				$upload = 0;
-				$month_list = array();
-				foreach ($xferStats as $row) {
-					$rtime = strtotime($row[2]);
-					$newstart = $cfg['month_start'].' ';
-					$newstart .= (date('j',$rtime) < $cfg['month_start']) ? date('M Y',strtotime('-1 Month',$rtime)) : date('M Y',$rtime);
-					if ($start != $newstart) {
-						if ($upload + $download != 0) {
-							array_push($month_list, array(
-								'user_id' => $_REQUEST["user"],
-								'month' => date('Y-m',strtotime($start)),
-								'start' => $start,
-								'downloadstr' => formatFreeSpace($download / (1048576)),
-								'uploadstr' => formatFreeSpace($upload / (1048576)),
-								'totalstr' => formatFreeSpace(($download + $upload) / (1048576))
-								)
-							);
-						}
-						$download = $row[0];
-						$upload = $row[1];
-						$start = $newstart;
-					} else {
-						$download += $row[0];
-						$upload += $row[1];
-					}
-				}
-				if ($upload + $download != 0) {
-					array_push($month_list, array(
-						'user_id' => $_REQUEST["user"],
-						'month' => date('Y-m',strtotime($start)),
-						'start' => $start,
-						'downloadstr' => formatFreeSpace($download / (1048576)),
-						'uploadstr' => formatFreeSpace($upload / (1048576)),
-						'totalstr' => formatFreeSpace(($download + $upload) / (1048576))
-						)
-					);
-				}
-				$tmpl->setloop('month_list', $month_list);
-				// weekly stats
-				$xferStats = ($mstart)
-					? Xfer::getUsageByDate(tfb_getRequestVar('user'), $mstart, $mend)
-					: Xfer::getUsageByDate(tfb_getRequestVar('user'));
-				$start = '';
-				$download = 0;
-				$upload = 0;
-				$week_list = array();
-				foreach ($xferStats as $row) {
-					$rtime = strtotime($row[2]);
-					$newstart = date('d M Y',strtotime('+1 Day last '.$cfg['week_start'],$rtime));
-					if ($start != $newstart) {
-						if ($upload + $download != 0) {
-							array_push($week_list, array(
-								'user_id' => $_REQUEST["user"],
-								'month' => @ $_REQUEST["month"],
-								'week' => date('Y-m-d',strtotime($start)),
-								'start' => $start,
-								'downloadstr' => formatFreeSpace($download / (1048576)),
-								'uploadstr' => formatFreeSpace($upload / (1048576)),
-								'totalstr' => formatFreeSpace(($download+$upload) / (1048576))
-								)
-							);
-						}
-						$download = $row[0];
-						$upload = $row[1];
-						$start = $newstart;
-					} else {
-						$download += $row[0];
-						$upload += $row[1];
-					}
-				}
-				if ($upload + $download != 0) {
-					array_push($week_list, array(
-						'user_id' => $_REQUEST["user"],
-						'month' => @ $_REQUEST["month"],
-						'week' => date('Y-m-d',strtotime($start)),
-						'start' => $start,
-						'downloadstr' => formatFreeSpace($download / (1048576)),
-						'uploadstr' => formatFreeSpace($upload / (1048576)),
-						'totalstr' => formatFreeSpace(($download+$upload) / (1048576))
-						)
-					);
-				}
-				$tmpl->setloop('week_list', $week_list);
-				// daily stats
-				$xferStats = ($wstart)
-					? Xfer::getUsageByDate(tfb_getRequestVar('user'), $wstart, $wend)
-					: Xfer::getUsageByDate(tfb_getRequestVar('user'));
-				$start = '';
-				$download = 0;
-				$upload = 0;
-				$day_list = array();
-				foreach ($xferStats as $row) {
-					$rtime = strtotime($row[2]);
-					$newstart = $row[2];
-					if ($row[2] == date('Y-m-d')) {
-						if ($user_id == '%') {
-							$row[0] = $xfer_total['day']['download'];
-							$row[1] = $xfer_total['day']['upload'];
-						} else {
-							$row[0] = $xfer[$_REQUEST["user"]]['day']['download'];
-							$row[1] = $xfer[$_REQUEST["user"]]['day']['upload'];
-						}
-					}
+			//
+			$username = tfb_getRequestVar('user');
+			$tmpl->setvar('user', $username);
+			$_month = tfb_getRequestVar('month');
+			if (isset($_REQUEST['month'])) {
+				$mstart = $_month.'-'.$cfg['month_start'];
+				$mend = date('Y-m-d', strtotime('+1 Month', strtotime($mstart)));
+			} else {
+				$mstart = 0;
+				$mend = 0;
+			}
+			$_week = tfb_getRequestVar('week');
+			if (isset($_REQUEST['week'])) {
+				$wstart = $_week;
+				$wend = date('Y-m-d', strtotime('+1 Week', strtotime($wstart)));
+			} else {
+				$wstart = $mstart;
+				$wend = $mend;
+			}
+			// month stats
+			$xferStats = Xfer::getUsageByDate($username);
+			$start = '';
+			$download = 0;
+			$upload = 0;
+			$month_list = array();
+			foreach ($xferStats as $row) {
+				$rtime = strtotime($row[2]);
+				$newstart = $cfg['month_start'].' ';
+				$newstart .= (date('j',$rtime) < $cfg['month_start']) ? date('M Y',strtotime('-1 Month',$rtime)) : date('M Y',$rtime);
+				if ($start != $newstart) {
 					if ($upload + $download != 0) {
-						array_push($day_list, array(
+						array_push($month_list, array(
+							'user_id' => $username,
+							'month' => date('Y-m',strtotime($start)),
+							'start' => $start,
+							'downloadstr' => formatFreeSpace($download / (1048576)),
+							'uploadstr' => formatFreeSpace($upload / (1048576)),
+							'totalstr' => formatFreeSpace(($download + $upload) / (1048576))
+							)
+						);
+					}
+					$download = $row[0];
+					$upload = $row[1];
+					$start = $newstart;
+				} else {
+					$download += $row[0];
+					$upload += $row[1];
+				}
+			}
+			if ($upload + $download != 0) {
+				array_push($month_list, array(
+					'user_id' => $username,
+					'month' => date('Y-m',strtotime($start)),
+					'start' => $start,
+					'downloadstr' => formatFreeSpace($download / (1048576)),
+					'uploadstr' => formatFreeSpace($upload / (1048576)),
+					'totalstr' => formatFreeSpace(($download + $upload) / (1048576))
+					)
+				);
+			}
+			$tmpl->setloop('month_list', $month_list);
+			// weekly stats
+			$xferStats = ($mstart)
+				? Xfer::getUsageByDate($username, $mstart, $mend)
+				: Xfer::getUsageByDate($username);
+			$start = '';
+			$download = 0;
+			$upload = 0;
+			$week_list = array();
+			foreach ($xferStats as $row) {
+				$rtime = strtotime($row[2]);
+				$newstart = date('d M Y', strtotime('+1 Day last '.$cfg['week_start'], $rtime));
+				if ($start != $newstart) {
+					if ($upload + $download != 0) {
+						array_push($week_list, array(
+							'user_id' => $username,
+							'month' => $_month,
+							'week' => date('Y-m-d',strtotime($start)),
 							'start' => $start,
 							'downloadstr' => formatFreeSpace($download / (1048576)),
 							'uploadstr' => formatFreeSpace($upload / (1048576)),
@@ -337,6 +290,43 @@ switch ($type) {
 					$download = $row[0];
 					$upload = $row[1];
 					$start = $newstart;
+				} else {
+					$download += $row[0];
+					$upload += $row[1];
+				}
+			}
+			if ($upload + $download != 0) {
+				array_push($week_list, array(
+					'user_id' => $username,
+					'month' => $_month,
+					'week' => date('Y-m-d',strtotime($start)),
+					'start' => $start,
+					'downloadstr' => formatFreeSpace($download / (1048576)),
+					'uploadstr' => formatFreeSpace($upload / (1048576)),
+					'totalstr' => formatFreeSpace(($download+$upload) / (1048576))
+					)
+				);
+			}
+			$tmpl->setloop('week_list', $week_list);
+			// daily stats
+			$xferStats = ($wstart)
+				? Xfer::getUsageByDate($username, $wstart, $wend)
+				: Xfer::getUsageByDate($username);
+			$start = '';
+			$download = 0;
+			$upload = 0;
+			$day_list = array();
+			foreach ($xferStats as $row) {
+				$rtime = strtotime($row[2]);
+				$newstart = $row[2];
+				if ($row[2] == date('Y-m-d')) {
+					if ($user_id == '%') {
+						$row[0] = $xfer_total['day']['download'];
+						$row[1] = $xfer_total['day']['upload'];
+					} else {
+						$row[0] = $xfer[$username]['day']['download'];
+						$row[1] = $xfer[$username]['day']['upload'];
+					}
 				}
 				if ($upload + $download != 0) {
 					array_push($day_list, array(
@@ -347,8 +337,20 @@ switch ($type) {
 						)
 					);
 				}
-				$tmpl->setloop('day_list', $day_list);
+				$download = $row[0];
+				$upload = $row[1];
+				$start = $newstart;
 			}
+			if ($upload + $download != 0) {
+				array_push($day_list, array(
+					'start' => $start,
+					'downloadstr' => formatFreeSpace($download / (1048576)),
+					'uploadstr' => formatFreeSpace($upload / (1048576)),
+					'totalstr' => formatFreeSpace(($download+$upload) / (1048576))
+					)
+				);
+			}
+			$tmpl->setloop('day_list', $day_list);
 			//
 			$tmpl->setvar('_TOTAL', $cfg["_TOTAL"]);
 			$tmpl->setvar('_SERVERXFERSTATS', $cfg['_SERVERXFERSTATS']);

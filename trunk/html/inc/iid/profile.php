@@ -90,7 +90,7 @@ switch ($op) {
 // deleteProfile -- delete a Profile Information
 //******************************************************************************
 	case "deleteProfile":
-		$pid = $_REQUEST["pid"];
+		$pid = tfb_getRequestVar('pid');
 		$profile = getProfile($pid);
 		deleteProfileInfo($pid);
 		AuditAction( $cfg["constants"]["admin"], $cfg['_DELETE'] . " Profile: " . $profile["name"] );
@@ -143,7 +143,7 @@ switch ($op) {
 // deleteCookie -- delete a Cookie Host Information
 //******************************************************************************
 	case "deleteCookie":
-		$cid = $_REQUEST["cid"];
+		$cid = tfb_getRequestVar('cid');
 		$cookie = getCookie($cid);
 		deleteCookieInfo($cid);
 		AuditAction($cfg["constants"]["admin"], $cfg['_DELETE'] . " Cookie: " . $cookie["host"]);
@@ -185,12 +185,12 @@ switch ($op) {
 	case "showCookies":
 	case "editCookies":
 		$tmpl->setvar('ShowCookies', 1);
-		$cid = @ $_REQUEST["cid"]; // Cookie ID
+		$cid = tfb_getRequestVar('cid'); // Cookie ID
 		// Used for when editing a cookie
 		$hostvalue = $datavalue = "";
 		if (!empty($cid)) {
 			// Get cookie information from database
-			$cookie = getCookie( $cid );
+			$cookie = getCookie($cid);
 			$hostvalue = " value=\"" . $cookie['host'] . "\"";
 			$datavalue = " value=\"" . $cookie['data'] . "\"";
 		}
@@ -199,24 +199,24 @@ switch ($op) {
 		$tmpl->setvar('cid', $cid);
 		$tmpl->setvar('hostvalue', $hostvalue);
 		$tmpl->setvar('datavalue', $datavalue);
-		(!empty( $cid )) ? $add1 = $cfg['_UPDATE'] : $add1 = "Add";
+		(!empty($cid)) ? $add1 = $cfg['_UPDATE'] : $add1 = "Add";
 		$tmpl->setvar('add1', $add1);
 		// We are editing a cookie, so have a link back to cookie list
-		if( !empty( $cid ) ) {
+		if (!empty($cid)) {
 			$tmpl->setvar('empty_cid', 1);
 		} else {
 			$tmpl->setvar('empty_cid', 0);
 			// Output the list of cookies in the database
 			$sql = "SELECT c.cid, c.host, c.data FROM tf_cookies AS c, tf_users AS u WHERE u.uid=c.uid AND u.user_id='" . $cfg["user"] . "'";
 			$dat = $db->GetAll( $sql );
-			if( empty( $dat ) ) {
+			if (empty($dat)) {
 				$tmpl->setvar('empty_dat', 1);
 			} else {
 				$tmpl->setvar('empty_dat', 0);
 				$cookie_data = array();
 				$tmpl->setvar('_DELETE', $cfg['_DELETE']);
 				$tmpl->setvar('_EDIT', $cfg['_EDIT']);
-				foreach( $dat as $cookie ) {
+				foreach ($dat as $cookie) {
 					array_push($cookie_data, array(
 						'cid' => $cookie["cid"],
 						'host' => $cookie["host"],
@@ -235,7 +235,7 @@ switch ($op) {
 	case "showProfiles":
 	case "editProfiles":
 		$tmpl->setvar('ShowProfiles', 1);
-		$pid = @ $_REQUEST["pid"];
+		$pid = tfb_getRequestVar('pid');
 		(!empty( $pid )) ? $add1 = $cfg['_UPDATE'] : $add1 = "Add";
 		$tmpl->setvar('add1', $add1);
 		(!empty( $pid )) ? $op2 = "modProfile" : $op2 = "addProfile";

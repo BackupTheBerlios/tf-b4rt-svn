@@ -37,7 +37,7 @@ $offset = 50;
 $inx = 0;
 $min = 0;
 if (isset($_REQUEST['min']))
-	$min = $_REQUEST['min'];
+	$min = tfb_getRequestVar('min');
 $max = $min + $offset;
 if ($cfg['enable_restrictivetview'] == 0) {
 	$sql = "SELECT user_id, file, time FROM tf_log WHERE action=".$db->qstr($cfg["constants"]["url_upload"])." OR action=".$db->qstr($cfg["constants"]["file_upload"])." ORDER BY time desc";

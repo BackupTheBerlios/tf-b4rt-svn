@@ -80,7 +80,7 @@ if (!((tfb_isValidPath($cfg["path"].$path)) &&
 }
 
 // check if there is a var sent for client, if not use default
-$client = (isset($_REQUEST["client"])) ? $_REQUEST["client"] : $cfg["dir_maketorrent_default"];
+$client = (isset($_REQUEST["client"])) ? tfb_getRequestVar('client') : $cfg["dir_maketorrent_default"];
 
 // client-generic vars
 $tfile = tfb_getRequestVar('torrent');
