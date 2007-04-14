@@ -20,6 +20,9 @@
 
 *******************************************************************************/
 
+// core functions
+require_once('inc/functions/functions.core.php');
+
 // common functions
 require_once('inc/functions/functions.common.php');
 
