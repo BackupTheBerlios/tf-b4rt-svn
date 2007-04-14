@@ -30,7 +30,7 @@ require_once('inc/functions/functions.image.php');
 require_once('inc/classes/Image.php');
 
 // image-op-switch
-$imageOp = (isset($_REQUEST['i'])) ? $_REQUEST['i'] : "noop";
+$imageOp = (isset($_REQUEST['i'])) ? tfb_getRequestVar('i') : "noop";
 switch ($imageOp) {
 
 	case "login":

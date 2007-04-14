@@ -28,7 +28,7 @@ function image_login() {
 	$bgImage = ((strpos($cfg["default_theme"], '/')) === false)
 		? 'themes/'.$cfg["default_theme"].'/images/code_bg'
 		: 'themes/tf_standard_themes/images/code_bg';
-	$rndCode = loginImageCode($cfg["db_user"], $_REQUEST["rnd"]);
+	$rndCode = loginImageCode($cfg["db_user"], tfb_getRequestVar('rnd'));
 	Image::paintLabelFromImage($bgImage, $rndCode, 5, 12, 2, 80, 80, 80);
 }
 

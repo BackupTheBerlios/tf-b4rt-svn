@@ -37,11 +37,10 @@ if ((!isset($cfg['isAdmin'])) || (!$cfg['isAdmin'])) {
 }
 
 // op-arg
-$op = (isset($_REQUEST['op'])) ? $_REQUEST['op'] : "default";
+$op = (isset($_REQUEST['op'])) ? tfb_getRequestVar('op') : "default";
 
 // check arg
 if (!preg_match('/^[a-zA-Z]+$/D', $op)) {
-	$op = tfb_getRequestVar('op');
 	AuditAction($cfg["constants"]["error"], "INVALID ADMIN-OP : ".$op);
 	@error("Invalid Admin-Op", "admin.php", "Admin", array($op));
 }

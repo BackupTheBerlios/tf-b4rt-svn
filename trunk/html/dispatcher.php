@@ -30,7 +30,7 @@ require_once('inc/functions/functions.all.php');
 @set_time_limit(0);
 
 // action-switch
-$action = (isset($_REQUEST['action'])) ? $_REQUEST['action'] : "---";
+$action = (isset($_REQUEST['action'])) ? tfb_getRequestVar('action') : "---";
 switch ($action) {
 
 /*******************************************************************************
