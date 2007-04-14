@@ -86,12 +86,12 @@ tmplInitializeInstance($cfg["theme"], "page.checkSFV.tmpl");
 $cmd = $cfg['bin_cksfv'] . ' -C ' . tfb_shellencode($dir) . ' -f ' . tfb_shellencode($file);
 $handle = popen($cmd . ' 2>&1', 'r' );
 $buff = (isset($cfg["debuglevel"]) && $cfg["debuglevel"] == 2)
-	? "<strong>Debug:</strong> Evaluating command:<br/><br/><pre>$cmd</pre><br/>Output follows below:<br/>"
+	? "<strong>Debug:</strong> Evaluating command:<br/><br/><pre>".tfb_htmlencode($cmd)."</pre><br/>Output follows below:<br/>"
 	: "";
 $buff .= "<pre>";
 while (!feof($handle))
-	$buff .= @fgets($handle, 30);
-$tmpl->setvar('buff', nl2br($buff));
+	$buff .= tfb_htmlencode(@fgets($handle, 30));
+$tmpl->setvar('buff', $buff);
 pclose($handle);
 $buff.= "</pre>";
 
