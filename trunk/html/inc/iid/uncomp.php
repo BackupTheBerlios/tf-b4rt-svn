@@ -106,9 +106,9 @@ if ((isset($_POST['exec'])) && ($_POST['exec'] == true)) {
 	$cmd .= " ".tfb_shellencode($dir);
 	$cmd .= " ".tfb_shellencode(tfb_getRequestVar('type'));
 	if (strcasecmp('rar', $_REQUEST['type']) == 0)
-		$cmd .= " ".$cfg['bin_unrar'];
+		$cmd .= " ".tfb_shellencode($cfg['bin_unrar']);
 	else if (strcasecmp('zip', $_REQUEST['type']) == 0)
-		$cmd .= " ".$cfg['bin_unzip'];
+		$cmd .= " ".tfb_shellencode($cfg['bin_unzip']);
 	$cmd .= " ".tfb_shellencode($passwd);
 	// os-switch
 	switch ($cfg["_OS"]) {

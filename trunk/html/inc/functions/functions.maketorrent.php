@@ -119,7 +119,7 @@ function createTorrentMainline() {
 	$command .= " HOME=".tfb_shellencode($cfg["path"]);
 	$command .= "; export HOME;";
 	$command .= "nohup ".$cfg["pythonCmd"]." -OO ";
-	$command .= $cfg["docroot"]."bin/clients/mainline/maketorrent-console.py";
+	$command .= tfb_shellencode($cfg["docroot"]."bin/clients/mainline/maketorrent-console.py");
 	$command .= " --no_verbose";
 	$command .= " --no_debug";
 	// $command .= " --language en";

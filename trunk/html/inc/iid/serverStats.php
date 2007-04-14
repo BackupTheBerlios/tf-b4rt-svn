@@ -81,8 +81,8 @@ switch ($type) {
 	// all
 	case "all":
 		// set vars
-		$tmpl->setvar('all_df', shell_exec("df -h ".$cfg["path"]));
-		$tmpl->setvar('all_du', shell_exec("du -sh ".$cfg["path"]."*"));
+		$tmpl->setvar('all_df', shell_exec("df -h ".tfb_shellencode($cfg["path"])));
+		$tmpl->setvar('all_du', shell_exec("du -sh ".tfb_shellencode($cfg["path"]."*")));
 		$tmpl->setvar('all_w', shell_exec("w"));
 		$tmpl->setvar('all_free', shell_exec("free -mo"));
 		// language
@@ -95,8 +95,8 @@ switch ($type) {
 	// drivespace
 	case "drivespace":
 		// set vars
-		$tmpl->setvar('drivespace_df', shell_exec("df -h ".$cfg["path"]));
-		$tmpl->setvar('drivespace_du', shell_exec("du -sh ".$cfg["path"]."*"));
+		$tmpl->setvar('drivespace_df', shell_exec("df -h ".tfb_shellencode($cfg["path"])));
+		$tmpl->setvar('drivespace_du', shell_exec("du -sh ".tfb_shellencode($cfg["path"]."*")));
 		// language
 		tmplSetTitleBar($cfg['_DRIVESPACE']);
 		// drivespace-bar
@@ -125,7 +125,7 @@ switch ($type) {
 				array_push($process_list, array(
 					'client' => $client,
 					'RunningProcessInfo' => $ch->runningProcessInfo(),
-					'pinfo' => shell_exec("ps auxww | ".$cfg['bin_grep']." ".$ch->binClient." | ".$cfg['bin_grep']." -v grep")
+					'pinfo' => shell_exec("ps auxww | ".$cfg['bin_grep']." ".tfb_shellencode($ch->binClient)." | ".$cfg['bin_grep']." -v grep")
 					)
 				);
 			}
