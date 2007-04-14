@@ -402,7 +402,7 @@ class MaintenanceAndRepair
 					$this->_countProblems++;
 					// t is not running, reset running-flag
 					$this->_outputMessage("reset of running-flag for transfer which is not running : ".$tname."\n");
-					$sql = "UPDATE tf_transfers SET running = '0' WHERE transfer = '".$tname."'";
+					$sql = "UPDATE tf_transfers SET running = '0' WHERE transfer = ".$db->qstr($tname);
 					$db->Execute($sql);
 					$this->_countFixed++;
 					// output
@@ -424,7 +424,7 @@ class MaintenanceAndRepair
 				$thash = getTransferHash($tname);
 				// update
 				if (!empty($thash)) {
-					$sql = "UPDATE tf_transfers SET hash = '".$thash."' WHERE transfer = '".$tname."'";
+					$sql = "UPDATE tf_transfers SET hash = ".$db->qstr($thash)." WHERE transfer = ".$db->qstr($tname);
 					$db->Execute($sql);
 					$this->_countFixed++;
 					// output
@@ -446,7 +446,7 @@ class MaintenanceAndRepair
 				$tDatapath = getTransferDatapath($tname);
 				// update
 				if ($tDatapath != "") {
-					$sql = "UPDATE tf_transfers SET datapath = ".$db->qstr($tDatapath)." WHERE transfer = '".$tname."'";
+					$sql = "UPDATE tf_transfers SET datapath = ".$db->qstr($tDatapath)." WHERE transfer = ".$db->qstr($tname);
 					$db->Execute($sql);
 					$this->_countFixed++;
 					// output
@@ -514,13 +514,13 @@ class MaintenanceAndRepair
 		// Prune LOG
 		$this->_count = 0;
 		$testTime = time() - ($cfg['days_to_keep'] * 86400); // 86400 is one day in seconds
-		$sql = "delete from tf_log where time < " . $db->qstr($testTime);
+		$sql = "delete from tf_log where time < ".$db->qstr($testTime);
 		$result = $db->Execute($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
 		$this->_count += $db->Affected_Rows();
 		unset($result);
 		$testTime = time() - ($cfg['minutes_to_keep'] * 60);
-		$sql = "delete from tf_log where time < " . $db->qstr($testTime). " and action=".$db->qstr($cfg["constants"]["hit"]);
+		$sql = "delete from tf_log where time < ".$db->qstr($testTime)." and action=".$db->qstr($cfg["constants"]["hit"]);
 		$result = $db->Execute($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
 		$this->_count += $db->Affected_Rows();
