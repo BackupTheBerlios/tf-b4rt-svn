@@ -70,16 +70,21 @@ function ts_resortTable(lnk,clid) {
 
     // Work out a type for the column
     if (table.rows.length <= 1) return;
-    var itm = ts_getInnerText(table.rows[1].cells[column]);
-    sortfn = ts_sort_caseinsensitive;
-    if (itm.match(/^\d\d[\/-]\d\d[\/-]\d\d\d\d$/)) sortfn = ts_sort_date;
-    if (itm.match(/^\d\d[\/-]\d\d[\/-]\d\d$/)) sortfn = ts_sort_date;
-    if (itm.match(/^[£$]/)) sortfn = ts_sort_currency;
-    if (itm.match(/^[\d\.]+$/)) sortfn = ts_sort_numeric;
-    // b4rt : next 3 regexps are copy-pasted from azureus webui
-    if (itm.match(/^[\d\.]+( | k| M| G| T)B$/)) sortfn = ts_sort_size;
-    if (itm.match(/^[\d\.]+( | k| M| G| T)B\/s$/)) sortfn = ts_sort_speed;
-    if (itm.match(/[\d\.]+%/) || itm.match(/N\/A/)) sortfn = ts_sort_percent;
+    for (var ri=1;ri<table.rows.length;ri++) {
+      // Find first row with content (some transfers only contain whitespace in some columns).
+      var itm = ts_getInnerText(table.rows[ri].cells[column]);
+      if (itm.match(/^\s*$/)) continue;
+      sortfn = ts_sort_caseinsensitive;
+      if (itm.match(/^\d\d[\/-]\d\d[\/-]\d\d\d\d$/)) sortfn = ts_sort_date;
+      if (itm.match(/^\d\d[\/-]\d\d[\/-]\d\d$/)) sortfn = ts_sort_date;
+      if (itm.match(/^[£$]/)) sortfn = ts_sort_currency;
+      if (itm.match(/^[\d\.]+$/)) sortfn = ts_sort_numeric;
+      // b4rt : next 3 regexps are copy-pasted from azureus webui
+      if (itm.match(/^[\d\.]+( | k| M| G| T)B$/)) sortfn = ts_sort_size;
+      if (itm.match(/^[\d\.]+( | k| M| G| T)B\/s$/)) sortfn = ts_sort_speed;
+      if (itm.match(/[\d\.]+%/) || itm.match(/N\/A/)) sortfn = ts_sort_percent;
+      break;
+    }
 
     SORT_COLUMN_INDEX = column;
     var firstRow = new Array();
@@ -218,8 +223,13 @@ function ts_sort_percent(a,b) {
 	if (a_content.match(/N\/A/) && b_content.match(/N\/A/)) return 0;
 	if (a_content.match(/N\/A/) && !b_content.match(/N\/A/)) return -1;
 	if (!a_content.match(/N\/A/) && b_content.match(/N\/A/)) return 1;
-	a1 = a_content.substring(0,a_content.indexOf('%'));
-	b1 = b_content.substring(0,b_content.indexOf('%'));
+    ap = a_content.indexOf('%');
+    bp = b_content.indexOf('%');
+    if (ap == -1 && bp == -1) return 0;
+    if (ap == -1 && bp != -1) return -1;
+    if (ap != -1 && bp == -1) return 1;
+    a1 = a_content.substring(0,ap);
+    b1 = b_content.substring(0,bp);
     aa = parseFloat(a1.replace(/[^0-9.]/g,''));
     bb = parseFloat(b1.replace(/[^0-9.]/g,''));
 	return aa-bb;
