@@ -274,7 +274,8 @@ class Rssd
      * @return boolean
      */
 	function _loadData() {
-		if ($this->_data = $this->_lastRSS->Get($this->_urlRSS)) {
+		$this->_data = $this->_lastRSS->Get($this->_urlRSS);
+		if ($this->_data !== false) {
 			return (empty($this->_data) === false);
 		} else {
             $msg = "Problem getting feed-data from ".$this->_urlRSS;

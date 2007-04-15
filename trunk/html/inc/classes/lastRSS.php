@@ -55,7 +55,7 @@ class lastRSS {
 	var $_textinputtags = array('title', 'description', 'name', 'link');
 
 	// -------------------------------------------------------------------
-	// Parse RSS file and returns associative array.
+	// parse RSS file and returns associative array.
 	// -------------------------------------------------------------------
 	function Get($rss_url) {
 		// If CACHE ENABLED
@@ -70,16 +70,17 @@ class lastRSS {
 			} else {
 				// cached file is too old, create new
 				$result = $this->Parse($rss_url);
-				$serialized = serialize($result);
-				if ($f = @fopen($cache_file, 'w')) {
-					fwrite ($f, $serialized, strlen($serialized));
-					fclose($f);
+				if ($result !== false) {
+					$serialized = serialize($result);
+					if ($f = @fopen($cache_file, 'w')) {
+						fwrite ($f, $serialized, strlen($serialized));
+						fclose($f);
+					}
+					if ($result) $result['cached'] = 0;
 				}
-				if ($result) $result['cached'] = 0;
 			}
-		}
-		// If CACHE DISABLED >> load and parse the file directly
-		else {
+		} else {
+			// If CACHE DISABLED >> load and parse the file directly
 			$result = $this->Parse($rss_url);
 			if ($result) $result['cached'] = 0;
 		}
@@ -94,24 +95,21 @@ class lastRSS {
 	function my_preg_match($pattern, $subject) {
 		// start regular expression
 		preg_match($pattern, $subject, $out);
-
 		// if there is some result... process it and return it
-		if(isset($out[1])) {
+		if (isset($out[1])) {
 			// Process CDATA (if present)
 			if ($this->CDATA == 'content') { // Get CDATA content (without CDATA tag)
 				$out[1] = strtr($out[1], array('<![CDATA['=>'', ']]>'=>''));
 			} elseif ($this->CDATA == 'strip') { // Strip CDATA
 				$out[1] = strtr($out[1], array('<![CDATA['=>'', ']]>'=>''));
 			}
-
 			// If code page is set convert character encoding to required
 			if ($this->cp != '')
-				//$out[1] = $this->MyConvertEncoding($this->rsscp, $this->cp, $out[1]);
 				$out[1] = iconv($this->rsscp, $this->cp.'//TRANSLIT', $out[1]);
 			// Return result
 			return trim($out[1]);
 		} else {
-		// if there is NO result, return empty string
+			// if there is NO result, return empty string
 			return '';
 		}
 	}
@@ -121,13 +119,13 @@ class lastRSS {
 	// -------------------------------------------------------------------
 	function unhtmlentities($string) {
 		// Get HTML entities table
-		$trans_tbl = get_html_translation_table (HTML_ENTITIES, ENT_QUOTES);
+		$trans_tbl = get_html_translation_table(HTML_ENTITIES, ENT_QUOTES);
 		// Flip keys<==>values
-		$trans_tbl = array_flip ($trans_tbl);
+		$trans_tbl = array_flip($trans_tbl);
 		// Add support for &apos; entity (missing in HTML_ENTITIES)
 		$trans_tbl += array('&apos;' => "'");
 		// Replace entities by values
-		return strtr ($string, $trans_tbl);
+		return strtr($string, $trans_tbl);
 	}
 
 	// -------------------------------------------------------------------
@@ -141,23 +139,28 @@ class lastRSS {
 		$rss_content = SimpleHTTP::getData($rss_url);
 		if (SimpleHTTP::getState() != SIMPLEHTTP_STATE_OK) {
 			// last op was not ok
-			// TODO :
+			// log
+			global $cfg;
+			$msgs = SimpleHTTP::getMessages();
+			AuditAction($cfg["constants"]["error"], "lastRSS: could not download feed-data from url ".$rss_url." (".implode("; ", $msgs).")");
+			// return false
 			return false;
 		}
 
 		// result-array
 		$result = array();
 
-		// Parse document encoding
+		// document encoding
 		$result['encoding'] = $this->my_preg_match("'encoding=[\'\"](.*?)[\'\"]'si", $rss_content);
 		// if document codepage is specified, use it
-		if ($result['encoding'] != '')
-			{ $this->rsscp = $result['encoding']; } // This is used in my_preg_match()
-		// otherwise use the default codepage
-		else
-			{ $this->rsscp = $this->default_cp; } // This is used in my_preg_match()
+		if ($result['encoding'] != '') {
+			$this->rsscp = $result['encoding']; // This is used in my_preg_match()
+		} else {
+			// otherwise use the default codepage
+			$this->rsscp = $this->default_cp; // This is used in my_preg_match()
+		}
 
-		// Parse CHANNEL info
+		// CHANNEL info
 		if (preg_match("'<channel.*?>(.*?)</channel>'si", $rss_content, $out_channel)) {
 			foreach($this->_channeltags as $channeltag) {
 				$temp = $this->my_preg_match("'<$channeltag.*?>(.*?)</$channeltag>'si", $out_channel[1]);
@@ -165,12 +168,12 @@ class lastRSS {
 			}
 		}
 		// If date_format is specified and lastBuildDate is valid
-		if ($this->date_format != '' && ($timestamp = strtotime($result['lastBuildDate'])) !==-1) {
+		if ($this->date_format != '' && ($timestamp = strtotime($result['lastBuildDate'])) !== -1) {
 			// convert lastBuildDate to specified date format
 			$result['lastBuildDate'] = date($this->date_format, $timestamp);
 		}
 
-		// Parse TEXTINPUT info
+		// TEXTINPUT info
 		preg_match("'<textinput(|[^>]*[^/])>(.*?)</textinput>'si", $rss_content, $out_textinfo);
 		// This a little strange regexp means:
 		// Look for tag <textinput> with or without any attributes, but skip truncated version <textinput /> (it's not beginning tag)
@@ -180,21 +183,21 @@ class lastRSS {
 				if ($temp != '') $result['textinput_'.$textinputtag] = $temp; // Set only if not empty
 			}
 		}
-		// Parse IMAGE info
+		// IMAGE info
 		preg_match("'<image.*?>(.*?)</image>'si", $rss_content, $out_imageinfo);
 		if (isset($out_imageinfo[1])) {
-			foreach($this->_imagetags as $imagetag) {
+			foreach ($this->_imagetags as $imagetag) {
 				$temp = $this->my_preg_match("'<$imagetag.*?>(.*?)</$imagetag>'si", $out_imageinfo[1]);
 				if ($temp != '') $result['image_'.$imagetag] = $temp; // Set only if not empty
 			}
 		}
-		// Parse ITEMS
+		// ITEMS
 		preg_match_all("'<item(| .*?)>(.*?)</item>'si", $rss_content, $items);
 		$rss_items = $items[2];
 		$i = 0;
 		$result['items'] = array(); // create array even if there are no items
-		foreach($rss_items as $rss_item) {
-			// If number of items is lower then limit: Parse one item
+		foreach ($rss_items as $rss_item) {
+			// If number of items is lower then limit: parse one item
 			if ($i < $this->items_limit || $this->items_limit == 0) {
 				foreach($this->_itemtags as $itemtag) {
 					$temp = $this->my_preg_match("'<$itemtag.*?>(.*?)</$itemtag>'si", $rss_item);

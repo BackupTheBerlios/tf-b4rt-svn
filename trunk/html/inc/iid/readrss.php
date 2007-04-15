@@ -63,8 +63,9 @@ $rss_list = array();
 foreach ($arURL as $rid => $url) {
 	if (isset($_REQUEST["debug"]))
 		$rss->cache_time=0;
-	if (($rs = $rss->get($url))) {
-		if(!empty( $rs["items"])) {
+	$rs = $rss->Get($url);
+	if ($rs !== false) {
+		if (!empty( $rs["items"])) {
 			// Check this feed has a title tag:
 			if (!isset($rs["title"]) || empty($rs["title"]))
 				$rs["title"] = "Feed URL ".htmlentities($url, ENT_QUOTES)." Note: this feed does not have a valid 'title' tag";
