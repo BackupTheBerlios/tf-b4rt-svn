@@ -20,9 +20,6 @@
 
 *******************************************************************************/
 
-// upload-limit
-define("_UPLOAD_LIMIT", 10000000);
-
 /**
  * startTransfer
  *
@@ -678,7 +675,7 @@ function dispatcher_processUpload() {
 						}
 					}
 				}
-				if ($_FILES['upload_files']['size'][$id] <= _UPLOAD_LIMIT && $_FILES['upload_files']['size'][$id] > 0) {
+				if ($_FILES['upload_files']['size'][$id] <= $cfg["upload_limit"] && $_FILES['upload_files']['size'][$id] > 0) {
 					//FILE IS BEING UPLOADED
 					if (@is_file($cfg["transfer_file_path"].$filename)) {
 						// Error
@@ -699,7 +696,7 @@ function dispatcher_processUpload() {
 					  	}
 					}
 				} else {
-					array_push($uploadMessages, "File not uploaded, file size limit is "._UPLOAD_LIMIT.". file has ".$size);
+					array_push($uploadMessages, "File not uploaded, file size limit is ".$cfg["upload_limit"].". file has ".$size);
 					continue;
 				}
 			}

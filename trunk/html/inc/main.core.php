@@ -69,6 +69,9 @@ $cfg["file_types_array"] = array(".torrent", ".wget", ".nzb");
 $cfg["file_types_regexp"] = implode("|", $cfg["file_types_array"]);
 $cfg["file_types_label"] = implode(", ", $cfg["file_types_array"]);
 
+// upload-limit (metafiles)
+$cfg["upload_limit"] = 8000000;
+
 // username
 $cfg["user"] = "";
 

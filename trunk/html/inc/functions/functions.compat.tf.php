@@ -88,7 +88,7 @@ function compat_tf_processUpload() {
 					}
 				}
 			}
-			if ($_FILES['upload_file']['size'] <= _UPLOAD_LIMIT && $_FILES['upload_file']['size'] > 0) {
+			if ($_FILES['upload_file']['size'] <= $cfg["upload_limit"] && $_FILES['upload_file']['size'] > 0) {
 				//FILE IS BEING UPLOADED
 				if (@is_file($cfg["transfer_file_path"].$filename)) {
 					// Error
@@ -119,7 +119,7 @@ function compat_tf_processUpload() {
 					}
 				}
 			} else {
-				array_push($uploadMessages, "File not uploaded, file size limit is "._UPLOAD_LIMIT.". file has ".$_FILES['upload_file']['size']);
+				array_push($uploadMessages, "File not uploaded, file size limit is ".$cfg["upload_limit"].". file has ".$_FILES['upload_file']['size']);
 			}
 		}
 	}
