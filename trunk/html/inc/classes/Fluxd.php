@@ -511,9 +511,7 @@ class Fluxd
     function instance_modListPoll() {
 		global $cfg;
     	$retVal = array();
-		// make sure retVal contains cfg modules, even if modlist command fails
-		foreach ($cfg['fluxdServiceModList'] as $mod)
-			$retVal[$mod] = 0;
+    	// get modlist
     	if ($this->state == FLUXD_STATE_RUNNING) {
 			$mods = trim($this->instance_sendCommand('modlist', 1));
 			if (strlen($mods) > 0) {
@@ -522,6 +520,12 @@ class Fluxd
 					$retVal[substr($mod, 0, -2)] = substr($mod, -1);
 			}
     	}
+    	// make sure retVal contains cfg modules
+    	if ((empty($retVal)) && (!empty($cfg['fluxdServiceModList']))) {
+    		foreach ($cfg['fluxdServiceModList'] as $mod)
+				$retVal[$mod] = 0;
+    	}
+    	// return
     	return $retVal;
     }
 
