@@ -30,7 +30,7 @@
 function GetProfiles($user, $profile) {
 	global $cfg, $db;
 	$profiles_array = array();
-	$sql = "SELECT name FROM tf_trprofiles WHERE owner LIKE ".$db->qstr($user)." AND public='0'";
+	$sql = "SELECT name FROM tf_trprofiles WHERE owner=".$db->qstr($user)." AND public='0'";
 	$rs = $db->GetCol($sql);
 	if ($rs) {
 		foreach($rs as $arr) {
@@ -77,7 +77,7 @@ function GetPublicProfiles($profile) {
  */
 function GetProfileSettings($profile) {
 	global $cfg, $db;
-	$sql = "SELECT minport, maxport, maxcons, rerequest, rate, maxuploads, drate, runtime, sharekill, superseeder from tf_trprofiles where name like ".$db->qstr($profile);
+	$sql = "SELECT minport, maxport, maxcons, rerequest, rate, maxuploads, drate, runtime, sharekill, superseeder from tf_trprofiles where name=".$db->qstr($profile);
 	$settings = $db->GetRow($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	return $settings;
@@ -118,7 +118,7 @@ function AddProfileInfo( $newProfile ) {
 function getProfile($pid) {
 	global $cfg, $db;
 	$rtnValue = "";
-	$sql = "SELECT id , name , minport , maxport , maxcons , rerequest , rate , maxuploads , drate , runtime , sharekill , superseeder , public FROM tf_trprofiles WHERE id LIKE ".$db->qstr($pid);
+	$sql = "SELECT id , name , minport , maxport , maxcons , rerequest , rate , maxuploads , drate , runtime , sharekill , superseeder , public FROM tf_trprofiles WHERE id=".$db->qstr($pid);
 	$rtnValue = $db->GetAll($sql);
 	return $rtnValue[0];
 }
