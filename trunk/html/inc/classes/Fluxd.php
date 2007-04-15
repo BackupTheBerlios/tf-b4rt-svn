@@ -29,9 +29,6 @@ define('FLUXD_STATE_ERROR', -1);                                        // error
 define('FLUXD_DELIM_MOD', ';');
 define('FLUXD_DELIM_STATE', ':');
 
-// config
-require_once('inc/config/config.fluxd.php');
-
 /**
  * class Fluxd for integration of fluxd
  */

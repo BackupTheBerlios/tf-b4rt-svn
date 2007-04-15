@@ -116,8 +116,6 @@ function saveUserSettings($uid, $settings) {
 	deleteUserSettings($uid);
 	// load global settings + overwrite per-user settings
 	loadSettings('tf_settings');
-	// config
-	require_once('inc/config/config.profile.php');
 	// insert new settings
 	foreach ($settings as $key => $value) {
 		if (in_array($key, $cfg['validUserSettingsKeys']))

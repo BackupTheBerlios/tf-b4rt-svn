@@ -32,6 +32,14 @@ require_once('inc/functions/functions.core.php');
 // common functions
 require_once('inc/functions/functions.common.php');
 
+// torrentflux-b4rt Version from version-file
+if (@is_file('version.php')) {
+	require_once('version.php');
+	$cfg["version"] = _VERSION;
+} else {
+	$cfg["version"] =  "unknown";
+}
+
 // constants
 $cfg["constants"] = array();
 $cfg["constants"]["url_upload"] = "URL Upload";
@@ -60,14 +68,6 @@ $cfg["file_types_array"] = array(".torrent", ".wget", ".nzb");
 // do NOT (!) touch the next 2 lines
 $cfg["file_types_regexp"] = implode("|", $cfg["file_types_array"]);
 $cfg["file_types_label"] = implode(", ", $cfg["file_types_array"]);
-
-// torrentflux-b4rt Version
-if (is_file('version.php')) {
-	require_once('version.php');
-	$cfg["version"] = _VERSION;
-} else {
-	$cfg["version"] =  "unknown";
-}
 
 // username
 $cfg["user"] = "";
@@ -117,7 +117,7 @@ $cfg['mainMenu'] = array(
 );
 
 // db
-if (is_file('inc/config/config.db.php')) {
+if (@is_file('inc/config/config.db.php')) {
 
 	// db-config
 	require_once('inc/config/config.db.php');
@@ -181,7 +181,23 @@ if (is_file('inc/config/config.db.php')) {
 		@header("location: login.php");
 		exit();
     } else {
-		@error("Could not find database-settings-file config.db.php");
+		@error("database-settings-file config.db.php is missing");
+    }
+}
+
+// load configs
+$configs = array(
+	'config.clients.php' => 'clients-config-file config.clients.php is missing',
+	'config.profile.php' => 'profile-config-file config.profile.php is missing',
+	'config.fluxd.php'   => 'fluxd-config-file config.fluxd.php is missing'
+);
+foreach ($configs as $configFile => $configError) {
+	if (@is_file('inc/config/'.$configFile)) {
+		// load config-file
+		require_once('inc/config/'.$configFile);
+	} else {
+		// error
+		@error($configError);
     }
 }
 
