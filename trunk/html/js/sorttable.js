@@ -210,7 +210,7 @@ function ts_sort_speed(a,b) {
     if (a_unit.match(/TB\/s$/)) aa = parseFloat(ts_getInnerText(a.cells[SORT_COLUMN_INDEX]).replace(/[^0-9.]/g,'')) * 1099511627776;
     if (b_unit.match(/B\/s$/)) bb = parseFloat(ts_getInnerText(b.cells[SORT_COLUMN_INDEX]).replace(/[^0-9.]/g,''));
     if (b_unit.match(/kB\/s$/)) bb = parseFloat(ts_getInnerText(b.cells[SORT_COLUMN_INDEX]).replace(/[^0-9.]/g,'')) * 1024;
-    if (b_unit.match(/MB\/s$/)) bb = parseFloat(ts_getInnerText(b.cells[SORT_COLUMN_INDEX]).replace(/[^0-9.]/g,'')) * 11048576;
+    if (b_unit.match(/MB\/s$/)) bb = parseFloat(ts_getInnerText(b.cells[SORT_COLUMN_INDEX]).replace(/[^0-9.]/g,'')) * 1048576;
     if (b_unit.match(/GB\/s$/)) bb = parseFloat(ts_getInnerText(b.cells[SORT_COLUMN_INDEX]).replace(/[^0-9.]/g,'')) * 1073741824;
     if (b_unit.match(/TB\/s$/)) bb = parseFloat(ts_getInnerText(b.cells[SORT_COLUMN_INDEX]).replace(/[^0-9.]/g,'')) * 1099511627776;
     return aa-bb;
