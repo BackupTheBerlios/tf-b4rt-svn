@@ -57,8 +57,7 @@ initGlobalTransfersArray();
 // Fluxd
 Fluxd::initialize();
 
-// Qmgr
-FluxdServiceMod::initializeServiceMod('Qmgr');
+// Qmgr cannot be initialized here (see comment in FluxCLI.php).
 
 // FluxCLI
 FluxCLI::processRequest($argv);

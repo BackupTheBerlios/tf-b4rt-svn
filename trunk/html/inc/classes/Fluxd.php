@@ -54,8 +54,8 @@ class Fluxd
     var $_pathLogFile = "";
     var $_pathLogFileError = "";
 
-	// mod-list
-	var $_modList = array();
+	// mod-list, only loaded first time it is needed
+	var $_modList = null;
 
     // socket-timeout
     var $_socketTimeout = 5;
@@ -300,8 +300,6 @@ class Fluxd
         // check if fluxd running
         if ($this->_isRunning())
         	$this->state = FLUXD_STATE_RUNNING;
-        // modlist-init
-        $this->_modList = $this->instance_modListPoll();
     }
 
 	// =========================================================================
@@ -476,6 +474,8 @@ class Fluxd
      * @return string with mod-state
      */
     function instance_modState($mod) {
+		if (is_null($this->_modList))
+			$this->_modList = $this->instance_modListPoll();
     	return $this->_modList[$mod];
     }
 
@@ -485,6 +485,8 @@ class Fluxd
      * @return array with mod-list
      */
     function instance_modList() {
+		if (is_null($this->_modList))
+			$this->_modList = $this->instance_modListPoll();
     	return $this->_modList;
     }
 
