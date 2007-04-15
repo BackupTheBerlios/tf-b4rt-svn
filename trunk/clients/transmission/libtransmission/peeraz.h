@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peeraz.h 1650 2007-04-03 18:22:58Z joshe $
+ * $Id: peeraz.h 1720 2007-04-15 07:36:24Z joshe $
  *
  * Copyright (c) 2006-2007 Transmission authors and contributors
  *
@@ -134,7 +134,10 @@ makeAZHandshake( tr_torrent_t * tor, tr_peer_t * peer, int * buflen )
                     tor->azId, TR_AZ_ID_LEN, 1 );
     tr_bencInitStr( tr_bencDictAdd( &val, "client" ),   TR_NAME, 0, 1 );
     tr_bencInitStr( tr_bencDictAdd( &val, "version" ),  VERSION_STRING, 0, 1 );
-    tr_bencInitInt( tr_bencDictAdd( &val, "tcp_port" ), tor->publicPort );
+    if( 0 < tor->publicPort )
+    {
+        tr_bencInitInt( tr_bencDictAdd( &val, "tcp_port" ), tor->publicPort );
+    }
 
     /* initialize supported message list */
     msgsval = tr_bencDictAdd( &val, "messages" );

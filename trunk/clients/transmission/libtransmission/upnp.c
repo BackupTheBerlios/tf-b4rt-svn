@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: upnp.c 1693 2007-04-09 23:06:28Z joshe $
+ * $Id: upnp.c 1720 2007-04-15 07:36:24Z joshe $
  *
  * Copyright (c) 2006-2007 Transmission authors and contributors
  *
@@ -236,6 +236,13 @@ tr_upnpForwardPort( tr_upnp_t * upnp, int port )
 {
     tr_dbg( "upnp port changed from %i to %i", upnp->port, port );
     upnp->port = port;
+}
+
+void
+tr_upnpRemoveForwarding( tr_upnp_t * upnp )
+{
+    tr_dbg( "upnp port unset" );
+    upnp->port = 0;
 }
 
 void

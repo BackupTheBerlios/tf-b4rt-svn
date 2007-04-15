@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peerext.h 1650 2007-04-03 18:22:58Z joshe $
+ * $Id: peerext.h 1720 2007-04-15 07:36:24Z joshe $
  *
  * Copyright (c) 2006-2007 Transmission authors and contributors
  *
@@ -148,6 +148,7 @@ makeExtendedHandshake( tr_torrent_t * tor, tr_peer_t * peer, int * len )
     /* our listening port */
     if( 0 < tor->publicPort )
     {
+        /* XXX should inform peer when we no longer have a valid port */
         tr_bencInitInt( tr_bencDictAdd( &val, "p" ), tor->publicPort );
     }
 

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: natpmp.h 1460 2007-02-06 03:24:55Z joshe $
+ * $Id: natpmp.h 1720 2007-04-15 07:36:24Z joshe $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -32,6 +32,7 @@ void        tr_natpmpStart( tr_natpmp_t * );
 void        tr_natpmpStop( tr_natpmp_t * );
 int         tr_natpmpStatus( tr_natpmp_t * );
 void        tr_natpmpForwardPort( tr_natpmp_t *, int );
+void        tr_natpmpRemoveForwarding( tr_natpmp_t * );
 void        tr_natpmpPulse( tr_natpmp_t *, int * );
 void        tr_natpmpClose( tr_natpmp_t * );
 

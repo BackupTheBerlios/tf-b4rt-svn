@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: upnp.h 1420 2007-01-21 07:16:18Z titer $
+ * $Id: upnp.h 1720 2007-04-15 07:36:24Z joshe $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -32,6 +32,7 @@ void        tr_upnpStart( tr_upnp_t * );
 void        tr_upnpStop( tr_upnp_t * );
 int         tr_upnpStatus( tr_upnp_t * );
 void        tr_upnpForwardPort( tr_upnp_t *, int );
+void        tr_upnpRemoveForwarding( tr_upnp_t * );
 void        tr_upnpPulse( tr_upnp_t * );
 void        tr_upnpClose( tr_upnp_t * );
 
