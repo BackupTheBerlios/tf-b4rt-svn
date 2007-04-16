@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: shared.c 1720 2007-04-15 07:36:24Z joshe $
+ * $Id: shared.c 1725 2007-04-16 05:48:52Z joshe $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -176,10 +176,10 @@ void tr_sharedSetPort( tr_shared_t * s, int port )
         {
             /* Notify the trackers */
             SetPublicPort( s, port );
-            /* Forward the new port */
-            tr_natpmpForwardPort( s->natpmp, port );
-            tr_upnpForwardPort( s->upnp, port );
         }
+        /* Forward the new port */
+        tr_natpmpForwardPort( s->natpmp, port );
+        tr_upnpForwardPort( s->upnp, port );
     }
 
     tr_sharedUnlock( s );

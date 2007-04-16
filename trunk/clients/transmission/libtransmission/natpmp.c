@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: natpmp.c 1720 2007-04-15 07:36:24Z joshe $
+ * $Id: natpmp.c 1725 2007-04-16 05:48:52Z joshe $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -333,6 +333,10 @@ tr_natpmpPulse( tr_natpmp_t * pmp, int * publicPort )
                             tr_dbg( "nat-pmp state add -> mapped with port %i",
                                     pmp->mappedport);
                             tr_inf( "nat-pmp mapped port %i", pmp->mappedport );
+                            if( NULL != publicPort )
+                            {
+                                *publicPort = pmp->mappedport;
+                            }
                             break;
                         case TR_NET_WAIT:
                             break;
