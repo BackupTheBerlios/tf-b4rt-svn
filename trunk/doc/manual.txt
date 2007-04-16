@@ -1,0 +1,308 @@
+$Id$
+3hr(s)
+
+/**********************************************************************
+Torrentflux-b4rt Reference Manual
+**********************************************************************/
+
+	Contents:
+	=========
+	Introduction
+
+	User Operations
+
+		Working with metadata files (.torrent, .wget, .nzb files)
+
+			Uploading metadata (.torrent, .wget, .nzb) files
+				Uploading metadata files from your filesystem
+				Uploading metadata files from a URL
+
+			Downloading metadata files
+
+			Searching for torrent files
+
+			RSS feed torrents
+
+		Controlling transfers
+			Controlling individual transfers
+				Starting individual transfers in advanced mode
+				Starting individual transfers in quick mode
+				Stopping individual transfers
+
+			Controlling transfers in bulk
+				Bulk starting and stopping more than one transfer
+				Bulk deleting transfer metafiles
+				Bulk deleting transfer metafiles and data
+				Bulk resetting transfer totals
+				Bulk wiping transfers
+
+			Transfer settings window
+				Overview - including diffs between info that's show for each diff metadata type
+				Opening the transfer settings window
+				Viewing general transfer statistics
+				Viewing a transfer's hosts
+				Viewing a transfer's scrape information
+				Viewing 'at a glance' pie charts of a transfersi statistics
+				Viewing a transfer's log file
+				Viewing a transfer's metadata details
+				Viewing the files included in a transfer
+				Changing settings for a transfer
+				Starting, stopping and restarting a transfer
+
+		Server statistics
+			Transfer status lights
+
+			General frontend  'Good looking' statistics
+
+			Viewing detailed server statistics
+				Drivespace and 'who' statistics
+				Process statistics
+				Network connection statistics
+				Transfer statistics
+
+			Opening the server monitor
+
+			Viewing an RSS feed of the transfer list
+
+			Viewing activity history
+
+		Changing the frontend look and feel
+			Reordering the transfer list
+
+			Turning page refresh on and off
+
+			Turning AJAX updates on and off
+
+			Showing/hiding seeding torrents
+
+		Profile management
+			General
+				Changing password/theme/language
+
+				Changing what to display in the frontend
+
+				Deleting auto login cookies
+
+				Resetting user profile to default
+
+			Cookie management
+				How to obtain cookie information
+
+				Adding, editing and deleting cookies
+
+			Transfer profile management
+				Adding, editing and deleting transfer profiles
+
+		Directory / file manager
+			Notes on availability re admin settings
+			Deleting files and directories
+			Renaming files and directories
+			Moving files and directories out of the transfer directory
+			Making torrents
+			Downloading files and directories
+			Downloading files and directories as tar archives
+			Streaming movie files using VLC
+			Viewing NFO files
+
+		Troubleshooting
+			Flushing the template cache
+			Running a maintenance operation
+
+	Administration Operations
+		Superadmin
+			Controlling bulk transfer operations
+
+			Viewing process listings
+
+			Performing maintenance tasks
+				Basic transfer maintenance
+				Killing processes
+				Cleaning transfer file leftovers and client resources
+				Repairing problematic installations
+				Resetting transfer totals
+				Locking access to the frontend
+
+			Backups
+				Performing a backup
+				Viewing a backup of transfer data
+
+			Viewing transfer log files
+
+			Miscellaneous actions
+				Viewing a list of installed files and their checksums
+				Checking software requirements
+
+			tf-b4rt
+				Checking your version against the latest version available
+				Viewing news about releases
+				Viewing the changelog for your release
+				Listing and verifying checksums of installed files
+
+		Configuration
+			General statistics and information listed on the admin page
+
+			Server options (server)
+				Setting the transfer download path
+				Setting the installation document root
+				Home directory configuration
+				Binary path configuration
+				Operating system specific configuration
+
+			Transfer client options (transfer)
+				Setting the default transfer client to use
+				Setting the default .torrent metadata viewer
+				Setting extra commandline options for the clients
+				Setting the default maximum upload/download rates
+				Setting the default maximum connections
+				Setting the default port range
+				Setting the default tracker rerequest interval
+				Setting the default action to perform on transfer completion
+				Setting the default percentage at which a torrent should stop seeding
+				Using cumulative sharekill ratios
+				Using file prioritization
+				Using superseeding
+				Skipping hash checking
+
+				Fluazu specific settings and operation
+				Wget specific settings
+				Nzbperl specific settings
+
+				Enabling the setting of umask on transfer start
+				Using nice to limit transfer process utilization
+
+			Transfer control options (control)
+				Allowing users to customize their settings
+				Allowing users to use transfer profiles
+				Allowing users to choose which transfer client to use
+				Allowing users to choose which directory to save transfers to
+				Setting the maximum directory depth to drill down to for the save path
+
+			Web application frontend operational options (webapp)
+				Setting the authentication type to use
+					Form-Auth
+					Form-Auth + Cookie
+					Form-Auth + Image-Validation
+					Basic-Auth
+					Basic-Passthru
+
+				Setting the basic authentication realm to use for passthru authentication
+				Setting the default page title
+				Allowing users to change their personal settings
+				Enabling display of a link to the torrentflux-b4rt home page
+				Setting the style of the drivespace bar
+				Setting the default transfer statistics window type
+				Setting the transfer statistics window update interval
+				Enabling name resolution for host addresses in the transfer statistics window
+				Setting the server monitor update interval
+				Enabling link dereferrer functionality
+				Setting the default theme
+				Setting the default language
+				Setting the number of days of log entries to keep
+				Setting the interval before a user is listed as being offline
+				Setting the RSS cache update interval
+				Enabling template caching
+				Setting the debug level for logging and feedback
+				Enabling the display of SQL error feedback
+
+			Web application frontend display options (index)
+				Enabling default page refresh
+				Setting page refresh interval
+				Enabling AJAX by default
+				Enabling update of page title in AJAX mode
+				Enabling update of online users in AJAX mode
+				Enabling update of transfer list in AJAX mode
+				Enabling silent AJAX updates
+				Setting the AJAX update interval
+				Setting the default width of the index page
+				Enabling the display of a multi-upload page link
+				Setting the number of rows to use in the multi-upload page
+				Enabling torrent searches
+				Setting the default torrent search engine
+				Enabling the display of link list
+				Enabling the display of online users
+				Enabling the display of 'good looking' server statistics
+				Setting what to display in the 'good looking' server statistics
+				Enabling display of bandwidth bars
+				Setting the default style of the bandwidth bars
+				Setting the upload/download line speed for the bandwidth bars
+				Enabling 'big bold drivespace' warning
+				Allowing only admins to see other user's transfers
+				Enabling download of transfer files from the transfer list
+				Enabling display of seeding torrents
+				Enabling display of estimated time until sharekill ratio is met
+				Allowing users to sort the transfer list by column type
+				Setting the default sort order of the transfer list
+				Setting the default transfer list columns to display
+				Setting the default transfer window view
+				Enabling multi operations (start/stop/delete more than one transfer at a time)
+				Enabling bulk operations (start/stop/resume all transfers at the same time)
+				Enabling the display of server statistics on the index page
+				Enabling the display of total network connections on the index page
+				Enabling the display of server load on the index page
+
+			Directory / File Management options (dir)
+				Allowing users to browse all folders
+				Allowing users to write to all folders
+				Allowing users to use the chmod functionality
+				Enabling 'long' style directory listings
+				Allowing users to use the make torrent functionality
+				Setting the default make torrent application
+				Allowing users to download directly from the directory browser
+				Setting the compression type to use when downloading complete directories
+				Allowing users to view .nfo file viewer functionality
+				Allowing users to use unrar to extract archives on the server
+				Allowing users to use the sfv checking functionality
+				Enabling VLC streaming functionality
+				Setting the default port for VLC streaming
+				Allowing users to rename files
+				Allowing users to move files out of the transfer folder
+				Setting a list of allowed folders to move transferred files into
+				Setting a list of restricted directories not to list in the directory listing
+
+			Statistics options (stats)
+				Allowing users to view superadmin level statistics
+				Display usage when stats.php is called without arguments
+				Setting the default deflate level for stats transfers
+				Setting the default delimiter character
+				Enabling the display of headings in the stats listings
+				Setting the default type of statistics to display
+				Setting the default file format of statistics
+				Enabling compression when sending statistics
+				Sending statistics as an attachment
+
+			Fluxd control and configuration (fluxd)
+				Controlling fluxd (start/stop/restart)
+				Setting the database mode to use
+				Setting the log level to use
+
+				Guide to Fluxd Modules and Configuration
+					Qmgr - transfer queue management
+					Watch - watch folders for new transfer files and start them automatically
+					Rssad - monitor RSS feeds regularly for new transfers matching a pattern
+					Fluxinet - connect to the fluxd daemon remotely over TCP
+					Maintenance - run regular maintenance checks on transfers, restart any stopped transfers automatically
+					Trigger - perform actions upon transfer completion (not currently implemented)
+
+			Transfer statistics configuration (xfer)
+				Enabling the display of transfer stats
+				Updating transfer stats in real time
+				Allowing all users to view all other users stats
+				(Re)setting the transfer stats
+				Setting the first day of the week
+				Setting the month day on which a month starts
+
+			Search engine configuration (search)
+				Checking for search engine updates
+				Filtering out unwanted categories from search results
+
+			Website link list management (links)
+				Adding, editing, moving and deleting link items
+
+			RSS Feed list configuration (RSS)
+				Adding, editing and deleting RSS feeds
+
+			Activity / Audit / Event viewer (activity)
+				Filtering items listed in the activity panel
+
+		Using fluxcli.php on the command-line
+			Running fluxcli.php from a cron job to auto fetch RSS feed items
