@@ -88,7 +88,7 @@ static char * finishCall = NULL;
 static tr_torrent_t * tor;
 
 // tf
-static volatile char tf_running = 1;
+static volatile char tf_shutdown = 0;
 static int tf_dieWhenDone = 0;
 static int tf_seedLimit = 0;
 static int tf_displayInterval = 5;
