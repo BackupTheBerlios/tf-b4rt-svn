@@ -105,7 +105,14 @@ $tmpl->setvar('server_du_total', substr($du, 0, -7));
 // version
 $tmpl->setvar('server_version', $cfg["version"]);
 
-// M: server-stats
+// M: db-settings
+$tmpl->setvar('db_type', $cfg["db_type"]);
+$tmpl->setvar('db_host', $cfg["db_host"]);
+$tmpl->setvar('db_name', $cfg["db_name"]);
+$tmpl->setvar('db_user', $cfg["db_user"]);
+$tmpl->setvar('db_pcon', ($cfg["db_pcon"]) ? "true" : "false");
+
+// R: server-stats
 $tmpl->setvar('server_os', php_uname('s'));
 $tmpl->setvar('server_php', PHP_VERSION);
 $tmpl->setvar('server_php_state', (PHP_VERSION < 4.3) ? 0 : 1);
@@ -171,12 +178,33 @@ if ($imageSupported) {
 	$tmpl->setvar('server_image_state', 0);
 }
 
-// R: db-settings
-$tmpl->setvar('db_type', $cfg["db_type"]);
-$tmpl->setvar('db_host', $cfg["db_host"]);
-$tmpl->setvar('db_name', $cfg["db_name"]);
-$tmpl->setvar('db_user', $cfg["db_user"]);
-$tmpl->setvar('db_pcon', ($cfg["db_pcon"]) ? "true" : "false");
+if (IsSuperAdmin()) {
+
+	// superadmin-link-prefix
+	$linkPrefix = '<img src="themes/';
+	$linkPrefix .= ((strpos($cfg["theme"], '/')) === false)
+		? $cfg["theme"].'/images/'
+		: 'tf_standard_themes/images/';
+	$linkPrefix .= 'arrow.gif" width="9" height="9"';
+
+	// superadmin-main-links
+	$sa_links_main = array();
+	array_push($sa_links_main, array("sa_link" => getSuperAdminLink('?t=0', $linkPrefix.' title="Superadmin - Transfers" border="0"> Transfers</a>')));
+	array_push($sa_links_main, array("sa_link" => getSuperAdminLink('?p=0', $linkPrefix.' title="Superadmin - Processes" border="0"> Processes</a>')));
+	array_push($sa_links_main, array("sa_link" => getSuperAdminLink('?m=0', $linkPrefix.' title="Superadmin - Maintenance" border="0"> Maintenance</a>')));
+	array_push($sa_links_main, array("sa_link" => getSuperAdminLink('?b=0', $linkPrefix.' title="Superadmin - Backup" border="0"> Backup</a>')));
+	array_push($sa_links_main, array("sa_link" => getSuperAdminLink('?l=0', $linkPrefix.' title="Superadmin - Log" border="0"> Log</a>')));
+	array_push($sa_links_main, array("sa_link" => getSuperAdminLink('?y=0', $linkPrefix.' title="Superadmin - Misc" border="0"> Misc</a>')));
+	array_push($sa_links_main, array("sa_link" => getSuperAdminLink('?z=0', $linkPrefix.' title="Superadmin - tf-b4rt" border="0"> tf-b4rt</a>')));
+	$tmpl->setloop('superadminlinks_main', $sa_links_main);
+
+	// check-links
+	$sa_links_check = array();
+	array_push($sa_links_check, array("sa_link" => getSuperAdminLink('?y=51', $linkPrefix.' title="PHP-Web Requirements Check" border="0"> Check PHP-Web</a>')));
+	array_push($sa_links_check, array("sa_link" => getSuperAdminLink('?y=52', $linkPrefix.' title="PHP-CLI Requirements Check" border="0"> Check PHP-CLI</a>')));
+	array_push($sa_links_check, array("sa_link" => getSuperAdminLink('?y=53', $linkPrefix.' title="Perl Requirements Check" border="0"> Check Perl</a>')));
+	$tmpl->setloop('superadminlinks_check', $sa_links_check);
+}
 
 // foot
 tmplSetFoot();

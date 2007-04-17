@@ -70,6 +70,13 @@
 					<td align="left"><strong>Version : </strong></td>
 					<td align="right"><tmpl_var name="server_version"></td>
 				</tr>
+				<tmpl_if name="superadminlinks_main">
+					<tmpl_loop name="superadminlinks_main">
+						<tr>
+							<td align="left" colspan="2"><tmpl_var name="sa_link"></td>
+						</tr>
+					</tmpl_loop>
+				</tmpl_if>
 			</table>
 		</td>
 		<td valign="top" align="center">
@@ -216,6 +223,13 @@
 						</font>
 					</td>
 				</tr>
+				<tmpl_if name="superadminlinks_check">
+					<tmpl_loop name="superadminlinks_check">
+						<tr>
+							<td align="left" colspan="2"><tmpl_var name="sa_link"></td>
+						</tr>
+					</tmpl_loop>
+				</tmpl_if>
 			</table>
 		</td>
 	</tr>

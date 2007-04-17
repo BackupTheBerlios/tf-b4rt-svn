@@ -94,6 +94,15 @@
 								<td align="right"><tmpl_var name="server_version"></td>
 							</tr>
 						</table>
+						<tmpl_if name="superadminlinks_main">
+							<table width="100%" border="0" align="center" cellpadding="2" cellspacing="0">
+							<tmpl_loop name="superadminlinks_main">
+								<tr>
+									<td bordercolor="#96BFE0" colspan="2"><tmpl_var name="sa_link"></td>
+								</tr>
+							</tmpl_loop>
+							</table>
+						</tmpl_if>
 					</td>
 				</tr>
 				<tr>
@@ -255,6 +264,13 @@
 									</font>
 								</td>
 							</tr>
+							<tmpl_if name="superadminlinks_check">
+								<tmpl_loop name="superadminlinks_check">
+									<tr>
+										<td bordercolor="#96BFE0" colspan="2"><tmpl_var name="sa_link"></td>
+									</tr>
+								</tmpl_loop>
+							</tmpl_if>
 						</table>
 					</td>
 				</tr>

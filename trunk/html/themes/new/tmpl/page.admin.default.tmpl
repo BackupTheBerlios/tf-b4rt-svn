@@ -96,6 +96,13 @@
 								<tmpl_var name="server_image">
 							</td>
 						</tr>
+						<tmpl_if name="superadminlinks_check">
+							<tmpl_loop name="superadminlinks_check">
+								<tr>
+									<td align="left" colspan="2"> <tmpl_var name="sa_link"></td>
+								</tr>
+							</tmpl_loop>
+						</tmpl_if>
 					</table>
 				</td>
 				<td class="statusInfos">
@@ -256,6 +263,13 @@
 								<tmpl_var name="server_du_total">
 							</td>
 						</tr>
+						<tmpl_if name="superadminlinks_main">
+							<tmpl_loop name="superadminlinks_main">
+								<tr>
+									<td align="left" colspan="2"> <tmpl_var name="sa_link"></td>
+								</tr>
+							</tmpl_loop>
+						</tmpl_if>
 					</table>
 				</td>
 			</tr>
