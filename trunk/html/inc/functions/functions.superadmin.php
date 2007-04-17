@@ -811,6 +811,8 @@ function sa_log($action = "") {
 			$htmlMain .= '<p>';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?l=2"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="fluxd-error" border="0"> fluxd-error</a>';
 			$htmlMain .= '<p>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?l=3"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="fluazu" border="0"> fluazu</a>';
+			$htmlMain .= '<p>';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?l=5"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="mainline" border="0"> mainline</a>';
 			$htmlMain .= '<p>';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?l=8"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="transfers" border="0"> transfers</a>';
@@ -831,6 +833,15 @@ function sa_log($action = "") {
 			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 			$htmlMain .= '<pre>';
 			$htmlMain .= tfb_htmlencode(@file_get_contents($cfg["path"].'.fluxd/fluxd-error.log'));
+			$htmlMain .= '</pre>';
+			$htmlMain .= '</div>';
+			break;
+
+		case "3": // fluazu-log
+			$htmlTitle = "log - fluazu";
+			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
+			$htmlMain .= '<pre>';
+			$htmlMain .= tfb_htmlencode(@file_get_contents($cfg["path"].'.fluazu/fluazu.log'));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '</div>';
 			break;
@@ -1612,6 +1623,8 @@ function buildPage($action) {
 			$htmlMain .= '<a href="' . _FILE_THIS . '?l=1">fluxd</a>';
 			$htmlMain .= ' | ';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?l=2">fluxd-error</a>';
+			$htmlMain .= ' | ';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?l=3">fluazu</a>';
 			$htmlMain .= ' | ';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?l=5">mainline</a>';
 			$htmlMain .= ' | ';
