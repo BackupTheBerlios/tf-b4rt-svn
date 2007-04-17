@@ -53,48 +53,36 @@ switch ($imageOp) {
 		image_test();
 
 	case "pieTransferTotals":
-		// check for valid referer
-		Image::checkReferer();
 		// main.internal
 		require_once('inc/main.internal.php');
 		// output image
 		image_pieTransferTotals();
 
 	case "pieTransferPeers":
-		// check for valid referer
-		Image::checkReferer();
 		// main.internal
 		require_once('inc/main.internal.php');
 		// output image
 		image_pieTransferPeers();
 
 	case "pieTransferScrape":
-		// check for valid referer
-		Image::checkReferer();
 		// main.internal
 		require_once('inc/main.internal.php');
 		// output image
 		image_pieTransferScrape();
 
 	case "pieServerBandwidth":
-		// check for valid referer
-		Image::checkReferer();
 		// main.internal
 		require_once('inc/main.internal.php');
 		// output image
 		image_pieServerBandwidth();
 
 	case "pieServerDrivespace":
-		// check for valid referer
-		Image::checkReferer();
 		// main.internal
 		require_once('inc/main.internal.php');
 		// output image
 		image_pieServerDrivespace();
 
 	case "mrtg":
-		// check for valid referer
-		Image::checkReferer();
 		// main.internal
 		require_once('inc/main.internal.php');
 		// output image
