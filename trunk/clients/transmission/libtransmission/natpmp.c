@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: natpmp.c 1725 2007-04-16 05:48:52Z joshe $
+ * $Id: natpmp.c 1730 2007-04-17 02:35:14Z joshe $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -256,6 +256,11 @@ tr_natpmpPulse( tr_natpmp_t * pmp, int * publicPort )
         mcastpulse( pmp );
     }
 
+    if( NULL != publicPort )
+    {
+        *publicPort = -1;
+    }
+
     if( pmp->active || PMP_STATE_DELETING == pmp->state )
     {
         switch( pmp->state )
@@ -418,11 +423,6 @@ tr_natpmpPulse( tr_natpmp_t * pmp, int * publicPort )
                 assert( 0 );
                 break;
         }
-    }
-
-    if( NULL != publicPort )
-    {
-        *publicPort = -1;
     }
 }
 

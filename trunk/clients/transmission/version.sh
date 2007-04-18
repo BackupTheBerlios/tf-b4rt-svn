@@ -3,9 +3,9 @@
 # $Id$
 
 MAJOR=0
-MINOR=6
-MAINT=1
-STRING=0.70-svn
+MINOR=7
+MAINT=0
+STRING=0.70
 
 # get transmission-revision from transmission.revision
 if [ -f transmission.revision ]; then

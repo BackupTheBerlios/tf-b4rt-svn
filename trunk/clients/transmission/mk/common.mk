@@ -1,6 +1,6 @@
-# $Id: common.mk 1528 2007-03-05 03:40:05Z joshe $
+# $Id: common.mk 1739 2007-04-17 22:38:42Z joshe $
 
-TMPCFLAGS   = -g -Wall -W -O0 -funroll-loops -D_FILE_OFFSET_BITS=64 \
+TMPCFLAGS   = -g -Wall -W -O3 -funroll-loops -D_FILE_OFFSET_BITS=64 \
               -D_LARGEFILE_SOURCE -D_GNU_SOURCE \
               -DSYS_$(shell echo $(SYSTEM) | tr a-z A-Z)
 TMPCXXFLAGS = $(TMPCFLAGS)
