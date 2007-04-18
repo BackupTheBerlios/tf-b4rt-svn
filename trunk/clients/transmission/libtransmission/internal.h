@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: internal.h 1685 2007-04-08 05:41:44Z joshe $
+ * $Id: internal.h 1750 2007-04-18 16:39:10Z joshe $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -131,6 +131,7 @@ typedef struct tr_bitfield_s tr_bitfield_t;
 
 typedef enum { TR_NET_OK, TR_NET_ERROR, TR_NET_WAIT } tr_tristate_t;
 
+#include "trcompat.h"
 #include "bsdqueue.h"
 #include "bsdtree.h"
 #include "platform.h"

@@ -5,7 +5,7 @@
 MAJOR=0
 MINOR=7
 MAINT=0
-STRING=0.70
+STRING=0.80-svn
 
 # get transmission-revision from transmission.revision
 if [ -f transmission.revision ]; then

@@ -1,4 +1,4 @@
-# $Id: lib.mk 1405 2007-01-19 08:36:49Z titer $
+# $Id: lib.mk 1750 2007-04-18 16:39:10Z joshe $
 
 include ../mk/config.mk
 include ../mk/common.mk
@@ -6,7 +6,7 @@ include ../mk/common.mk
 SRCS = transmission.c bencode.c net.c tracker.c peer.c inout.c \
        metainfo.c sha1.c utils.c fdlimit.c clients.c completion.c \
        platform.c ratecontrol.c choking.c natpmp.c upnp.c http.c xml.c \
-       shared.c torrent.c
+       shared.c torrent.c strlcpy.c strlcat.c
 
 OBJS = $(SRCS:%.c=%.o)
 
