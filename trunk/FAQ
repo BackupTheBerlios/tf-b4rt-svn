@@ -1,6 +1,6 @@
 =======================================================================
 $Id$
-vim: set comments=fb\:o,fb\:#,fb\:-,fb\:*,fb\:A.,fb\:Q.:
+vim: set comments=fb\:o,fb\:#,fb\:-,fb\:*,fb\:A.,fb\:Q. et tw=72 sw=4:
 =======================================================================
 
 
@@ -13,9 +13,9 @@ Torrentflux-b4rt 1.0 Frequently Asked Questions / FAQ file
 
 	The file is split into the following sections:
 
-		Torrentflux-b4rt compatibility with other operating systems
-		Fluxd
-		Transmission
+    o Torrentflux-b4rt compatibility with other operating systems
+    o Fluxd
+    o Transmission
 
 
 /**********************************************************************
@@ -40,6 +40,7 @@ A.	There are reports from users that torrentflux-b4rt will run on the
 /**********************************************************************
 Fluxd
 **********************************************************************/
+
 Q.	I get the following error when trying to start fluxd:
 
 	Error : initializing FluxDB : loglevel not defined
@@ -51,12 +52,12 @@ A.	This error indicates that your PHP commandline binary (php-cli) is
 	the supported modules you have built into your php-cli binary by
 	issuing the command 'php -m' in a shell:
 
-		root@users /root# php -m
-		[PHP Modules]
-		mysql
-		pcre
-		session
-		sockets
+    root@users /root# php -m
+    [PHP Modules]
+    mysql
+    pcre
+    session
+    sockets
 
 	These 3 modules listed above - mysql (or one of the other supported
 	database types), pcre, session and sockets - are all required to run
@@ -94,6 +95,7 @@ A.	This error indicates that your PHP commandline binary (php-cli) is
 /**********************************************************************
 Transmission
 **********************************************************************/
+
 Q.	How do I install the modified Torrentflux-b4rt version of
 	Transmission on BSD (FreeBSD/NetBSD/OpenBSD/etc)?
 
@@ -126,17 +128,17 @@ A.	The BSD operating systems use 'make' as part of the base operating
 	# Set env variables for CXXFLAGS, LDFLAGS and CFLAGS.
 	# Note: this command should be all on one line, remove '\' below:
 	root@users /home/tfbdev/svn/tf-b4rt/trunk/clients/transmission# \
-		setenv CXXFLAGS -I/usr/local/include \
-		&& setenv LDFLAGS "-L/usr/local/lib -lgnugetopt" \
-		&& setenv CFLAGS -I/usr/local/include
+    setenv CXXFLAGS -I/usr/local/include \
+    && setenv LDFLAGS "-L/usr/local/lib -lgnugetopt" \
+    && setenv CFLAGS -I/usr/local/include
 	root@users /home/tfbdev/svn/tf-b4rt/trunk/clients/transmission# \
 
 	# Finally, configure, build and install the client
 	# Again, note this is on one line, remove the '\':
 	root@users /home/tfbdev/svn/tf-b4rt/trunk/clients/transmission# \
-		./configure && gmake && gmake install
+    ./configure && gmake && gmake install
 
 
 	See here for more background and info on the problem:
 
-		https://tf-b4rt.berlios.de/forum/index.php/topic,266.0.html
+    https://tf-b4rt.berlios.de/forum/index.php/topic,266.0.html
