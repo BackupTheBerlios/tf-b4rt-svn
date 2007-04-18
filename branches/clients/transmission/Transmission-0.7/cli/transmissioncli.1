@@ -1,0 +1,144 @@
+.\" $Id$
+.\"
+.\" ****************************************************************************
+.\"
+.\"  Copyright (c) Deanna Phillips <deanna@sdf.lonestar.org>
+.\"
+.\"  Permission to use, copy, modify, and distribute this software for any
+.\"  purpose with or without fee is hereby granted, provided that the above
+.\"  copyright notice and this permission notice appear in all copies.
+.\"
+.\"  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+.\"  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+.\"  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+.\"  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+.\"  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+.\"  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+.\"  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+.\"
+.\" ****************************************************************************
+.\"
+.\" 16/07/06 : b4rt   - changes due to move to berliOS. last history-entry here,
+.\"                     check svn-log on berliOS-svn from now on.
+.\" 15/07/06 : b4rt   - changes due to move to svn.
+.\" 08/07/06 : b4rt   - synced changes of official transmissioncli (r163-r310)
+.\"                   - changed statfile-output-format for "seeds" and "peers"
+.\"                     to have "tflux-format" (0) for "no seeds" and "no peers"
+.\"                     as transmission uses "-1" in that case.
+.\"                   - only print out version-info-string in usage+arg-error.
+.\" 03/07/06 : b4rt   - changes in statfile-output for "seeds" and "peers"
+.\" 02/07/06 : b4rt   - change to work with transmission 0.6.x codebase
+.\"                     (function tr_torrentInit has new argument)
+.\" 22/05/06 : Sylver - corrected output file when exiting transmission
+.\"                     (when download is not finished)
+.\"                   - revert default download speed back to 20 kb/s
+.\"                     (no need to change as torrenflux give wanted speed)
+.\" 22/05/06 : b4rt   - minor output-things. (just cosmetics~)
+.\"                   - standard-upload = 10 (like tornado)
+.\"                   - modified arg-conversion :
+.\"                     ~ applies for upload and download
+.\"                     ~ if user really wants to have a 0-arg (zero) he can
+.\"                       pass -2.
+.\" 21/05/06 : Sylver - When running torrentflux, download rate = 0 is
+.\"                     converted to -1 (no limit)
+.\"                   - option -z (--pid) added to log the PID in the
+.\"                     specified file.
+.\" 17/05/06 : Sylver - Corrected a bug causing segfault under FreeBSD
+.\"                     was trying to close a file that wasn't open)
+.\"
+.\" ****************************************************************************
+.\"
+.Dd $Date$
+.Dt TRANSMISSIONCLI 1
+.Os
+.Sh NAME
+.Nm transmissioncli
+.Nd torrentflux-b4rt-version.
+.Sh SYNOPSIS
+.Nm transmissioncli
+.Bk -words
+.Op Fl h
+.Op Fl i Ar torrent-file
+.Op Fl s Ar torrent-file
+.Op Fl v Ar level
+.Op Fl n
+.Op Fl p Ar port
+.Op Fl u Ar upload-rate
+.Op Fl d Ar download-rate
+.Op Fl f Ar script
+.Op Fl r Ar die-when-done
+.Op Fl c Ar seedlimit
+.Op Fl e Ar display-interval
+.Op Fl o Ar owner
+.Ek
+.Sh DESCRIPTION
+The
+.Nm
+program is a lightweight, command-line BitTorrent client with
+scripting capabilities.
+this version of transmissioncli is for torrentflux-b4rt.
+The options are as follows:
+.Pp
+.Bl -tag -width Ds
+.It Fl h, Fl -help
+Prints a short usage summary.
+.It Fl i, Fl -info Ar torrent-file
+Shows information from the specified torrent file, such as the
+cryptographic hash, the tracker, announcement, file size and file
+name.
+.It Fl s, -scrape Ar torrent-file
+Prints the number of seeders and leechers for the specified torrent
+file, and exits.
+.It Fl v, -verbose Ar level
+Sets debugging options.  The current range is 0-2, with the highest
+level producing the most output.  The default is 0.
+.It Fl n, Fl -nat-traversal
+Attempt to use the NAT-PMP and UPnP IGD protocols to establish a port
+mapping for allowing incoming peer connections.
+.It Fl p, -port Ar port
+Specifies an alternate port for the client to listen on.  The default is
+9090.
+.It Fl u, -upload Ar upload-rate
+Specifies the maximum upload rate in kB/s, which defaults to 10. The
+level -1 or 0 may be used for unlimited uploads.
+.It Fl d, -download Ar download-rate
+Specifies the maximum download rate in kB/s, which defaults to -1 for
+no download limit).
+.It Fl f, -finish Ar script
+Specifies a shell script to be executed upon successful download.
+.It Fl r, -die-when-done Ar int
+Auto-Shutdown when done (0 = False, 1 = True)
+.It Fl c, -seedlimit Ar int
+Seed-Limit (Percent) to reach before shutdown. (0 = seed forever -1 = no seeding)
+.It Fl e, -display-interval Ar int
+Time between updates of stat-file
+.It Fl o, -owner Ar string
+Name of the owner
+.El
+.Sh FILES
+.Pa ~/.transmission
+.Pp
+Directory where
+.Nm
+keeps torrent information for future seeding and resume operations.
+.Sh AUTHORS
+The
+.Nm
+program was written by
+.An -nosplit
+.An Eric Petit Aq titer@m0k.org
+.An Josh Elsasser Aq josh@elsasser.org
+.An Bryan Varner Aq bryan@varnernet.com
+and
+.An Michael Demars Aq keul@m0k.org .
+tfCLI by
+.An b4rt Aq b4rt@users.berlios.de
+and
+.An Sylver
+.Sh SEE ALSO
+http://transmission.m0k.org - http://tf-b4rt.berlios.de/
+.Sh CAVEATS
+.Nm
+currently saves its downloads into the directory from which it was
+called.  If this directory is not writeable by the user, the program
+will terminate unexpectedly.
