@@ -1,6 +1,9 @@
 =======================================================================
 $Id$
+
 vim: set comments=fb\:o,fb\:#,fb\:-,fb\:*,fb\:A.,fb\:Q. et tw=72 sw=4:
+
+macro for converting content list item into titled docbook <section>:
 O<section><title id=""maA>JdwA</title><para></para></section>'awwwll
 =======================================================================
 
