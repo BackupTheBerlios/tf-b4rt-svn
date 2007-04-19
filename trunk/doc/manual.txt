@@ -1,6 +1,7 @@
 =======================================================================
 $Id$
 vim: set comments=fb\:o,fb\:#,fb\:-,fb\:*,fb\:A.,fb\:Q. et tw=72 sw=4:
+O<section><title id=""maA>JdwA</title><para></para></section>'awwwll
 =======================================================================
 
 /**********************************************************************
@@ -16,12 +17,15 @@ Torrentflux-b4rt Reference Manual
         Working with metadata files (.torrent, .wget, .nzb files)
 
             Uploading metadata (.torrent, .wget, .nzb) files
-                Uploading metadata files from your filesystem
+                Uploading individual metadata files from your filesystem
+                Uploading multiple torrent files from your filesystem
                 Uploading metadata files from a URL
 
             Downloading metadata files
 
             Searching for torrent files
+                Working in the search results page
+                Performing a search
 
             RSS feed torrents
 
@@ -320,7 +324,9 @@ Torrentflux-b4rt Reference Manual
 Introduction
 **********************************************************************/
 
-    This is the manual for the transfer control client torrentflux-b4rt.  The manual is split into the following sections:
+    This is the manual for the transfer control client torrentflux-b4rt.
+
+    The manual is split into the following sections:
 
         o User operations
             - covers day to day basic use of torrentflux-b4rt
@@ -348,15 +354,189 @@ Introduction
 
         Working with metadata files (.torrent, .wget, .nzb files)
 
+        This section uses the term 'metadata files' to refer
+        collectively to .torrent, .wget and .nzb files.
+
             Uploading metadata (.torrent, .wget, .nzb) files
-                Uploading metadata files from your filesystem
+
+                Uploading individual metadata files from your filesystem
+
+                    To upload a metadata file from your filesystem:
+
+                        1. Click on the 'Browse...' button next to the
+                           text field labelled 'Select a Metafile for
+                           upload (.torrent, .wget, .nzb):'.
+
+                        2. Browse to the location containing the meta
+                           file you want to upload, select the file and
+                           click 'OK'.
+                        3. Click the 'Go' button next to the 'upload
+                           metafile' text field.
+
+                        4. (Optional) To upload and start the transfer
+                           at the same time, select 'Upload+Start' from
+                           the drop-down list next to the filename text
+                           field.
+
+                Uploading multiple torrent files from your filesystem
+
+                    To upload more than one torrent file at a time,
+                    there are two options:
+
+                    Javascript multi upload method:
+
+                    1.  Enter the filename of the first torrent in the
+                        filename field.
+
+                    2.  Click the 'More...' link underneath the filename
+                        text field.
+
+                        A new filename text field will appear for you to
+                        enter a new file to upload.  You can repeat the
+                        above until you have the filenames of all files
+                        you wish to upload.  When you're done, click
+                        'Go' to upload all the files at once.
+
+                    Multiple Upload page method:
+
+                    1. Click on the 'Multiple Upload' link underneath
+                       the 'Select filename for upload' text field.
+
+                       You will be directed to a new page with a number
+                       of empty filename text fields where you can enter
+                       the names of the files you wish to upload.  When
+                       all files are selected, click 'Go' to upload.
+
+                    In both methods above, you can have the files upload
+                    and start immediately by selecting the correct
+                    option from the drop down list - 'Upload+Start'.
+
                 Uploading metadata files from a URL
+
+                    Metadata files (.torrent, .nzb and .wget files) can
+                    be uploaded directly from a remote URL (http/ftp) to
+                    torrentflux-b4rt.  This saves having to download the
+                    file first and then upload it separately.
+
+                    To upload a metadata file from a remote URL (ie
+                    http://example.com/torrentfile.torrent):
+
+                    1.  Enter the URL in the text field labelled 'URL
+                        for the Torrent File:'.
+
+                    2.  Click the 'Go' button next to the text field.
+
+                    3.  (Optional) To upload and then start the
+                        transfer, select 'Get File+Start' from the
+                        dropdown list next to the URL field.
+
+                    The same operation can be completed for .wget files
+                    and .nzb files if enabled by the administrator.
+
 
             Downloading metadata files
 
+                Metadata files that have already been uploaded to
+                torrentflux-b4rt can be downloaded by clicking on the
+                green down arrow to the left of the transfer list item.
+
+                You will be prompted to save the metadata file to disk
+                or open it with a suitable application if your browser
+                is configured to handle the metadata file type.
+
+                Example:
+                --------
+                This feature is useful for when you want to confirm the
+                integrity of a torrent file that doesn't appear to be
+                transferring correctly.  Just download the file by
+                clicking the download button and then open the torrent
+                file in a standalone torrent client.
+
+                This way you can see whether the torrent is working as
+                it should in a different torrent client and verify
+                whether there is a problem with the client you're using
+                in torrentflux-b4rt.
+
             Searching for torrent files
 
+                Performing a search
+
+                    To search for a torrent file:
+
+                    1.  Enter the keywords you wish to search for in the
+                        text field labelled 'Torrent Search:'.
+
+                    2.  Select the torrent search engine you wish to use
+                        from the dropdown list next to the text box.
+
+                    3.  Click the 'Search' button.
+
+                    A search will then be made for the keywords you
+                    entered on the search engine you specified and the
+                    results will be listed.
+
+                    Click on the name of the torrent in the results list
+                    to download the torrent file directly to
+                    torrentflux-b4rt.
+
+                Working in the search results page
+
+                    The search results page lists all the torrents that
+                    matched the keywords you searched for, including the
+                    following information:
+
+                        o Torrent name
+                            - password protected downloads are marked
+                              with a bold 'P'
+                            - torrents which require you to register
+                              first before downloading them are marked
+                              with a bold 'R'
+                        o Category
+                        o Size
+                        o Seeds
+                        o Peers
+
+                    Clicking on the torrent name will download the
+                    torrent to torrentflux-b4rt.
+
+                    Clicking on a category name will fetch a list of all
+                    torrents in that category from where torrents can be
+                    downloaded by clicking on them.
+
+                    Seedless transfers can be hidden from the search
+                    result list by clicking on the 'Hide Seedless' link.
+
             RSS feed torrents
+
+                The RSS torrents page can be browsed by clicking on the
+                link 'RSS Torrents' in the middle of the window above
+                the transfer list/drivespace bar.
+
+                An RSS feed item can be downloaded by clicking on it's
+                name in the RSS feed list page.
+
+                If you don't see any feed items on the RSS torrents
+                page, contact your administrator to get the RSS feeds
+                added.
+
+                Note, the RSS torrents page does not download torrents
+                automatically using RSS!  For this functionality you
+                must use the Fluxd daemon's Rssad module.  See
+                TODO:rssad_link for information on configuring this.
+
+                IMPORTANT:
+                ----------
+                If you are unable to download the RSS feed item when you
+                click on it, make sure that the item you're trying to
+                download is actually a torrent file and not just a link
+                to the page that contains the file.
+
+                The RSS feed your administrator adds MUST be a 'direct
+                download' feed.  This is a feed of torrent URLs which
+                can be downloaded directly (instead of having to visit a
+                'details' page first and then download the torrent from
+                that page).
+
 
         Controlling transfers
             Controlling individual transfers
