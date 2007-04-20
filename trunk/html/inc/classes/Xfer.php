@@ -198,7 +198,7 @@ class Xfer
 		// sql-state
 		$sql = "SELECT SUM(download) AS download, SUM(upload) AS upload FROM tf_xfer";
 		if ($username != "")
-			$sql .= " WHERE user_id LIKE ".$db->qstr($username);
+			$sql .= " WHERE user_id = ".$db->qstr($username);
 		// exec state
 		$result = $db->Execute($sql);
 		// error-check
@@ -225,7 +225,7 @@ class Xfer
 		// sql-state
 		$sql = "SELECT SUM(download) AS download, SUM(upload) AS upload, date FROM tf_xfer";
 		if ($username != "")
-			$sql .= " WHERE user_id LIKE ".$db->qstr($username);
+			$sql .= " WHERE user_id = ".$db->qstr($username);
 		if (($dateBegin != "") && ($dateEnd != ""))
 			$sql .= " AND date >= ".$db->qstr($dateBegin)." AND date < ".$db->qstr($dateEnd);
 		$sql .= " GROUP BY date ORDER BY date";
