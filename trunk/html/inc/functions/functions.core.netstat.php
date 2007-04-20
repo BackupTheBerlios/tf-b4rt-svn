@@ -171,28 +171,23 @@ function netstatHosts($transfer) {
  */
 function netstatHostsByPid($transferPid) {
 	global $cfg;
-	$hostHash = null;
 	switch ($cfg["_OS"]) {
 		case 1: // linux
 			$hostList = shell_exec($cfg['bin_netstat']." -e -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." \"".$transferPid."/\" | ".$cfg['bin_awk']." '{print \$5}'");
-			$hostAry = explode("\n",$hostList);
-			foreach ($hostAry as $line) {
-				$hostLineAry = explode(':',trim($line));
-				$hostHash[$hostLineAry[0]] = @ $hostLineAry[1];
-			}
 			break;
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
 			$hostList = shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_awk']." '/".$webserverUser.".+".$transferPid.".+tcp.+[0-9]:[0-9].+[0-9]:[0-9]/ {print \$7}'");
-			$hostAry = explode("\n",$hostList);
-			foreach ($hostAry as $line) {
-				$hostLineAry = explode(':',trim($line));
-				$hostHash[$hostLineAry[0]] = @ $hostLineAry[1];
-			}
 			break;
 	}
-	return $hostHash;
+	$retVal = array();
+	$hostAry = explode("\n", $hostList);
+	foreach ($hostAry as $hostLine) {
+		$hostLineAry = explode(':', trim($hostLine));
+		$retVal[$hostLineAry[0]] = isset($hostLineAry[1]) ? $hostLineAry[1] : "";
+	}
+	return $retVal;
 }
 
 ?>
