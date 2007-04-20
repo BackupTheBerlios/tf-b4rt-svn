@@ -52,7 +52,7 @@ function FetchHTMLNoWaitNoFollow( $url, $referer = "" )
     // to see if it has cookies set to the domain name.
     if( ( strpos( $domain["query"], "passkey=" ) ) === false )
     {
-        $sql = "SELECT c.data FROM tf_cookies AS c LEFT JOIN tf_users AS u ON ( u.uid = c.uid ) WHERE u.user_id = '" . $cfg["user"] . "' AND c.host = '" . $domain['host'] . "'";
+        $sql = "SELECT c.data FROM tf_cookies AS c LEFT JOIN tf_users AS u ON ( u.uid = c.uid ) WHERE u.user_id = ".$db->qstr($cfg["user"])." AND c.host = ".$db->qstr($domain['host']);
         $cookie = $db->GetOne( $sql );
     }
 

@@ -92,7 +92,7 @@ function AddProfileInfo( $newProfile ) {
 	global $db, $cfg;
 	$sql = 'INSERT INTO tf_trprofiles ( name , owner , minport , maxport , maxcons , rerequest , rate , maxuploads , drate , runtime , sharekill , superseeder , public )'
 		." VALUES ("
-		.$db->qstr($newProfile["name"])
+		.     $db->qstr($newProfile["name"])
 		.", ".$db->qstr($cfg['uid'])
 		.", ".$db->qstr($newProfile["minport"])
 		.", ".$db->qstr($newProfile["maxport"])
@@ -131,7 +131,8 @@ function getProfile($pid) {
  */
 function modProfileInfo($pid, $newProfile) {
 	global $cfg, $db;
-	$sql = "UPDATE tf_trprofiles SET owner = ".$db->qstr($cfg['uid'])
+	$sql = "UPDATE tf_trprofiles SET"
+	." owner = ".$db->qstr($cfg['uid'])
 	.", name = ".$db->qstr($newProfile["name"])
 	.", minport = ".$db->qstr($newProfile["minport"])
 	.", maxport = ".$db->qstr($newProfile["maxport"])

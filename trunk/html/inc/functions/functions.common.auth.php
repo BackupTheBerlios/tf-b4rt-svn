@@ -52,7 +52,7 @@ function performAuthentication($username = '', $password = '', $md5password = ''
 	if ($result->RecordCount() == 1) { // suc. auth.
 		// Add a hit to the user
 		$hits++;
-		$sql = 'select * from tf_users where uid = '.$uid;
+		$sql = "select * from tf_users where uid = ".$db->qstr($uid);
 		$rs = $db->Execute($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
 		$rec = array(

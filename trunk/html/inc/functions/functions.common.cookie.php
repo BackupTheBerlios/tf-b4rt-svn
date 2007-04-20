@@ -29,7 +29,7 @@
 function getCookie($cid) {
 	global $cfg, $db;
 	$rtnValue = "";
-	$sql = "SELECT host, data FROM tf_cookies WHERE cid=".$cid;
+	$sql = "SELECT host, data FROM tf_cookies WHERE cid=".$db->qstr($cid);
 	$rtnValue = $db->GetAll($sql);
 	return $rtnValue[0];
 }
@@ -41,7 +41,7 @@ function getCookie($cid) {
  */
 function deleteCookieInfo($cid) {
 	global $db;
-	$sql = "delete from tf_cookies where cid=".$cid;
+	$sql = "delete from tf_cookies where cid=".$db->qstr($cid);
 	$result = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 }

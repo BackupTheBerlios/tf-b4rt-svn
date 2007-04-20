@@ -27,7 +27,7 @@
  */
 function DeleteMessage($mid) {
 	global $cfg, $db;
-	$sql = "delete from tf_messages where mid=".$mid." and to_user=".$db->qstr($cfg["user"]);
+	$sql = "delete from tf_messages where mid=".$db->qstr($mid)." and to_user=".$db->qstr($cfg["user"]);
 	$result = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 }
@@ -39,7 +39,7 @@ function DeleteMessage($mid) {
  */
 function MarkMessageRead($mid) {
 	global $cfg, $db;
-	$sql = 'select * from tf_messages where mid = '.$mid;
+	$sql = "select * from tf_messages where mid = ".$db->qstr($mid);
 	$rs = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	$rec = array('IsNew'=>0, 'force_read'=>0);
@@ -106,7 +106,7 @@ function SaveMessage($to_user, $from_user, $message, $to_all=0, $force_read=0) {
  */
 function GetMessage($mid) {
 	global $cfg, $db;
-	$sql = "select from_user, message, ip, time, isnew, force_read from tf_messages where mid=".$mid." and to_user=".$db->qstr($cfg["user"]);
+	$sql = "select from_user, message, ip, time, isnew, force_read from tf_messages where mid=".$db->qstr($mid)." and to_user=".$db->qstr($cfg["user"]);
 	$rtnValue = $db->GetRow($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	return $rtnValue;

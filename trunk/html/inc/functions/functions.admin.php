@@ -454,10 +454,10 @@ function admin_moveLink() {
 	$idx = getLinkSortOrder($lid);
 	$position = array("up"=>-1, "down"=>1);
 	$new_idx = $idx + $position[$direction];
-	$sql = "UPDATE tf_links SET sort_order = ".$idx." WHERE sort_order = ".$new_idx;
+	$sql = "UPDATE tf_links SET sort_order = ".$db->qstr($idx)." WHERE sort_order = ".$db->qstr($new_idx);
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
-	$sql = "UPDATE tf_links SET sort_order = ".$new_idx." WHERE lid = ".$lid;
+	$sql = "UPDATE tf_links SET sort_order = ".$db->qstr($new_idx)." WHERE lid = ".$db->qstr($lid);
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	// flush session-cache
@@ -864,7 +864,7 @@ function addNewLink($newLink,$newSite) {
  */
 function alterLink($lid,$newLink,$newSite) {
 	global $cfg, $db;
-	$sql = "UPDATE tf_links SET url=".$db->qstr($newLink).",sitename=".$db->qstr($newSite)." WHERE lid = ".$lid;
+	$sql = "UPDATE tf_links SET url=".$db->qstr($newLink).",sitename=".$db->qstr($newSite)." WHERE lid = ".$db->qstr($lid);
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	// flush session-cache
@@ -880,7 +880,7 @@ function alterLink($lid,$newLink,$newSite) {
 function getLink($lid) {
 	global $cfg, $db;
 	$rtnValue = "";
-	$sql = "SELECT url FROM tf_links WHERE lid=".$lid;
+	$sql = "SELECT url FROM tf_links WHERE lid=".$db->qstr($lid);
 	$rtnValue = $db->GetOne($sql);
 	return $rtnValue;
 }
@@ -895,23 +895,23 @@ function deleteOldLink($lid) {
 	// Link Mod
 	//$sql = "delete from tf_links where lid=".$lid;
 	// Get Current sort order index of link with this link id:
-	$idx=getLinkSortOrder($lid);
+	$idx = getLinkSortOrder($lid);
 	// Fetch all link ids and their sort orders where the sort order is greater
 	// than the one we're removing - we need to shuffle each sort order down
 	// one:
 	$sql = "SELECT sort_order, lid FROM tf_links ";
-	$sql .= "WHERE sort_order > ".$idx." ORDER BY sort_order ASC";
+	$sql .= "WHERE sort_order > ".$db->qstr($idx)." ORDER BY sort_order ASC";
 	$result = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
-	$arLinks=$result->GetAssoc();
+	$arLinks = $result->GetAssoc();
 	// Decrement the sort order of each link:
 	foreach ($arLinks as $sid=>$this_lid) {
-		$sql="UPDATE tf_links SET sort_order=sort_order-1 WHERE lid=".$this_lid;
+		$sql = "UPDATE tf_links SET sort_order=sort_order-1 WHERE lid=".$db->qstr($this_lid);
 		$db->Execute($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
 	}
 	// Finally delete the link:
-	$sql = "DELETE FROM tf_links WHERE lid=".$lid;
+	$sql = "DELETE FROM tf_links WHERE lid=".$db->qstr($lid);
 	$result = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	// flush session-cache
@@ -927,7 +927,7 @@ function deleteOldLink($lid) {
 function getLinkSortOrder($lid) {
     global $db;
     // Get Current sort order index of link with this link id:
-    $sql="SELECT sort_order FROM tf_links WHERE lid=$lid";
+    $sql="SELECT sort_order FROM tf_links WHERE lid=".$db->qstr($lid);
     $rtnValue=$db->GetOne($sql);
     if ($db->ErrorNo() != 0) dbError($sql);
     return $rtnValue;
@@ -942,7 +942,7 @@ function getLinkSortOrder($lid) {
 function getSite($lid) {
     global $cfg, $db;
     $rtnValue = "";
-    $sql = "SELECT sitename FROM tf_links WHERE lid=".$lid;
+    $sql = "SELECT sitename FROM tf_links WHERE lid=".$db->qstr($lid);
     $rtnValue = $db->GetOne($sql);
     return $rtnValue;
 }
@@ -968,7 +968,7 @@ function addNewRSS($newRSS) {
  */
 function deleteOldRSS($rid) {
 	global $db;
-	$sql = "delete from tf_rss where rid=".$rid;
+	$sql = "delete from tf_rss where rid=".$db->qstr($rid);
 	$result = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 }
@@ -982,7 +982,7 @@ function deleteOldRSS($rid) {
 function getRSS($rid) {
 	global $cfg, $db;
 	$rtnValue = "";
-	$sql = "SELECT url FROM tf_rss WHERE rid=".$rid;
+	$sql = "SELECT url FROM tf_rss WHERE rid=".$db->qstr($rid);
 	$rtnValue = $db->GetOne($sql);
 	return $rtnValue;
 }
@@ -999,7 +999,7 @@ function DeleteThisUser($user_id) {
 	if ($db->ErrorNo() != 0) dbError($sql);
 	// delete any cookies this user may have had
 	//$sql = "DELETE tf_cookies FROM tf_cookies, tf_users WHERE (tf_users.uid = tf_cookies.uid) AND tf_users.user_id=".$db->qstr($user_id);
-	$sql = "DELETE FROM tf_cookies WHERE uid=".$uid;
+	$sql = "DELETE FROM tf_cookies WHERE uid=".$db->qstr($uid);
 	$result = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	// Now cleanup any message this person may have had
@@ -1028,7 +1028,7 @@ function updateThisUser($user_id, $org_user_id, $pass1, $userType, $hideOffline)
 	$user_id = strtolower($user_id);
 	if ($hideOffline == "")
 		$hideOffline = 0;
-	$sql = 'select * from tf_users where user_id = '.$db->qstr($org_user_id);
+	$sql = "select * from tf_users where user_id = ".$db->qstr($org_user_id);
 	$rs = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	$rec = array();
@@ -1066,7 +1066,7 @@ function updateThisUser($user_id, $org_user_id, $pass1, $userType, $hideOffline)
  */
 function changeUserLevel($user_id, $level) {
 	global $db;
-	$sql = 'select * from tf_users where user_id = '.$db->qstr($user_id);
+	$sql = "select * from tf_users where user_id = ".$db->qstr($user_id);
 	$rs = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	$rec = array('user_level'=>$level);

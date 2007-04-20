@@ -69,7 +69,7 @@ function UpdateUserProfile($user_id, $pass1, $hideOffline, $theme, $language) {
 		$rec['password'] = md5($pass1);
 		AuditAction($cfg["constants"]["update"], $cfg['_PASSWORD']);
 	}
-	$sql = 'select * from tf_users where user_id = '.$db->qstr($user_id);
+	$sql = "select * from tf_users where user_id = ".$db->qstr($user_id);
 	$rs = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	$rec['hide_offline'] = $hideOffline;
