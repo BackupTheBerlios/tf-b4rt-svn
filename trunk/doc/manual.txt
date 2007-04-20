@@ -38,12 +38,10 @@ Torrentflux-b4rt Reference Manual
                 Starting individual transfers in quick mode
                 Stopping individual transfers
 
-            Controlling transfers in bulk
-                Bulk starting and stopping more than one transfer
-                Bulk deleting transfer metafiles
-                Bulk deleting transfer metafiles and data
-                Bulk resetting transfer totals
-                Bulk wiping transfers
+            Controlling multiple transfers using the multi-ops feature
+                Overview
+                Using multi-ops
+                Available multi-op operations
 
             Transfer settings window
                 Overview - including diffs between info that's show for each diff metadata type
@@ -544,28 +542,332 @@ Introduction
         Controlling transfers
             Controlling individual transfers
                 Starting individual transfers in advanced mode
+
+                    Click the icon with a single white arrow on a green
+                    background - located next to the transfer list item
+                    on the far left of the listing - to open the
+                    advanced start window.
+
+                    The transfer settings window will open on the
+                    'Control' page.  On this page you can modify a
+                    number of settings before starting the transfer.
+
+                    Once any modifications to the settings are made,
+                    click 'Run Transfer' to start the transfer running.
+
+                    To close the settings window after starting the
+                    torrent, check the checkbox named 'Close Window'.
+
+                    To NOT run a hash check before starting a torrent,
+                    check the checkbox named 'Don't check hashes'.  This
+                    is useful for when you have a very large torrent
+                    that you know has been downloaded fully already and
+                    you don't want to spend a long time having the
+                    torrent client rechecking the integrity of the
+                    download before continuing on to seed the torrent.
+
+                    For full information on changing a transfer's
+                    settings see the section on
+                    TODO_link:changing_transfer settings
+
+                    Note:
+                    -----
+                    The start advanced icon is only visible if the
+                    torrent has not already started or is not in the
+                    process of stopping.  To verify this, look at the
+                    status column in the transfer listing which will
+                    tell you whether the transfer is starting, started,
+                    connecting, seeding, leeching, stopping, stopped or
+                    new.
+
                 Starting individual transfers in quick mode
+
+                    Click the icon with a double white arrow on a green
+                    background - located next to the transfer list item
+                    on the far left of the listing - to start a transfer
+                    in 'quick' mode.
+
+                    Starting a transfer in quick mode allows you to skip
+                    the advanced settings window.  Instead, the default
+                    client and settings configured by the administrator
+                    will be used instead to start the transfer.
+
+                    See the section on TODO_link:transfer_client_options
+
                 Stopping individual transfers
 
-            Controlling transfers in bulk
-                Bulk starting and stopping more than one transfer
-                Bulk deleting transfer metafiles
-                Bulk deleting transfer metafiles and data
-                Bulk resetting transfer totals
-                Bulk wiping transfers
+                    Click the icon with a white square on a red
+                    background - located next to the transfer list item
+                    on the far left of the listing - to stop a running
+                    transfer.
+
+            Controlling multiple transfers using the multi-ops feature
+
+                Overview
+
+                    The multi-ops feature of torrentflux-b4rt allows you
+                    to perform the same operation on more than one
+                    transfer at a time.
+
+                Using multi-ops
+
+                    1.  Select the transfers from the transfer list that
+                        you want to perform the multi-op on by checking
+                        their checkboxes to the far right of the
+                        transfer list.
+
+                        Note - to toggle the selection of ALL transfers,
+                        check the checkbox at the bottom of the transfer
+                        list to the far right next to the multi-ops
+                        dropdown list.  Unchecking this checkbox will
+                        deselect all transfers.
+
+                        This can be useful if you have a large list of
+                        transfers and you want to perform a multi-op on
+                        only 90% of the transfers.
+
+                    2.  Select the type of multi-op you want to perform
+                        on the selected transfers from the drop down
+                        list located under the transfer list to the far
+                        right.
+
+                    3.  Click the 'Go' button to perform the chosen
+                        multi-op on the selected transfers.
+
+                        WARNING:
+                        --------
+                        You will NOT be prompted for confirmation to
+                        perform the multi-op so be sure that you really
+                        want to carry out the action before using the
+                        multi-op feature!
+
+                Available multi-op operations
+
+                    The operations that can be performed using multi-ops
+                    are listed below:
+
+                    o   starting and stopping more than one transfer
+
+                    o   deleting transfer metafiles
+                        - ONLY the metafiles are deleted, any transfer
+                          data downloaded will NOT be deleted with this
+                          option.
+
+                          Choose this option if you have yet to move the
+                          transfer data out of the torrentflux-b4rt data
+                          directory.
+
+                    o   deleting transfer metafiles and data
+                        - delete both the transfer metafile - ie
+                          .torrent file etc - AND the transfer data.
+
+                          Be careful when using this option, only use it
+                          when you have no more use for the data that
+                          has been downloaded.
+
+                    o   resetting transfer totals
+                        - reset any information stored about how much
+                          data has been transferred for this transfer -
+                          cumulative upload/download totals.
+
+                          Only use this option if you don't need to know
+                          about how much data has been transferred in
+                          total for a transfer.
+
+                    o   wiping transfers
+                        - deletes any transferred data and resets the
+                          totals for the transfer.
+
+                          Be careful when using this option, only use it
+                          when you want any transferred data removed.
 
             Transfer settings window
-                Overview - including diffs between info that's show for each diff metadata type
+
+                Overview
+
+                    The transfer settings window allows fine grained
+                    control over your transfers and access to detailed
+                    statistics and logs.
+
+                    The options available in the settings window will
+                    differ according to the type of transfer and the
+                    status of the transfer - if the transfer is
+                    currently running or not.
+
+                    The transfer settings window is primarily used to
+                    modify the settings of a currently running transfer
+                    'on the fly' and to view statistics and logging info
+                    for the transfer.
+
+                    The transfer settings window is also used to modify
+                    the settings of a client / transfer when starting a
+                    transfer in 'advanced mode'.  See
+                    TODO_link:'Starting individual transfers in advanced
+                    mode'
+
                 Opening the transfer settings window
+
+                    The transfer settings window can be opened by using
+                    any of the following methods:
+
+                        o   Starting a torrent in 'advanced mode'
+                            TODO_link:'Starting individual transfers in
+                            advanced
+
+                        o   Clicking on a transfer in the transfer list.
+                            The transfer can be in any status - started
+                            or stopped - to use this method.
+
+                        o   Clicking on the 'Transfer Settings' icon to
+                            the far right of the transfer item in the
+                            transfer list.
+
+                    A number of different 'views' or pages are available
+                    in the transfer settings window, these are covered
+                    below.
+
                 Viewing general transfer statistics
+
+                    The 'Stats' page of the transfer settings window
+                    allows you to view the following information about
+                    your transfer:
+
+                        o	Estimated Time - time until transfer
+                            download is complete.
+
+                        o	Percent Done - percentage of data already
+                            downloaded.
+
+                        o	User - the torrentflux-b4rt owner of this
+                            transfer
+
+                        o	Download Speed - current download speed,
+                            updates every 5 seconds by default.
+
+                        o	Upload Speed - current upload speed,
+                            updates every 5 seconds by default.
+
+                        o	Down - total downloaded during the current
+                            session.
+
+                        o	Up - total uploaded during the current
+                            session.
+
+                        o	Down-Total - total downloaded during all
+                            sessions for this transfer; the cumulative
+                            download total.
+
+                        o	Up-Total - total uploaded during all
+                            sessions for this transfer; the cumulative
+                            upload total.
+
+                        o	Seeds - current number of seeds available
+                            for this transfer, updates every 5 seconds
+                            by default.
+
+                        o	Peers - current number of peers available
+                            for this transfer, updates every 5 seconds
+                            by default.
+
+                        o	Port - current local port being used for this
+                            transfer
+
+                        o	Connections - current number of active
+                            connections for this transfer.
+
+                        o	Sharing - current share ratio for this
+                            transfer, 100% equals same amount uploaded
+                            as downloaded.
+
+                        o	Seed Until - the share ratio at which
+                            seeding should stop.  Otherwise known as
+                            'sharekill' ratio - ie 'stop sharing when
+                            this ratio is reached'
+
                 Viewing a transfer's hosts
+
+                    The 'Hosts' page of the transfer settings window
+                    allows you to view a list of the hosts currently
+                    connected with respect to this transfer.
+
+                    A host in this list may not necessarily be actively
+                    transferring data to/from us.  A host can be
+                    connected and just in the process of negotiating the
+                    transfer of data.
+
                 Viewing a transfer's scrape information
+
+                    The 'Scrape' page of the transfer settings window
+                    allows you to view the number of seeds vs leechers
+                    for the current transfer in the form of a pie chart.
+
                 Viewing 'at a glance' pie charts of a transfers statistics
+
+                    The 'Images' page of the transfer settings window
+                    allows you to view at a glance the total uploaded vs
+                    downloaded and the number of peers vs seeders.
+
                 Viewing a transfer's log file
+
+                    The 'Log' page of the transfer settings window
+                    allows you to view the detailed logging information
+                    for the current transfer.
+
+                    The transfer log is the first place to look when
+                    troubleshooting a problematic transfer.  In it you
+                    will find all the information output from the
+                    transfer client and errors relating to a problem are
+                    often displayed there.
+
                 Viewing a transfer's metadata details
+
+                    The 'Details' page of the transfer settings window
+                    allows you to view detailed meta information about
+                    the current transfer - the transfer filename,
+                    hashing info, details of what files/directories are
+                    included in the transfer, transfer size and the
+                    announce url for torrents.
+
                 Viewing the files included in a transfer
+
+                    The 'Files' page of the transfer settings window
+                    allows you to see what files are included in a
+                    transfer once complete.
+
                 Changing settings for a transfer
+
+                    The 'Settings' page of the transfer settings window
+                    allows you to modify the settings related to the
+                    current transfer.
+
+                    If a transfer has already started, any changes made
+                    to the settings can be sent to the transfer's
+                    client 'on the fly' by checking the checkbox
+                    labelled 'Send Changes to Client' (set by default if
+                    a transfer is already running).  There is no need to
+                    stop the transfer before making changes to a
+                    transfer's settings.
+
+                    The settings available for a transfer will differ
+                    depending on the client chosen to perform the
+                    transfer.  Not all settings are available for all
+                    choices of client.
+
                 Starting, stopping and restarting a transfer
+
+                    The 'Control' page of the transfer settings window
+                    allows you to start, stop or restart a transfer.
+                    The available options available will differ
+                    depending on the current status of the transfer.
+
+                    When the transfer is currently stopped, the control
+                    page resembles the 'Settings' page in that all the
+                    settings are available for modification prior to
+                    starting the transfer.
+
+                    When the transfer is currently running, the control
+                    page is limited to the stopping or restarting of a
+                    transfer.
 
         Server statistics
             Transfer status lights
