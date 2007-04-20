@@ -9,31 +9,31 @@ function validateSettings(section) {
 		case 'dir':
 			break;
 		case 'fluxd':
-			if (isNumber(document.theForm.fluxd_Qmgr_interval.value) == false ) {
+			if (isUnsignedNumber(document.theForm.fluxd_Qmgr_interval.value) == false ) {
 				msg = msg + "* Qmgr Interval must be a valid number.\n";
 				document.theForm.fluxd_Qmgr_interval.focus();
 			}
-			if (isNumber(document.theForm.fluxd_Qmgr_maxTotalTransfers.value) == false) {
+			if (isUnsignedNumber(document.theForm.fluxd_Qmgr_maxTotalTransfers.value) == false) {
 				msg = msg + "* Max Total Transfers must be a valid number.\n";
 				document.theForm.fluxd_Qmgr_maxTotalTransfers.focus();
 			}
-			if (isNumber(document.theForm.fluxd_Qmgr_maxUserTransfers.value) == false) {
+			if (isUnsignedNumber(document.theForm.fluxd_Qmgr_maxUserTransfers.value) == false) {
 				msg = msg + "* Max User Transfers must be a valid number.\n";
 				document.theForm.fluxd_Qmgr_maxUserTransfers.focus();
 			}
-			if (isNumber(document.theForm.fluxd_Fluxinet_port.value) == false ) {
+			if (isUnsignedNumber(document.theForm.fluxd_Fluxinet_port.value) == false ) {
 				msg = msg + "* Fluxinet port must be a valid number.\n";
 				document.theForm.fluxd_Fluxinet_port.focus();
 			}
-			if (isNumber(document.theForm.fluxd_Watch_interval.value) == false ) {
+			if (isUnsignedNumber(document.theForm.fluxd_Watch_interval.value) == false ) {
 				msg = msg + "* Watch Interval must be a valid number.\n";
 				document.theForm.fluxd_Watch_interval.focus();
 			}
-			if (isNumber(document.theForm.fluxd_Maintenance_interval.value) == false) {
+			if (isUnsignedNumber(document.theForm.fluxd_Maintenance_interval.value) == false) {
 				msg = msg + "* Maintenance Interval must be a valid number.\n";
 				document.theForm.fluxd_Maintenance_interval.focus();
 			}
-			if (isNumber(document.theForm.fluxd_Trigger_interval.value) == false ) {
+			if (isUnsignedNumber(document.theForm.fluxd_Trigger_interval.value) == false ) {
 				msg = msg + "* Trigger Interval must be a valid number.\n";
 				document.theForm.fluxd_Trigger_interval.focus();
 			}
@@ -70,23 +70,23 @@ function validateSettings(section) {
 			}
 			break;
 		case 'index':
-			if (isNumber(document.theForm.page_refresh.value) == false ) {
+			if (isUnsignedNumber(document.theForm.page_refresh.value) == false ) {
 				msg = msg + "* Page Refresh Interval must be a valid number.\n";
 				document.theForm.page_refresh.focus();
 			}
-			if (isNumber(document.theForm.index_ajax_update.value) == false ) {
+			if (isUnsignedNumber(document.theForm.index_ajax_update.value) == false ) {
 				msg = msg + "* AJAX Update Interval must be a valid number.\n";
 				document.theForm.index_ajax_update.focus();
 			}
-			if (isNumber(document.theForm.hack_multiupload_rows.value) == false ) {
+			if (isUnsignedNumber(document.theForm.hack_multiupload_rows.value) == false ) {
 				msg = msg + "* multi-upload rows must be a valid number.\n";
 				document.theForm.hack_multiupload_rows.focus();
 			}
-			if (isNumber(document.theForm.bandwidth_up.value) == false ) {
+			if (isUnsignedNumber(document.theForm.bandwidth_up.value) == false ) {
 				msg = msg + "* Bandwidth Up must be a valid number.\n";
 				document.theForm.bandwidth_up.focus();
 			}
-			if (isNumber(document.theForm.bandwidth_down.value) == false ) {
+			if (isUnsignedNumber(document.theForm.bandwidth_down.value) == false ) {
 				msg = msg + "* Bandwidth Down must be a valid number.\n";
 				document.theForm.bandwidth_down.focus();
 			}
@@ -101,7 +101,7 @@ function validateSettings(section) {
 			}
 			break;
 		case 'control':
-			if (isNumber(document.theForm.maxdepth.value) == false) {
+			if (isUnsignedNumber(document.theForm.maxdepth.value) == false) {
 				msg = msg + "* Max Depth must be a valid number.\n" ;
 			}
 			break;
@@ -177,57 +177,57 @@ function validateSettings(section) {
 				msg = msg + "* Host cannot be empty.\n";
 				document.theForm.fluazu_host.focus();
 			}
-			if (isNumber(document.theForm.fluazu_port.value) == false) {
+			if (isUnsignedNumber(document.theForm.fluazu_port.value) == false) {
 				msg = msg + "* Port must be a valid number.\n";
 				document.theForm.fluazu_port.focus();
 			}
 			break;
 		case 'azureus':
-			if (isNumber(document.azuForm.CORE_PARAM_INT_MAX_DOWNLOAD_SPEED_KBYTES_PER_SEC.value) == false) {
+			if (isUnsignedNumber(document.azuForm.CORE_PARAM_INT_MAX_DOWNLOAD_SPEED_KBYTES_PER_SEC.value) == false) {
 				msg = msg + "* Max Download Speed KBs must be a valid number.\n";
 				document.azuForm.CORE_PARAM_INT_MAX_DOWNLOAD_SPEED_KBYTES_PER_SEC.focus();
 			}
-			if (isNumber(document.azuForm.CORE_PARAM_INT_MAX_UPLOAD_SPEED_KBYTES_PER_SEC.value) == false) {
+			if (isUnsignedNumber(document.azuForm.CORE_PARAM_INT_MAX_UPLOAD_SPEED_KBYTES_PER_SEC.value) == false) {
 				msg = msg + "* Max Upload Speed KBs must be a valid number.\n";
 				document.azuForm.CORE_PARAM_INT_MAX_UPLOAD_SPEED_KBYTES_PER_SEC.focus();
 			}
 			break;
 		case 'webapp':
-			if (isNumber(document.theForm.transferStatsUpdate.value) == false) {
+			if (isUnsignedNumber(document.theForm.transferStatsUpdate.value) == false) {
 				msg = msg + "* Download-Details Update Interval must be a valid number.\n";
 				document.theForm.transferStatsUpdate.focus();
 			}
-			if (isNumber(document.theForm.servermon_update.value) == false) {
+			if (isUnsignedNumber(document.theForm.servermon_update.value) == false) {
 				msg = msg + "* Server Monitor Update Interval must be a valid number.\n";
 				document.theForm.servermon_update.focus();
 			}
-			if (isNumber(document.theForm.days_to_keep.value) == false) {
+			if (isUnsignedNumber(document.theForm.days_to_keep.value) == false) {
 				msg = msg + "* Days to keep Audit Actions must be a valid number.\n";
 				document.theForm.days_to_keep.focus();
 			}
-			if (isNumber(document.theForm.minutes_to_keep.value) == false) {
+			if (isUnsignedNumber(document.theForm.minutes_to_keep.value) == false) {
 				msg = msg + "* Minutes to keep user online must be a valid number.\n";
 				document.theForm.minutes_to_keep.focus();
 			}
-			if (isNumber(document.theForm.rss_cache_min.value) == false) {
+			if (isUnsignedNumber(document.theForm.rss_cache_min.value) == false) {
 				msg = msg + "* Minutes to Cache RSS Feeds must be a valid number.\n";
 				document.theForm.rss_cache_min.focus();
 			}
 			break;
 		case 'xfer':
-			if (isNumber(document.theForm.xfer_total.value) == false) {
+			if (isUnsignedNumber(document.theForm.xfer_total.value) == false) {
 				msg = msg + "* xfer total must be a valid number.\n";
 				document.theForm.xfer_total.focus();
 			}
-			if (isNumber(document.theForm.xfer_month.value) == false) {
+			if (isUnsignedNumber(document.theForm.xfer_month.value) == false) {
 				msg = msg + "* xfer month must be a valid number.\n";
 				document.theForm.xfer_month.focus();
 			}
-			if (isNumber(document.theForm.xfer_week.value) == false) {
+			if (isUnsignedNumber(document.theForm.xfer_week.value) == false) {
 				msg = msg + "* xfer week must be a valid number.\n";
 				document.theForm.xfer_week.focus();
 			}
-			if (isNumber(document.theForm.xfer_day.value) == false) {
+			if (isUnsignedNumber(document.theForm.xfer_day.value) == false) {
 				msg = msg + "* xfer day must be a valid number.\n";
 				document.theForm.xfer_day.focus();
 			}
@@ -239,19 +239,4 @@ function validateSettings(section) {
 	} else {
 		return true;
 	}
-}
-
-/**
- * isNumber
- */
-function isNumber(sText) {
-	var ValidChars = "0123456789";
-	var IsNumber = true;
-	var Char;
-	for (i = 0; i < sText.length && IsNumber == true; i++) {
-		Char = sText.charAt(i);
-		if (ValidChars.indexOf(Char) == -1)
-			IsNumber = false;
-	}
-	return IsNumber;
 }

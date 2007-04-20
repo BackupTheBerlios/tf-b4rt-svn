@@ -70,19 +70,19 @@ function validateProfile(isCreate, _USERIDREQUIRED, _PASSWORDLENGTH, _PASSWORDNO
  */
 function validateSettings() {
 	var msg = "";
-	if (isNumber(document.settingsForm.page_refresh.value) == false ) {
+	if (isUnsignedNumber(document.settingsForm.page_refresh.value) == false ) {
 		msg = msg + "* Page Refresh Interval must be a valid number.\n";
 		document.settingsForm.page_refresh.focus();
 	}
-	if (isNumber(document.settingsForm.index_ajax_update.value) == false ) {
+	if (isUnsignedNumber(document.settingsForm.index_ajax_update.value) == false ) {
 		msg = msg + "* AJAX Update Interval must be a valid number.\n";
 		document.settingsForm.index_ajax_update.focus();
 	}
-	if (isNumber(document.settingsForm.transferStatsUpdate.value) == false) {
+	if (isUnsignedNumber(document.settingsForm.transferStatsUpdate.value) == false) {
 		msg = msg + "* Download-Details Update Interval must be a valid number.\n";
 		document.settingsForm.transferStatsUpdate.focus();
 	}
-	if (isNumber(document.settingsForm.servermon_update.value) == false) {
+	if (isUnsignedNumber(document.settingsForm.servermon_update.value) == false) {
 		msg = msg + "* Server Monitor Update Interval must be a valid number.\n";
 		document.settingsForm.servermon_update.focus();
 	}
@@ -92,19 +92,4 @@ function validateSettings() {
 	} else {
 		return true;
 	}
-}
-
-/**
- * isNumber
- */
-function isNumber(sText) {
-	var ValidChars = "0123456789";
-	var IsNumber = true;
-	var Char;
-	for (i = 0; i < sText.length && IsNumber == true; i++) {
-		Char = sText.charAt(i);
-		if (ValidChars.indexOf(Char) == -1)
-			IsNumber = false;
-	}
-	return IsNumber;
 }
