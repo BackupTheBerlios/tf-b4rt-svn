@@ -1065,7 +1065,7 @@ sub status {
 	$head .= "socket : ".$path_socket."\n";
 	$head .= "transfers-dir : ".$path_transfer_dir."\n";
 	$head .= "docroot : ".$path_docroot."\n";
-	$head .= "fluxcli : ".$path_docroot."/bin/".$bin_fluxcli."\n";
+	$head .= "fluxcli : ".$path_docroot."bin/".$bin_fluxcli."\n";
 	$head .= "php : ".$bin_php."\n";
 	$head .= "db-mode : ".$dbMode."\n";
 	$head .= "loglevel : ".$loglevel."\n";
