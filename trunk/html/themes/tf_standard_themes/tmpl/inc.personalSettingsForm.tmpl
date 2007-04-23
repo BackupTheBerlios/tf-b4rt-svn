@@ -1,8 +1,8 @@
 <form name="settingsForm" action="index.php?iid=profile&op=updateSettingsUser" method="post" onsubmit="return validateSettings('')">
 	<table border="0" cellpadding="3" cellspacing="0" width="100%">
 		<tr>
-			<td align="left" width="350" valign="top"><strong>Page Refresh</strong><br>
-			Enable/Disable Page Refresh :
+			<td align="left" width="350" valign="top"><strong>Page Refresh:</strong><br>
+			Enable/disable page refresh
 			</td>
 			<td valign="top">
 				<select name="enable_index_meta_refresh">
@@ -16,16 +16,16 @@
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>Page Refresh Interval</strong><br>
-			Number of seconds before the page refreshes :
+			<td align="left" width="350" valign="top"><strong>Page Refresh Interval:</strong><br>
+			Number of seconds between page refreshes
 			</td>
 			<td valign="top">
 				<input name="page_refresh" type="Text" maxlength="3" value="<tmpl_var name="page_refresh">" size="3">
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>AJAX Update</strong><br>
-			Enable/Disable AJAX Update :
+			<td align="left" width="350" valign="top"><strong>AJAX Update:</strong><br>
+			Enable/disable AJAX updates
 			</td>
 			<td valign="top">
 				<select name="enable_index_ajax_update">
@@ -39,8 +39,8 @@
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>Page-Title AJAX Update</strong><br>
-			Enable/Disable update of the Page-Title in AJAX Updates :
+			<td align="left" width="350" valign="top"><strong>Page title AJAX Update:</strong><br>
+			Enable/disable update of page title in AJAX updates
 			</td>
 			<td valign="top">
 				<select name="enable_index_ajax_update_title">
@@ -54,8 +54,8 @@
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>Users AJAX Update</strong><br>
-			Enable/Disable update of the User-List in AJAX Updates :
+			<td align="left" width="350" valign="top"><strong>User list AJAX Update:</strong><br>
+			Enable/disable update of the user list in AJAX Updates
 			</td>
 			<td valign="top">
 				<select name="enable_index_ajax_update_users">
@@ -69,8 +69,8 @@
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>Transfer List AJAX Update</strong><br>
-			Enable/Disable Transfer List AJAX Update :
+			<td align="left" width="350" valign="top"><strong>Transfer List AJAX Update:</strong><br>
+			Enable/disable update of the transfer list in AJAX updates
 			</td>
 			<td valign="top">
 				<select name="enable_index_ajax_update_list">
@@ -84,9 +84,9 @@
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>Silent AJAX Update</strong><br>
-			If enabled the AJAX-Update is more silent :<br>
-			No "Update in Progress..." shown in Title and on Label and no Counter shown.
+			<td align="left" width="350" valign="top"><strong>Silent AJAX Update:</strong><br>
+			Do not display &quot;Update in Progress...&quot; during
+			AJAX updates
 			</td>
 			<td valign="top">
 				<select name="enable_index_ajax_update_silent">
@@ -100,26 +100,26 @@
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>AJAX Update Interval</strong><br>
-			Number of seconds between AJAX-Updates :
+			<td align="left" width="350" valign="top"><strong>AJAX Update Interval:</strong><br>
+			Number of seconds between AJAX updates<br>(default: 5)
 			</td>
 			<td valign="top">
 				<input name="index_ajax_update" type="Text" maxlength="3" value="<tmpl_var name="index_ajax_update">" size="3">
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>Width</strong><br>
-			Specify the width of the index-page. (900):
+			<td align="left" width="350" valign="top"><strong>Width:</strong><br>
+			Width in pixels of the index page<br>(default: 900)
 			</td>
-			<td valign="bottom">
+			<td valign="top">
 				<input name="ui_dim_main_w" type="Text" maxlength="5" value="<tmpl_var name="ui_dim_main_w">" size="5">
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>Display Links</strong><br>
-			Display Links on the index-page :
+			<td align="left" width="350" valign="top"><strong>Display Links:</strong><br>
+			Display list of links on the index page
 			</td>
-			<td valign="bottom">
+			<td valign="top">
 				<select name="ui_displaylinks">
 					<option value="1">true</option>
 					<option value="0"
@@ -131,10 +131,10 @@
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>Display Users</strong><br>
-			Display Users on the index-page :
+			<td align="left" width="350" valign="top"><strong>Display Users:</strong><br>
+			Display users on the index page
 			</td>
-			<td valign="bottom">
+			<td valign="top">
 				<select name="ui_displayusers">
 					<option value="1">true</option>
 					<option value="0"
@@ -146,8 +146,8 @@
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>Enable Good looking statistics</strong><br>
-			Enable/Disable "Good looking statistics" :
+			<td align="left" width="350" valign="top"><strong>Enable Good Looking Statistics:</strong><br>
+			Enable/disable &quot;Good looking statistics&quot;
 			</td>
 			<td valign="top">
 				<select name="enable_goodlookstats">
@@ -161,18 +161,18 @@
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>Good looking statistics settings</strong><br>
-			Select Fields shown in "Good looking statistics" :
+			<td align="left" width="350" valign="top"><strong>Good Looking Statistics Settings:</strong><br>
+			Select Fields shown in &quot;Good looking statistics&quot;
 			</td>
 			<td valign="top">
 				<tmpl_include name="inc.goodLookingStatsForm.tmpl">
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>Display Bandwidth-Bars</strong><br>
-			Display Bandwidth-Bars :
+			<td align="left" width="350" valign="top"><strong>Display Bandwidth Bars:</strong><br>
+			Display bandwidth usage bars
 			</td>
-			<td valign="bottom">
+			<td valign="top">
 				<select name="ui_displaybandwidthbars">
 					<option value="1">true</option>
 					<option value="0"
@@ -184,8 +184,8 @@
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>Bandwidth-Bars Style</strong><br>
-			Select Style of Bandwidth-Bars :
+			<td align="left" width="350" valign="top"><strong>Bandwidth Bars Style:</strong><br>
+			Select style of bandwidth bars
 			</td>
 			<td valign="top">
 				<select name="bandwidthbar">
@@ -203,8 +203,8 @@
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>Enable Big bold drivespace warning</strong><br>
-			Enable/Disable "Big bold drivespace warning" :
+			<td align="left" width="350" valign="top"><strong>Big Bold Drivespace Warning:</strong><br>
+			Enable/disable drivespace warning when disk space low
 			</td>
 			<td valign="top">
 				<select name="enable_bigboldwarning">
@@ -218,8 +218,9 @@
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>Show Seeding Torrents</strong><br>
-			Specify if we show seeding torrents on the index page
+			<td align="left" width="350" valign="top"><strong>Show
+			Seeding Torrents:</strong><br>
+			Display seeding torrents on index page
 			</td>
 			<td valign="top">
 				<select name="index_show_seeding">
@@ -233,8 +234,9 @@
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>Estimated Time to Seed</strong><br>
-				Display the estimated time until your seeding reaches the cutoff you set :
+			<td align="left" width="350" valign="top"><strong>Estimated Time To Seed:</strong><br>
+				Display the estimated time until transfers reach sedding
+				cutoff ratio
 			</td>
 			<td valign="top">
 				<select name="display_seeding_time">
@@ -248,8 +250,9 @@
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>Enable sorttable</strong><br>
-			Enable Client-Side sorting of Transfer-Table:
+			<td align="left" width="350" valign="top"><strong>Transfer List Sorting:</strong><br>
+			Enable/disable reordering of transfer list by clicking on column
+			headings
 			</td>
 			<td valign="top">
 				<select name="enable_sorttable">
@@ -263,24 +266,27 @@
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>Select Sort-Order</strong><br>
-			Select default Sort-Order of transfers :
+			<td align="left" width="350" valign="top"><strong>Default
+			Transfer List Sort Order:</strong><br>
+			Select default sort order of transfers in transfer list
 			</td>
 			<td valign="top">
 				<tmpl_include name="inc.sortOrderSettings.tmpl">
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>Transfer-List Settings</strong><br>
-			Select the columns shown in the transfer-list.
+			<td align="left" width="350"
+			valign="top"><strong>Transfer List Display:</strong><br>
+			Select the information to display in the transfer list
 			</td>
 			<td valign="top">
 				<tmpl_include name="inc.indexPageSettingsForm.tmpl">
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>Default Transfer Window</strong><br>
-				Select the default-page of the transfer-windows.
+			<td align="left" width="350" valign="top"><strong>Default
+			Page In Transfer Settings Window:</strong><br>
+			Select the default page to display in the transfer settings window
 			</td>
 			<td valign="top">
 				<select name="transfer_window_default">
@@ -293,8 +299,9 @@
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>Show Server Stats</strong><br>
-			Enable showing the server stats at the bottom :
+			<td align="left" width="350" valign="top"><strong>Server
+			Stats:</strong><br>
+			Enable/disable display of server stats on index page
 			</td>
 			<td valign="top">
 				<select name="index_page_stats">
@@ -308,8 +315,9 @@
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>Show Connections</strong><br>
-			Enable showing the Sum of TCP-Connections:
+			<td align="left" width="350" valign="top"><strong>Network
+			Connections:</strong><br>
+			Enable/disable display of total network connections
 			</td>
 			<td valign="top">
 				<select name="index_page_connections">
@@ -323,8 +331,10 @@
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>Show Server Load</strong><br>
-			Enable showing the average server load over the last 15 minutes:
+			<td align="left" width="350" valign="top"><strong>Show
+			Server Load:</strong><br>
+			Enable/disable display of server load averages<br>(1/5/15 min
+			averages)
 			</td>
 			<td valign="top">
 				<select name="show_server_load">
@@ -338,8 +348,9 @@
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>Drivespace-Bar Style</strong><br>
-			Select Style of Drivespace-Bar :
+			<td align="left" width="350" valign="top"><strong>Drivespace
+			Bar Style:</strong><br>
+			Select style of drivespace bar
 			</td>
 			<td valign="top">
 				<select name="drivespacebar">
@@ -357,10 +368,12 @@
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>Transfer-Stats Type</strong><br>
-			Choose Type of Transfer-Stats-Window :
+			<td align="left" width="350"
+			valign="top"><strong>Transfer Stats Window Update
+			Method:</strong><br>
+			Select method to use to update transfer stats window
 			</td>
-			<td valign="bottom">
+			<td valign="top">
 				<select name="transferStatsType">
 					<option value="standard">standard</option>
 					<option value="ajax"
@@ -372,16 +385,20 @@
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>Transfer-Stats Update Interval</strong><br>
-			Update-interval in seconds of the Transfer-Stats-Window :
+			<td align="left" width="350"
+			valign="top"><strong>Transfer Stats Window Update
+			Interval:</strong><br>
+			Number of seconds between transfer stats updates
 			</td>
-			<td valign="bottom">
+			<td valign="top">
 				<input name="transferStatsUpdate" type="Text" maxlength="3" value="<tmpl_var name="transferStatsUpdate">" size="3">
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>Transfer-Hosts</strong><br>
-			Show IPs or Hostnames in Transfer-Hosts-Window :
+			<td align="left" width="350" valign="top"><strong>Transfer
+			Hosts:</strong><br>
+			Enable/disable display of connected hosts in transfer hosts
+			window
 			</td>
 			<td valign="top">
 				<select name="transferHosts">
@@ -395,8 +412,9 @@
 			</td>
 		</tr>
 		<tr>
-			<td align="left" width="350" valign="top"><strong>Server Monitor Update Interval</strong><br>
-			Number of seconds for Server Monitor Update :
+			<td align="left" width="350" valign="top"><strong>Server Monitor Update Interval:</strong><br>
+				Number of seconds between server monitor updates
+				for server monitor update
 			</td>
 			<td valign="top">
 				<input name="servermon_update" type="Text" maxlength="3" value="<tmpl_var name="servermon_update">" size="3">
