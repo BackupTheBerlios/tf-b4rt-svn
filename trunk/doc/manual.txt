@@ -44,7 +44,7 @@ Torrentflux-b4rt Reference Manual
                 Available multi-op operations
 
             Transfer settings window
-                Overview - including diffs between info that's show for each diff metadata type
+                Overview
                 Opening the transfer settings window
                 Viewing general transfer statistics
                 Viewing a transfer's hosts
@@ -76,9 +76,9 @@ Torrentflux-b4rt Reference Manual
         Changing the frontend look and feel
             Reordering the transfer list
 
-            Turning page refresh on and off
-
             Turning AJAX updates on and off
+
+            Turning page refresh on and off
 
             Showing/hiding seeding torrents
 
@@ -870,30 +870,355 @@ Introduction
                     transfer.
 
         Server statistics
+
             Transfer status lights
+
+                The transfer status light for a transfer is displayed to
+                the far left of the transfer list.  The colour of the
+                transfer status light determines the current status of
+                the transfer.
+
+                The colours of the transfer status light are as follows:
+
+                o   Black
+                    - transfer is not running.
+
+                o   Red
+                    - transfer is running but no seeds are currently
+                      available for the transfer.  If this status
+                      persists you should check:
+
+                        * the transfer log for any errors (see
+                          TODO_link:Viewing transfer log files)
+
+                        * the torrent's tracker is online
+
+                        * your firewall is configured to allow
+                          connections to/from the client
+
+                        * the torrent actually has any seeds available
+                          at all
+
+                      It is also worth testing that the torrent works
+                      correctly in another torrent client if the red
+                      light status continues, although be sure that the
+                      client you test in does not use Distributed Hash
+                      Tables (DHT or 'trackerless') because this maybe
+                      affect the results of the comparison test.
+
+                o   Yellow
+                    - transfer is running but there are less than two
+                      seeds available.  This can indicate that a torrent
+                      is not well seeded and if this status continues
+                      you may need to find a better seeded torrent or
+                      use a DHT/trackerless enabled client.
+
+                o   Green
+                    - transfer is running with at least two seeds.
 
             General frontend  'Good looking' statistics
 
+                The 'Good looking' statistics are displayed to the top
+                right of the torrentflux-b4rt frontend and include the
+                following statistics:
+
+                o	Download Speed- total download speed for all
+                    running transfers
+
+                o	Upload Speed - total upload speed for all running
+                    transfers
+
+                o	Total Speed - total upload + download speed for all
+                    running transfers
+
+                o	Connections - total network connections for all
+                    running transfers
+
+                o	Drive Space - total hard disk drive space currently
+                    in use for the filesystem where torrentflux-b4rt
+                    downloads transfers to
+
+                o	Server Load - current server load averages of the
+                    server.  A sustained load average of over 2 in each
+                    of the three readings can be indicative of excessive
+                    server load depending on the server role.
+
+                Clicking on any of the links in the 'Good looking'
+                statistics section will open up the 'Server statistics'
+                page.
+
             Viewing detailed server statistics
+
+                Overview
+                    The server statistics page provides detailed
+                    information on server status, including drivespace,
+                    logged-in user, process, network and transfer usage.
+
+                    The server statistics page can be opened using the
+                    following methods:
+
+                    -   Clicking on any of the links in the 'Good
+                        looking statistics' section of the frontend.
+
+                    -   Clicking on the 'Server Stats' link above the
+                        drivespace bar towards the middle of the
+                        frontend.
+
                 Drivespace and 'who' statistics
+
+                    This is the default view for the server statistics
+                    page labelled 'all' in the drop down list labelled
+                    'Type' at the top of the server stats page.
+
+                    This view provides information about:
+
+                    o   Current drivespace used on the filesystem where
+                        torrentflux-b4rt downloads transfers to.  The
+                        output is taken from the Unix command 'df'.
+
+                    o   Currently logged in users on the server - ie
+                        'real' shell users on the server that
+                        torrentflux-b4rt is installed on.  The output is
+                        taken from the Unix command 'w' or 'who'.
+
+
                 Process statistics
+
+                    This view can be set by selecting 'ps' from the
+                    'Type' dropdown list on the server stats page.
+
+                    The view displays information about any currently
+                    running processes for each of the transfer clients
+                    supported by torrentflux-b4rt.
+
                 Network connection statistics
+
+                    This view can be set by selecting 'netstat' from the
+                    'Type' dropdown list on the server stats page.
+
+                    The view displays information about any network
+                    connections currently connected for any of the
+                    supported torrentflux-b4rt transfer clients.
+
                 Transfer statistics
+
+                    This view can be set by selecting 'xfer' from the
+                    'Type' dropdown list on the server stats page.
+
+                    The view displays transfer statistics - ie amount of
+                    bandwidth used - in a table.  Statistics are given
+                    for bandwidth used for each user in total, over the
+                    last month, over the last week and for the current
+                    day.
+
+                    A detailed breakdown of 'per user' or 'total'
+                    transfer statistics can be viewed by clicking on the
+                    links in the initial transfer stats page.  On this
+                    detailed page you can view statistics for any single
+                    day within the last 30 days.
 
             Opening the server monitor
 
+                The server monitor can be opened by clicking on the
+                'green light on a white background' image above the
+                drivespace bar towards the middle of the frontend.
+
+                The following information is displayed in the server
+                monitor:
+
+                    o	Download Speed
+                    o	Upload Speed
+                    o	Total Speed
+                    o	Connections
+                    o	Drive Space
+                    o	Server Load
+                    o	Transfers running
+                    o	Transfers queued
+
+                The server monitor is updated every 5 seconds by default
+                - update interval can be changed in the (TODO_link:
+                Setting the server monitor update interval) webapps
+                admin section.
+
             Viewing an RSS feed of the transfer list
+
+                An RSS feed of the transfer list can be displayed by
+                clicking on the RSS icon (icon with orange background
+                and white arcs).
+
+                The RSS feed can be subscribed to in your feed reader,
+                allowing another method for monitoring the status of
+                your transfers.
 
             Viewing activity history
 
+                The activity history can be viewed by regular users by
+                clicking on the 'History' link in the top right
+                navigation menu.
+
+                The activity history page displays information about all
+                activities performed by the user in the last 30 days.
+
+                The history page is a good place to look when
+                troubleshooting problematic transfers.
+
         Changing the frontend look and feel
+
             Reordering the transfer list
 
-            Turning page refresh on and off
+                The transfer items in the transfer list are reordered by
+                clicking on the various transfer list column headers at
+                the top of the transfer list.
+
+                For example, to change the display of transfer list
+                items so the oldest items are displayed towards the top
+                of the list, click on the first transfer list column header
+                (above the transfer status lights) marked with a '#'.
+
+                The transfer list reordering options are as follows -
+                clicking the mentioned column header will toggle the
+                sorting:
+
+                o   Order by date transfer added to torrentflux-b4rt
+                    - click column header labelled '#'
+
+                o   Order by transfer file name alphabetically
+                    - click column header labelled 'Transfer File'
+
+                o   Order by transfer owner
+                    - click column header labelled 'User'
+
+                o   Order by transfer size
+                    - click column header labelled 'Size'
+
+                o   Order by total downloaded
+                    - click column header labelled 'T. Down'
+
+                o   Order by total uploaded
+                    - click column header labelled 'T. Up'
+
+                o   Order by transfer status
+                    - click column header labelled 'Status'
+
+                o   Order by percentage completed
+                    - click column header labelled 'Progress'
+
+                o   Order by download bandwidth
+                    - click column header labelled 'Down'
+
+                o   Order by upload bandwidth
+                    - click column header labelled 'Up'
+
+                o   Order by number of seeders
+                    - click column header labelled 'Seeders'
+
+                o   Order by number of peers
+                    - click column header labelled 'Peers'
+
+                o   Order by estimated time left til completion
+                    - click column header labelled 'Estimated Time'
+
+                o   Order by type of transfer client
+                    - click column header labelled 'C' - client types
+                      are denoted as follows:
+
+                        B: tornado
+                        T: transmission
+                        M: mainline
+                        A: azureus
+                        W: wget
+                        N: nzbperl
+
+                Note:
+                -----
+                The 'Enable sortable' feature must be enabled in
+                the 'index' settings page in the admin section to allow
+                reordering of transfers.
+
+                The columns available in your transfer list may differ
+                depending on how the administrator has configured the
+                display of transfer lists.  See the section on TODO_LINK
+                'Setting the default transfer list columns to display'.
+
+                The transfer list columns can also be configured on a
+                per user basis by modifying the user profile settings if
+                the administrator has allowed profile management.
+                See the section on TODO_LINK 'Changing what to display
+                in the frontend'.
+                Also see the administration section on TODO_LINK
+                'Allowing users to use transfer profiles' for info on
+                enabling or disabling individual user profile
+                management.
 
             Turning AJAX updates on and off
 
+                The transfer list can be updated automatically using
+                AJAX (Asynchronous Javascript and XML).  To turn on AJAX
+                updates, click on the link 'Turn ON AJAX-Update' under
+                the transfer list.
+
+                The update text will change to:
+
+                    'Next AJAX-Update in xx seconds'
+
+                where xx is the countdown in seconds until the next
+                AJAX update (default 5 seconds).  The timer will count down
+                until it reaches zero, at which point the transfer list
+                will be refreshed.
+
+                To turn off AJAX updates, click on the link 'Next
+                AJAX-Update in xx seconds' again.
+
+                The AJAX update interval can be configured either globally
+                by the administrator ('index' section of the admin
+                pages) or individually on a per-user basis in the user's
+                profile.
+
+            Turning page refresh on and off
+
+                The main torrentflux-b4rt index page containing the
+                transfer list can be updated automatically using the
+                HTML meta refresh method.  To turn on page refresh,
+                click on the link 'Turn ON Page Refresh' under the
+                transfer list.
+
+                The refresh text will change to:
+
+                    'Next Page Refresh in xx Seconds'
+
+                where xx is the countdown in seconds until the next
+                refresh (default 60 seconds).  The timer will count down
+                until it reaches zero, at which point the page will be
+                refreshed.
+
+                To turn off automatic page refreshes, click on the link
+                'Next Page Refresh in .. Seconds' again.
+
+                The refresh interval can be configured either globally
+                by the administrator ('index' section of the admin
+                pages) or individually on a per-user basis in the user's
+                profile.
+
+                Note:
+                -----
+                Using the page refresh method, the whole page is
+                reloaded - not just the transfer list.  This option is
+                now largely deprecated in favour of the AJAX update
+                method, which only updates the transfer list instead of
+                the whole page and so uses up less bandwidth.
+
             Showing/hiding seeding torrents
+
+                Clicking on the 'Hide Seeding Torrents' link under the
+                transfer list will hide all currently seeding torrents.
+
+                This is useful when you have a lot of transfers in the
+                transfer list that are in the 'Seeding' state that you
+                don't want to keep an eye on continually.
+
+                This feature can be configured either globally in the
+                'index' section of the admin pages or on a per user
+                basis in the user's profile.
 
         Profile management
             General
