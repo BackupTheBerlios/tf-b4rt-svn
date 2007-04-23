@@ -58,7 +58,9 @@ class FluxdQmgr extends FluxdServiceMod
 	 */
     function getState() {
 		global $instanceFluxdQmgr;
-		return $instanceFluxdQmgr->state;
+		return (isset($instanceFluxdQmgr))
+			? $instanceFluxdQmgr->state
+			: FLUXDMOD_STATE_NULL;
     }
 
     /**
@@ -68,7 +70,9 @@ class FluxdQmgr extends FluxdServiceMod
      */
     function getMessages() {
     	global $instanceFluxdQmgr;
-		return $instanceFluxdQmgr->messages;
+		return (isset($instanceFluxdQmgr))
+			? $instanceFluxdQmgr->messages
+			: array();
     }
 
 	/**
@@ -78,7 +82,9 @@ class FluxdQmgr extends FluxdServiceMod
 	 */
 	function getModState() {
 		global $instanceFluxdQmgr;
-		return $instanceFluxdQmgr->modstate;
+		return (isset($instanceFluxdQmgr))
+			? $instanceFluxdQmgr->modstate
+			: FLUXDMOD_STATE_NULL;
 	}
 
     /**
@@ -88,7 +94,9 @@ class FluxdQmgr extends FluxdServiceMod
      */
     function isRunning() {
     	global $instanceFluxdQmgr;
-		return ($instanceFluxdQmgr->modstate == FLUXDMOD_STATE_RUNNING);
+		return (isset($instanceFluxdQmgr))
+			? ($instanceFluxdQmgr->modstate == FLUXDMOD_STATE_RUNNING)
+			: false;
     }
 
     /**
@@ -99,7 +107,9 @@ class FluxdQmgr extends FluxdServiceMod
      */
     function getQueuedTransfers($user = "") {
     	global $instanceFluxdQmgr;
-    	return $instanceFluxdQmgr->instance_getQueuedTransfers($user);
+		return (isset($instanceFluxdQmgr))
+			? $instanceFluxdQmgr->instance_getQueuedTransfers($user)
+			: "";
     }
 
     /**
@@ -110,7 +120,9 @@ class FluxdQmgr extends FluxdServiceMod
      */
     function countQueuedTransfers($user = "") {
     	global $instanceFluxdQmgr;
-    	return $instanceFluxdQmgr->instance_countQueuedTransfers($user);
+		return (isset($instanceFluxdQmgr))
+			? $instanceFluxdQmgr->instance_countQueuedTransfers($user)
+			: 0;
     }
 
     /**
@@ -121,7 +133,8 @@ class FluxdQmgr extends FluxdServiceMod
      */
     function enqueueTransfer($transfer, $user) {
     	global $instanceFluxdQmgr;
-    	$instanceFluxdQmgr->instance_enqueueTransfer($transfer, $user);
+    	if (isset($instanceFluxdQmgr))
+    		$instanceFluxdQmgr->instance_enqueueTransfer($transfer, $user);
     }
 
     /**
@@ -132,7 +145,8 @@ class FluxdQmgr extends FluxdServiceMod
      */
     function dequeueTransfer($transfer, $user) {
     	global $instanceFluxdQmgr;
-    	$instanceFluxdQmgr->instance_dequeueTransfer($transfer, $user);
+    	if (isset($instanceFluxdQmgr))
+    		$instanceFluxdQmgr->instance_dequeueTransfer($transfer, $user);
     }
 
 	// =========================================================================
