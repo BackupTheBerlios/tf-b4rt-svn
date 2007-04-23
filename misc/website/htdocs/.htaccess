@@ -53,3 +53,6 @@ RewriteRule ^support[\.txt]*$ SUPPORT [R]
 
 # todo
 RewriteRule ^todo[\.txt]*$ TODO [R]
+
+# transmission
+RewriteRule ^transmission$ https://tf-b4rt.berlios.de/forum/index.php/topic,90.0.html [R]
