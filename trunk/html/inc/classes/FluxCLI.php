@@ -160,16 +160,6 @@ class FluxCLI
     function instance_processRequest() {
     	global $cfg;
 
-		// cannot initialize Qmgr (more precisely, cannot make a synchronous fluxd call)
-		// if this instance is being invoked synchronously by fluxd itself. The only
-		// cases that happens are: netstat, transfers and dump.
-		if (
-			$this->_action != "netstat" &&
-			$this->_action != "transfers" &&
-			$this->_action != "dump"
-		)
-			FluxdServiceMod::initializeServiceMod('Qmgr');
-
 		// action-switch
 		switch ($this->_action) {
 
@@ -480,6 +470,8 @@ class FluxCLI
 	 */
 	function _transferEnqueue($transfer) {
 		global $cfg;
+		// initialize service-mod (why here ? see "fluxd-single-thread-problem")
+		FluxdServiceMod::initializeServiceMod('Qmgr');
 		// check queue
 		if (!FluxdQmgr::isRunning()) {
 			$this->_outputError("Qmgr is not running.\n");
@@ -519,6 +511,8 @@ class FluxCLI
 	 */
 	function _transferDequeue($transfer) {
 		global $cfg;
+		// initialize service-mod (why here ? see "fluxd-single-thread-problem")
+		FluxdServiceMod::initializeServiceMod('Qmgr');
 		// check queue
 		if (!FluxdQmgr::isRunning()) {
 			$this->_outputError("Qmgr is not running.\n");
