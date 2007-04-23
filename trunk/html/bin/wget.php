@@ -24,10 +24,9 @@
 // declare ticks
 declare(ticks = 1);
 
-// prevent invocation from web (hopefully on all the php-config-permutations)
+// prevent invocation from web
 if (empty($argv[0])) die();
-if (empty($_SERVER['argv'][0])) die();
-if ($argv[0] != $_SERVER['argv'][0]) die();
+if (isset($_REQUEST['argv'])) die();
 
 // dummy
 $_SESSION = array('cache' => false);
