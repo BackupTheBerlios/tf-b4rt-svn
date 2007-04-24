@@ -728,7 +728,7 @@ static int tf_processCommandFile(tr_handle_t *h) {
 			}
 			// add char and increment
 			++totalChars;
-			if (index < 128) {
+			if (index < 127) {
 				currentLine[index++] = *fileCurrentPos++;
 			} else {
 				fileCurrentPos++;
