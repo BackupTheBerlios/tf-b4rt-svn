@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: utils.h 1579 2007-03-23 08:28:01Z joshe $
+ * $Id: utils.h 1763 2007-04-20 02:05:07Z joshe $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -72,6 +72,8 @@ int tr_concat( char ** buf, int * used, int * max,
  * Creates a nul-terminated string 
  **********************************************************************/
 char * tr_dupstr( const char * base, int len );
+
+int    tr_ioErrorFromErrno( void );
 
 char * tr_errorString( int code );
 

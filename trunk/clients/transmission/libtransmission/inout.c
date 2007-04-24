@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: inout.c 1608 2007-03-30 17:35:23Z joshe $
+ * $Id: inout.c 1763 2007-04-20 02:05:07Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -409,8 +409,8 @@ static int readOrWriteBytes( tr_io_t * io, uint64_t offset, int size,
             /* do what we are here to do... */
             if( readOrWrite( file, buf, cur ) != cur )
             {
+                ret = tr_ioErrorFromErrno();
                 tr_fdFileRelease( file );
-                ret = TR_ERROR_IO_OTHER;
                 goto cleanup;
             }
 

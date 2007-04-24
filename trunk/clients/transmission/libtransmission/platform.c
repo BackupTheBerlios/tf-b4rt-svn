@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: platform.c 1750 2007-04-18 16:39:10Z joshe $
+ * $Id: platform.c 1753 2007-04-18 19:32:53Z joshe $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -148,7 +148,7 @@ char * tr_getCacheDirectory()
     snprintf( cacheDirectory, MAX_PATH_LENGTH, "%s/Cache",
               tr_getPrefsDirectory() );
 #elif defined( SYS_DARWIN )
-    snprintf( cacheDirectory, MAX_PATH_LENGTH, "%s/Caches/Transmission",
+    snprintf( cacheDirectory, MAX_PATH_LENGTH, "%s/Library/Caches/Transmission",
               tr_getHomeDirectory() );
 #else
     snprintf( cacheDirectory, MAX_PATH_LENGTH, "%s/cache",
@@ -182,7 +182,7 @@ char * tr_getTorrentsDirectory()
               tr_getPrefsDirectory() );
 #elif defined( SYS_DARWIN )
     snprintf( torrentsDirectory, MAX_PATH_LENGTH, "%s/Torrents",
-              tr_getHomeDirectory() );
+              tr_getPrefsDirectory() );
 #else
     snprintf( torrentsDirectory, MAX_PATH_LENGTH, "%s/torrents",
               tr_getPrefsDirectory() );
