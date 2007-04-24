@@ -153,11 +153,11 @@
 								</tmpl_if>
 						</table>
 					</td>
-					<td width="425" bgcolor="<tmpl_var name="table_data_bg">" valign="top">
+					<td width="<tmpl_var name="stats_cell_width">" align="right" bgcolor="<tmpl_var name="table_data_bg">" valign="top">
 						<table cellpadding="1" border="0">
 							<tr>
 								<tmpl_if name="ui_displaylinks" value="1">
-									<td valign="top" nowrap>
+									<td width="200" valign="top" nowrap>
 										<b><tmpl_var name="_LINKS">:</b><br>
 										<tmpl_loop name="linklist">
 											<tmpl_if name="enable_dereferrer">
@@ -169,7 +169,7 @@
 									</td>
 								</tmpl_if>
 								<tmpl_if name="ui_displayusers">
-									<td bgcolor="<tmpl_var name="table_data_bg">" valign="top">
+									<td width="100" bgcolor="<tmpl_var name="table_data_bg">" valign="top">
 										<table width="100%" cellpadding="0" border="0">
 											<tr>
 										    	<td><img src="themes/tf_standard_themes/images/user.gif" width=17 height=14 title="" border=0 align="bottom"></td>
@@ -205,7 +205,7 @@
 	    							</td>
 								</tmpl_if>
 								<tmpl_if name="enable_goodlookstats">
-									<td bgcolor="<tmpl_var name="table_data_bg">" valign="top">
+									<td width="140" bgcolor="<tmpl_var name="table_data_bg">" valign="top">
 										<tmpl_if name="settingsHackStats1">
 											<b><tmpl_var name="_DOWNLOADSPEED">:</b><br>
 											<a href="index.php?iid=serverStats&type=who"><img src="themes/tf_standard_themes/images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><label id="g_speedDown"><tmpl_var name="settingsHackStats11"></label> kB/s</a><br>

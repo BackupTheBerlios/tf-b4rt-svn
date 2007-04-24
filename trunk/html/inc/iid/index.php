@@ -549,14 +549,19 @@ if ($cfg["index_page_connections"] != 0) {
 // loadavg
 $loadavgString = ($cfg["show_server_load"] != 0) ? @getLoadAverageString() : "n/a";
 
+// Width of top right stats cell:
+$stats_cell_width=0;
+
 // links
 if ($cfg["ui_displaylinks"] != "0") {
+	$stats_cell_width+=200;
 	if (isset($cfg['linklist']))
 		$tmpl->setloop('linklist', $cfg['linklist']);
 }
 
 // goodlookingstats
 if ($cfg["enable_goodlookstats"] != "0") {
+	$stats_cell_width+=180;
 	if ($settingsHackStats[0] == 1) {
 		$tmpl->setvar('settingsHackStats1', 1);
 		$tmpl->setvar('settingsHackStats11', @number_format($cfg["total_download"], 2));
@@ -585,6 +590,7 @@ if ($cfg["enable_goodlookstats"] != "0") {
 
 // users
 if ($cfg["ui_displayusers"] != "0") {
+	$stats_cell_width+=100;
 	$tmpl->setvar('ui_displayusers',1);
 	$tmpl->setvar('hide_offline', $cfg["hide_offline"]);
 	$userCount = count($cfg['users']);
@@ -601,6 +607,9 @@ if ($cfg["ui_displayusers"] != "0") {
 	if (count($arOfflineUsers) > 0)
 		$tmpl->setloop('arOfflineUsers', $arOfflineUsers);
 }
+
+// Width of top right stats cell:
+$tmpl->setvar('stats_cell_width',$stats_cell_width);
 
 // xfer
 if ($cfg['enable_xfer'] == 1) {
