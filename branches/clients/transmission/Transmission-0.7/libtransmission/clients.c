@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: clients.c 1675 2007-04-06 01:52:16Z livings124 $
+ * $Id: clients.c 1786 2007-04-23 20:14:07Z titer $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -73,8 +73,19 @@ char * tr_clientForId( uint8_t * id )
         }
         else if( !memcmp( &id[1], "BOW", 3 ) )
         {
-            asprintf( &ret, "Bits on Wheels (%c%c%c)",
-                      id[4], id[5], id[6] );
+            if( !memcmp( &id[4], "A0C", 3 ) )
+            {
+                asprintf( &ret, "Bits on Wheels 1.0.6" );
+            }
+            else if( !memcmp( &id[4], "A0B", 3 ) )
+            {
+                asprintf( &ret, "Bits on Wheels 1.0.5" );
+            }
+            else
+            {
+                asprintf( &ret, "Bits on Wheels (%c%c%c)",
+                        id[4], id[5], id[6] );
+            }
         }
         else if( !memcmp( &id[1], "BR", 2 ) )
         {

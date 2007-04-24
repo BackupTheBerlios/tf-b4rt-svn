@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: bencode.c 1719 2007-04-15 06:21:12Z joshe $
+ * $Id: bencode.c 1780 2007-04-23 19:26:19Z titer $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -291,6 +291,7 @@ benc_val_t * tr_bencDictFindFirst( benc_val_t * val, ... )
     benc_val_t * ret;
     va_list      ap;
 
+    ret = NULL;
     va_start( ap, val );
     while( ( key = va_arg( ap, const char * ) ) )
     {
