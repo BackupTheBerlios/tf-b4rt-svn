@@ -88,14 +88,20 @@ Torrentflux-b4rt Reference Manual
 
                 Changing what to display in the frontend
 
-                Deleting auto login cookies
+                Deleting torrentflux-b4rt auto login cookies
 
                 Resetting user profile to default
 
-            Cookie management
+            External cookie management
+                Overview
+
                 How to obtain cookie information
 
-                Adding, editing and deleting cookies
+                Adding cookies
+
+                Editing cookies
+
+                Deleting cookies
 
             Transfer profile management
                 Adding, editing and deleting transfer profiles
@@ -1221,21 +1227,323 @@ Introduction
                 basis in the user's profile.
 
         Profile management
+
+            Overview
+
+                The user profile page is available by clicking on the
+                'Profile' link in the navigation menu at the top right
+                of the frontend.
+
+                A number of options and settings can be changed on a per
+                user basis, including general user settings (password,
+                default theme, language), what is displayed in the
+                frontend, what cookies to use for cookie enabled sites
+                and the option to create different transfer profiles for
+                different transfer situations.
+
             General
+
                 Changing password/theme/language
+
+                    The following items can be changed directly on the
+                    'Profile' page:
+
+                    o   User name
+                    o   Password
+                    o   Default Theme
+                    o   Language
+                    o   Whether to hide offline users on the frontend
 
                 Changing what to display in the frontend
 
-                Deleting auto login cookies
+                    A large number of frontend display settings can be
+                    changed on a per user basis.  These options are
+                    available under the 'Personal Settings' heading on
+                    the 'Profile' page.
+
+                    The frontend display options which can be configured
+                    are as follows:
+
+                    TODO: put links to admin help for each of the
+                    following
+
+                    o   Page Refresh
+                        -   Enable/disable page refresh
+
+                    o   Page Refresh Interval
+                        -   Number of seconds between page refreshes
+
+                    o   AJAX Update
+                        -   Enable/disable AJAX updates
+
+                    o   Page title AJAX Update
+                        -   Enable/disable update of page title in AJAX
+                            updates
+
+                    o   User list AJAX Update
+                        -   Enable/disable update of the user list in
+                            AJAX Updates
+
+                    o   Transfer List AJAX Update
+                        -   Enable/disable update of the transfer list
+                            in AJAX updates
+
+                    o   Silent AJAX Update
+                        -   Do not display "Update in Progress..."
+                            during AJAX updates
+
+                    o   AJAX Update Interval
+                        -   Number of seconds between AJAX updates
+                            (default: 5)
+                    o   Width
+                        -   Width in pixels of the index page (default:
+                            900)
+
+                    o   Display Links
+                        -   Display list of links on the index page
+
+                    o   Display Users
+                        -   Display users on the index page
+
+                    o   Enable Good Looking Statistics
+                        -   Enable/disable "Good looking statistics"
+
+                    o   Good Looking Statistics Settings
+                        -   Select Fields shown in "Good looking
+                            statistics"
+
+                            Available stats to display in good looking
+                            stats panel:
+
+                            *	Download Speed
+                            *	Upload Speed
+                            *	Total Speed
+                            *	Connections
+                            *	Drive Space
+                            *	Server Load
+
+                    o   Display Bandwidth Bars
+                        -   Display bandwidth usage bars
+
+                    o   Bandwidth Bars Style
+                        -   Select style of bandwidth bars
+
+                    o   Big Bold Drivespace Warning
+                        -   Enable/disable drivespace warning when disk
+                            space low
+
+                    o   Show Seeding Torrents
+                        -   Display seeding torrents on index page
+
+                    o   Estimated Time To Seed
+                        -   Display the estimated time until transfers
+                            reach seeding cutoff ratio
+
+                    o   Transfer List Sorting
+                        -   Enable/disable reordering of transfer list
+                            by clicking on column headings
+
+                    o   Default Transfer List Sort Order
+                        -   Select default sort order of transfers in
+                            transfer list
+
+                    o   Transfer List Display
+                        -   Select the information to display in the
+                            transfer list
+
+                            Information columns available for display in
+                            transfer list:
+
+                            *	Owner
+                            *	Size
+                            *	Total Down
+                            *	Total Up
+                            *	Status
+                            *	Progress
+                            *	Down-Speed
+                            *	Up-Speed
+                            *	Seeds
+                            *	Peers
+                            *	Estimated Time
+                            *	Client
+
+                    o   Default Page In Transfer Settings Window
+                        -   Select the default page to display in the
+                            transfer settings window
+
+                    o   Server Stats
+                        -   Enable/disable display of server stats on
+                            index page
+
+                    o   Network Connections
+                        -   Enable/disable display of total network
+                            connections
+
+                    o   Show Server Load
+                        -   Enable/disable display of server load
+                            averages (1/5/15 min averages)
+
+                    o   Drivespace Bar Style
+                        -   Select style of drivespace bar
+
+                    o   Transfer Stats Window Update Method
+                        -   Select method to use to update transfer
+                            stats window
+
+                    o   Transfer Stats Window Update Interval
+                        -   Number of seconds between transfer stats
+                            updates
+
+                    o   Transfer Hosts
+                        -   Enable/disable display of connected hosts in
+                            transfer hosts window
+
+                    o   Server Monitor Update Interval
+                        -   Number of seconds between server monitor
+                            updates for server monitor update
+
+                Deleting torrentflux-b4rt auto login cookies
+
+                    To delete the auto-login cookie used to authenticate
+                    the current user automatically, click on the link
+                    'Delete "Auto-Login" Cookie'.
+
+                    When you restart the browser and browse to the
+                    torrentflux-b4rt frontend, you will be prompted to
+                    reenter your username and password to login.
+
+                    To find out about admin options for configuring
+                    authentication in torrentflux-b4rt see TODO_LINK:
+                    'Setting the authentication type to use'.
 
                 Resetting user profile to default
 
-            Cookie management
+                    Clicking the link 'Reset Personal Settings' will
+                    reset all customised personal settings to the
+                    defaults.
+
+            External cookie management
+
+                Overview
+
+                    Torrentflux-b4rt can be configured to use HTTP
+                    cookies when performing any operation that involves
+                    a HTTP request with a website that requires cookies.
+
+                    This is mainly used for downloading torrent files
+                    from a private tracker that requires you to use
+                    cookies for authentication.
+
+                    The following sections describe how to use external
+                    cookies with torrentflux-b4rt.
+
                 How to obtain cookie information
 
-                Adding, editing and deleting cookies
+                    TODO: create separate appendix for this item?  could
+                    expand to include methods for each 
+
+                    FireFox
+
+                        *	Tools => Options
+
+                        *	Cookies => View Cookies
+
+                        *	Locate the site you want to get cookie
+                            information from.
+
+                        *	Copy the cookie values for the variables
+                            that the site uses.
+
+                            Common cookie variables used in torrent sites
+                            are UID and PASS, although these will differ
+                            from site to site.  See your torrent site FAQ
+                            or Forum for more info.
+
+
+                    Internet Explorer
+
+                        *	Tools => Internet Options
+                        *	General => Settings => View Files
+                        *	Locate cookie file for site (eg: Cookie:user@www.host.com/)
+                        *	Open the file in a text editor
+                        *	Grab the values below UID and PASS
+
+                            The file will look something like this:
+
+                            ------
+
+                            userZone
+                            -660
+                            www.host.com/
+                            1600
+                            2148152320
+                            29840330
+                            125611120
+                            29766905
+                            *
+                            uid
+                            123456 <----------------------------
+                            www.host.com/
+                            1536
+                            3567643008
+                            32111902
+                            4197448416
+                            29766904
+                            *
+                            pass
+                            0j9i8h7g6f5e4d3c2b1a <--------------
+                            www.host.com/
+                            1536
+                            3567643008
+                            32111902
+                            4197448416
+                            29766904
+                            *
+
+                             --------
+
+                Adding cookies
+
+                    Enter the domain of the website you want to use
+                    cookies for in the text field labelled 'Host:'.
+
+                    Enter the cookie string you want to use in the text
+                    field labelled 'Data:'.
+
+                    Example:
+                    --------
+
+                    If the cookie variables you want to send are:
+
+                    o   uid with a value set to '99'
+                    o   pass with a value set to 'foobar'
+
+                    then the cookie string would look like:
+
+                    o   uid=99;pass=foobar;
+
+                    Once the Host/Data fields are completed, click 'Add'
+                    to add the cookie.
+
+                    The cookie will now be used whenever you perform an
+                    action that involves an HTTP request with the
+                    domain.
+
+                Editing cookies
+
+                    Click on the 'Edit' icon next to the cookie you want
+                    to edit.  On the resulting page, modify the cookie
+                    as needed and click 'Update' when finished.
+
+                Deleting cookies
+
+                    Click on the 'Delete <domain>' icon next to the
+                    cookie you want to delete.  This will remove the
+                    cookie from the current user's profile.
+
 
             Transfer profile management
+
                 Adding, editing and deleting transfer profiles
 
         Directory / file manager
