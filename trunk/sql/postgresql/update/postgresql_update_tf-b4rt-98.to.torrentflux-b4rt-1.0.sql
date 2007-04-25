@@ -22,17 +22,17 @@ CREATE TABLE tf_transfers (
   hash VARCHAR(40) DEFAULT '' NOT NULL,
   datapath VARCHAR(255) NOT NULL DEFAULT '',
   savepath VARCHAR(255) NOT NULL DEFAULT '',
-  running INT2 NOT NULL DEFAULT '0',
-  rate INT2 NOT NULL DEFAULT '0',
-  drate INT2 NOT NULL DEFAULT '0',
-  maxuploads INT2 NOT NULL DEFAULT '0',
-  superseeder INT2 NOT NULL DEFAULT '0',
+  running SMALLINT NOT NULL DEFAULT '0',
+  rate INTEGER NOT NULL DEFAULT '0',
+  drate INTEGER NOT NULL DEFAULT '0',
+  maxuploads SMALLINT NOT NULL DEFAULT '0',
+  superseeder SMALLINT NOT NULL DEFAULT '0',
   runtime VARCHAR(5) NOT NULL DEFAULT 'False',
-  sharekill INT2 NOT NULL DEFAULT '0',
-  minport INT2 NOT NULL DEFAULT '0',
-  maxport INT2 NOT NULL DEFAULT '0',
-  maxcons INT2 NOT NULL DEFAULT '0',
-  rerequest INT4 NOT NULL DEFAULT '0',
+  sharekill INTEGER NOT NULL DEFAULT '0',
+  minport INTEGER NOT NULL DEFAULT '0',
+  maxport INTEGER NOT NULL DEFAULT '0',
+  maxcons INTEGER NOT NULL DEFAULT '0',
+  rerequest INTEGER NOT NULL DEFAULT '0',
   PRIMARY KEY (transfer),
   CHECK (running>=0),
   CHECK (maxuploads>=0),
@@ -48,8 +48,8 @@ CREATE TABLE tf_transfers (
 DROP TABLE tf_torrent_totals;
 CREATE TABLE tf_transfer_totals (
   tid VARCHAR(40) NOT NULL DEFAULT '',
-  uptotal INT8 NOT NULL DEFAULT '0',
-  downtotal INT8 NOT NULL DEFAULT '0',
+  uptotal BIGINT NOT NULL DEFAULT '0',
+  downtotal BIGINT NOT NULL DEFAULT '0',
   PRIMARY KEY (tid)
 );
 
@@ -62,20 +62,20 @@ CREATE SEQUENCE tf_trprofiles_id_seq;
 -- tf_trprofiles
 --
 CREATE TABLE tf_trprofiles (
-  id INT4 DEFAULT nextval('tf_trprofiles_id_seq'),
+  id INTEGER DEFAULT nextval('tf_trprofiles_id_seq'),
   name VARCHAR(255) NOT NULL DEFAULT '',
-  owner INT4 NOT NULL DEFAULT '0',
-  public INT2 NOT NULL DEFAULT '0',
-  rate INT2  NOT NULL DEFAULT '0',
-  drate INT2  NOT NULL DEFAULT '0',
-  maxuploads INT2  NOT NULL DEFAULT '0',
-  superseeder INT2 NOT NULL DEFAULT '0',
+  owner INTEGER NOT NULL DEFAULT '0',
+  public SMALLINT NOT NULL DEFAULT '0',
+  rate INTEGER NOT NULL DEFAULT '0',
+  drate INTEGER NOT NULL DEFAULT '0',
+  maxuploads SMALLINT NOT NULL DEFAULT '0',
+  superseeder SMALLINT NOT NULL DEFAULT '0',
   runtime VARCHAR(5) NOT NULL DEFAULT 'False',
-  sharekill INT2  NOT NULL DEFAULT '0',
-  minport INT2 NOT NULL DEFAULT '0',
-  maxport INT2 NOT NULL DEFAULT '0',
-  maxcons INT2 NOT NULL DEFAULT '0',
-  rerequest INT4 NOT NULL DEFAULT '0',
+  sharekill INTEGER NOT NULL DEFAULT '0',
+  minport INTEGER NOT NULL DEFAULT '0',
+  maxport INTEGER NOT NULL DEFAULT '0',
+  maxcons INTEGER NOT NULL DEFAULT '0',
+  rerequest INTEGER NOT NULL DEFAULT '0',
   PRIMARY KEY (id),
   CHECK (public>=0),
   CHECK (maxuploads>=0),
@@ -134,7 +134,7 @@ INSERT INTO tf_settings_stats VALUES ('stats_default_compress','0');
 --
 -- alter
 --
-ALTER TABLE tf_users ADD state INT2 NOT NULL DEFAULT '1';
+ALTER TABLE tf_users ADD state SMALLINT NOT NULL DEFAULT '1';
 
 --
 -- updates

@@ -583,8 +583,8 @@ $queries[$cqt][$cdb] = array();
 array_push($queries[$cqt][$cdb], "CREATE SEQUENCE tf_cookies_cid_seq");
 array_push($queries[$cqt][$cdb], "
 CREATE TABLE tf_cookies (
-  cid INT4 DEFAULT nextval('tf_cookies_cid_seq'),
-  uid INT4 NOT NULL DEFAULT '0',
+  cid INTEGER DEFAULT nextval('tf_cookies_cid_seq'),
+  uid INTEGER NOT NULL DEFAULT '0',
   host VARCHAR(255) DEFAULT NULL,
   data VARCHAR(255) DEFAULT NULL,
   PRIMARY KEY (cid)
@@ -593,10 +593,10 @@ CREATE TABLE tf_cookies (
 array_push($queries[$cqt][$cdb], "CREATE SEQUENCE tf_links_lid_seq");
 array_push($queries[$cqt][$cdb], "
 CREATE TABLE tf_links (
-  lid INT4 DEFAULT nextval('tf_links_lid_seq'),
+  lid INTEGER DEFAULT nextval('tf_links_lid_seq'),
   url VARCHAR(255) NOT NULL DEFAULT '',
   sitename VARCHAR(255) NOT NULL DEFAULT 'Old Link',
-  sort_order INT2  DEFAULT '0',
+  sort_order SMALLINT DEFAULT '0',
   PRIMARY KEY (lid),
   CHECK (sort_order>=0)
 )");
@@ -604,7 +604,7 @@ CREATE TABLE tf_links (
 array_push($queries[$cqt][$cdb], "CREATE SEQUENCE tf_log_cid_seq");
 array_push($queries[$cqt][$cdb], "
 CREATE TABLE tf_log (
-  cid INT4 DEFAULT nextval('tf_log_cid_seq'),
+  cid INTEGER DEFAULT nextval('tf_log_cid_seq'),
   user_id VARCHAR(32) NOT NULL DEFAULT '',
   file VARCHAR(200) NOT NULL DEFAULT '',
   action VARCHAR(200) NOT NULL DEFAULT '',
@@ -618,21 +618,21 @@ CREATE TABLE tf_log (
 array_push($queries[$cqt][$cdb], "CREATE SEQUENCE tf_messages_mid_seq");
 array_push($queries[$cqt][$cdb], "
 CREATE TABLE tf_messages (
-  mid INT4 DEFAULT nextval('tf_messages_mid_seq'),
+  mid INTEGER DEFAULT nextval('tf_messages_mid_seq'),
   to_user VARCHAR(32) NOT NULL DEFAULT '',
   from_user VARCHAR(32) NOT NULL DEFAULT '',
   message TEXT,
-  IsNew INT4 DEFAULT NULL,
+  IsNew INTEGER DEFAULT NULL,
   ip VARCHAR(15) NOT NULL DEFAULT '',
   time VARCHAR(14) NOT NULL DEFAULT '0',
-  force_read INT2 DEFAULT '0',
+  force_read SMALLINT DEFAULT '0',
   PRIMARY KEY (mid)
 )");
 // tf_rss
 array_push($queries[$cqt][$cdb], "CREATE SEQUENCE tf_rss_rid_seq");
 array_push($queries[$cqt][$cdb], "
 CREATE TABLE tf_rss (
-  rid INT4 DEFAULT nextval('tf_rss_rid_seq'),
+  rid INTEGER DEFAULT nextval('tf_rss_rid_seq'),
   url VARCHAR(255) NOT NULL DEFAULT '',
   PRIMARY KEY (rid)
 )");
@@ -640,17 +640,17 @@ CREATE TABLE tf_rss (
 array_push($queries[$cqt][$cdb], "CREATE SEQUENCE tf_users_uid_seq");
 array_push($queries[$cqt][$cdb], "
 CREATE TABLE tf_users (
-  uid INT4 DEFAULT nextval('tf_users_uid_seq'),
+  uid INTEGER DEFAULT nextval('tf_users_uid_seq'),
   user_id VARCHAR(32) NOT NULL DEFAULT '',
-	  password VARCHAR(34) NOT NULL DEFAULT '',
-  hits INT4 NOT NULL DEFAULT '0',
+  password VARCHAR(34) NOT NULL DEFAULT '',
+  hits INTEGER NOT NULL DEFAULT '0',
   last_visit VARCHAR(14) NOT NULL DEFAULT '0',
   time_created VARCHAR(14) NOT NULL DEFAULT '0',
-  user_level INT2 NOT NULL DEFAULT '0',
-  hide_offline INT2 NOT NULL DEFAULT '0',
+  user_level SMALLINT NOT NULL DEFAULT '0',
+  hide_offline SMALLINT NOT NULL DEFAULT '0',
   theme VARCHAR(100) NOT NULL DEFAULT 'default',
   language_file VARCHAR(60) DEFAULT 'lang-english.php',
-  state INT2 NOT NULL DEFAULT '1',
+  state SMALLINT NOT NULL DEFAULT '1',
   PRIMARY KEY (uid)
 )");
 // tf_transfers
@@ -662,17 +662,17 @@ CREATE TABLE tf_transfers (
   hash VARCHAR(40) DEFAULT '' NOT NULL,
   datapath VARCHAR(255) NOT NULL DEFAULT '',
   savepath VARCHAR(255) NOT NULL DEFAULT '',
-  running INT2 NOT NULL DEFAULT '0',
-  rate INT2 NOT NULL DEFAULT '0',
-  drate INT2 NOT NULL DEFAULT '0',
-  maxuploads INT2 NOT NULL DEFAULT '0',
-  superseeder INT2 NOT NULL DEFAULT '0',
+  running SMALLINT NOT NULL DEFAULT '0',
+  rate INTEGER NOT NULL DEFAULT '0',
+  drate INTEGER NOT NULL DEFAULT '0',
+  maxuploads SMALLINT NOT NULL DEFAULT '0',
+  superseeder SMALLINT NOT NULL DEFAULT '0',
   runtime VARCHAR(5) NOT NULL DEFAULT 'False',
-  sharekill INT2 NOT NULL DEFAULT '0',
-  minport INT2 NOT NULL DEFAULT '0',
-  maxport INT2 NOT NULL DEFAULT '0',
-  maxcons INT2 NOT NULL DEFAULT '0',
-  rerequest INT4 NOT NULL DEFAULT '0',
+  sharekill INTEGER NOT NULL DEFAULT '0',
+  minport INTEGER NOT NULL DEFAULT '0',
+  maxport INTEGER NOT NULL DEFAULT '0',
+  maxcons INTEGER NOT NULL DEFAULT '0',
+  rerequest INTEGER NOT NULL DEFAULT '0',
   PRIMARY KEY (transfer),
   CHECK (running>=0),
   CHECK (maxuploads>=0),
@@ -685,28 +685,28 @@ CREATE TABLE tf_transfers (
 array_push($queries[$cqt][$cdb], "
 CREATE TABLE tf_transfer_totals (
   tid VARCHAR(40) NOT NULL DEFAULT '',
-  uptotal INT8 NOT NULL DEFAULT '0',
-  downtotal INT8 NOT NULL DEFAULT '0',
+  uptotal BIGINT NOT NULL DEFAULT '0',
+  downtotal BIGINT NOT NULL DEFAULT '0',
   PRIMARY KEY (tid)
 )");
 // tf_trprofiles
 array_push($queries[$cqt][$cdb], "CREATE SEQUENCE tf_trprofiles_id_seq");
 array_push($queries[$cqt][$cdb], "
 CREATE TABLE tf_trprofiles (
-  id INT4 DEFAULT nextval('tf_trprofiles_id_seq'),
+  id INTEGER DEFAULT nextval('tf_trprofiles_id_seq'),
   name VARCHAR(255) NOT NULL DEFAULT '',
-  owner INT4 NOT NULL DEFAULT '0',
-  public INT2 NOT NULL DEFAULT '0',
-  rate INT2  NOT NULL DEFAULT '0',
-  drate INT2  NOT NULL DEFAULT '0',
-  maxuploads INT2  NOT NULL DEFAULT '0',
-  superseeder INT2 NOT NULL DEFAULT '0',
+  owner INTEGER NOT NULL DEFAULT '0',
+  public SMALLINT NOT NULL DEFAULT '0',
+  rate INTEGER NOT NULL DEFAULT '0',
+  drate INTEGER NOT NULL DEFAULT '0',
+  maxuploads SMALLINT NOT NULL DEFAULT '0',
+  superseeder SMALLINT NOT NULL DEFAULT '0',
   runtime VARCHAR(5) NOT NULL DEFAULT 'False',
-  sharekill INT2  NOT NULL DEFAULT '0',
-  minport INT2 NOT NULL DEFAULT '0',
-  maxport INT2 NOT NULL DEFAULT '0',
-  maxcons INT2 NOT NULL DEFAULT '0',
-  rerequest INT4 NOT NULL DEFAULT '0',
+  sharekill INTEGER NOT NULL DEFAULT '0',
+  minport INTEGER NOT NULL DEFAULT '0',
+  maxport INTEGER NOT NULL DEFAULT '0',
+  maxcons INTEGER NOT NULL DEFAULT '0',
+  rerequest INTEGER NOT NULL DEFAULT '0',
   PRIMARY KEY (id),
   CHECK (public>=0),
   CHECK (maxuploads>=0),
@@ -720,13 +720,13 @@ array_push($queries[$cqt][$cdb], "
 CREATE TABLE tf_xfer (
   user_id VARCHAR(32) NOT NULL DEFAULT '',
   date DATE NOT NULL DEFAULT '0001-01-01',
-  download INT8 NOT NULL DEFAULT '0',
-  upload INT8 NOT NULL DEFAULT '0'
+  download BIGINT NOT NULL DEFAULT '0',
+  upload BIGINT NOT NULL DEFAULT '0'
 )");
 // tf_settings_user
 array_push($queries[$cqt][$cdb], "
 CREATE TABLE tf_settings_user (
-  uid INT4 NOT NULL,
+  uid INTEGER NOT NULL,
   tf_key VARCHAR(255) NOT NULL DEFAULT '',
   tf_value TEXT DEFAULT '' NOT NULL
 )");
