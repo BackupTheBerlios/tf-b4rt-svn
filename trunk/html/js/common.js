@@ -23,12 +23,12 @@ function bulkCheck(thisIn) {
 }
 function showTransfer(name_file) {
 	if (actionInProgress)
-		return false;
+		return;
 	window.open(name_file,'_blank','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=600,height=400">')
 }
 function openServerMonitor() {
 	if (actionInProgress)
-		return false;
+		return;
 	window.open('index.php?iid=servermon','_blank','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=470,height=220')
 }
 function actionClick(showlabel) {
