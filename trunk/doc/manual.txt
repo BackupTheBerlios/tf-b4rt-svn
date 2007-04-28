@@ -104,7 +104,13 @@ Torrentflux-b4rt Reference Manual
                 Deleting cookies
 
             Transfer profile management
-                Adding, editing and deleting transfer profiles
+                Overview
+
+                Adding transfer profiles
+
+                Editing transfer profiles
+
+                Deleting transfer profiles
 
         Directory / file manager
             Notes on availability re admin settings
@@ -1544,7 +1550,65 @@ Introduction
 
             Transfer profile management
 
-                Adding, editing and deleting transfer profiles
+                Overview
+
+                    The transfer profile management section is found on
+                    the user's 'Profile' page.  Click the link 'Transfer
+                    Profiles Management' to open the transfer profiles
+                    management window.
+
+                    A transfer profile is a pre-defined set of transfer
+                    options which are saved under a transfer profile
+                    name.  The transfer profile(s) can then be used at
+                    a later date when you start a new transfer, saving
+                    you the effort of having to manually go through each
+                    of the settings for that transfer tweaking them to
+                    suit the type of transfer you're performing.
+
+                    Example:
+                    --------
+                    You use a private torrent tracker that requires you
+                    keep at least a ratio of 1.05.  Rather than manually
+                    go through the settings each time you start a
+                    torrent for that private tracker, instead you can
+                    create a transfer profile with the following
+                    settings:
+
+                    o   'Percentage When Seeding should Stop:' = '105'
+                    o   'Max upload rate' = 0 - no restriction on upload
+                        speed
+
+                    Now each time you start a new transfer that uses the
+                    private tracker, just select the profile from the
+                    transfer settings window - the sharekill ratio
+                    will automatically be set to 105 and there will be
+                    no restriction on how fast you upload to leeching
+                    peers meaning you should meet your ratio of 1.05
+                    faster.
+
+                Adding transfer profiles
+
+                    To add a transfer profile, complete the form on the
+                    transfer profiles management page and click the
+                    'Add' button.
+
+                    If you wish the profile to be available to all other
+                    users, check the 'Public Profile' checkbox.
+
+                Editing transfer profiles
+
+                    To edit a transfer profile, click the 'Edit
+                    <profilename>' icon next to the profile.  This will
+                    load the profile's settings and allow you to modify
+                    them.
+
+                    When you are happy with the changes, click the
+                    'Update' button to save the profile.
+
+                Deleting transfer profiles
+
+                    To delete a transfer profile, click on the red
+                    button with a cross on it next to the profile.
 
         Directory / file manager
             Notes on availability re admin settings
