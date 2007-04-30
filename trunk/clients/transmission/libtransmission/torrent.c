@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: torrent.c 1772 2007-04-21 13:57:30Z livings124 $
+ * $Id: torrent.c 1807 2007-04-28 01:34:39Z livings124 $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -625,6 +625,11 @@ void tr_torrentAmountFinished( tr_torrent_t * tor, float * tab, int size )
 void tr_torrentRemoveSaved( tr_torrent_t * tor )
 {
     tr_metainfoRemoveSaved( tor->info.hashString, tor->handle->tag );
+}
+
+void tr_torrentRemoveFastResume( tr_torrent_t * tor )
+{
+    tr_ioRemoveResume( tor );
 }
 
 /***********************************************************************

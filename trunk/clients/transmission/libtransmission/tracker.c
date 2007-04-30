@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: tracker.c 1685 2007-04-08 05:41:44Z joshe $
+ * $Id: tracker.c 1810 2007-04-29 15:28:56Z livings124 $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -515,18 +515,17 @@ static tr_http_t * getQuery( tr_tracker_t * tc )
 
     char         * event, * trackerid, * idparam;
     uint64_t       left;
-    uint64_t       down;
-    uint64_t       up;
     char           start;
     int            numwant = 50;
 
-    down = tor->downloadedCur;
-    up   = tor->uploadedCur;
     if( tc->started )
     {
         event = "&event=started";
-        down  = 0;
-        up    = 0;
+        
+        tor->downloadedPrev += tor->downloadedCur;
+        tor->downloadedCur   = 0;
+        tor->uploadedPrev   += tor->uploadedCur;
+        tor->uploadedCur     = 0;
 
         if( shouldChangePort( tc ) )
         {
@@ -575,8 +574,8 @@ static tr_http_t * getQuery( tr_tracker_t * tc )
                           "%s%s"
                           "%s",
                           tcInf->announce, start, tor->escapedHashString,
-                          tc->id, tc->publicPort, up, down, left, numwant,
-                          tor->key, idparam, trackerid, event );
+                          tc->id, tc->publicPort, tor->uploadedCur, tor->downloadedCur,
+                          left, numwant, tor->key, idparam, trackerid, event );
 }
 
 static tr_http_t * getScrapeQuery( tr_tracker_t * tc )

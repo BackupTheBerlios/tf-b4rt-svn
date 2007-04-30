@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.h 1767 2007-04-20 23:51:15Z livings124 $
+ * $Id: transmission.h 1807 2007-04-28 01:34:39Z livings124 $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -349,6 +349,8 @@ float * tr_torrentCompletion( tr_torrent_t * tor );
  * TR_FLAG_SAVE flag is set.
  **********************************************************************/
 void tr_torrentRemoveSaved( tr_torrent_t * );
+
+void tr_torrentRemoveFastResume( tr_torrent_t * tor );
 
 /***********************************************************************
  * tr_torrentClose

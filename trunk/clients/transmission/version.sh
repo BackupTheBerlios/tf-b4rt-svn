@@ -4,7 +4,7 @@
 
 MAJOR=0
 MINOR=7
-MAINT=1
+MAINT=2
 STRING=0.80-svn
 
 # get transmission-revision from transmission.revision

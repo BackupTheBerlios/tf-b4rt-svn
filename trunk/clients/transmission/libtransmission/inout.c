@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: inout.c 1763 2007-04-20 02:05:07Z joshe $
+ * $Id: inout.c 1809 2007-04-28 03:44:09Z livings124 $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -101,6 +101,14 @@ tr_io_t * tr_ioInit( tr_torrent_t * tor )
     }
 
     return io;
+}
+
+void tr_ioRemoveResume( tr_torrent_t * tor )
+{
+    if( !tor->io )
+    {
+        fastResumeRemove( tor );
+    }
 }
 
 /***********************************************************************
@@ -464,8 +472,8 @@ static void invertSlots( tr_io_t * io, int slot1, int slot2 )
     uint8_t * buf1, * buf2;
     int piece1, piece2, foo;
 
-    buf1 = calloc( inf->pieceSize, 1 );
-    buf2 = calloc( inf->pieceSize, 1 );
+    buf1 = malloc( inf->pieceSize );
+    buf2 = malloc( inf->pieceSize );
 
     readSlot( io, slot1, buf1, &foo );
     readSlot( io, slot2, buf2, &foo );

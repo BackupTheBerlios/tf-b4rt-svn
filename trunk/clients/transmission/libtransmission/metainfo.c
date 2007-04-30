@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: metainfo.c 1692 2007-04-08 21:25:01Z joshe $
+ * $Id: metainfo.c 1807 2007-04-28 01:34:39Z livings124 $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -535,7 +535,7 @@ void tr_metainfoRemoveSaved( const char * hashString, const char * tag )
     char file[MAX_PATH_LENGTH];
 
     savedname( file, sizeof file, hashString, tag );
-    unlink(file);
+    unlink( file );
 }
 
 uint8_t * readtorrent( const char * path, size_t * size )
