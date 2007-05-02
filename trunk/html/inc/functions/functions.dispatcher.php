@@ -634,82 +634,28 @@ function dispatcher_processUpload() {
 	// action-id
 	$actionId = tfb_getRequestVar('aid');
 	// file upload
-	$filename = "";
 	$uploadMessages = array();
 	// stack
 	$tStack = array();
 	// process upload
 	while (count($_FILES) > 0) {
-		$uploadFiles = array_shift($_FILES);
-		foreach ($uploadFiles['size'] as $id => $size) {
-			if ($size == 0) {
-				// no or empty file, skip it
-				continue;
+		$upload = array_shift($_FILES);
+		if (is_array($upload['size'])) {
+			foreach ($upload['size'] as $id => $size) {
+				if ($size > 0) {
+					_dispatcher_processUpload(
+						$upload['name'][$id], $upload['tmp_name'][$id], $size,
+						$actionId, $uploadMessages, $tStack);
+				}
 			}
-			$filename = stripslashes($uploadFiles['name'][$id]);
-			$filename = tfb_cleanFileName($filename);
-			if ($filename === false) {
-				// invalid file
-				array_push($uploadMessages, "The type of file ".stripslashes($uploadFiles['name'][$id])." is not allowed.");
-				array_push($uploadMessages, "\nvalid file-extensions: ");
-				array_push($uploadMessages, $cfg["file_types_label"]);
-				continue;
-			} else {
-				// file is valid
-				if (substr($filename, -5) == ".wget") {
-					// is enabled ?
-					if ($cfg["enable_wget"] == 0) {
-						AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload wget-file ".$filename);
-						array_push($uploadMessages, "wget is disabled  : ".$filename);
-						continue;
-					} else if ($cfg["enable_wget"] == 1) {
-						if (!$cfg['isAdmin']) {
-							AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload wget-file ".$filename);
-							array_push($uploadMessages, "wget is disabled for users : ".$filename);
-							continue;
-						}
-					}
-				} else if (substr($filename, -4) == ".nzb") {
-					// is enabled ?
-					if ($cfg["enable_nzbperl"] == 0) {
-						AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload nzb-file ".$filename);
-						array_push($uploadMessages, "nzbperl is disabled  : ".$filename);
-						continue;
-					} else if ($cfg["enable_nzbperl"] == 1) {
-						if (!$cfg['isAdmin']) {
-							AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload nzb-file ".$filename);
-							array_push($uploadMessages, "nzbperl is disabled for users : ".$filename);
-							continue;
-						}
-					}
-				}
-				if ($uploadFiles['size'][$id] <= $cfg["upload_limit"] && $uploadFiles['size'][$id] > 0) {
-					//FILE IS BEING UPLOADED
-					if (@is_file($cfg["transfer_file_path"].$filename)) {
-						// Error
-						array_push($uploadMessages, "the file ".$filename." already exists on the server.");
-						continue;
-					} else {
-						if (@move_uploaded_file($uploadFiles['tmp_name'][$id], $cfg["transfer_file_path"].$filename)) {
-							@chmod($cfg["transfer_file_path"].$filename, 0644);
-							AuditAction($cfg["constants"]["file_upload"], $filename);
-							// inject
-							injectTransfer($filename);
-							// instant action ?
-							if ($actionId > 1)
-								array_push($tStack,$filename);
-						} else {
-							array_push($uploadMessages, "File not uploaded, file could not be found or could not be moved: ".$cfg["transfer_file_path"].$filename);
-							continue;
-					  	}
-					}
-				} else {
-					array_push($uploadMessages, "File not uploaded, file size limit is ".$cfg["upload_limit"].". file has ".$size);
-					continue;
-				}
+		} else {
+			if ($upload['size'] > 0) {
+				_dispatcher_processUpload(
+					$upload['name'], $upload['tmp_name'], $upload['size'],
+					$actionId, $uploadMessages, $tStack);
 			}
 		}
-	} // End File Upload
+	}
 	// instant action ?
 	if (($actionId > 1) && (!empty($tStack))) {
 		foreach ($tStack as $transfer) {
@@ -726,8 +672,87 @@ function dispatcher_processUpload() {
        			$uploadMessages = array_merge($uploadMessages, $ch->messages);
 		}
 	}
+	// messages
 	if (count($uploadMessages) > 0) {
 		@error("There were Problems", "", "", $uploadMessages);
+	}
+}
+
+/**
+ * _dispatcher_processUpload
+ *
+ * @param $name
+ * @param $tmp_name
+ * @param $size
+ * @param $actionId
+ * @param &$uploadMessages
+ * @param &$tStack
+ * @return bool
+ */
+function _dispatcher_processUpload($name, $tmp_name, $size, $actionId, &$uploadMessages, &$tStack) {
+	global $cfg;
+	$filename = tfb_cleanFileName(stripslashes($name));
+	if ($filename === false) {
+		// invalid file
+		array_push($uploadMessages, "The type of file ".stripslashes($name)." is not allowed.");
+		array_push($uploadMessages, "\nvalid file-extensions: ");
+		array_push($uploadMessages, $cfg["file_types_label"]);
+		return false;
+	} else {
+		// file is valid
+		if (substr($filename, -5) == ".wget") {
+			// is enabled ?
+			if ($cfg["enable_wget"] == 0) {
+				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload wget-file ".$filename);
+				array_push($uploadMessages, "wget is disabled  : ".$filename);
+				return false;
+			} else if ($cfg["enable_wget"] == 1) {
+				if (!$cfg['isAdmin']) {
+					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload wget-file ".$filename);
+					array_push($uploadMessages, "wget is disabled for users : ".$filename);
+					return false;
+				}
+			}
+		} else if (substr($filename, -4) == ".nzb") {
+			// is enabled ?
+			if ($cfg["enable_nzbperl"] == 0) {
+				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload nzb-file ".$filename);
+				array_push($uploadMessages, "nzbperl is disabled  : ".$filename);
+				return false;
+			} else if ($cfg["enable_nzbperl"] == 1) {
+				if (!$cfg['isAdmin']) {
+					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload nzb-file ".$filename);
+					array_push($uploadMessages, "nzbperl is disabled for users : ".$filename);
+					return false;
+				}
+			}
+		}
+		if ($size <= $cfg["upload_limit"] && $size > 0) {
+			//FILE IS BEING UPLOADED
+			if (@is_file($cfg["transfer_file_path"].$filename)) {
+				// Error
+				array_push($uploadMessages, "the file ".$filename." already exists on the server.");
+				return false;
+			} else {
+				if (@move_uploaded_file($tmp_name, $cfg["transfer_file_path"].$filename)) {
+					@chmod($cfg["transfer_file_path"].$filename, 0644);
+					AuditAction($cfg["constants"]["file_upload"], $filename);
+					// inject
+					injectTransfer($filename);
+					// instant action ?
+					if ($actionId > 1)
+						array_push($tStack,$filename);
+					// return
+					return true;
+				} else {
+					array_push($uploadMessages, "File not uploaded, file could not be found or could not be moved: ".$cfg["transfer_file_path"].$filename);
+					return false;
+			  	}
+			}
+		} else {
+			array_push($uploadMessages, "File not uploaded, file size limit is ".$cfg["upload_limit"].". file has ".$size);
+			return false;
+		}
 	}
 }
 
@@ -822,6 +847,8 @@ function dispatcher_exit() {
 		? tfb_getRequestVar('riid')
 		: "index";
 	switch ($redir) {
+		case "_exit_":
+			exit("1");
 		case "_none_":
 			break;
 		case "_referer_":
