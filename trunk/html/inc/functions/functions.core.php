@@ -239,8 +239,9 @@ function AuditAction($action, $file = "") {
  */
 function error($msg, $link = "", $linklabel = "", $msgs = array()) {
 	global $cfg, $argv;
-	// web/cli
-    if (empty($argv[0])) { // web
+	// web/cli/tfbf
+	if ((empty($argv[0])) &&
+		(!("tfbf" == @substr($cfg['user_agent'], 0, 4)))) { // web
 		// theme
 		$theme = "default";
 		if (isset($cfg["theme"]))
@@ -267,9 +268,9 @@ function error($msg, $link = "", $linklabel = "", $msgs = array()) {
 		$_tmpl->pparse();
 		// get out here
 		exit();
- 	} else { // cli
+ 	} else { // cli/tfbf
     	// message
-    	$exitMsg = "Error : ".$msg."\n";
+    	$exitMsg = "Error: ".$msg."\n";
     	// messages
     	if (!empty($msgs))
     		$exitMsg .= implode("\n", $msgs)."\n";
