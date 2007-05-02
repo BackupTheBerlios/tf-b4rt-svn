@@ -624,25 +624,33 @@ function _dispatcher_processDownload($url, $type = 'torrent', $ext = '.torrent')
  */
 function dispatcher_processUpload() {
 	global $cfg;
+	// check if files exist
+	if (empty($_FILES)) {
+		// log
+		AuditAction($cfg["constants"]["error"], "no file in file-upload");
+		// return
+		return;
+	}
+	// action-id
+	$actionId = tfb_getRequestVar('aid');
+	// file upload
 	$filename = "";
 	$uploadMessages = array();
-	// file upload
-	if (!empty($_FILES['upload_files'])) {
-		// action-id
-		$actionId = tfb_getRequestVar('aid');
-		// stack
-		$tStack = array();
-		// process upload
-		foreach($_FILES['upload_files']['size'] as $id => $size) {
+	// stack
+	$tStack = array();
+	// process upload
+	while (count($_FILES) > 0) {
+		$uploadFiles = array_shift($_FILES);
+		foreach ($uploadFiles['size'] as $id => $size) {
 			if ($size == 0) {
 				// no or empty file, skip it
 				continue;
 			}
-			$filename = stripslashes($_FILES['upload_files']['name'][$id]);
+			$filename = stripslashes($uploadFiles['name'][$id]);
 			$filename = tfb_cleanFileName($filename);
 			if ($filename === false) {
 				// invalid file
-				array_push($uploadMessages, "The type of file ".stripslashes($_FILES['upload_files']['name'][$id])." is not allowed.");
+				array_push($uploadMessages, "The type of file ".stripslashes($uploadFiles['name'][$id])." is not allowed.");
 				array_push($uploadMessages, "\nvalid file-extensions: ");
 				array_push($uploadMessages, $cfg["file_types_label"]);
 				continue;
@@ -675,14 +683,14 @@ function dispatcher_processUpload() {
 						}
 					}
 				}
-				if ($_FILES['upload_files']['size'][$id] <= $cfg["upload_limit"] && $_FILES['upload_files']['size'][$id] > 0) {
+				if ($uploadFiles['size'][$id] <= $cfg["upload_limit"] && $uploadFiles['size'][$id] > 0) {
 					//FILE IS BEING UPLOADED
 					if (@is_file($cfg["transfer_file_path"].$filename)) {
 						// Error
 						array_push($uploadMessages, "the file ".$filename." already exists on the server.");
 						continue;
 					} else {
-						if (@move_uploaded_file($_FILES['upload_files']['tmp_name'][$id], $cfg["transfer_file_path"].$filename)) {
+						if (@move_uploaded_file($uploadFiles['tmp_name'][$id], $cfg["transfer_file_path"].$filename)) {
 							@chmod($cfg["transfer_file_path"].$filename, 0644);
 							AuditAction($cfg["constants"]["file_upload"], $filename);
 							// inject
@@ -700,22 +708,22 @@ function dispatcher_processUpload() {
 					continue;
 				}
 			}
-		} // End File Upload
-		// instant action ?
-		if (($actionId > 1) && (!empty($tStack))) {
-			foreach ($tStack as $transfer) {
-				$ch = ClientHandler::getInstance(getTransferClient($transfer));
-				switch ($actionId) {
-					case 3:
-						$ch->start($transfer, false, true);
-						break;
-					case 2:
-						$ch->start($transfer, false, false);
-						break;
-				}
-				if (count($ch->messages) > 0)
-           			$uploadMessages = array_merge($uploadMessages, $ch->messages);
+		}
+	} // End File Upload
+	// instant action ?
+	if (($actionId > 1) && (!empty($tStack))) {
+		foreach ($tStack as $transfer) {
+			$ch = ClientHandler::getInstance(getTransferClient($transfer));
+			switch ($actionId) {
+				case 3:
+					$ch->start($transfer, false, true);
+					break;
+				case 2:
+					$ch->start($transfer, false, false);
+					break;
 			}
+			if (count($ch->messages) > 0)
+       			$uploadMessages = array_merge($uploadMessages, $ch->messages);
 		}
 	}
 	if (count($uploadMessages) > 0) {
