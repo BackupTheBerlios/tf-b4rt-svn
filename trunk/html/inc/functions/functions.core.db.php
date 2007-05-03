@@ -37,9 +37,20 @@ function dbInitialize() {
     	@ $db->PConnect($cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
     else
     	@ $db->Connect($cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
+    // register shutdown-function
+    @register_shutdown_function("dbDispose");
     // check for error
     if ($db->ErrorNo() != 0)
     	@error("Database Connection Problems", "", "", array("Check your database-config-file. (inc/config/config.db.php)"));
+}
+
+/**
+ * dispose ADOdb-connection
+ */
+function dbDispose() {
+	global $db;
+	// close connection
+	@ $db->Close();
 }
 
 /**
