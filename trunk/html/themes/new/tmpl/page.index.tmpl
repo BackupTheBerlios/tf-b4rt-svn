@@ -337,8 +337,8 @@
 
 
 
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 
 
@@ -347,7 +347,7 @@
 		<tr>
 			<td>
 		<form action="dispatcher.php" method="POST" onsubmit="return actionSubmit()">
-			<div id="transferList"><tmpl_include name="inc.transferList.tmpl"></div>
+			
 			<table bgcolor="<tmpl_var name="table_data_bg">" width="100%" bordercolor="<tmpl_var name="table_border_dk">" border="0" cellpadding=3 cellspacing=0>
 				<tr>
 					<td bgcolor="<tmpl_var name="table_header_bg">">
@@ -427,7 +427,7 @@
 																	<option value="transferWipe" style="background-color: #DDAAAA">Wipe</option>
 																</select>
 																<input type="submit" value="Go">
-																<input type="checkbox" name="bulkBox" onclick="bulkCheck(this);">
+																<input type="checkbox" name="bulkBox" onclick="bulkCheck(this);"w>
 															</td>
 														</tmpl_if>
 													</tr></table>
@@ -446,5 +446,6 @@
 	</tr>
 	</table>
 </div>
-</body>
-</html>
+
+
+

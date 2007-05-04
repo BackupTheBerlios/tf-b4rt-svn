@@ -1,61 +1,58 @@
-<tr>
-	<td background="themes/default/images/bar.gif" bgcolor="#94ABC0" nowrap><div align="center" class="title">
-		<tmpl_if name="sortOrder" value="da">
-			<a href="index.php?iid=index&so=dd" onclick="return actionClick(true)"><font class="adminlink">#</font></a>
-			<a href="index.php?iid=index&so=dd" onclick="return actionClick(true)"><img src="themes/default/images/s_down.gif" width="9" height="9" border="0"></a>
-		<tmpl_elseif name="sortOrder" value="dd">
-			<a href="index.php?iid=index&so=da" onclick="return actionClick(true)"><font class="adminlink">#</font></a>
-			<a href="index.php?iid=index&so=da" onclick="return actionClick(true)"><img src="themes/default/images/s_up.gif" width="9" height="9" border="0"></a>
-		<tmpl_else>
-			<a href="index.php?iid=index&so=dd" onclick="return actionClick(true)"><font class="adminlink">#</font></a>
-		</tmpl_if>
-	</div></td>
-	<td background="themes/default/images/bar.gif" bgcolor="#94ABC0" nowrap><div align="center" class="title">
-		<tmpl_if name="sortOrder" value="na">
-			<a href="index.php?iid=index&so=nd" onclick="return actionClick(true)"><font class="adminlink"><tmpl_var name="_TRANSFERFILE"></font></a>
-			<a href="index.php?iid=index&so=nd" onclick="return actionClick(true)"><img src="themes/default/images/s_down.gif" width="9" height="9" border="0"></a>
-		<tmpl_elseif name="sortOrder" value="nd">
-			<a href="index.php?iid=index&so=na" onclick="return actionClick(true)"><font class="adminlink"><tmpl_var name="_TRANSFERFILE"></font></a>
-			<a href="index.php?iid=index&so=na" onclick="return actionClick(true)"><img src="themes/default/images/s_up.gif" width="9" height="9" border="0"></a>
-		<tmpl_else>
-			<a href="index.php?iid=index&so=na" onclick="return actionClick(true)"><font class="adminlink"><tmpl_var name="_TRANSFERFILE"></font></a>
-		</tmpl_if>
-	</div></td>
-	<tmpl_if name="settings_0">
-		<td background="themes/default/images/bar.gif" bgcolor="#94ABC0" nowrap><div align="center" class="title"><tmpl_var name="_USER"></div></td>
-	</tmpl_if>
-	<tmpl_if name="settings_1">
-		<td background="themes/default/images/bar.gif" bgcolor="#94ABC0" nowrap><div align="center" class="title">Size</div></td>
-	</tmpl_if>
-	<tmpl_if name="settings_2">
-		<td background="themes/default/images/bar.gif" bgcolor="#94ABC0" nowrap><div align="center" class="title">T. Down</div></td>
-	</tmpl_if>
-	<tmpl_if name="settings_3">
-		<td background="themes/default/images/bar.gif" bgcolor="#94ABC0" nowrap><div align="center" class="title">T. Up</div></td>
-	</tmpl_if>
-	<tmpl_if name="settings_4">
-		<td background="themes/default/images/bar.gif" bgcolor="#94ABC0" nowrap><div align="center" class="title"><tmpl_var name="_STATUS"></div></td>
-	</tmpl_if>
-	<tmpl_if name="settings_5">
-		<td background="themes/default/images/bar.gif" bgcolor="#94ABC0" nowrap><div align="center" class="title">Progress</div></td>
-	</tmpl_if>
-	<tmpl_if name="settings_6">
-		<td background="themes/default/images/bar.gif" bgcolor="#94ABC0" nowrap><div align="center" class="title">Down</div></td>
-	</tmpl_if>
-	<tmpl_if name="settings_7">
-		<td background="themes/default/images/bar.gif" bgcolor="#94ABC0" nowrap><div align="center" class="title">Up</div></td>
-	</tmpl_if>
-	<tmpl_if name="settings_8">
-		<td background="themes/default/images/bar.gif" bgcolor="#94ABC0" nowrap><div align="center" class="title">Seeds</div></td>
-	</tmpl_if>
-	<tmpl_if name="settings_9">
-		<td background="themes/default/images/bar.gif" bgcolor="#94ABC0" nowrap><div align="center" class="title">Peers</div></td>
-	</tmpl_if>
-	<tmpl_if name="settings_10">
-		<td background="themes/default/images/bar.gif" bgcolor="#94ABC0" nowrap><div align="center" class="title"><tmpl_var name="_ESTIMATEDTIME"></div></td>
-	</tmpl_if>
-	<tmpl_if name="settings_11">
-		<td background="themes/default/images/bar.gif" bgcolor="#94ABC0" nowrap><div align="center" class="title">C</div></td>
-	</tmpl_if>
-	<td background="themes/default/images/bar.gif" bgcolor="#94ABC0" nowrap><div align="center" class="title"><tmpl_var name="_ADMIN"></div></td>
-</tr>
+<div id="upload">
+	<div id="uploadLast"></div>
+	<div id="uploadFirst">
+		<span class="upload">
+			<tmpl_if name="sortOrder" value="da">
+				<a id="closeLink" href="index.php?iid=index&so=dd" onclick="return actionClick(true)">#<img src="themes/new/pics/s_down.jpg"></a>
+			<tmpl_elseif name="sortOrder" value="dd">
+				<a id="closeLink" href="index.php?iid=index&so=da" onclick="return actionClick(true)">#<img src="themes/new/pics/s_up.jpg"></a>
+			<tmpl_else>
+				<a id="closeLink" href="index.php?iid=index&so=dd" onclick="return actionClick(true)">#</a>
+			</tmpl_if>
+			<tmpl_if name="sortOrder" value="na">
+				<a id="closeLink" href="index.php?iid=index&so=nd" onclick="return actionClick(true)"><tmpl_var name="_TRANSFERFILE"><img src="themes/new/pics/s_down.jpg"></a>
+			<tmpl_elseif name="sortOrder" value="nd">
+				<a id="closeLink" href="index.php?iid=index&so=na" onclick="return actionClick(true)"><tmpl_var name="_TRANSFERFILE"><img src="themes/new/pics/s_up.jpg"></a>
+			<tmpl_else>
+				<a id="closeLink" href="index.php?iid=index&so=na" onclick="return actionClick(true)"><tmpl_var name="_TRANSFERFILE"></a>
+			</tmpl_if>
+			<tmpl_if name="settings_0">
+				<tmpl_var name="_USER">
+			</tmpl_if>
+			<tmpl_if name="settings_1">
+				Size
+			</tmpl_if>
+			<tmpl_if name="settings_2">
+				T. Down
+			</tmpl_if>
+			<tmpl_if name="settings_3">
+				T. Up
+			</tmpl_if>
+			<tmpl_if name="settings_4">
+				<tmpl_var name="_STATUS">
+			</tmpl_if>
+			<tmpl_if name="settings_5">
+				Progress
+			</tmpl_if>
+			<tmpl_if name="settings_6">
+				Down
+			</tmpl_if>
+			<tmpl_if name="settings_7">
+				Up
+			</tmpl_if>
+			<tmpl_if name="settings_8">
+				Seeds
+			</tmpl_if>
+			<tmpl_if name="settings_9">
+				Peers
+			</tmpl_if>
+			<tmpl_if name="settings_10">
+				<tmpl_var name="_ESTIMATEDTIME">
+			</tmpl_if>
+			<tmpl_if name="settings_11">
+				C
+			</tmpl_if>
+			<tmpl_var name="_ADMIN">
+		</span>
+	</div>
+</div>
