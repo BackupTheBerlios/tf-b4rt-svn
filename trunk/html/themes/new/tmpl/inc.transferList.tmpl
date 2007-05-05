@@ -1,92 +1,122 @@
-<table class="sortable" id="transfer_table">
+<table class="sortabl" id="transfer_table">
 	<tmpl_if name="are_user_transfer">
 	<!--	<tmpl_include name="inc.transferListHead.tmpl">		-->
 			<tmpl_loop name="arUserTorrent">
-				<div id="upload">
-					<div id="uploadLast"></div>
-					<div id="uploadFirst">
-						<span class="upload">
-							<a href="javascript:more_Info('<tmpl_var name="entry">')">
-								<img id="more_Info_<tmpl_var name="entry">" src="themes/new/pics/moreInfo_closed.jpg" alt="More Infos">
+			
+			<tr>
+				<td class="transfer_table_left">
+				</td>
+				<td class="transfer_table_slider">
+					<a href="javascript:slider('<tmpl_var name="entry">','toggle')">
+						<img id="more_Info_<tmpl_var name="entry">" src="themes/new/pics/moreInfo_closed.jpg" alt="More Infos">
+					</a>
+				</td>
+				<tmpl_if name="enable_metafile_download">
+					<td class="transfer_table_metafile">
+						<a href="dispatcher.php?action=metafileDownload&transfer=<tmpl_var name="url_entry">">
+							<img src="themes/default/images/down.gif" title="Download Metafile" height="12">
+						</a>
+					</td>
+				</tmpl_if>
+				<td class="transfer_table_dir">
+					<a href="index.php?iid=dir&dir=<tmpl_var name="url_path">" onclick="return actionClick(true)">
+						<img src="themes/default/images/datadir.gif" title="<tmpl_var name="datapath">" height="12">
+					</a>
+				</td>
+				<td class="transfer_table_basic">
+					<a class="upload" href="JavaScript:showTransfer('index.php?iid=<tmpl_var name="twd">&transfer=<tmpl_var name="url_entry">')">
+						<tmpl_var name="displayname">
+					</a>
+				</td>
+				<td class="transfer_table_admin">
+				
+				
+				
+					<tmpl_if name="is_owner">
+						<a href="JavaScript:showTransfer('index.php?iid=transferSettings&transfer=<tmpl_var name="url_entry">')">
+							<img src="themes/default/images/properties.png" alt="Transfer Settings" height="12">
+						</a>
+						<tmpl_if name="transferRunning" value="1">
+							<img src="themes/default/images/blank.gif" height="12">
+							<a href="dispatcher.php?action=stop&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)">
+								<img src="themes/default/images/bulkstop.gif" alt="<tmpl_var name="_STOPTRANSFER">" height="12">
 							</a>
-						
-							<img src="themes/default/images/<tmpl_var name="hd_image">" title="<tmpl_var name="hd_title"><tmpl_var name="entry">" height="12">
-							<tmpl_if name="enable_metafile_download">
-								<a href="dispatcher.php?action=metafileDownload&transfer=<tmpl_var name="url_entry">">
-									<img src="themes/default/images/down.gif" title="Download Metafile" height="12">
-								</a>
+							<img src="themes/default/images/delete_off.gif" height="12">
+							<tmpl_if name="enable_multiops">
+								<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">" onclick="ajax_updateState = 0;">
 							</tmpl_if>
-							<a href="index.php?iid=dir&dir=<tmpl_var name="url_path">" onclick="return actionClick(true)">
-								<img src="themes/default/images/datadir.gif" title="<tmpl_var name="datapath">" height="12">
-							</a>
-							<a class="upload" href="JavaScript:showTransfer('index.php?iid=<tmpl_var name="twd">&transfer=<tmpl_var name="url_entry">')">
-								<tmpl_var name="displayname">
-							</a>
-							<tmpl_if name="is_owner">
-								<a href="JavaScript:showTransfer('index.php?iid=transferSettings&transfer=<tmpl_var name="url_entry">')"><img src="themes/default/images/properties.png" alt="Transfer Settings" height="12"></a>
-								<tmpl_if name="transferRunning" value="1">
+						<tmpl_else>
+							<tmpl_if name="transferowner" value="n/a">
+								<img src="themes/default/images/blank.gif" height="12">
+								<img src="themes/default/images/run_off.gif" alt="<tmpl_var name="_NOTOWNER">" height="12">
+							<tmpl_else>
+								<tmpl_if name="transferRunning" value="3">
 									<img src="themes/default/images/blank.gif" height="12">
-									<a href="dispatcher.php?action=stop&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/default/images/bulkstop.gif" alt="<tmpl_var name="_STOPTRANSFER">" height="12"></a>
-									<img src="themes/default/images/delete_off.gif" height="12">
-									<tmpl_if name="enable_multiops">
-										<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">" onclick="ajax_updateState = 0;">
-									</tmpl_if>
+									<a href="dispatcher.php?action=deQueue&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)">
+										<img src="themes/default/images/queued.gif" alt="<tmpl_var name="_DELQUEUE">" height="12">
+									</a>
 								<tmpl_else>
-									<tmpl_if name="transferowner" value="n/a">
-										<img src="themes/default/images/blank.gif" height="12">
-										<img src="themes/default/images/run_off.gif" alt="<tmpl_var name="_NOTOWNER">" height="12">
-									<tmpl_else>
-										<tmpl_if name="transferRunning" value="3">
-											<img src="themes/default/images/blank.gif" height="12">
-											<a href="dispatcher.php?action=deQueue&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/default/images/queued.gif" alt="<tmpl_var name="_DELQUEUE">" height="12"></a>
+									<tmpl_if name="is_no_file">
+										<tmpl_if name="show_run" value="1">
+											<a href="#" onclick="showTransfer('index.php?iid=transferControl&transfer=<tmpl_var name="url_entry">')">
+												<img src="themes/default/images/bulkstart.gif" alt="<tmpl_var name="_RUNTRANSFER">" height="12">
+											</a>
 										<tmpl_else>
-											<tmpl_if name="is_no_file">
-												<tmpl_if name="show_run" value="1">
-													<a href="#" onclick="showTransfer('index.php?iid=transferControl&transfer=<tmpl_var name="url_entry">')"><img src="themes/default/images/bulkstart.gif" alt="<tmpl_var name="_RUNTRANSFER">" height="12"></a>
-												<tmpl_else>
-													<a href="#" onclick="showTransfer('index.php?iid=transferControl&transfer=<tmpl_var name="url_entry">')"><img src="themes/default/images/seed_on.gif" alt="<tmpl_var name="_SEEDTRANSFER">" height="12"></a>
-												</tmpl_if>
-												<tmpl_if name="show_run" value="1">
-													<a href="dispatcher.php?action=start&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/default/images/bulkresume.gif" alt="<tmpl_var name="_RUNTRANSFER">" height="12"></a>
-												<tmpl_else>
-													<tmpl_if name="clientType" value="torrent">
-														<a href="dispatcher.php?action=start&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/default/images/seed_on.gif" alt="<tmpl_var name="_SEEDTRANSFER">" height="12"></a>
-													<tmpl_else>
-														<img src="themes/default/images/run_off.gif" alt="Done" height="12">
-													</tmpl_if>
-												</tmpl_if>
+											<a href="#" onclick="showTransfer('index.php?iid=transferControl&transfer=<tmpl_var name="url_entry">')">
+												<img src="themes/default/images/seed_on.gif" alt="<tmpl_var name="_SEEDTRANSFER">" height="12">
+											</a>
+										</tmpl_if>
+										<tmpl_if name="show_run" value="1">
+											<a href="dispatcher.php?action=start&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)">
+												<img src="themes/default/images/bulkresume.gif" alt="<tmpl_var name="_RUNTRANSFER">" height="12">
+											</a>
+										<tmpl_else>
+											<tmpl_if name="clientType" value="torrent">
+												<a href="dispatcher.php?action=start&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)">
+													<img src="themes/default/images/seed_on.gif" alt="<tmpl_var name="_SEEDTRANSFER">" height="12">
+												</a>
 											<tmpl_else>
-												<img src="themes/default/images/blank.gif" height="12">
-												<img src="themes/default/images/run_off.gif" alt="<tmpl_var name="_STOPPING">" height="12">
+												<img src="themes/default/images/run_off.gif" alt="Done" height="12">
 											</tmpl_if>
 										</tmpl_if>
-									</tmpl_if>
-									<tmpl_if name="is_no_file">
-										<a href="dispatcher.php?action=delete&transfer=<tmpl_var name="url_entry">" onclick="return actionConfirm('Delete <tmpl_var name="entry"> ?')"><img src="themes/default/images/delete_on.gif" alt="<tmpl_var name="_DELETE">" height="12"></a>
 									<tmpl_else>
-										<img src="themes/default/images/delete_off.gif" alt="<tmpl_var name="_STOPPING">" height="12">
-									</tmpl_if>
-									<tmpl_if name="enable_multiops">
-										<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">" onclick="ajax_updateState = 0;">
+										<img src="themes/default/images/blank.gif" height="12">
+										<img src="themes/default/images/run_off.gif" alt="<tmpl_var name="_STOPPING">" height="12">
 									</tmpl_if>
 								</tmpl_if>
-							<tmpl_else>
-								<img src="themes/default/images/locked.gif" alt="<tmpl_var name="_NOTOWNER">" height="12">
-								<img src="themes/default/images/locked.gif" alt="<tmpl_var name="_NOTOWNER">" height="12">
-								<img src="themes/default/images/locked.gif" alt="<tmpl_var name="_NOTOWNER">" height="12">
-								<input type="checkbox" disabled="disabled">
 							</tmpl_if>
-							
-							
-						</span>
-					</div>
-				</div>
+							<tmpl_if name="is_no_file">
+								<a href="dispatcher.php?action=delete&transfer=<tmpl_var name="url_entry">" onclick="return actionConfirm('Delete <tmpl_var name="entry"> ?')">
+									<img src="themes/default/images/delete_on.gif" alt="<tmpl_var name="_DELETE">" height="12">
+								</a>
+							<tmpl_else>
+								<img src="themes/default/images/delete_off.gif" alt="<tmpl_var name="_STOPPING">" height="12">
+							</tmpl_if>
+							<tmpl_if name="enable_multiops">
+								<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">" onclick="ajax_updateState = 0;">
+							</tmpl_if>
+						</tmpl_if>
+					<tmpl_else>
+						<img src="themes/default/images/locked.gif" alt="<tmpl_var name="_NOTOWNER">" height="12">
+						<img src="themes/default/images/locked.gif" alt="<tmpl_var name="_NOTOWNER">" height="12">
+						<img src="themes/default/images/locked.gif" alt="<tmpl_var name="_NOTOWNER">" height="12">
+						<input type="checkbox" disabled="disabled">
+					</tmpl_if>
+				</td>
 				
 				
 				
-				
-				
-				<div id="<tmpl_var name="entry">" style="display: none; height: 0px;">
+				<td class="transfer_table_right">
+				</td>
+			</tr>
+			<tr id="<tmpl_var name="entry">" style="display: none; height: 0px;">
+				<td class="tranfer_table_details" colspan="10">
+					Details
+				</td>
+			</tr>
+			
+			
+				<div style="display: none; height: 0px;">
 					
 					<div class="uploadClass">
 							

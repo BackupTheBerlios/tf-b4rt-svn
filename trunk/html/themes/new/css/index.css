@@ -97,3 +97,39 @@ span.serverStats2 {
 	color: #585858;
 	margin-left: 35px;
 }
+td.transfer_table_left {
+	width: 7px;
+	background-repeat: no-repeat;
+	height: 26px;
+	background-image: url(../pics/upload_left.jpg);
+}
+td.transfer_table_right {
+	width: 7px;
+	background-repeat: no-repeat;
+	height: 26px;
+	background-image: url(../pics/upload_right.jpg);
+}
+td.transfer_table_slider,
+td.transfer_table_metafile,
+td.transfer_table_dir {
+	padding-right: 2px;
+	padding-left: 2px;
+	width: 12px;
+	background-repeat: repeat-x;
+	height: 26px;
+	background-image: url(../pics/upload.jpg);
+}
+td.transfer_table_basic {
+	width: auto;
+	background-repeat: repeat-x;
+	height: 26px;
+	background-image: url(../pics/upload.jpg);
+}
+td.transfer_table_admin {
+	padding-right: 2px;
+	padding-left: 2px;
+	width: 90px;
+	background-repeat: repeat-x;
+	height: 26px;
+	background-image: url(../pics/upload.jpg);
+}
