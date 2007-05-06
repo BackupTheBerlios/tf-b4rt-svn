@@ -133,3 +133,42 @@ td.transfer_table_admin {
 	height: 26px;
 	background-image: url(../pics/upload.jpg);
 }
+#transfer_table_details {
+	margin-left: 10px;
+	margin-right: 10px;
+	margin-bottom: 10px;
+	width: 100%;
+}
+td.transfer_table_details_text {
+	color: #FFFFFF;
+	font-size: 10px;
+	background-color: #c1b18d;
+	padding-bottom: 2px;
+	text-align: left;
+}
+td.transfer_table_details_value {
+	background-color: #c1b18d;
+	padding-left: 5px;
+	padding-bottom: 2px;
+	text-align: left;
+}
+td.transfer_table_details_empty {
+	background-color: #c1b18d;
+}
+td.transfer_table_details_left {
+	width: 10px;
+	background-color: #c1b18d;
+	background-image: url("../pics/upload_bottom_left.jpg");
+	background-repeat: no-repeat;
+	background-position: bottom left;
+}
+td.transfer_table_details_right {
+	width: 10px;
+	background-color: #c1b18d;
+	background-image: url(../pics/upload_bottom_right.jpg);
+	background-repeat: no-repeat;
+	background-position: bottom right;
+}
+#transferList_others {
+	padding-bottom: 10px;
+}
