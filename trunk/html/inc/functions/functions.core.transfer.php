@@ -476,7 +476,7 @@ function getTransferListHeadArray($settings = null) {
 		array_push($retVal, "T. Up");
 	// ================================================================== status
 	if ($settings[4] != 0)
-		array_push($retVal, $cfg['_STATUS']);
+		array_push($retVal, "Status");
 	// ================================================================ progress
 	if ($settings[5] != 0)
 		array_push($retVal, "Progress");
@@ -494,7 +494,7 @@ function getTransferListHeadArray($settings = null) {
 		array_push($retVal, "Peers");
 	// ===================================================================== ETA
 	if ($settings[10] != 0)
-		array_push($retVal, $cfg['_ESTIMATEDTIME']);
+		array_push($retVal, "Estimated Time");
 	// ================================================================== client
 	if ($settings[11] != 0)
 		array_push($retVal, "Client");
