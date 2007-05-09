@@ -34,20 +34,21 @@ function sa_transfers($action = "") {
 	switch ($action) {
 
 		case "0": // Transfers-main
-			$htmlTitle = "Transfers";
+			$htmlTitle = "Transfer Bulk Operations";
 			$htmlMain .= '<br><div align="left">';
-			$htmlMain .= '<p>';
+			$htmlMain .= '<p>Select action to perform on all items in the transfer list:</p>';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?t=1"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Stop All Transfers" border="0"> Stop All Transfers</a>';
 			$htmlMain .= '<p>';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?t=2"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Start All Transfers" border="0"> Start All Transfers</a>';
 			$htmlMain .= '<p>';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?t=3"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Resume All Transfers" border="0"> Resume All Transfers</a>';
+			$htmlMain .= '<br><br><strong>Note:</strong><br>\'Start All Transfers\' will start all transfers in the transfer list, regardless of whether they have been started previously or not.<br><br>\'Resume All Transfers\' will only start those transfers that have previously been started and are currently in the \'stopped\' state';
 			$htmlMain .= '</div><br><br>';
 			break;
 
 		case "1": // Transfers-Stop
 			$htmlTitle = "Transfers - Stop";
-			$htmlMain .= '<br><strong>Transfers Stopped :</strong><br>';
+			$htmlMain .= '<br><strong>Transfers Stopped:</strong><br>';
 			$htmlMain .= '<pre>';
 			$transferList = getTransferArray();
 			foreach ($transferList as $transfer) {
@@ -64,7 +65,7 @@ function sa_transfers($action = "") {
 
 		case "2": // Transfers-Start
 			$htmlTitle = "Transfers - Start";
-			$htmlMain .= '<br><strong>Transfers Started :</strong><br>';
+			$htmlMain .= '<br><strong>Transfers Started:</strong><br>';
 			$htmlMain .= '<pre>';
 			$transferList = getTransferArray();
 			foreach ($transferList as $transfer) {
@@ -81,7 +82,7 @@ function sa_transfers($action = "") {
 
 		case "3": // Transfers-Resume
 			$htmlTitle = "Transfers - Resume";
-			$htmlMain .= '<br><strong>Transfers Resumed :</strong><br>';
+			$htmlMain .= '<br><strong>Transfers Resumed:</strong><br>';
 			$htmlMain .= '<pre>';
 			$transferList = getTransferArray();
 			$sf = new StatFile("");
@@ -98,7 +99,7 @@ function sa_transfers($action = "") {
 			$htmlMain .= '<hr><br>';
 			break;
 	}
-	$htmlMain .= '<br><strong>Transfers :</strong><br>';
+	$htmlMain .= '<br><strong>Transfers:</strong><br>';
 	$htmlMain .= '<pre>';
 	$transferList = getTransferArray();
 	foreach ($transferList as $transfer) {
@@ -127,9 +128,10 @@ function sa_processes($action = "") {
 		case "0": // Processes-main
 			$htmlTitle = "Processes";
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?p=1"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="All" border="0"> All</a>';
+			$htmlMain .= 'View currently running torrentflux-b4rt processes:<br><br>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?p=1"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="All" border="0"> All</a> - detailed process list';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?p=2"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Transfers" border="0"> Transfers</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?p=2"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Transfers" border="0"> Transfers</a> - simple list of running transfers with option to force stop individual transfers';
 			$htmlMain .= '<br><br>';
 			break;
 
@@ -214,48 +216,48 @@ function sa_maintenance($action = "") {
 
 		case "0": // Maintenance-main
 			$htmlTitle = "Maintenance";
+			$htmlMain .= '<p>Select the maintenance task you wish to perform below:<br><br>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=1"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Main" border="0"> Main</a> - clean up stale files; resume stalled transfers';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=1"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Main" border="0"> Main</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=2"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Kill" border="0"> Kill</a> - kill rebel processes';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=2"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Kill" border="0"> Kill</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=3"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Clean" border="0"> Clean</a> - clean up stale cache/pid/template files';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=3"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Clean" border="0"> Clean</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=4"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Repair" border="0"> Repair</a> - check for erroneous stat/pid files, fix bad db entries, prune old db items';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=4"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Repair" border="0"> Repair</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=5"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Reset" border="0"> Reset</a> - reset transfer totals, xfer stats and personal settings';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=5"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Reset" border="0"> Reset</a>';
-			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=6"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Lock" border="0"> Lock</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=6"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Lock" border="0"> Lock</a> - lock access to the frontend';
 			$htmlMain .= '<br><br>';
 			break;
 
-		case "1": // Maintenance : Main
+		case "1": // Maintenance: Main
 			$htmlTitle = "Maintenance - Main";
 			$htmlMain .= '<p>';
 			$htmlMain .= '<strong>Standard</strong><br>';
-			$htmlMain .= 'Standard Maintenance-Run. (same as on index-page and automatic called on every login).<br>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=11"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Standard Maintenance-Run" border="0"> Standard Maintenance-Run</a>';
+			$htmlMain .= 'Standard Maintenance Run - same as on index-page and automatic called on every login<br>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=11"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Standard Maintenance-Run" border="0"> Standard Maintenance Run</a>';
 			$htmlMain .= '<p>';
 			$htmlMain .= '<strong>Extended</strong><br>';
-			$htmlMain .= 'Extended Maintenance-Run. Like a standard-run but will also restart all died Transfers.<br>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=12"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="vlc-kill" border="0"> Extended Maintenance-Run</a>';
+			$htmlMain .= 'Extended Maintenance Run - like a standard run but will also restart all dead transfers.<br>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=12"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="vlc-kill" border="0"> Extended Maintenance Run</a>';
 			$htmlMain .= '<br><br>';
 			break;
 
-		case "11": // Maintenance : Main : Standard Maintenance-Run
-			$htmlTitle = "Maintenance - Main - Standard Maintenance-Run";
+		case "11": // Maintenance: Main: Standard Maintenance-Run
+			$htmlTitle = "Maintenance - Main - Standard Maintenance Run";
 			$htmlMain .= '<br>';
-			$htmlMain .= 'Standard Maintenance-Run';
+			$htmlMain .= 'Standard Maintenance Run: ';
 			require_once("inc/classes/MaintenanceAndRepair.php");
 			MaintenanceAndRepair::maintenance(false);
 			$htmlMain .= ' <font color="green">done</font>';
 			$htmlMain .= '<br><br>';
 			break;
 
-		case "12": // Maintenance : Main
-			$htmlTitle = "Maintenance - Main - Extended Maintenance-Run";
+		case "12": // Maintenance: Main
+			$htmlTitle = "Maintenance - Main - Extended Maintenance Run";
 			$htmlMain .= '<br>';
-			$htmlMain .= 'Extended Maintenance-Run';
+			$htmlMain .= 'Extended Maintenance Run: ';
 			require_once("inc/classes/MaintenanceAndRepair.php");
 			MaintenanceAndRepair::maintenance(true);
 			$htmlMain .= ' <font color="green">done</font>';
@@ -265,41 +267,41 @@ function sa_maintenance($action = "") {
 		case "2": // Maintenance-Kill
 			$htmlTitle = "Maintenance - Kill";
 			$htmlMain .= '<br>';
-			$htmlMain .= '<font color="red"><strong>DON\'T</strong> do this or you will screw up things for sure !</font><br><br>';
-			$htmlMain .= 'This is only meant as emergency-break if things go terrible wrong already.<br>Please use this only if you know what you are doing.';
+			$htmlMain .= '<font color="red"><strong>DON\'T</strong> do this or you will screw up things for sure!</font><br><br>';
+			$htmlMain .= 'This is only meant as emergency \'last resort\' if things have already gone terribly wrong already.<br>Please use this only if you know what you are doing.<br><br><hr><strong>ALL the selected process types will be killed, not just those related to torrentflux-b4rt!!!</strong><hr><br>';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<strong>php</strong><br>';
-			$htmlMain .= 'use this to kill all php processes.<br>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=21"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="php-kill" border="0"> php-kill</a>';
+			$htmlMain .= '<strong>PHP</strong><br>';
+			$htmlMain .= 'Kill all PHP processes:<br>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=21"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="php-kill" border="0"> PHP Kill</a>';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<strong>python</strong><br>';
-			$htmlMain .= 'use this to kill all python processes.<br>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=22"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="python-kill" border="0"> python-kill</a>';
+			$htmlMain .= '<strong>Python</strong><br>';
+			$htmlMain .= 'Kill all python processes:<br>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=22"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="python-kill" border="0"> Python Kill</a>';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<strong>perl</strong><br>';
-			$htmlMain .= 'use this to kill all perl processes.<br>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=23"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="perl-kill" border="0"> perl-kill</a>';
+			$htmlMain .= '<strong>Perl</strong><br>';
+			$htmlMain .= 'Kill all perl processes:<br>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=23"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="perl-kill" border="0"> Perl Kill</a>';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<strong>transmissioncli</strong><br>';
-			$htmlMain .= 'use this to kill all transmissioncli processes.<br>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=24"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="transmissioncli-kill" border="0"> transmissioncli-kill</a>';
+			$htmlMain .= '<strong>Transmissioncli</strong><br>';
+			$htmlMain .= 'Kill all transmissioncli processes:<br>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=24"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="transmissioncli-kill" border="0"> Transmissioncli Kill</a>';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<strong>wget</strong><br>';
-			$htmlMain .= 'use this to kill all wget processes.<br>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=25"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="wget-kill" border="0"> wget-kill</a>';
+			$htmlMain .= '<strong>Wget</strong><br>';
+			$htmlMain .= 'Kill all wget processes:<br>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=25"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="wget-kill" border="0"> Wget Kill</a>';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<strong>vlc</strong><br>';
-			$htmlMain .= 'use this to kill all vlc processes.<br>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=26"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="vlc-kill" border="0"> vlc-kill</a>';
+			$htmlMain .= '<strong>VLC</strong><br>';
+			$htmlMain .= 'Kill all VLC processes:<br>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=26"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="vlc-kill" border="0"> VLC Kill</a>';
 			$htmlMain .= '<br><br>';
 			break;
 
-		case "21": // Maintenance-Kill : php
-			$htmlTitle = "Maintenance - Kill - php";
+		case "21": // Maintenance-Kill: php
+			$htmlTitle = "Maintenance - Kill - PHP";
 			$htmlMain .= '<br>';
-			$htmlMain .= '"kill all php processes" done.';
+			$htmlMain .= 'Kill all PHP processes: <font color="green">done</font>';
 			$htmlMain .= '<br><br>';
-			$htmlMain .= '<strong>process-list (filtered) before call :</strong><br>';
+			$htmlMain .= '<strong>Process list (filtered) before call:</strong><br>';
 			$htmlMain .= '<pre>';
 			$htmlMain .= tfb_htmlencode(trim(shell_exec("ps auxww | ".$cfg['bin_grep']." php | ".$cfg['bin_grep']." -v grep")));
 			$htmlMain .= '</pre>';
@@ -307,24 +309,24 @@ function sa_maintenance($action = "") {
 			$callResult = trim(shell_exec("killall -9 php 2> /dev/null"));
 			if ((isset($callResult)) && ($callResult != "")) {
 				$htmlMain .= '<br>';
-				$htmlMain .= 'Call-Result : <br>';
+				$htmlMain .= 'Call Result: <br>';
 				$htmlMain .= '<pre>'.tfb_htmlencode($callResult).'</pre>';
 				$htmlMain .= '<br>';
 			}
 			sleep(2); // just 2 sec
-			$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
+			$htmlMain .= '<strong>Process list (filtered) after call:</strong><br>';
 			$htmlMain .= '<pre>';
 			$htmlMain .= tfb_htmlencode(trim(shell_exec("ps auxww | ".$cfg['bin_grep']." php | ".$cfg['bin_grep']." -v grep")));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '<br>';
 			break;
 
-		case "22": // Maintenance-Kill : python
-			$htmlTitle = "Maintenance - Kill - python";
+		case "22": // Maintenance-Kill: python
+			$htmlTitle = "Maintenance - Kill - Python";
 			$htmlMain .= '<br>';
-			$htmlMain .= '"kill all python processes" done.';
+			$htmlMain .= 'Kill all python processes: <font color="green">done</font>';
 			$htmlMain .= '<br><br>';
-			$htmlMain .= '<strong>process-list (filtered) before call :</strong><br>';
+			$htmlMain .= '<strong>Process list (filtered) before call:</strong><br>';
 			$htmlMain .= '<pre>';
 			$htmlMain .= tfb_htmlencode(trim(shell_exec("ps auxww | ".$cfg['bin_grep']." python | ".$cfg['bin_grep']." -v grep")));
 			$htmlMain .= '</pre>';
@@ -332,24 +334,24 @@ function sa_maintenance($action = "") {
 			$callResult = trim(shell_exec("killall -9 python 2> /dev/null"));
 			if ((isset($callResult)) && ($callResult != "")) {
 				$htmlMain .= '<br>';
-				$htmlMain .= 'Call-Result : <br>';
+				$htmlMain .= 'Call Result: <br>';
 				$htmlMain .= '<pre>'.tfb_htmlencode($callResult).'</pre>';
 				$htmlMain .= '<br>';
 			}
 			sleep(2); // just 2 sec
-			$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
+			$htmlMain .= '<strong>Process list (filtered) after call:</strong><br>';
 			$htmlMain .= '<pre>';
 			$htmlMain .= tfb_htmlencode(trim(shell_exec("ps auxww | ".$cfg['bin_grep']." python | ".$cfg['bin_grep']." -v grep")));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '<br>';
 			break;
 
-		case "23": // Maintenance-Kill : perl
-			$htmlTitle = "Maintenance - Kill - perl";
+		case "23": // Maintenance-Kill: perl
+			$htmlTitle = "Maintenance - Kill - Perl";
 			$htmlMain .= '<br>';
-			$htmlMain .= '"kill all perl processes" done.';
+			$htmlMain .= 'Kill all perl processes: <font color="green">done</font>';
 			$htmlMain .= '<br><br>';
-			$htmlMain .= '<strong>process-list (filtered) before call :</strong><br>';
+			$htmlMain .= '<strong>Process list (filtered) before call:</strong><br>';
 			$htmlMain .= '<pre>';
 			$htmlMain .= tfb_htmlencode(trim(shell_exec("ps auxww | ".$cfg['bin_grep']." perl | ".$cfg['bin_grep']." -v grep")));
 			$htmlMain .= '</pre>';
@@ -357,24 +359,24 @@ function sa_maintenance($action = "") {
 			$callResult = trim(shell_exec("killall -9 perl 2> /dev/null"));
 			if ((isset($callResult)) && ($callResult != "")) {
 				$htmlMain .= '<br>';
-				$htmlMain .= 'Call-Result : <br>';
+				$htmlMain .= 'Call Result: <br>';
 				$htmlMain .= '<pre>'.tfb_htmlencode($callResult).'</pre>';
 				$htmlMain .= '<br>';
 			}
 			sleep(2); // just 2 sec
-			$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
+			$htmlMain .= '<strong>Process list (filtered) after call:</strong><br>';
 			$htmlMain .= '<pre>';
 			$htmlMain .= tfb_htmlencode(trim(shell_exec("ps auxww | ".$cfg['bin_grep']." perl | ".$cfg['bin_grep']." -v grep")));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '<br>';
 			break;
 
-		case "24": // Maintenance-Kill : transmissioncli
-			$htmlTitle = "Maintenance - Kill - transmissioncli";
+		case "24": // Maintenance-Kill: transmissioncli
+			$htmlTitle = "Maintenance - Kill - Transmissioncli";
 			$htmlMain .= '<br>';
-			$htmlMain .= '"kill all transmissioncli processes" done.';
+			$htmlMain .= 'Kill all transmissioncli processes: <font color="green">done</font>';
 			$htmlMain .= '<br><br>';
-			$htmlMain .= '<strong>process-list (filtered) before call :</strong><br>';
+			$htmlMain .= '<strong>Process list (filtered) before call:</strong><br>';
 			$htmlMain .= '<pre>';
 			$htmlMain .= tfb_htmlencode(trim(shell_exec("ps auxww | ".$cfg['bin_grep']." transmissioncli | ".$cfg['bin_grep']." -v grep")));
 			$htmlMain .= '</pre>';
@@ -382,24 +384,24 @@ function sa_maintenance($action = "") {
 			$callResult = trim(shell_exec("killall -9 transmissioncli 2> /dev/null"));
 			if ((isset($callResult)) && ($callResult != "")) {
 				$htmlMain .= '<br>';
-				$htmlMain .= 'Call-Result : <br>';
+				$htmlMain .= 'Call Result: <br>';
 				$htmlMain .= '<pre>'.tfb_htmlencode($callResult).'</pre>';
 				$htmlMain .= '<br>';
 			}
 			sleep(2); // just 2 sec
-			$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
+			$htmlMain .= '<strong>Process list (filtered) after call:</strong><br>';
 			$htmlMain .= '<pre>';
 			$htmlMain .= tfb_htmlencode(trim(shell_exec("ps auxww | ".$cfg['bin_grep']." transmissioncli | ".$cfg['bin_grep']." -v grep")));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '<br>';
 			break;
 
-		case "25": // Maintenance-Kill : wget
-			$htmlTitle = "Maintenance - Kill - wget";
+		case "25": // Maintenance-Kill: wget
+			$htmlTitle = "Maintenance - Kill - Wget";
 			$htmlMain .= '<br>';
-			$htmlMain .= '"kill all wget processes" done.';
+			$htmlMain .= 'Kill all wget processes: <font color="green">done</font>';
 			$htmlMain .= '<br><br>';
-			$htmlMain .= '<strong>process-list (filtered) before call :</strong><br>';
+			$htmlMain .= '<strong>Process list (filtered) before call:</strong><br>';
 			$htmlMain .= '<pre>';
 			$htmlMain .= tfb_htmlencode(trim(shell_exec("ps auxww | ".$cfg['bin_grep']." wget | ".$cfg['bin_grep']." -v grep")));
 			$htmlMain .= '</pre>';
@@ -407,24 +409,24 @@ function sa_maintenance($action = "") {
 			$callResult = trim(shell_exec("killall -9 wget 2> /dev/null"));
 			if ((isset($callResult)) && ($callResult != "")) {
 				$htmlMain .= '<br>';
-				$htmlMain .= 'Call-Result : <br>';
+				$htmlMain .= 'Call Result: <br>';
 				$htmlMain .= '<pre>'.tfb_htmlencode($callResult).'</pre>';
 				$htmlMain .= '<br>';
 			}
 			sleep(2); // just 2 sec
-			$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
+			$htmlMain .= '<strong>Process list (filtered) after call:</strong><br>';
 			$htmlMain .= '<pre>';
 			$htmlMain .= tfb_htmlencode(trim(shell_exec("ps auxww | ".$cfg['bin_grep']." wget | ".$cfg['bin_grep']." -v grep")));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '<br>';
 			break;
 
-		case "26": // Maintenance-Kill : vlc
-			$htmlTitle = "Maintenance - Kill - vlc";
+		case "26": // Maintenance-Kill: vlc
+			$htmlTitle = "Maintenance - Kill - VLC";
 			$htmlMain .= '<br>';
-			$htmlMain .= '"kill all vlc processes" done.';
+			$htmlMain .= 'Kill all VLC processes: <font color="green">done</font>';
 			$htmlMain .= '<br><br>';
-			$htmlMain .= '<strong>process-list (filtered) before call :</strong><br>';
+			$htmlMain .= '<strong>Process list (filtered) before call:</strong><br>';
 			$htmlMain .= '<pre>';
 			$htmlMain .= tfb_htmlencode(trim(shell_exec("ps auxww | ".$cfg['bin_grep']." vlc | ".$cfg['bin_grep']." -v grep")));
 			$htmlMain .= '</pre>';
@@ -432,12 +434,12 @@ function sa_maintenance($action = "") {
 			$callResult = trim(shell_exec("killall -9 vlc 2> /dev/null"));
 			if ((isset($callResult)) && ($callResult != "")) {
 				$htmlMain .= '<br>';
-				$htmlMain .= 'Call-Result : <br>';
+				$htmlMain .= 'Call Result: <br>';
 				$htmlMain .= '<pre>'.tfb_htmlencode($callResult).'</pre>';
 				$htmlMain .= '<br>';
 			}
 			sleep(2); // just 2 sec
-			$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
+			$htmlMain .= '<strong>Process list (filtered) after call:</strong><br>';
 			$htmlMain .= '<pre>';
 			$htmlMain .= tfb_htmlencode(trim(shell_exec("ps auxww | ".$cfg['bin_grep']." vlc | ".$cfg['bin_grep']." -v grep")));
 			$htmlMain .= '</pre>';
@@ -446,32 +448,32 @@ function sa_maintenance($action = "") {
 
 		case "3": // Maintenance-Clean
 			$htmlTitle = "Maintenance - Clean";
-			$htmlMain .= '<br>';
-			$htmlMain .= '<strong>pid-file-leftovers</strong><br>';
-			$htmlMain .= 'use this to delete pid-file-leftovers of deleted transfers.<br>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=31"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="pid-file-clean" border="0"> pid-file-clean</a>';
+			$htmlMain .= '<br>Select the action to perform below:<br><hr><strong>Please stop any running transfers BEFORE cleaning the PID or cache files!!!</strong><hr><br>';
+			$htmlMain .= '<strong>Process ID (PID) File Leftovers</strong><br>';
+			$htmlMain .= 'Delete stale PID files from deleted transfers:<br>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=31"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="pid-file-clean" border="0"> PID File Clean</a>';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<strong>tornado</strong><br>';
-			$htmlMain .= 'use this to delete the cache of tornado. (stop your tornados first !)<br>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=32"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="tornado-clean" border="0"> tornado-clean</a>';
+			$htmlMain .= '<strong>BitTornado</strong><br>';
+			$htmlMain .= 'Delete the BitTornado cache:<br>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=32"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="tornado-clean" border="0"> BitTornado Clean</a>';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<strong>transmission</strong><br>';
-			$htmlMain .= 'use this to delete cache-leftovers of deleted transmission-torrents.<br>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=33"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="transmission-clean" border="0"> transmission-clean</a>';
+			$htmlMain .= '<strong>Transmission</strong><br>';
+			$htmlMain .= 'Delete Transmission cache:<br>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=33"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="transmission-clean" border="0"> Transmission Clean</a>';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<strong>mainline</strong><br>';
-			$htmlMain .= 'use this to delete the cache of mainline. (stop your mainlines first !)<br>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=34"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="mainline-clean" border="0"> mainline-clean</a>';
+			$htmlMain .= '<strong>BitTorrent Mainline</strong><br>';
+			$htmlMain .= 'Delete BitTorrent Mainline cache:<br>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=34"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="mainline-clean" border="0"> BitTorrent Mainline Clean</a>';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<strong>template-cache</strong><br>';
-			$htmlMain .= 'use this to delete the template-cache.<br>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=35"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="template-cache-clean" border="0"> template-cache-clean</a>';
+			$htmlMain .= '<strong>Template Cache</strong><br>';
+			$htmlMain .= 'Delete the Torrentflux-b4rt template cache:<br>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=35"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="template-cache-clean" border="0"> Template Cache Clean</a>';
 			$htmlMain .= '<br><br>';
 			break;
 
-		case "31": // Maintenance-Clean : pid-file-clean
-			$htmlTitle = "Maintenance - Clean - pid-file";
-			$htmlMain .= '<br>';
+		case "31": // Maintenance-Clean: pid-file-clean
+			$htmlTitle = "Maintenance - Clean - PID Files";
+			$htmlMain .= '<br><strong>Cleaning stale PID files:</strong><br>';
 			$result = "";
 			$transferList = getTransferArrayFromDB();
 			if ($dirHandle = @opendir($cfg["transfer_file_path"])) {
@@ -488,28 +490,28 @@ function sa_maintenance($action = "") {
 				closedir($dirHandle);
 			}
 			if (strlen($result) > 0)
-				$htmlMain .= '<br>Deleted pid-leftovers : <br><pre>'.$result.'</pre><br>';
+				$htmlMain .= '<br>Deleted stale PID files: <br><pre>'.$result.'</pre><br>';
 			else
-				$htmlMain .= '<br>No pid-leftovers found.<br><br>';
+				$htmlMain .= '<br>No stale PID files found.<br><br>';
 			break;
 
-		case "32": // Maintenance-Clean : tornado-clean
-			$htmlTitle = "Maintenance - Clean - tornado";
-			$htmlMain .= '<br>';
+		case "32": // Maintenance-Clean: tornado-clean
+			$htmlTitle = "Maintenance - Clean - BitTornado";
+			$htmlMain .= '<br><strong>Cleaning BitTornado cache:</strong><br>';
 			$result = "";
 			$result .= cleanDir($cfg["path"].'.BitTornado/datacache');
 			$result .= cleanDir($cfg["path"].'.BitTornado/torrentcache');
 			$result .= cleanDir($cfg["path"].'.BitTornado/piececache');
 			$result .= cleanDir($cfg["path"].'.BitTornado/icons');
 			if (strlen($result) > 0)
-				$htmlMain .= '<br>Deleted  : <br><pre>'.$result.'</pre><br>';
+				$htmlMain .= '<br>Deleted cache: <br><pre>'.$result.'</pre><br>';
 			else
 				$htmlMain .= '<br>Nothing found.<br><br>';
 			break;
 
-		case "33": // Maintenance-Clean : transmission-clean
-			$htmlTitle = "Maintenance - Clean - transmission";
-			$htmlMain .= '<br>';
+		case "33": // Maintenance-Clean: transmission-clean
+			$htmlTitle = "Maintenance - Clean - Transmission";
+			$htmlMain .= '<br><strong>Cleaning Transmission cache:</strong><br>';
 			$result = "";
 			$hashes = array();
 			$transferList = getTransferArray();
@@ -529,139 +531,140 @@ function sa_maintenance($action = "") {
 				closedir($dirHandle);
 			}
 			if (strlen($result) > 0)
-				$htmlMain .= '<br>Deleted cache-leftovers : <br><pre>'.$result.'</pre><br>';
+				$htmlMain .= '<br>Deleted cache: <br><pre>'.$result.'</pre><br>';
 			else
-				$htmlMain .= '<br>No cache-leftovers found.<br><br>';
+				$htmlMain .= '<br>Nothing found.<br><br>';
 			break;
 
-		case "34": // Maintenance-Clean : mainline-clean
-			$htmlTitle = "Maintenance - Clean - mainline";
-			$htmlMain .= '<br>';
+		case "34": // Maintenance-Clean: mainline-clean
+			$htmlTitle = "Maintenance - Clean - BitTorrent Mainline";
+			$htmlMain .= '<br><strong>Cleaning BitTorrent Mainline cache:</strong><br>';
 			$result = "";
 			$result .= cleanDir($cfg["path"].'.bittorrent/console/resume');
 			$result .= cleanDir($cfg["path"].'.bittorrent/console/metainfo');
 			$result .= cleanDir($cfg["path"].'.bittorrent/console/torrents');
 			$result .= cleanDir($cfg["path"].'.bittorrent/mutex');
 			if (strlen($result) > 0)
-				$htmlMain .= '<br>Deleted  : <br><pre>'.$result.'</pre><br>';
+				$htmlMain .= '<br>Deleted cache: <br><pre>'.$result.'</pre><br>';
 			else
 				$htmlMain .= '<br>Nothing found.<br><br>';
 			break;
 
-		case "35": // Maintenance-Clean :template-cache-clean
-			$htmlTitle = "Maintenance - Clean - template-cache";
-			$htmlMain .= '<br>';
+		case "35": // Maintenance-Clean:template-cache-clean
+			$htmlTitle = "Maintenance - Clean - Template Cache";
+			$htmlMain .= '<br><strong>Cleaning Torrentflux-b4rt Template Cache:</strong><br>';
 			$result = cleanDir($cfg["path"].'.templateCache');
 			if (strlen($result) > 0)
-				$htmlMain .= '<br>Deleted compiled templates : <br><pre>'.$result.'</pre><br>';
+				$htmlMain .= '<br>Deleted compiled templates: <br><pre>'.$result.'</pre><br>';
 			else
 				$htmlMain .= '<br>No compiled templates found.<br><br>';
 			break;
 
-		case "4": // Maintenance : Repair
+		case "4": // Maintenance: Repair
 			$htmlTitle = "Maintenance - Repair";
 			$htmlMain .= '<br>';
-			$htmlMain .= '<font color="red"><strong>DON\'T</strong> do this if your system is running as it should. You WILL break something.</font>';
-			$htmlMain .= '<br>use this after server-reboot, if transfers were killed or if there are other problems with the webapp.';
+			$htmlMain .= '<hr><font color="red"><strong>DON\'T</strong> do this if your system is running as it should. You WILL break something.</font><hr>';
+			$htmlMain .= '<br>The \'Repair\' action will attempt to repair any problems such as out of synch stat files, erroneous PID files, bad hash entries in the database as well as pruning the database.<br><br>Only use this after a server-reboot, if transfers were killed or if there are other problems with the webapp that can\'t be resolved another way.<br>';
 			$htmlMain .= '<br><a href="' . _FILE_THIS . '?m=41"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Repair" border="0"> Repair</a>';
 			$htmlMain .= '<br><br>';
 			break;
 
-		case "41": // Maintenance : Repair
+		case "41": // Maintenance: Repair
 			$htmlTitle = "Maintenance - Repair";
 			$htmlMain .= '<br>';
-			$htmlMain .= 'Repair';
+			$htmlMain .= 'Repairing Torrentflux-b4rt:';
 			require_once("inc/classes/MaintenanceAndRepair.php");
 			MaintenanceAndRepair::repair();
 			$htmlMain .= ' <font color="green">done</font>';
 			$htmlMain .= '<br><br>';
 			break;
 
-		case "5": // Maintenance : Reset
+		case "5": // Maintenance: Reset
 			$htmlTitle = "Maintenance - Reset";
-			$htmlMain .= '<br>';
-			$htmlMain .= '<strong>transfer-totals</strong><br>';
-			$htmlMain .= 'use this to reset the transfer-totals.<br>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=51"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="transfer-totals" border="0"> transfer-totals-reset</a>';
+			$htmlMain .= '<br>Select the item you wish to reset below:<br><br>';
+			$htmlMain .= '<strong>Transfer Totals</strong><br>';
+			$htmlMain .= 'Reset the transfer totals (totals uploaded/downloaded in the transfer list):<br>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=51"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="transfer-totals" border="0"> Reset Transfer Totals</a>';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<strong>xfer-stats</strong><br>';
-			$htmlMain .= 'use this to reset the xfer-stats.<br>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=52"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="xfer-stats" border="0"> xfer-stats-reset</a>';
+			$htmlMain .= '<strong>Xfer Stats</strong><br>';
+			$htmlMain .= 'Reset the transfer statistics:<br>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=52"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="xfer-stats" border="0"> Reset Xfer Stats</a>';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<strong>personal-settings</strong><br>';
-			$htmlMain .= 'use this to reset the personal settings of all users.<br>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=53"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="personal-settings" border="0"> personal-settings-reset</a>';
+			$htmlMain .= '<strong>Personal Settings</strong><br>';
+			$htmlMain .= 'Reset the personal settings of all users:<br>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=53"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="personal-settings" border="0"> Reset Personal Settings</a>';
 			$htmlMain .= '<br><br>';
 			break;
 
-		case "51": // Maintenance : Reset - transfer-totals
-			$htmlTitle = "Maintenance - Reset - transfer-totals";
+		case "51": // Maintenance: Reset - transfer-totals
+			$htmlTitle = "Maintenance - Reset - Transfer Totals";
 			$htmlMain .= '<br>';
-			$htmlMain .= 'Reset of transfer-totals';
+			$htmlMain .= 'Resetting transfer totals:<br>';
 			$result = resetAllTransferTotals();
 			$htmlMain .= ($result === true)
-				? ' <font color="green">done</font>'
-				: '<br><font color="red">Error :</font><br>'.$result;
+				? ' <font color="green">Done</font>'
+				: '<br><font color="red">Error:</font><br>'.$result;
 			$htmlMain .= '<br><br>';
 			break;
 
-		case "52": // Maintenance : Reset - xfer
-			$htmlTitle = "Maintenance - Reset - xfer";
+		case "52": // Maintenance: Reset - xfer
+			$htmlTitle = "Maintenance - Reset - Transfer Statistics";
 			$htmlMain .= '<br>';
-			$htmlMain .= 'Reset of xfer-stats';
+			$htmlMain .= 'Resetting xfer stats:<br>';
 			$result = Xfer::resetStats();
 			$htmlMain .= ($result === true)
-				? ' <font color="green">done</font>'
-				: '<br><font color="red">Error :</font><br>'.$result;
+				? ' <font color="green">Done</font>'
+				: '<br><font color="red">Error:</font><br>'.$result;
 			$htmlMain .= '<br><br>';
 			break;
 
-		case "53": // Maintenance : Reset - personal-settings
-			$htmlTitle = "Maintenance - Reset - personal-settings";
+		case "53": // Maintenance: Reset - personal-settings
+			$htmlTitle = "Maintenance - Reset - Personal Settings";
 			$htmlMain .= '<br>';
-			$htmlMain .= 'Reset of personal-settings';
+			$htmlMain .= 'Resetting personal settings:<br>';
 			$result = deleteAllUserSettings();
 			$htmlMain .= ($result === true)
-				? ' <font color="green">done</font>'
-				: '<br><font color="red">Error :</font><br>'.$result;
+				? ' <font color="green">Done</font>'
+				: '<br><font color="red">Error:</font><br>'.$result;
 			$htmlMain .= '<br><br>';
 			break;
 
-		case "6": // Maintenance : Lock
-			$htmlTitle = "Maintenance - Lock";
-			$htmlMain .= '<br>';
+		case "6": // Maintenance: Lock
+			$htmlTitle = "Maintenance - Lock Torrentflux-b4rt Frontend";
+			$htmlMain .= '<br>Lock/unlock access to the Torrentflux-b4rt frontend.  Only the superadmin can access the locked frontend.<br><br><hr>';
 			switch ($cfg['webapp_locked']) {
 				case 0:
-					$htmlMain .= '<strong><font color="green">webapp currently unlocked.</font></strong>';
+					$htmlMain .= '<strong><font color="green">Frontend currently unlocked.</font></strong>';
 					break;
 				case 1:
-					$htmlMain .= '<strong><font color="red">webapp currently locked.</font></strong>';
+					$htmlMain .= '<strong><font color="red">Frontend currently locked.</font></strong>';
 					break;
 			}
-			$htmlMain .= '<p>';
-			$htmlMain .= 'Use this to lock/unlock your webapp. only superadmin can access locked webapp.';
+			$htmlMain .= '<hr><p>';
 			$htmlMain .= '<br><a href="' . _FILE_THIS . '?m=61"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Repair" border="0"> ';
 			if ($cfg['webapp_locked'] == 1)
-				$htmlMain .= 'un';
-			$htmlMain .= 'lock</a>';
+				$htmlMain .= 'Un';
+			$htmlMain .= $cfg['webapp_locked'] ? 'l' : 'L' .'ock Frontend</a>';
 			$htmlMain .= '<br><br>';
 			break;
 
-		case "61": // Maintenance : lock/unlock
+		case "61": // Maintenance: lock/unlock
 			$htmlTitle = "Maintenance - Lock";
 			$htmlMain .= '<br>';
 			switch ($cfg['webapp_locked']) {
 				case 0:
 					$result = setWebappLock(1);
+					$htmlMain .= "Locking frontend:<br>";
 					$htmlMain .= ($result === true)
-						? '<font color="red">webapp locked.</font>'
-						: '<br><font color="red">Error :</font><br>'.$result;
+						? '<font color="green">Done</font>'
+						: '<br><font color="red">Error:</font><br>'.$result;
 					break;
 				case 1:
 					$result = setWebappLock(0);
+					$htmlMain .= "Unlocking frontend:<br>";
 					$htmlMain .= ($result === true)
-						? '<font color="red">webapp unlocked.</font>'
-						: '<br><font color="red">Error :</font><br>'.$result;
+						? '<font color="green">Done</font>'
+						: '<br><font color="red">Error:</font><br>'.$result;
 					break;
 			}
 			$htmlMain .= '<br><br>';
@@ -685,7 +688,7 @@ function sa_backup($action = "") {
 		case "0": // choose backup-type
 			buildPage("b");
 			$htmlTitle = "Backup - Create";
-			$htmlMain .= '<br>';
+			$htmlMain .= '<br>Select the format and location to save the backup to:<br><br>';
 			$htmlMain .= '<form name="backupServer" action="' . _FILE_THIS . '" method="post">';
 			$htmlMain .= '<select name="c">';
 			$htmlMain .= '<option value="0">none</option>';
@@ -704,11 +707,10 @@ function sa_backup($action = "") {
 			$htmlMain .= '<input type="Hidden" name="b" value="2">';
 			$htmlMain .= '<input type="submit" value="Backup to Client">';
 			$htmlMain .= '</form><p>';
-			$htmlMain .= 'In case you choose "Backup on Server" the archive will be located in : <br>';
+			$htmlMain .= '<br><strong>Notes:</strong><br>"Backup on Server" will save the backup archive to the following path:<br>';
 			$htmlMain .= '<em>'.tfb_htmlencodekeepspaces($cfg["path"] . _DIR_BACKUP).'/</em>';
 			$htmlMain .= '<br><br>';
-			$htmlMain .= 'Be patient until "its done" and don\'t click stuff while backup is created.<br>';
-			$htmlMain .= 'This script will tell you if things go wrong so no need to stress it.<br>';
+			$htmlMain .= '"Backup to Client" will create the backup archive and prompt you to save in your web browser.<br><br><strong>Please wait</strong> until the backup is complete.  Don\'t click stuff while backup archive is being created - you will be informed if something goes wrong so no need to stress it.<br>';
 			printPage();
 			exit();
 
@@ -805,17 +807,17 @@ function sa_log($action = "") {
 	switch ($action) {
 
 		case "0": // log-main
-			$htmlTitle = "log";
+			$htmlTitle = "Log Viewer";
+			$htmlMain .= '<br>Select the type of log you want to view below:<p>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?l=1"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="fluxd" border="0"> fluxd</a> - STDOUT logfiles for the torrentflux-b4rt fluxd daemon';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?l=1"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="fluxd" border="0"> fluxd</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?l=2"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="fluxd-error" border="0"> fluxd-error</a> - STDERR logfiles for the torrentflux-b4rt fluxd daemon';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?l=2"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="fluxd-error" border="0"> fluxd-error</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?l=3"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="fluazu" border="0"> fluazu</a> - logfiles for the fluazu interface to Azureus';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?l=3"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="fluazu" border="0"> fluazu</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?l=5"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="mainline" border="0"> BitTorrent Mainline</a> - centralized logfile for the BitTorrent Mainline client';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?l=5"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="mainline" border="0"> mainline</a>';
-			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?l=8"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="transfers" border="0"> transfers</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?l=8"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="transfers" border="0"> Transfers</a> - logfiles for transfers in the current transfer list';
 			$htmlMain .= '<br><br>';
 			break;
 
@@ -861,6 +863,7 @@ function sa_log($action = "") {
 
 		case "8": // transfers
 			$htmlTitle = "log - transfers";
+			$htmlMain .= "<br>Select the transfer you wish to view the logfile for from below:<br>";
 			$logList = getTransferArray('na');
 			if ((isset($logList)) && (is_array($logList))) {
 				$htmlMain .= '<ul>';
@@ -913,28 +916,28 @@ function sa_misc($action = "") {
 	switch ($action) {
 
 		case "0": // misc-main
-			$htmlTitle = "Misc";
+			$htmlTitle = "Miscellaneous Admin Tasks";
+			$htmlMain .= '<br>Select the task you wish to perform from below:<p>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?y=1"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="List files installed" border="0"> Lists</a> - view a list of currently installed torrentflux-b4rt files';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?y=1"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Check" border="0"> Lists</a>';
-			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?y=5"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Check" border="0"> Check</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?y=5"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Check requirements" border="0"> Check Requirements</a> - check your server meets the requirements to run torrentflux-b4rt';
 			$htmlMain .= '<br><br>';
 			break;
 
 		case "1": // misc - Lists
-			$htmlTitle = "Misc - Lists";
-			$htmlMain .= '<p>';
+			$htmlTitle = "Misc - File Lists";
+			$htmlMain .= '<br>Select an option from below:<p>';
 			$htmlMain .= '<img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Files" border="0"> Files (';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?y=11" target="_blank">html</a>';
 			$htmlMain .= ' / ';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?y=12" target="_blank">text</a>';
-			$htmlMain .= ')';
+			$htmlMain .= ') - list files currently installed';
 			$htmlMain .= '<p>';
 			$htmlMain .= '<img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Checksums" border="0"> Checksums (';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?y=13" target="_blank">html</a>';
 			$htmlMain .= ' / ';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?y=14" target="_blank">text</a>';
-			$htmlMain .= ')';
+			$htmlMain .= ') - list checksums of files currently installed';
 			$htmlMain .= '<br><br>';
 			break;
 
@@ -957,25 +960,26 @@ function sa_misc($action = "") {
 			exit();
 
 		case "5": // misc - Check
-			$htmlTitle = "Misc - Check";
-			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?y=51"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="php-web" border="0"> php-web</a>';
-			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?y=52"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="php-cli" border="0"> php-cli</a>';
-			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?y=53"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Perl" border="0"> Perl</a>';
+			$htmlTitle = "Misc - Check Requirements";
+			$htmlMain .= '<br>Select the requirements you wish to check from below:<p>';
+			$htmlMain .= "<strong>PHP Web</strong><br>Check your PHP web installation meets the requirements for web based activities in torrentflux-b4rt:<br>";
+			$htmlMain .= '<a href="' . _FILE_THIS . '?y=51"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="php-web" border="0"> Check PHP Web Requirements</a><br><br>';
+			$htmlMain .= "<strong>PHP CLI</strong><br>Check your PHP commandline binary installation meets the requirements for commandline based activities in torrentflux-b4rt:<br>";
+			$htmlMain .= '<a href="' . _FILE_THIS . '?y=52"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="php-cli" border="0"> Check PHP CLI Binary Requirements</a><br><br>';
+			$htmlMain .= "<strong>Perl</strong><br>Check your Perl installation meets the requirements for perl based activities in torrentflux-b4rt:<br>";
+			$htmlMain .= '<a href="' . _FILE_THIS . '?y=53"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Perl" border="0"> Check Perl Requirements</a>';
 			$htmlMain .= '<br><br>';
 			break;
 
 		case "51": // misc - Check - php-web
-			$htmlTitle = "Misc - Check - php-web";
+			$htmlTitle = "Misc - Check Requirements - PHP Web Installation";
 			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 			$htmlMain .= phpCheckWeb();
 			$htmlMain .= '</div>';
 			break;
 
 		case "52": // misc - Check - php-cli
-			$htmlTitle = "Misc - Check - php-cli";
+			$htmlTitle = "Misc - Check Requirements - PHP CLI Binary Installation";
 			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 			$htmlMain .= '<pre>';
 			$htmlMain .= tfb_htmlencode(shell_exec($cfg["bin_php"]." ".tfb_shellencode($cfg["docroot"]."bin/check/check-cli.php")));
@@ -984,7 +988,7 @@ function sa_misc($action = "") {
 			break;
 
 		case "53": // misc - Check - Perl
-			$htmlTitle = "Misc - Check - Perl";
+			$htmlTitle = "Misc - Check Requirements - Perl";
 			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 			$htmlMain .= '<pre>';
 			$htmlMain .= tfb_htmlencode(shell_exec($cfg["perlCmd"]." ".tfb_shellencode($cfg["docroot"]."bin/check/check.pl")." all"));
@@ -993,7 +997,7 @@ function sa_misc($action = "") {
 			break;
 
 		case "531": // misc - Check - Perl - nzbperl
-			$htmlTitle = "Misc - Check - Perl";
+			$htmlTitle = "Misc - Check Requirements - Nzbperl";
 			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 			$htmlMain .= '<pre>';
 			$htmlMain .= tfb_htmlencode(shell_exec($cfg["perlCmd"]." ".tfb_shellencode($cfg["docroot"]."bin/check/check.pl")." nzbperl"));
@@ -1019,15 +1023,15 @@ function sa_tfb($action = "") {
 	switch ($action) {
 
 		case "0": // main
-			$htmlTitle = "tf-b4rt";
+			$htmlTitle = "Tf-b4rt Updates";
+			$htmlMain .= '<br>Select the information you wish to view from below:<p>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?z=1"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Version" border="0"> Version</a>  - check your torrentflux-b4rt version is up to date';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?z=1"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Version" border="0"> Version</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?z=2"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="News" border="0"> News</a>  - view the release news for each version of torrentflux-b4rt';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?z=2"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="News" border="0"> News</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?z=3"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Changelog" border="0"> Changelog</a>  - view the changelogs for each version of torrentflux-b4rt';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?z=3"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Changelog" border="0"> Changelog</a>';
-			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?z=9"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Misc" border="0"> Misc</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?z=9"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Misc" border="0"> Misc</a>  - check the integrity of installed files';
 			$htmlMain .= '<br><br>';
 			break;
 
@@ -1044,18 +1048,18 @@ function sa_tfb($action = "") {
 				// version-text
 				$htmlMain .= '<br>';
 				if (strpos(_VERSION, "svn") !== false) {
-				        $htmlMain .= '<strong>This Version : </strong>'._VERSION;
+				        $htmlMain .= '<strong>This Version: </strong>'._VERSION;
     					$htmlMain .= '<br><br>';
-    					$htmlMain .= '<strong>Latest Release : </strong>';
+    					$htmlMain .= '<strong>Latest Release: </strong>';
     					$htmlMain .= $versionAvailable;
     					$htmlMain .= '<br><br>';
     					$htmlMain .= '<font color="blue">This Version is a svn-Version.</font>';
 				} else {
     				if ($versionAvailable != _VERSION) {
-    					$htmlMain .= '<strong>This Version : </strong>';
+    					$htmlMain .= '<strong>This Version: </strong>';
     					$htmlMain .= '<font color="red">'._VERSION.'</font>';
     					$htmlMain .= '<br><br>';
-    					$htmlMain .= '<strong>Available Version : </strong>';
+    					$htmlMain .= '<strong>Available Version: </strong>';
     					$htmlMain .= $versionAvailable;
     					$htmlMain .= '<br><br>';
     					$htmlMain .= '<strong><font color="red">There is a new Version available !</font></strong>';
@@ -1064,18 +1068,18 @@ function sa_tfb($action = "") {
 						$htmlMain .= '<input type="Hidden" name="u" value="0">';
 						$htmlMain .= '<input type="submit" value="Update to Version '.$versionAvailable.'">';
 						$htmlMain .= '</form>';
-    					$htmlMain .= '<strong>Current Release : </strong>';
+    					$htmlMain .= '<strong>Current Release: </strong>';
     					$htmlMain .= '<br>';
     					$htmlMain .= '<a href="'._URL_RELEASE.'" target="_blank"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Current Release" border="0"> '._URL_RELEASE.'</a>';
     					$htmlMain .= '<br><br>';
-    					$htmlMain .= '<strong>Homepage : </strong>';
+    					$htmlMain .= '<strong>Homepage: </strong>';
     					$htmlMain .= '<br>';
     					$htmlMain .= '<a href="'._URL_HOME.'" target="_blank"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Homepage on BerliOS" border="0"> '._URL_HOME.'</a>';
     					$htmlMain .= '<br>';
     				} else {
-    					$htmlMain .= '<strong>This Version : </strong>'._VERSION;
+    					$htmlMain .= '<strong>This Version: </strong>'._VERSION;
     					$htmlMain .= '<br><br>';
-    					$htmlMain .= '<strong>Available Version : </strong>';
+    					$htmlMain .= '<strong>Available Version: </strong>';
     					$htmlMain .= $versionAvailable;
     					$htmlMain .= '<br><br>';
     					$htmlMain .= '<font color="green">This Version looks good.</font>';
@@ -1088,11 +1092,11 @@ function sa_tfb($action = "") {
 				$htmlMain = '<br>';
 				$htmlMain .= '<font color="red">Error getting available version.</font>';
 				$htmlMain .= '<br><br>';
-    			$htmlMain .= '<strong>Current Release : </strong>';
+    			$htmlMain .= '<strong>Current Release: </strong>';
     			$htmlMain .= '<br>';
     			$htmlMain .= '<a href="'._URL_RELEASE.'" target="_blank"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Current Release" border="0"> '._URL_RELEASE.'</a>';
 				$htmlMain .= '<br><br>';
-				$htmlMain .= '<strong>Homepage : </strong>';
+				$htmlMain .= '<strong>Homepage: </strong>';
 				$htmlMain .= '<br>';
 				$htmlMain .= '<a href="'._URL_HOME.'" target="_blank"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Homepage on BerliOS" border="0"> '._URL_HOME.'</a>';
 				$htmlMain .= '<br>';
@@ -1203,7 +1207,7 @@ function sa_update($action = "") {
 					$htmlTop = "<strong>Update - Database</strong>";
 					$htmlMain = "<br>Database-Update in this Update is needed.";
 					$htmlMain .= '<br><br>';
-					$htmlMain .= 'Type : <em>'.$cfg["db_type"].'</em>';
+					$htmlMain .= 'Type: <em>'.$cfg["db_type"].'</em>';
 					$htmlMain .= '<br><br>';
 					$htmlMain .= '<form name="update" action="' . _FILE_THIS . '" method="post">';
 					$htmlMain .= '<input type="Hidden" name="u" value="2">';
@@ -1270,7 +1274,7 @@ function sa_update($action = "") {
 			if ((isset($updateFileList)) && ($updateFileList != "")) {
 				sendLine('<strong>Update - Files</strong>');
 				sendLine('<br><br>');
-				sendLine('Files that require an update in this Version :');
+				sendLine('Files that require an update in this Version:');
 				sendLine('<pre>');
 				sendLine($updateFileList);
 				sendLine('</pre>');
@@ -1287,7 +1291,7 @@ function sa_update($action = "") {
 
 		case "4":
 			sendLine('<strong>Update - Files</strong><br><br><em>Updating Files... Please Wait...</em><br><ul>');
-			sendLine('<li>Getting Update-Archive :<br>');
+			sendLine('<li>Getting Update-Archive:<br>');
 			@ini_set("allow_url_fopen", "1");
 			@ini_set("user_agent", "torrentflux-b4rt/". _VERSION);
 			// get md5
@@ -1329,7 +1333,7 @@ function sa_update($action = "") {
 				exit();
 			}
 			// validate archive
-			sendLine('<li>Validating Update-Archive : ');
+			sendLine('<li>Validating Update-Archive: ');
 			if ((file_exists($cfg['docroot']._UPDATE_ARCHIVE))
 				&& ($md5hash == @md5_file($cfg['docroot']._UPDATE_ARCHIVE))) {
 				sendLine('<font color="green">Ok</font> (<em>'.$md5hash.'</em>)<br></li>');
@@ -1338,7 +1342,7 @@ function sa_update($action = "") {
 				exit();
 			}
 			// extract archive
-			sendLine('<li>Extracting Update-Archive : <br>');
+			sendLine('<li>Extracting Update-Archive: <br>');
 			sendLine('<em>');
 			$cmd  = 'cd '.tfb_shellencode($cfg['docroot']).' && tar jxvf '._UPDATE_ARCHIVE;
 			$cmd .= ' 2>&1';
@@ -1351,14 +1355,14 @@ function sa_update($action = "") {
 			sendLine('</em>');
 			sendLine('<font color="green">done</font></li>');
 			// delete archive
-			sendLine('<li>Deleting Update-Archive : ');
+			sendLine('<li>Deleting Update-Archive: ');
 			if (@unlink($cfg['docroot']._UPDATE_ARCHIVE))
 				sendLine('<font color="green">done</font></li>');
 			else
 				sendLine('<font color="red">failed</font><br>remove archive '.$cfg['docroot']._UPDATE_ARCHIVE.' manual now.</li>');
 
 			// version-file
-			sendLine('<li>Updating Version-Information : ');
+			sendLine('<li>Updating Version-Information: ');
 			$versionAvailable = trim(getDataFromUrl(_SUPERADMIN_URLBASE._SUPERADMIN_PROXY));
 			if ((isset($versionAvailable)) && ($versionAvailable != "")) {
 				if ($handle = @fopen("version.php", "w")) {
@@ -1551,7 +1555,7 @@ function superadminAuthentication($message = "") {
 function buildPage($action) {
 	global $cfg, $statusImage, $statusMessage, $htmlTitle, $htmlTop, $htmlMain;
 	// navi
-	$htmlTop .= '<a href="' . _FILE_THIS . '?t=0">Transfers</a>';
+	$htmlTop .= '<a href="' . _FILE_THIS . '?t=0">Transfer Bulk-ops</a>';
 	$htmlTop .= ' | ';
 	$htmlTop .= '<a href="' . _FILE_THIS . '?p=0">Processes</a>';
 	$htmlTop .= ' | ';
@@ -1563,7 +1567,7 @@ function buildPage($action) {
 	$htmlTop .= ' | ';
 	$htmlTop .= '<a href="' . _FILE_THIS . '?y=0">Misc</a>';
 	$htmlTop .= ' | ';
-	$htmlTop .= '<a href="' . _FILE_THIS . '?z=0">tf-b4rt</a>';
+	$htmlTop .= '<a href="' . _FILE_THIS . '?z=0">Updates</a>';
 	// body
 	switch($action) {
 		case "b": // backup passthru
@@ -1576,14 +1580,14 @@ function buildPage($action) {
 			$htmlMain .= '<table width="100%" bgcolor="'.$cfg["table_data_bg"].'" border="0" cellpadding="4" cellspacing="0"><tr><td width="100%">';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?b=0">Create Backup</a>';
 			$htmlMain .= ' | ';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?b=3">Backups on Server</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?b=3">Backups currently on server</a>';
 			$htmlMain .= '</td><td align="right" nowrap><strong>Backup</strong></td>';
 			$htmlMain .= '</tr></table>';
 			break;
 		case "-u": // update-error passthru
 			$statusImage = "red.gif";
 			$htmlTitle = "Update";
-			$htmlMain = '<br><font color="red"><strong>Update from your Version not possible.</strong></font>';
+			$htmlMain = '<br><font color="red"><strong>Update from your version not possible.</strong></font>';
 			$htmlMain .= '<br><br>';
 			$htmlMain .= 'Please use the most recent tarball and perform a manual update.';
 			$htmlMain .= '<br>';
@@ -1637,7 +1641,7 @@ function buildPage($action) {
 			$htmlMain .= '<table width="100%" bgcolor="'.$cfg["table_data_bg"].'" border="0" cellpadding="4" cellspacing="0"><tr><td width="100%">';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?y=1">Lists</a>';
 			$htmlMain .= ' | ';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?y=5">Check</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?y=5">Check Requirements</a>';
 			$htmlMain .= '</td><td align="right" nowrap><strong>Misc</strong></td>';
 			$htmlMain .= '</tr></table>';
 			break;
@@ -1682,20 +1686,20 @@ function buildPage($action) {
 			$htmlTitle = "SuperAdmin";
 			$statusImage = "black.gif";
 			$htmlMain = '<br><div align="left">';
+			$htmlMain .= '<p>Select the superadmin task you wish to perform below:<br><br>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?t=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Transfers" border="0"> Transfers</a> - bulk start/stop/resume transfers';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?t=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Transfers" border="0"> Transfers</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?p=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Processes" border="0"> Processes</a> - view detailed process info; force stop transfer processes';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?p=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Processes" border="0"> Processes</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Maintenance" border="0"> Maintenance</a> - clean up and maintenance';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Maintenance" border="0"> Maintenance</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?b=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Backup" border="0"> Backup</a> - create backups; download saved backups';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?b=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Backup" border="0"> Backup</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?l=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Log" border="0"> Log</a> - view logs';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?l=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Log" border="0"> Log</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?y=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Misc" border="0"> Misc</a> - test for PHP and Perl requirements; view list of installed files';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?y=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Misc" border="0"> Misc</a>';
-			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?z=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="tf-b4rt" border="0"> tf-b4rt</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?z=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="tf-b4rt" border="0"> tf-b4rt</a> - version checking, updates, news, changelog; check installed file integrity';
 			$htmlMain .= '</div><br><br>';
 			break;
 	}
@@ -1704,8 +1708,8 @@ function buildPage($action) {
 /**
  * echo a string. use echo or sendLine
  *
- * @param $string : string to echo
- * @param $mode : 0 = echo | 1 = sendLine
+ * @param $string: string to echo
+ * @param $mode: 0 = echo | 1 = sendLine
  */
 function doEcho($string, $mode = 0) {
 	switch ($mode) {
@@ -1872,7 +1876,7 @@ function getReleaseList() {
 	$retVal = "";
 	$releaseList = @gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=3"));
 	if ((isset($releaseList)) && ($releaseList != "")) {
-		$retVal .= '<strong>Available Tarballs : </strong>';
+		$retVal .= '<strong>Available Tarballs: </strong>';
 		$retVal .= '<br>';
 		$retVal .= '<table cellpadding="2" cellspacing="1" border="1" bordercolor="'.$cfg["table_border_dk"].'" bgcolor="'.$cfg["body_data_bg"].'">';
 		$retVal .= '<tr>';
@@ -1929,7 +1933,7 @@ function cleanDir($dir) {
 			if (@unlink($dir.$file) === true)
 				$result .= tfb_htmlencode($file)."\n";
 			else
-				$result .= "ERROR : ".tfb_htmlencode($file)."\n";
+				$result .= "ERROR: ".tfb_htmlencode($file)."\n";
 		}
 	}
 	@closedir($dirHandle);
@@ -2100,7 +2104,7 @@ function backupDelete($filename) {
 	global $cfg;
 	$backupFile = $cfg["path"]. _DIR_BACKUP . '/' . $filename;
 	@unlink($backupFile);
-	AuditAction($cfg["constants"]["admin"], "Backup Deleted : ".$filename);
+	AuditAction($cfg["constants"]["admin"], "Backup Deleted: ".$filename);
 }
 
 /**
@@ -2122,7 +2126,7 @@ function backupSend($filename, $delete = false) {
 	if (!is_file($backupFile))
 		return false;
 	// log before we screw up the file-name
-	AuditAction($cfg["constants"]["admin"], "Backup Sent : ".$filename);
+	AuditAction($cfg["constants"]["admin"], "Backup Sent: ".$filename);
 	// filenames in IE containing dots will screw up the filename
 	if (strstr($_SERVER['HTTP_USER_AGENT'], "MSIE"))
 		$filename = preg_replace('/\./', '%2e', $filename, substr_count($filename, '.') - 1);
@@ -2157,8 +2161,8 @@ function backupSend($filename, $delete = false) {
 /**
  * backup of flux-installation
  *
- * @param $talk : boolean if function should talk
- * @param $compression : 0 = none | 1 = gzip | 2 = bzip2
+ * @param $talk: boolean if function should talk
+ * @param $compression: 0 = none | 1 = gzip | 2 = bzip2
  * @return string with name of backup-archive, string with "" in error-case.
  */
 function backupCreate($talk = false, $compression = 0) {
@@ -2166,7 +2170,7 @@ function backupCreate($talk = false, $compression = 0) {
 	// backup-dir
 	$dirBackup = $cfg["path"]. _DIR_BACKUP;
 	if (!checkDirectory($dirBackup)) {
-		$error = "Errors when checking/creating backup-dir : ".tfb_htmlencodekeepspaces($dirBackup);
+		$error = "Errors when checking/creating backup-dir: ".tfb_htmlencodekeepspaces($dirBackup);
 		return "";
 	}
 	// files and more strings
@@ -2287,7 +2291,7 @@ function backupCreate($talk = false, $compression = 0) {
 	// log
 	if ($talk)
 		sendLine('<font color="green">Backup Complete.</font><br>');
-	AuditAction($cfg["constants"]["admin"], "Backup Created : ".$fileArchiveName);
+	AuditAction($cfg["constants"]["admin"], "Backup Created: ".$fileArchiveName);
 	return $fileArchiveName;
 }
 
@@ -2364,18 +2368,18 @@ function validateLocalFiles() {
 	// summary
 	sendLine('<h3>Done.</h3>');
 	// files Total
-	sendLine('<strong>'._VERSION.' : </strong>'.$remoteChecksumsCount.'<br>');
-	sendLine('<strong>Local : </strong>'.$localChecksumsCount.'<br>');
+	sendLine('<strong>'._VERSION.': </strong>'.$remoteChecksumsCount.'<br>');
+	sendLine('<strong>Local: </strong>'.$localChecksumsCount.'<br>');
 	// files Ok
-	sendLine('<strong>Unchanged : </strong>'.count($filesOk).'<br>');
+	sendLine('<strong>Unchanged: </strong>'.count($filesOk).'<br>');
 	// files Missing
-	sendLine('<strong>Missing : </strong>'.count($filesMissing).'<br>');
+	sendLine('<strong>Missing: </strong>'.count($filesMissing).'<br>');
 	// files Changed
-	sendLine('<strong>Changed : </strong>'.count($filesChanged).'<br>');
+	sendLine('<strong>Changed: </strong>'.count($filesChanged).'<br>');
 	// files New
-	sendLine('<strong>New : </strong>'.count($filesNew).'<br>');
+	sendLine('<strong>New: </strong>'.count($filesNew).'<br>');
 	if (count($filesNew) > 0) {
-		sendLine('<br><strong>New Files : </strong><br>');
+		sendLine('<br><strong>New Files: </strong><br>');
 		foreach ($filesNew as $newFile)
 			sendLine(tfb_htmlencodekeepspaces($newFile).'<br>');
 	}
@@ -2395,11 +2399,11 @@ function phpCheckWeb() {
 	$warningsMessages = array();
 	// PHP-Version
 	$retVal .= '<p><strong>1. PHP-Version</strong></p>';
-	$phpVersion = 'PHP-Version : <em>'.PHP_VERSION.'</em> ';
+	$phpVersion = 'PHP-Version: <em>'.PHP_VERSION.'</em> ';
 	if (PHP_VERSION < 4.3) {
 		$phpVersion .= '<font color="red">Failed</font>';
 		$errors++;
-		array_push($errorsMessages, "PHP-Version : 4.3 or higher required.");
+		array_push($errorsMessages, "PHP-Version: 4.3 or higher required.");
 	} else {
 		$phpVersion .= '<font color="green">Passed</font>';
 	}
@@ -2415,7 +2419,7 @@ function phpCheckWeb() {
 	} else {
 		$session .= '<font color="red">Failed</font>';
 		$errors++;
-		array_push($errorsMessages, "PHP-Extensions : session required.");
+		array_push($errorsMessages, "PHP-Extensions: session required.");
 	}
 	$retVal .= $session.'</li>';
 	// pcre
@@ -2425,7 +2429,7 @@ function phpCheckWeb() {
 	} else {
 		$pcre .= '<font color="red">Failed</font>';
 		$errors++;
-		array_push($errorsMessages, "PHP-Extensions : pcre required.");
+		array_push($errorsMessages, "PHP-Extensions: pcre required.");
 	}
 	$retVal .= $pcre.'</li>';
 	// sockets
@@ -2435,7 +2439,7 @@ function phpCheckWeb() {
 	} else {
 		$sockets .= '<font color="red">Failed</font>';
 		$warnings++;
-		array_push($warningsMessages, "PHP-Extensions : sockets required for communication with fluxd. fluxd cannot work without sockets.");
+		array_push($warningsMessages, "PHP-Extensions: sockets required for communication with fluxd. fluxd cannot work without sockets.");
 	}
 	$retVal .= $sockets.'</li>';
 	//
@@ -2450,7 +2454,7 @@ function phpCheckWeb() {
 	} else {
 		$safe_mode .= '<font color="red">Failed</font>';
 		$errors++;
-		array_push($errorsMessages, "PHP-Configuration : safe_mode must be turned off.");
+		array_push($errorsMessages, "PHP-Configuration: safe_mode must be turned off.");
 	}
 	$retVal .= $safe_mode.'</li>';
 	// allow_url_fopen
@@ -2459,7 +2463,7 @@ function phpCheckWeb() {
 		$allow_url_fopen .= '<font color="green">Passed</font>';
 	} else {
 		$allow_url_fopen .= '<font color="red">Failed</font>';
-		array_push($warningsMessages, "PHP-Configuration : allow_url_fopen must be turned on. some features wont work if it is turned off.");
+		array_push($warningsMessages, "PHP-Configuration: allow_url_fopen must be turned on. some features wont work if it is turned off.");
 		$warnings++;
 	}
 	$retVal .= $allow_url_fopen.'</li>';
@@ -2470,7 +2474,7 @@ function phpCheckWeb() {
 	} else {
 		$register_globals .= '<font color="red">Failed</font>';
 		$errors++;
-		array_push($errorsMessages, "PHP-Configuration : register_globals must be turned off.");
+		array_push($errorsMessages, "PHP-Configuration: register_globals must be turned off.");
 	}
 	$retVal .= $register_globals.'</li>';
 	//
@@ -2498,7 +2502,7 @@ function phpCheckWeb() {
 	// db-state
 	if ($dbsupported == 0) {
 		$errors++;
-		array_push($errorsMessages, "PHP-Database-Support : no supported database-type found.");
+		array_push($errorsMessages, "PHP-Database-Support: no supported database-type found.");
 	}
 	// OS-Specific
 	// get os
@@ -2527,7 +2531,7 @@ function phpCheckWeb() {
 			} else {
 				$posix .= '<font color="red">Failed</font>';
 				$warnings++;
-				array_push($warningsMessages, "OS-Specific : PHP-extension posix missing. some netstat-features wont work without.");
+				array_push($warningsMessages, "OS-Specific: PHP-extension posix missing. some netstat-features wont work without.");
 			}
 			$retVal .= $posix.'</li>';
 			$retVal .= "</ul>";
@@ -2536,13 +2540,13 @@ function phpCheckWeb() {
 		default:
 			$retVal .= "OS not supported.<br>";
 			$errors++;
-			array_push($errorsMessages, "OS-Specific : ".$osString." not supported.");
+			array_push($errorsMessages, "OS-Specific: ".$osString." not supported.");
 			break;
 	}
 	// summary
 	$retVal .= '<p><strong>Summary</strong></p>';
 	// state
-	$state = "<strong>State : ";
+	$state = "<strong>State: ";
 	if (($warnings + $errors) == 0) {
 		// good
 		$state .= '<font color="green">Ok</font>';
@@ -2566,7 +2570,7 @@ function phpCheckWeb() {
 	}
 	// errors
 	if (count($errorsMessages) > 0) {
-		$retVal .= '<p><strong><font color="red">Errors : </font></strong><br>';
+		$retVal .= '<p><strong><font color="red">Errors: </font></strong><br>';
 		$retVal .= "<ul>";
 		foreach ($errorsMessages as $errorsMessage) {
 			$retVal .= "<li>".$errorsMessage."</li>";
@@ -2575,7 +2579,7 @@ function phpCheckWeb() {
 	}
 	// warnings
 	if (count($warningsMessages) > 0) {
-		$retVal .= '<p><strong><font color="orange">Warnings : </font></strong><br>';
+		$retVal .= '<p><strong><font color="orange">Warnings: </font></strong><br>';
 		$retVal .= "<ul>";
 		foreach ($warningsMessages as $warningsMessage) {
 			$retVal .= "<li>".$warningsMessage."</li>";
