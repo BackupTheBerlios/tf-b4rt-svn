@@ -1842,12 +1842,54 @@ Introduction
                 the sfv file.
 
         Troubleshooting
+
             Flushing the template cache
+
+                Occasionally problems may occur with the templating
+                system which make pages display incorrectly.  A first
+                attempt at fixing this kind of problem is to flush the
+                template cache.
+
+                The template cache can be flushed by clicking on the
+                'Flush Cache' icon located at the bottom of the transfer
+                list next to the bulk operations links.  The icon is a
+                'recycle' symbol.
+
+                If you are unable to click on the icon, try browsing to
+                the following URL:
+
+                http://example.com/dispatcher.php?action=cacheFlush
+
+                replacing 'example.com' with the URL of your
+                torrentflux-b4rt installation.
+
             Running a maintenance operation
 
+                Occasionally problems occur whereby the integrity of the
+                files that are used to keep track of transfers can
+                become corrupted.  This problem can lead to a situation
+                where torrentflux-b4rt reports that a transfer is
+                running when it isn't - or similar problems to this.
+
+                A first attempt at solving this kind of problem is to
+                perform a maintenance run from the front end which will
+                check the status of the transfer's control files and fix
+                any problems if possible.
+
+                To make a maintenance run, click on the 'Maintenance'
+                icon located at the bottom of the transfer list near to
+                the bulk operations links.  The icon is a red and white
+                life ring symbol.
+
+                For more thorough maintenance tasks see the section on
+                superadmin maintenance tasks
+
+                TODO_LINK: Performing maintenance tasks
 
     Administration operations
+
         Superadmin
+
             Controlling bulk transfer operations
 
             Viewing process listings
