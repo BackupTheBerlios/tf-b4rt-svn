@@ -64,7 +64,7 @@ if (@file_exists($cfg['pythonCmd']) !== true) {
  ******************************************************************************/
 
 // file + torrent vars
-$path = tfb_getRequestVar('path');
+$path = tfb_getRequestVarRaw('path');
 $torrent = "";
 if (!empty($path)) {
 	$torrent = tfb_cleanFileName(StripFolders($path).".torrent");

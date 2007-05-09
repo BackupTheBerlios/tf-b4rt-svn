@@ -54,7 +54,7 @@
 							<a href="JavaScript:moveFile('index.php?iid=move&path=<tmpl_var escape="url" name="urlencode1">&start=true')"><img src="themes/tf_standard_themes/images/_move.gif" width=16 height=16 title="<tmpl_Var name="_DIR_MOVE_LINK">" border="0"></a>
 						</tmpl_if>
 						<tmpl_if name="enable_maketorrent" value="1">
-							<a href="JavaScript:MakeTorrent('index.php?iid=maketorrent&path=<tmpl_var name="urlencode1">')"><img src="themes/tf_standard_themes/images/make.gif" width=16 height=16 title="Make Torrent" border=0></a>
+							<a href="JavaScript:MakeTorrent('index.php?iid=maketorrent&path=<tmpl_var escape="url" name="urlencode1">')"><img src="themes/tf_standard_themes/images/make.gif" width=16 height=16 title="Make Torrent" border=0></a>
 						</tmpl_if>
 						<tmpl_if name="enable_file_download" value="1">
 							<a href="index.php?iid=dir&tar=<tmpl_var name="urlencode1">"><img src="themes/tf_standard_themes/images/tar_down.gif" width=16 height=16 title="Download as <tmpl_var name="package_type">" border=0></a>
@@ -100,7 +100,7 @@
 							<a href="JavaScript:moveFile('index.php?iid=move&path=<tmpl_var escape="url" name="urlencode1">&start=true')"><img src="themes/tf_standard_themes/images/_move.gif" width=16 height=16 title="<tmpl_Var name="_DIR_MOVE_LINK">" border=0></a>
 						</tmpl_if>
 						<tmpl_if name="enable_maketorrent" value="1">
-							<a href="JavaScript:MakeTorrent('index.php?iid=maketorrent&path=<tmpl_var name="urlencode1">')"><img src="themes/tf_standard_themes/images/make.gif" width=16 height=16 title="Make Torrent" border=0></a>
+							<a href="JavaScript:MakeTorrent('index.php?iid=maketorrent&path=<tmpl_var escape="url" name="urlencode1">')"><img src="themes/tf_standard_themes/images/make.gif" width=16 height=16 title="Make Torrent" border=0></a>
 						</tmpl_if>
 						<tmpl_if name="enable_file_download" value="1">
 							<a href="index.php?iid=dir&down=<tmpl_var name="urlencode1">"><img src="themes/tf_standard_themes/images/download_owner.gif" width=16 height=16 title="Download" border=0></a>

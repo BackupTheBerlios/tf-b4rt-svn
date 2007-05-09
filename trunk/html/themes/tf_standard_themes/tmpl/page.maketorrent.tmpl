@@ -50,7 +50,7 @@
 										<option value="tornado">tornado</option>
 										<option value="mainline"<tmpl_if name="client" value="mainline"> selected</tmpl_if>>mainline</option>
 									</select>
-									<input type="hidden" name="path" value="<tmpl_var name="path">">
+									<input type="hidden" name="path" value="<tmpl_var escape="html" name="path">">
 								</td>
 							</tr>
 						</table>
@@ -64,7 +64,7 @@
 									<tr>
 										<td>
 											<form action="<tmpl_var name="form_action">" method="post" id="maketorrent" name="maketorrent">
-											<input type="hidden" name="path" value="<tmpl_var name="path">">
+											<input type="hidden" name="path" value="<tmpl_var escape="html" name="path">">
 												<table>
 												<tmpl_if name="client" value="tornado">
 													<input type="hidden" name="client" value="tornado">
