@@ -43,6 +43,10 @@ Torrentflux-b4rt Reference Manual
                 Using multi-ops
                 Available multi-op operations
 
+            Controlling multiple transfers using the bulk-ops feature
+                Overview
+                Using bulk-ops
+
             Transfer settings window
                 Overview
                 Opening the transfer settings window
@@ -694,6 +698,51 @@ Introduction
 
                           Be careful when using this option, only use it
                           when you want any transferred data removed.
+
+            Controlling multiple transfers using the bulk-ops feature
+
+                Overview
+
+                    A number of actions can be performed on all the
+                    transfer is the transfer list at the same time.
+                    This is quicker than performing the action on each
+                    transfer individually or even by using the multi-ops
+                    feature.
+
+                    The operations that can be performed in bulk are:
+
+                    o   Start all transfers
+                    o   Resume all transfers
+                    o   Stop all transfers
+
+                    'Start all transfers' will start every single
+                    transfer in the transfer list <b>regardless of
+                    whether they have previously been started or
+                    not</b>.
+
+                    'Resume all transfers' will only start those
+                    transfers in the transfer list that have already
+                    previously been started and are currently in the
+                    'stopped' state.
+
+                    'Stop all transfers' stops all currently running
+                    transfers in the transfer list.
+
+                    The bulk-ops start/resume are safe to use on a
+                    transfer list where some transfers are already
+                    running - only those transfers that aren't currently
+                    running will be started or resumed.  A transfer
+                    won't accidentally be started twice!
+
+                Using bulk-ops
+
+                    To use the bulk-ops feature, click on the
+                    'Start/Stop/Resume All Transfers' icon at the bottom
+                    of the transfer list next to the multi-ops dropdown
+                    list.  The icons are a white arrow on a green
+                    background, a double white arrow on a green
+                    background and a white square on a red background
+                    respectivly for start, resume and stop.
 
             Transfer settings window
 
@@ -1872,7 +1921,7 @@ Introduction
                 running when it isn't - or similar problems to this.
 
                 A first attempt at solving this kind of problem is to
-                perform a maintenance run from the front end which will
+                perform a maintenance run fron the front end which will
                 check the status of the transfer's control files and fix
                 any problems if possible.
 
