@@ -742,7 +742,7 @@ Introduction
                     list.  The icons are a white arrow on a green
                     background, a double white arrow on a green
                     background and a white square on a red background
-                    respectivly for start, resume and stop.
+                    respectively for start, resume and stop.
 
             Transfer settings window
 
@@ -1921,7 +1921,7 @@ Introduction
                 running when it isn't - or similar problems to this.
 
                 A first attempt at solving this kind of problem is to
-                perform a maintenance run fron the front end which will
+                perform a maintenance run from the front end which will
                 check the status of the transfer's control files and fix
                 any problems if possible.
 
