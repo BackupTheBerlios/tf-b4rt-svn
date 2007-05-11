@@ -136,9 +136,13 @@ Torrentflux-b4rt Reference Manual
 
     Administration operations
         Superadmin
+            Overview
+
             Controlling bulk transfer operations
 
-            Viewing process listings
+            Working with processes
+                Viewing detailed process listings
+                Force stopping processes
 
             Performing maintenance tasks
                 Basic transfer maintenance
@@ -733,6 +737,10 @@ Introduction
                     running - only those transfers that aren't currently
                     running will be started or resumed.  A transfer
                     won't accidentally be started twice!
+
+                    See also:
+                    TODO_LINK:
+                    Controlling bulk transfer operations
 
                 Using bulk-ops
 
@@ -1496,9 +1504,6 @@ Introduction
 
                 How to obtain cookie information
 
-                    TODO: create separate appendix for this item?  could
-                    expand to include methods for each 
-
                     FireFox
 
                         *	Tools => Options
@@ -1515,7 +1520,6 @@ Introduction
                             are UID and PASS, although these will differ
                             from site to site.  See your torrent site FAQ
                             or Forum for more info.
-
 
                     Internet Explorer
 
@@ -1939,14 +1943,169 @@ Introduction
 
         Superadmin
 
+            Overview
+
+                The superadmin pages are accessible only by the
+                superadmin account holder - the administration account
+                that is created the first time that torrentflux-b4rt is
+                created.
+
+                The superadmin pages are accessed by clicking on the
+                'Superadmin' link on the administration pages - a new
+                window will open with the superadmin pages in it.
+
+                The superadmin pages allow you detailed control over the
+                following tasks and areas:
+
+                o	Transfers - bulk start/stop/resume transfers
+
+                o	Processes - view detailed process info; force stop
+                    transfer processes
+
+                o	Maintenance - clean up and maintenance
+
+                o	Backup - create backups; download saved backups
+
+                o	Log - view logs
+
+                o	Misc - test for PHP and Perl requirements; view list
+                    of installed files
+
+                o	tf-b4rt - version checking, updates, news,
+                    changelog; check installed file integrity
+
+                Be careful when using the superadmin features as many of
+                them apply to all torrentflux-b4rt users and not just
+                individual users.
+
             Controlling bulk transfer operations
 
-            Viewing process listings
+                The superadmin transfer bulk-ops page allows you to
+                operate on multiple transfers at one time.  The actions
+                are identical to the bulk-ops feature available in the
+                frontend.
+
+                The transfer bulk-ops available in the superadmin pages
+                are:
+
+                o	Stop All Transfers - this option will stop all
+                    currently running transfers
+
+                o	Start All Transfers - this option will start all
+                    transfers that are currently not running
+
+                o	Resume All Transfers - this option will start *only*
+                    those transfers that have already been previously
+                    started
+
+                See also:
+
+                TODO_LINK: User operations - Controlling multiple
+                transfers using the bulk-ops feature
+
+            Working with processes
+
+                Viewing detailed process listings
+
+                    To view a detailed list of currently running
+                    processes, click on the 'All' link on the
+                    'Processes' tab in the superadmin pages.
+
+                    A detailed list of all currently running processes
+                    associated with torrentflux-b4rt will be displayed.
+
+                    The output is divided into sections, one for each
+                    client associated with torrentflux-b4rt.
+
+                Force stopping processes
+
+                    Problematic transfers can be forced to stop by using
+                    the 'Transfers' link on the 'Processes' tab in the
+                    superadmin pages.
+
+                    The 'Transfers' page displays a list of all
+                    currently running transfers, listing the user the
+                    transfer belongs to and the transfer file name.
+
+                    The transfers in this list can be force stopped by
+                    clicking on the red icon in the right hand column next
+                    to the transfer.
+
+                    This force stop method sends a SIGKILL signal to the
+                    process associated with the transfer.
 
             Performing maintenance tasks
+
                 Basic transfer maintenance
+
+                    The 'Main' page of the 'Maintenance' tab in the
+                    superadmin pages allows you to run maintenance tasks
+                    on your torrentflux-b4rt installation.
+
+                    The available options are:
+
+                    o	Standard Maintenance Run
+
+                        This option is the same as available on the
+                        index page of the frontend and is automatically
+                        called on every login.
+
+                        The standard maintenance run performs the
+                        following actions:
+
+                        - Checks for stale fluxd PID and socket files
+                          and removes them if found.
+
+                        - Check for any transfers that are marked as
+                          running but actually aren't running and update
+                          their status to show them as not running.
+
+                        - Update the database so the information stored
+                          there is in line with the transfer files in
+                          the filesystem.
+
+                    o	Extended Maintenance Run
+
+                        This option is exactly the same as the standard
+                        maintenance run, except that any transfers that
+                        are marked as running but aren't actually
+                        running are restarted.
+
                 Killing processes
+
+                    The 'Kill' link on the 'Maintenance' tab of the
+                    superadmin pages allows you to kill all processes
+                    for a given type - PHP, Python, Perl,
+                    Transmission, Wget, VLC.
+
+                    This option will send a KILL signal to all processes
+                    matching the type you choose.
+
+                    NOTE:
+                    -----
+                    Be VERY careful when using this option and only use
+                    it as a last resort or if you really know what you
+                    are doing.
+
+                    The kill signal sent will kill ALL processes of the
+                    type you specify - for example if you choose to kill
+                    all PHP processes, every PHP process running on the
+                    server as the webserver user will be killed, not
+                    just those related to torrentflux-b4rt!
+
+                    If you choose to use this option to kill processes,
+                    it is advisable to check what processes are running
+                    first by issuing the following command as root:
+
+                    ps aux | grep php
+
+                    for example in the case of 'php'.  This will give
+                    you an idea of what PHP processes are currently
+                    running and you can be sure then that you are only
+                    going to kill the processes you need to.
+
                 Cleaning transfer file leftovers and client resources
+
                 Repairing problematic installations
                 Resetting transfer totals
                 Locking access to the frontend
