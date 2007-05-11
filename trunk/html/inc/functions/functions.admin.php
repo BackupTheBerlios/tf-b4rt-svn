@@ -1084,8 +1084,9 @@ function changeUserLevel($user_id, $level) {
 function setWebappLock($lock) {
 	global $db;
 	$db->Execute("UPDATE tf_settings SET tf_value = ".$db->qstr($lock)." WHERE tf_key = 'webapp_locked'");
-	// set transfers-cache
-	cacheTransfersSet();
+	// flush session-cache
+	cacheFlush();
+	// return
 	return ($db->ErrorNo() == 0)
 		? true
 		: $db->ErrorMsg();

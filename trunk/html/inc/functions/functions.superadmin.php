@@ -642,9 +642,10 @@ function sa_maintenance($action = "") {
 			}
 			$htmlMain .= '<hr><p>';
 			$htmlMain .= '<br><a href="' . _FILE_THIS . '?m=61"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Repair" border="0"> ';
-			if ($cfg['webapp_locked'] == 1)
-				$htmlMain .= 'Un';
-			$htmlMain .= $cfg['webapp_locked'] ? 'l' : 'L' .'ock Frontend</a>';
+			$htmlMain .= ($cfg['webapp_locked'] == 1)
+				? 'Unlock'
+				: 'Lock';
+			$htmlMain .= ' Frontend</a>';
 			$htmlMain .= '<br><br>';
 			break;
 
