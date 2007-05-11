@@ -1,66 +1,6 @@
 /* $Id$ */
 
 /**
- * addWatchEntry
- */
-function addWatchEntry () {
-	var wu = lrtrim(document.theForm.watch_user.options[document.theForm.watch_user.selectedIndex].value);
-    var wd = lrtrim(document.theForm.watch_dir.value);
-    if ((wu != "") && (wd != "")) {
-		if (wd.indexOf('/') != 0) {
-			alert("Directory must be absolute !");
-			return false;
-		}
-	    var liststr = document.theForm.fluxd_Watch_jobs;
-	    var list = document.theForm.watch_jobs;
-	    for (var i = 0; i < document.theForm.watch_jobs.options.length; i++) {
-	    	if ((lrtrim(document.theForm.watch_jobs.options[i].value)) == (wu + ":" + wd)) {
-	    		alert("Job already exists");
-	    		return false;
-	    	}
-	    	if ((lrtrim(document.theForm.watch_jobs.options[i].value)) == (wu + ":" + wd + "/")) {
-	    		alert("Job already exists");
-	    		return false;
-	    	}
-	    }
-	    var newentry = document.createElement("option");
-	    newentry.text = wu + ":" + wd;
-	    newentry.value = newentry.text;
-	    //document.theForm.watch_user.value = "";
-		document.theForm.watch_dir.value = "";
-	    if (navigator.appName == "Netscape")
-	    	list.add(newentry, null);
-	    else
-	    	list.add(newentry);
-	    if (liststr.value == "")
-	    	liststr.value = newentry.value;
-	    else
-	    	liststr.value = liststr.value + ";" + newentry.value;
-    } else {
-		alert("Please select an Username and enter a Directory first!");
-	}
-}
-
-/**
- * removeWatchEntry
- */
-function removeWatchEntry() {
-	if (document.theForm.watch_jobs.selectedIndex != -1) {
-		var liststr = document.theForm.fluxd_Watch_jobs;
-		document.theForm.watch_jobs.remove(document.theForm.watch_jobs.selectedIndex);
-		var newValue = "";
-		for (var j = 0; j < document.theForm.watch_jobs.options.length; j++) {
-            if (j > 0)
-                newValue += ";";
-		    newValue += lrtrim(document.theForm.watch_jobs.options[j].value);
-		}
-		liststr.value = lrtrim(newValue);
-	} else {
-		alert("Please select a Job first!");
-	}
-}
-
-/**
  * addRssadFilterEntry()
  */
 function addRssadFilterEntry() {

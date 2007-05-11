@@ -226,19 +226,6 @@ function processSettingsParams($updateIndexSettings = true, $updateGoodlookinSet
 		unset($_POST['resdirlist']);
 	if (isset($_POST['resdirentry']))
 		unset($_POST['resdirentry']);
-	// fluxd : watch
-	if (isset($_POST['watch_jobs']))
-		unset($_POST['watch_jobs']);
-	if (isset($_POST['watch_user']))
-		unset($_POST['watch_user']);
-	if (isset($_POST['watch_dir']))
-		unset($_POST['watch_dir']);
-	if (isset($_POST['checkdir'])) {
-		$doCheckdir = ($_POST['checkdir'] == "true") ? true : false;
-		unset($_POST['checkdir']);
-	} else {
-		$doCheckdir = false;
-	}
 	// init settings array from params
 	// process and handle all specials and exceptions while doing this.
 	$settings = array();
@@ -284,30 +271,6 @@ function processSettingsParams($updateIndexSettings = true, $updateGoodlookinSet
 							if ($idx > 0)
 								$val .= ':';
 							$val .= trim(checkDirPathString($dirAry[$idx]));
-						}
-						$settings[$key] = trim($val);
-					} else {
-						$settings[$key] = "";
-					}
-					break;
-				case "fluxd_Watch_jobs": // watch-jobs
-					if (strlen($value) > 0) {
-						$val = "";
-						$jobs = explode(";", $value);
-						$idx = 0;
-						foreach ($jobs as $job) {
-							$jobAry = explode(":", trim($job));
-							$user = trim(array_shift($jobAry));
-							$dir = trim(array_shift($jobAry));
-							$dir = trim(checkDirPathString($dir));
-							if ($idx > 0)
-								$val .= ';';
-							$val .= $user;
-							$val .= ':';
-							$val .= $dir;
-							$idx++;
-							if ($doCheckdir)
-								checkDirectory($dir);
 						}
 						$settings[$key] = trim($val);
 					} else {

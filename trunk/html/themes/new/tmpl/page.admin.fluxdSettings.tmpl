@@ -244,40 +244,13 @@
 						Watch Jobs
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="watch_jobs" size="3">
-							<tmpl_if name="fluxd_Watch_jobs_list">
-								<tmpl_loop name="fluxd_Watch_jobs_list">
-									<option value="<tmpl_var escape="html" name="user">:<tmpl_var escape="html" name="dir">"><tmpl_var escape="htmlkeepspaces" name="user">:<tmpl_var escape="htmlkeepspaces" name="dir"></option>
-								</tmpl_loop>
-							</tmpl_if>
-						</select>
-						<input type="button" name="remButton" value="remove" onclick="removeWatchEntry()">
+						<a id="closeLink" href="admin.php?op=fluxdWatchSettings">Configure Jobs.</a>
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsText">
 						Configure the Watch-Jobs.
 					</td>
-				</tr>
-				<tr>
-					<td class="settingsTitle">
-						New Job
-					</td>
-					<td class="settingsSetting">
-						<br />
-						User:
-						<select name="watch_user">
-							<tmpl_loop name="watch_user">
-								<option value="<tmpl_var name="user">"><tmpl_var name="user"></option>
-							</tmpl_loop>
-						</select>
-						<input type="button" name="addButton" value="add" onclick="addWatchEntry()" size="30">
-						<br /><br />
-						Dir:
-						<input type="text" name="watch_dir" size="20">
-						Check/Create dirs <input type="checkbox" name="checkdir" value="true" checked>
-					</td>
-					<input type="hidden" name="fluxd_Watch_jobs" value="<tmpl_var name="fluxd_Watch_jobs">">
 				</tr>
 			</table>
 		</div>

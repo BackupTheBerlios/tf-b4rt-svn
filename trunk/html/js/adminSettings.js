@@ -61,12 +61,22 @@ function validateSettings(section) {
 				document.theForm.savedir.focus();
 			} else {
 				if (document.theForm.savedir.value.indexOf('/') != 0) {
-					msg = msg + "* savedir must be a absolute path.\n";
+					msg = msg + "* savedir must be an absolute path.\n";
 				}
 			}
 			if (document.theForm.url.value.length < 1) {
 				msg = msg + "* Enter a URL.\n";
 				document.theForm.url.focus();
+			}
+			break;
+		case 'fluxd_Watch_job':
+			if (document.theForm.watchdir.value.length < 1) {
+				msg = msg + "* Enter a watchdir.\n";
+				document.theForm.watchdir.focus();
+			} else {
+				if (document.theForm.watchdir.value.indexOf('/') != 0) {
+					msg = msg + "* watchdir must be an absolute path.\n";
+				}
 			}
 			break;
 		case 'index':
@@ -239,4 +249,16 @@ function validateSettings(section) {
 	} else {
 		return true;
 	}
+}
+
+/**
+ * performRefresh
+ *
+ * Refresh theForm without executing its onsubmit code (used when a select
+ * has changed and the form must be reloaded to show new values).
+ */
+function performRefresh() {
+  var f = document.theForm;
+  f.refresh.value = '1';
+  f.submit();
 }

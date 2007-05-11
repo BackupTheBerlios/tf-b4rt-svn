@@ -94,24 +94,6 @@ FluxdServiceMod::initializeServiceMod('Watch');
 $tmpl->setvar('fluxd_Watch_enabled', $cfg["fluxd_Watch_enabled"]);
 $tmpl->setvar('fluxd_Watch_state', FluxdWatch::getModState());
 $tmpl->setvar('fluxd_Watch_interval', $cfg["fluxd_Watch_interval"]);
-if (strlen($cfg["fluxd_Watch_jobs"]) > 0) {
-	$watchlist = array();
-	$jobs = explode(";", trim($cfg["fluxd_Watch_jobs"]));
-	foreach ($jobs as $job) {
-		$jobAry = explode(":", trim($job));
-		$user = trim(array_shift($jobAry));
-		$dir = trim(array_shift($jobAry));
-		if ((strlen($user) > 0) && (strlen($dir) > 0))
-			array_push($watchlist, array('user' => $user,'dir' => $dir));
-	}
-	$tmpl->setloop('fluxd_Watch_jobs_list', $watchlist);
-}
-$watchuser = array();
-$userCount = count($cfg['users']);
-for ($i = 0; $i < $userCount; $i++)
-	array_push($watchuser, array('user' => $cfg['users'][$i]));
-$tmpl->setloop('watch_user', $watchuser);
-$tmpl->setvar('fluxd_Watch_jobs', $cfg["fluxd_Watch_jobs"]);
 
 // Rssad
 FluxdServiceMod::initializeServiceMod('Rssad');

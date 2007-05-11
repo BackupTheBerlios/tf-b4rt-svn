@@ -134,7 +134,6 @@ function admin_updateFluxdSettings() {
 		$_POST["fluxd_Qmgr_interval"] != $cfg["fluxd_Qmgr_interval"] ||
 		$_POST["fluxd_Fluxinet_port"] != $cfg["fluxd_Fluxinet_port"] ||
 		$_POST["fluxd_Watch_interval"] != $cfg["fluxd_Watch_interval"] ||
-		$_POST["fluxd_Watch_jobs"] != $cfg["fluxd_Watch_jobs"] ||
 		$_POST["fluxd_Rssad_interval"] != $cfg["fluxd_Rssad_interval"] ||
 		$_POST["fluxd_Maintenance_interval"] != $cfg["fluxd_Maintenance_interval"] ||
 		$_POST["fluxd_Trigger_interval"] != $cfg["fluxd_Trigger_interval"]) {
