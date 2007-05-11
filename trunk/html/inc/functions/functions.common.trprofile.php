@@ -21,16 +21,41 @@
 *******************************************************************************/
 
 /**
- * This method Gets Download profiles for the actual user
+ * This method Gets Download profiles for a specific user (given by uid)
+ *
+ * @param $uid
+ * @param $profile
+ * @return array
+ */
+function GetProfiles($uid, $profile) {
+	global $cfg, $db;
+	$profiles_array = array();
+	$sql = "SELECT name FROM tf_trprofiles WHERE owner=".$db->qstr($uid)." AND public='0'";
+	$rs = $db->GetCol($sql);
+	if ($rs) {
+		foreach($rs as $arr) {
+			array_push($profiles_array, array(
+				'name' => $arr,
+				'is_selected' => ($arr == $profile) ? 1 : 0
+				)
+			);
+		}
+	}
+	if ($db->ErrorNo() != 0) dbError($sql);
+	return $profiles_array;
+}
+
+/**
+ * This method Gets Download profiles for a specific user (given by username)
  *
  * @param $user
  * @param $profile
  * @return array
  */
-function GetProfiles($user, $profile) {
+function GetProfilesByUserName($user, $profile) {
 	global $cfg, $db;
 	$profiles_array = array();
-	$sql = "SELECT name FROM tf_trprofiles WHERE owner=".$db->qstr($user)." AND public='0'";
+	$sql = "SELECT p.name FROM tf_users AS u LEFT JOIN tf_trprofiles AS p ON (u.uid = p.owner) WHERE u.user_id=".$db->qstr($user)." AND p.public='0'";
 	$rs = $db->GetCol($sql);
 	if ($rs) {
 		foreach($rs as $arr) {
