@@ -149,7 +149,8 @@ Torrentflux-b4rt Reference Manual
                 Killing processes
                 Cleaning transfer file leftovers and client resources
                 Repairing problematic installations
-                Resetting transfer totals
+                Resetting transfer totals, transfer stats and personal
+                settings
                 Locking access to the frontend
 
             Backups
@@ -2106,9 +2107,113 @@ Introduction
 
                 Cleaning transfer file leftovers and client resources
 
+                    The 'Clean' linked page on the 'Maintenance' tab of
+                    the superadmin pages allows you to clean leftover
+                    transfer pid files, client cache files and
+                    torrentflux-b4rt's template cache files.
+
+                    The actions available are:
+
+                    o   PID File Clean
+
+                        Deletes stale PID files from transfers.
+                        Any transfers that are currently not running
+                        should not have a PID file associated with it.
+                        These stale PID files are deleted using this
+                        option.
+
+                    o   BitTornado Clean
+
+                        Deletes the BitTornado cache.
+                        BitTornado uses a cache whilst transferring
+                        data.
+                        This option deletes the BitTornado cache.
+
+                    o   Transmission Clean
+
+                        Deletes the Transmission cache.
+                        Transmission uses a cache whilst transferring
+                        data.
+                        This option deletes the Transmission cache.
+
+                    o   BitTorrent Mainline Clean
+
+                        Deletes the BitTorrent Mainline cache.
+                        BitTorrent Mainline uses a cache whilst
+                        transferring data.  This option deletes the
+                        BitTorrent Mainline cache.
+
+                    o   Template Cache Clean
+
+                        Deletes the Torrentflux-b4rt template cache.
+                        Torrentflux-b4rt can be configured to use a
+                        template cache to speed up display of pages.
+                        This option deletes the template cache.
+
+                        See also:
+                        TODO_LINK webapp admin config - Enabling
+                        template caching
+
                 Repairing problematic installations
-                Resetting transfer totals
+
+                    The 'Repair' linked page on the 'Maintenance' tab of
+                    the superadmin pages allows you to perform a
+                    thorough repair of the torrentflux-b4rt
+                    installation.
+
+                    This option is the same as the basic 'maintenance'
+                    run - TODO_LINK: superadmin maint etc except that
+                    this option resets the stat files of any transfers
+                    and deletes all transfer pids as if they had just
+                    been newly injected.  No transfers are restarted
+                    using this repair option.
+
+                    Generally this option should only be taken as a last
+                    resort if transfer's refuse to start at all.
+
+                Resetting transfer totals, transfer stats and personal
+                settings
+
+                    The 'Reset' linked page on the 'Maintenance' tab of
+                    the superadmin pages allows you to reset the
+                    transfer totals, transfer statistics and personal
+                    settings.
+
+                    The options available are:
+
+                    o   Reset Transfer Totals
+
+                        Resets the transfer totals - total
+                        uploaded/downloaded - for each transfer in the
+                        transfer list.
+                        Do not use this option if you are trying to keep
+                        track of your ratio on trackers using the
+                        transfer totals in the frontend!
+
+                    o   Reset Xfer Stats
+
+                        Resets the transfer statistics.
+                        All transfer statistics on record are reset
+                        using this option - how much has been downloaded
+                        per user over the last day/month/year etc.
+
+                    o   Reset Personal Settings
+
+                        Resets the personal settings of all users.
+                        All user's personal settings are reset to the
+                        default values.  Be careful using this option as
+                        all user's profiles are affected.
+
                 Locking access to the frontend
+
+                    The 'Lock' linked page on the 'Maintenance' tab of
+                    the superadmin pages allows you to lock all access
+                    to the torrentflux-b4rt frontend for non-admin
+                    users.
+
+                    When attempting to browse the frontend, users will
+                    only see a message informing them the frontend is
+                    locked.
 
             Backups
                 Performing a backup
