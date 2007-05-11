@@ -894,65 +894,66 @@ sub set {
 
 #------------------------------------------------------------------------------#
 # Sub: fluxcli                                                                 #
-# Arguments: Command [Arg1, Arg2, Arg3, Arg4]                                  #
+# Arguments: Command[, Args]                                                   #
 # Returns: string or 0|1                                                       #
 #------------------------------------------------------------------------------#
 sub fluxcli {
-	my $Command = shift;
-	my $Arg1 = shift;
-	my $Arg2 = shift;
-	my $Arg3 = shift;
-	my $Arg4 = shift;
+	my ($Command, @Args) = @_;
+	my $Args = $#Args + 1;
+	my ($ArgsReq, $ArgsMax);
+
 	# qx
-	if ($Command =~/^transfers|^netstat/) {
-		if ((defined $Arg1) || (defined $Arg2)) {
-			return printUsage();
-		} else {
-			my $shellCmd = $bin_php." bin/".$bin_fluxcli." ".quotemeta($Command)." 2>> ".$log_error;
-			return qx($shellCmd);
-		}
+	for ($Command) {
+		if (/^transfers|^netstat/) { $ArgsReq = 0; last; }
+		if (/^dump/)               { $ArgsReq = 1; last; }
 	}
-	if ($Command =~/^dump/) {
-		if ((!(defined $Arg1)) || (defined $Arg2)) {;
-			return printUsage();
-		} else {
-			my $shellCmd = $bin_php." bin/".$bin_fluxcli." ".quotemeta($Command)." ".quotemeta($Arg1)." 2>> ".$log_error;
-			return qx($shellCmd);
-		}
+	if (defined $ArgsReq) {
+		return printUsage() if ($Args < $ArgsReq || $Args > (defined $ArgsMax ? $ArgsMax : $ArgsReq));
+		my $shellCmd = $bin_php." bin/".$bin_fluxcli." ".quotemeta($Command).appendArgs(\@Args, $ArgsReq)." 2>> ".$log_error;
+		return qx($shellCmd);
 	}
+
 	# syscall
-	if ($Command =~/^\w+-all|^repair/) {
-		if ((defined $Arg1) || (defined $Arg2)) {
-			return 0;
-		} else {
-			my $shellCmd = $bin_php." bin/".$bin_fluxcli." ".quotemeta($Command);
-			return doSysCall($shellCmd);
-		}
+	for ($Command) {
+		if (/^start-all|^resume-all/)           { $ArgsReq = 0; $ArgsMax = 2; last; }
+		if (/^stop-all|^repair/)                { $ArgsReq = 0;               last; }
+		if (/^start/)                           { $ArgsReq = 1; $ArgsMax = 3; last; }
+		if (/^stop|^reset|^delete|^wipe|^xfer/) { $ArgsReq = 1;               last; }
+		if (/^inject|^watch/)                   { $ArgsReq = 2; $ArgsMax = 4; last; }
+		if (/^maintenance/)                     { $ArgsReq = 0; $ArgsMax = 1; last; }
+		if (/^rss/)                             { $ArgsReq = 4; $ArgsMax = 5; last; }
 	}
-	if ($Command =~/^start|^stop|^reset|^delete|^wipe|^xfer|^maintenance/) {
-		if ((!(defined $Arg1)) || (defined $Arg2)) {;
-			return 0;
-		} else {
-			my $shellCmd = $bin_php." bin/".$bin_fluxcli." ".quotemeta($Command)." ".quotemeta($Arg1);
-			return doSysCall($shellCmd);
-		}
+	if (defined $ArgsReq) {
+		return 0 if ($Args < $ArgsReq || $Args > (defined $ArgsMax ? $ArgsMax : $ArgsReq));
+                my $shellCmd = $bin_php." bin/".$bin_fluxcli." ".quotemeta($Command).appendArgs(\@Args, $ArgsReq);
+		return doSysCall($shellCmd);
 	}
-	if ($Command =~/^inject|^watch/) {
-		if ((!(defined $Arg1)) || (!(defined $Arg2))) {
-			return 0;
-		} else {
-			my $shellCmd = $bin_php." bin/".$bin_fluxcli." ".quotemeta($Command)." ".quotemeta($Arg1)." ".quotemeta($Arg2);
-			return doSysCall($shellCmd);
-		}
+}
+
+#------------------------------------------------------------------------------#
+# Sub: appendArgs                                                              #
+# Arguments: RefArgs[, ArgsReq]                                                #
+# Returns: Command-string fragment                                             #
+#------------------------------------------------------------------------------#
+sub appendArgs {
+	my $Args = shift;
+	my $ArgsReq = shift;
+	$ArgsReq = 0 if (!defined $ArgsReq);
+
+	# Iterate from last-to-first, to skip missing
+	# rightmost non-mandatory args.
+	my $return = '';
+	my $canSkip = 1;
+	for (my $i = ($ArgsReq > $#$Args ? $ArgsReq - 1 : $#$Args); $i >= 0; $i--) {
+		my $Arg = $$Args[$i];
+		my $ArgPresent = defined $Arg;
+		$canSkip = 0 if ($canSkip && ($i < $ArgsReq || $ArgPresent));
+		if    ($canSkip && !$ArgPresent)          {                                        }
+		elsif (!$ArgPresent || length($Arg) == 0) { $return = " ''".$return;               }
+		else                                      { $return = ' '.quotemeta($Arg).$return; }
 	}
-	if ($Command =~/^rss/) {
-		if ((!(defined $Arg1)) || (!(defined $Arg2)) || (!(defined $Arg3)) || (!(defined $Arg4))) {
-			return 0;
-		} else {
-			my $shellCmd = $bin_php." bin/".$bin_fluxcli." ".quotemeta($Command)." ".quotemeta($Arg1)." ".quotemeta($Arg2)." ".quotemeta($Arg3)." ".quotemeta($Arg4);
-			return doSysCall($shellCmd);
-		}
-	}
+
+	return $return;
 }
 
 #------------------------------------------------------------------------------#
@@ -975,6 +976,19 @@ sub doSysCall {
 		return 1;
     }
 	return 0;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: lrtrim                                                                  #
+# Arguments: string                                                            #
+# Returns: trimmed and chomped string                                          #
+#------------------------------------------------------------------------------#
+sub lrtrim($) {
+	$_ = shift;
+	chomp;
+	s/^\s+//;
+	s/\s+$//;
+	return $_;
 }
 
 #------------------------------------------------------------------------------#

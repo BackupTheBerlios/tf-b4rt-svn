@@ -48,8 +48,23 @@ my $interval;
 # time of last run
 my $time_last_run = 0;
 
-# jobs-hash
+# jobs-hash: dir => {  # anonymous hash
+#                     U => user,
+#                     P => profile, # optional
+#                                   # optional other attributes, currently ignored
+#                     D => dir
+#                   }
 my %jobs;
+
+
+################################################################################
+# constants                                                                    #
+################################################################################
+
+my $delimJobs      = ';';
+my $delimJob       = ':';
+my $delimComponent = '=';
+
 
 ################################################################################
 # constructor + destructor                                                     #
@@ -130,19 +145,47 @@ sub initialize {
 	Fluxd::printMessage("Watch", "initializing (loglevel: ".$loglevel." ; interval: ".$interval." ; jobs: ".$jobs.")\n");
 
 	# parse jobs
-	my (@jobsAry) = split(/;/,$jobs);
+	my (@jobsAry) = split(/$delimJobs/,$jobs);
 	foreach my $jobEntry (@jobsAry) {
-		chomp $jobEntry;
-		my (@jobAry) = split(/:/,$jobEntry);
-		my $user = shift @jobAry;
-		chomp $user;
-		my $dir = shift @jobAry;
-		chomp $dir;
-		if ((!($user eq "")) && (-d $dir)) {
-			if ($loglevel > 1) {
-				Fluxd::printMessage("Watch", "job : user=".$user.", dir=".$dir."\n");
+		# U=user:[P=profile:]D=dir
+
+		$_ = Fluxd::lrtrim $jobEntry;
+		next if !defined $_ || length $_ == 0;
+
+		my %jobEntry;
+		while (1) {
+			if (/^D$delimComponent/) {	# Dir: final component.
+				$jobEntry{D} = substr $_, 2;
+				last;
+			} else {					# Other component.
+				my (@jobAry) = split /$delimJob/, $_, 2;
+				if ($#jobAry != 1 || $jobAry[0] !~ /^\s*[A-Z]$delimComponent/) {
+					# message
+					$message = "invalid job entry";
+					# set state
+					$state = Fluxd::MOD_STATE_ERROR;
+					# return
+					return 0;
+				}
+				$_ = Fluxd::lrtrim shift @jobAry;
+				$jobEntry{substr $_, 0, 1} = substr $_, 2;
+				$_ = Fluxd::lrtrim shift @jobAry;
 			}
-			$jobs{$user} = $dir;
+		}
+
+		if (
+			defined $jobEntry{U} && length $jobEntry{U} > 0 &&
+			defined $jobEntry{D} && -d $jobEntry{D}
+		) {
+			if ($loglevel > 1) {
+				Fluxd::printMessage("Watch",
+					"job : user=".$jobEntry{U}.
+					((defined $jobEntry{P} && length $jobEntry{P} > 0) ? ", profile=".$jobEntry{P} : '').
+					", dir=".$jobEntry{D}.
+					"\n"
+				);
+			}
+			$jobs{$jobEntry{D}} = { %jobEntry };
 		}
 	}
 
@@ -201,17 +244,21 @@ sub main {
 	if ((time() - $time_last_run) >= $interval) {
 
 		# watch in dirs for dropped meta-files
-		foreach my $user (sort keys %jobs) {
-			my $dir = $jobs{$user};
-			if ((!($user eq "")) && (-d $dir)) {
+		foreach my $key (sort keys %jobs) {
+			my $job = $jobs{$key};
+			my $user    = defined $$job{U} ? $$job{U} : '';
+			my $profile = defined $$job{P} ? $$job{P} : '';
+			my $dir     = defined $$job{D} ? $$job{D} : '';
+			if (length $user > 0 && -d $dir) {
 				if ($loglevel > 1) {
 					my $msg = "executing job :\n";
 					$msg .= " user: ".$user."\n";
+					$msg .= " profile: ".$profile."\n" if length $profile > 0;
 					$msg .= " dir: ".$dir."\n";
 					Fluxd::printMessage("Watch", $msg);
 				}
 				# exec
-				tfwatch($dir, $user);
+				tfwatch($dir, $user, $profile);
 			}
 		}
 
@@ -243,10 +290,14 @@ sub status {
 	$return .= "\n-= Watch Revision ".$VERSION." =-\n";
 	$return .= "interval : ".$interval." s \n";
 	$return .= "jobs :\n";
-	foreach my $user (sort keys %jobs) {
-		my $dir = $jobs{$user};
-		if ((!($user eq "")) && (-d $dir)) {
-			$return .= "  * username: ".$user."\n";
+	foreach my $key (sort keys %jobs) {
+		my $job = $jobs{$key};
+		my $user    = defined $$job{U} ? $$job{U} : '';
+		my $profile = defined $$job{P} ? $$job{P} : '';
+		my $dir     = defined $$job{D} ? $$job{D} : '';
+		if (length $user > 0 && -d $dir) {
+			$return .= "  * user: ".$user."\n";
+			$return .= "    profile: ".$profile."\n" if length $profile > 0;
 			$return .= "    dir: ".$dir."\n";
 		}
 	}
@@ -255,14 +306,21 @@ sub status {
 
 #------------------------------------------------------------------------------#
 # Sub: tfwatch                                                                 #
-# Arguments: dir, user                                                         #
+# Arguments: dir, user[, profile]                                              #
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub tfwatch {
 	my $dir = shift;
 	my $user = shift;
+	my $profile = shift;
+	my $options = 'ds';
+	my @extra;
+	if (defined($profile) && length($profile) > 0) {
+		$options .= 'p';
+		push @extra, $profile;
+	}
 	# fluxcli-call
-	return Fluxd::fluxcli("watch", $dir, $user);
+	return Fluxd::fluxcli("watch", $dir, $user, $options, @extra);
 }
 
 ################################################################################
