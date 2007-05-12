@@ -294,3 +294,6 @@ td.outlinks {
 	background-image: url("../pics/menu_box.jpg");
 	background-repeat: repeat-y;
 }
+div.cookie {
+	font-weight: 700;
+}
