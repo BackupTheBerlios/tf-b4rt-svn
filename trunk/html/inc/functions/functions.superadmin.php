@@ -717,7 +717,7 @@ function sa_backup($action = "") {
 			$htmlMain .= "<li>Document root directory structure -<br>all files underneath the webserver document root folder where you installed Torrentflux-b4rt.<br><br></li>";
 			$htmlMain .= "<li>The Transfers folder directory structure -<br>all files in the .transfers folder located in the path configured in the admin pages 'server' tab.<br><br></li>";
 			$htmlMain .= "<li>The fluxd folder directory structure -<br>all files in the .fluxd folder located in the path configured in the admin pages 'server' tab.<br><br></li>";
-			$htmlMain .= "<li>The MRTG folder directory structure -<br>all files in the .mrtg folder located in the path configuredx in the admin pages 'server' tab.<br><br></li>";
+			$htmlMain .= "<li>The MRTG folder directory structure -<br>all files in the .mrtg folder located in the path configured in the admin pages 'server' tab.<br><br></li>";
 			$htmlMain .= "<li>The Torrentflux-b4rt database -<br>the database used to store information used in the day to day running of torrentflux-b4rt.<br><br></li>";
 			$htmlMain .= "</ul><hr>";
 
@@ -825,7 +825,7 @@ function sa_log($action = "") {
 			$htmlMain .= '<p>';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?l=3"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="fluazu" border="0"> fluazu</a> - logfiles for the fluazu interface to Azureus';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?l=5"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="mainline" border="0"> BitTorrent Mainline</a> - centralized logfile for the BitTorrent Mainline client';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?l=5"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="mainline" border="0"> BitTorrent Mainline</a> - centralised logfile for the BitTorrent Mainline client';
 			$htmlMain .= '<p>';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?l=8"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="transfers" border="0"> Transfers</a> - logfiles for transfers in the current transfer list';
 			$htmlMain .= '<br><br>';
