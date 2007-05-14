@@ -1033,7 +1033,7 @@ function sa_tfb($action = "") {
 	switch ($action) {
 
 		case "0": // main
-			$htmlTitle = "Tf-b4rt Updates";
+			$htmlTitle = "About";
 			$htmlMain .= '<br>Select the information you wish to view from below:<p>';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?z=1"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Version" border="0"> Version</a>  - check your torrentflux-b4rt version is up to date';
 			$htmlMain .= '<p>';
@@ -1041,7 +1041,7 @@ function sa_tfb($action = "") {
 			$htmlMain .= '<p>';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?z=3"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Changelog" border="0"> Changelog</a>  - view the changelogs for each version of torrentflux-b4rt';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?z=9"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Misc" border="0"> Misc</a>  - check the integrity of installed files';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?z=9"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Checksum Validation" border="0"> Checksum Validation</a>  - check the integrity of installed files';
 			$htmlMain .= '<br><br>';
 			break;
 
@@ -1130,7 +1130,7 @@ function sa_tfb($action = "") {
 			break;
 
 		case "9": // Misc-main
-			$htmlTitle = "tf-b4rt - Misc";
+			$htmlTitle = "tf-b4rt - Checksum Validation";
 			$htmlMain .= '<p>';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?z=95" target="_blank"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Checksums of '._VERSION.'" border="0"> Checksums of '._VERSION.'</a>';
 			$htmlMain .= '<p>';
@@ -1577,7 +1577,7 @@ function buildPage($action) {
 	$htmlTop .= ' | ';
 	$htmlTop .= '<a href="' . _FILE_THIS . '?y=0">Misc</a>';
 	$htmlTop .= ' | ';
-	$htmlTop .= '<a href="' . _FILE_THIS . '?z=0">Updates</a>';
+	$htmlTop .= '<a href="' . _FILE_THIS . '?z=0">About</a>';
 	// body
 	switch($action) {
 		case "b": // backup passthru
@@ -1664,8 +1664,8 @@ function buildPage($action) {
 			$htmlMain .= ' | ';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?z=3">Changelog</a>';
 			$htmlMain .= ' | ';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?z=9">Misc</a>';
-			$htmlMain .= '</td><td align="right" nowrap><strong>tf-b4rt</strong></td>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?z=9">Checksum Validation</a>';
+			$htmlMain .= '</td><td align="right" nowrap><strong>About</strong></td>';
 			$htmlMain .= '</tr></table>';
 			break;
 		case "f": // fluxd passthru
@@ -1709,7 +1709,7 @@ function buildPage($action) {
 			$htmlMain .= '<p>';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?y=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Misc" border="0"> Misc</a> - test for PHP and Perl requirements; view list of installed files';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?z=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="tf-b4rt" border="0"> tf-b4rt</a> - version checking, updates, news, changelog; check installed file integrity';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?z=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="tf-b4rt" border="0"> About</a> - version checking, updates, news, changelog; check installed file integrity';
 			$htmlMain .= '</div><br><br>';
 			break;
 	}
