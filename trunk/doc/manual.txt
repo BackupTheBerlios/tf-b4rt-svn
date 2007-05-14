@@ -157,13 +157,15 @@ Torrentflux-b4rt Reference Manual
                 Creating a backup
                 Viewing a backup of transfer data
 
-            Viewing transfer log files
+            Viewing log files
+                Overview
 
             Miscellaneous actions
                 Viewing a list of installed files and their checksums
                 Checking software requirements
 
-            tf-b4rt
+            Checking for updates, news and version info for your
+            torrentflux-b4rt installation
                 Checking your version against the latest version available
                 Viewing news about releases
                 Viewing the changelog for your release
@@ -2325,17 +2327,158 @@ Introduction
                     on the respective icon to the right of the backup
                     item in the list.
 
-            Viewing transfer log files
+            Viewing log files
+
+                Overview
+
+                    The 'Log' tab on the superadmin pages allows you to
+                    view the log files for various components
+                    torrentflux-b4rt:
+
+                    o	fluxd - STDOUT logfiles for the torrentflux-b4rt
+                        fluxd daemon.
+
+                        The fluxd logfile contains day to day logging
+                        information which should be the first place to
+                        look when attempting to troubleshoot fluxd
+                        problems, together with the fluxd error log.
+
+                    o	fluxd-error - STDERR logfiles for the
+                        torrentflux-b4rt fluxd daemon.
+
+                        The fluxd error logfile contains any errors
+                        encountered in the day to day running of fluxd.
+                        Essential viewing when troubleshooting fluxd.
+
+                    o	fluazu - logfiles for the fluazu interface to
+                        Azureus.
+
+                    o	BitTorrent Mainline - centralised logfile for
+                        the BitTorrent Mainline client.
+
+                    o	Transfers - logfiles for transfers in the
+                        current transfer list.
+
+                        Clicking the 'transfers' logfile link will take
+                        you to a page containing a list of links to the
+                        logfiles of all current transfers in the
+                        transfer list.
 
             Miscellaneous actions
+
                 Viewing a list of installed files and their checksums
+
+                    The 'Lists' linked page on the 'Misc' tab of the
+                    superadmin pages allows you to view a list of all
+                    the torrentflux-b4rt files installed and their
+                    checksums.
+
+                    The file list feature displays a list of each file
+                    under the current document root for the installation
+                    and the version of each file if found.
+
+                    The checksum feature displays a list of each file
+                    under the current document root for the installation
+                    and the checksum for each of those files.  The
+                    checksum for a file is unique and when the file
+                    contents change in any way, the checksum will also
+                    change.  Checksums can therefore be used to
+                    determine if the contents of a file have been
+                    changed at some point by comparing the current
+                    checksum to the checksum of the original file.
+
                 Checking software requirements
 
-            tf-b4rt
+                    The 'Check Requirements' linked page on the 'Misc'
+                    tab of the superadmin pages allows you to run tests
+                    to check if your server's software meets the
+                    requirements for running Torrentflux-b4rt
+                    successfully.
+
+                    The tests are as follows:
+
+                    o   Check PHP Web Requirements
+
+                        Check your PHP web installation meets the
+                        requirements for web based activities in
+                        torrentflux-b4rt.
+
+                        This test will check that the currently
+                        installed PHP web component has all the correct
+                        extensions built in to run torrentflux-b4rt
+                        correctly.
+
+                    o   Check PHP CLI Binary Requirements
+
+                        Check your PHP commandline binary installation
+                        meets the requirements for commandline based
+                        activities in torrentflux-b4rt.
+
+                    o   Check Perl Requirements
+
+                        Check your Perl installation meets the
+                        requirements for perl based activities in
+                        torrentflux-b4rt.
+
+                        This option will check all perl modules required
+                        for the correct operation of torrentflux-b4rt
+                        are installed.
+
+            Checking for updates, news and version info for your
+            torrentflux-b4rt installation
+
                 Checking your version against the latest version available
+
+                    The 'Version' linked page on the 'About' tab of
+                    the superadmin pages will display the current
+                    version of your torrentflux-b4rt installation along
+                    with information about the current latest version
+                    available from the torrentflux-b4rt downloads pages.
+
+                    This option allows you to see easily whether a new
+                    version of torrentflux-b4rt is available for
+                    download.
+
+                    Note:
+                    -----
+                    When using the SVN version of torrentflux-b4rt,
+                    details of the latest version are not displayed
+                    since it is presumed you are using the bleeding edge
+                    version of the software.
+
                 Viewing news about releases
+
+                    The 'News' linked page on the 'About' tab of the
+                    superadmin pages displays a list of links to the
+                    news page for each release of torrentflux-b4rt.
+
+                    The list of news pages is obtained from the
+                    torrentflux-b4rt website and so is always up to
+                    date.
+
                 Viewing the changelog for your release
+
+                    The 'Changelog' linked page on the 'About' tab of the
+                    superadmin pages displays a list of links to the
+                    changelogs for each release of torrentflux-b4rt.
+
+                    This list of changelogs is obtained from the
+                    torrentflux-b4rt website.
+
                 Listing and verifying checksums of installed files
+
+                    The 'Checksum Validation' linked page on the 'About'
+                    tab of the superadmin pages allows you to check the
+                    integrity of the files installed in your
+                    installation of torrentflux-b4rt against a list
+                    stored on the torrentflux-b4rt website.  This allows
+                    you to verify whether any of your files have changed
+                    since you installed them, alerting you to any
+                    differences.
+
+                    The script will analyse the files you have installed
+                    and provide a detailed report about all
+                    unchanged/changed/missing/new files.
 
         Configuration
             General statistics and information listed on the admin page
