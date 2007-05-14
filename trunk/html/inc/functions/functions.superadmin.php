@@ -2092,7 +2092,7 @@ function backupList() {
 		if ($dirHandle = opendir($dirBackup)) {
 			$fileList = "";
 			while (false !== ($file = readdir($dirHandle))) {
-				if ((substr($file, 0, 1)) != ".")
+				if ( substr($file, 0, 7) == "backup_" )
 					$fileList .= $file . "\n";
 			}
 			closedir($dirHandle);
