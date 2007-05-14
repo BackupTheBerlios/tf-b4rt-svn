@@ -711,7 +711,16 @@ function sa_backup($action = "") {
 			$htmlMain .= '<br><strong>Notes:</strong><br>"Backup on Server" will save the backup archive to the following path:<br>';
 			$htmlMain .= '<em>'.tfb_htmlencodekeepspaces($cfg["path"] . _DIR_BACKUP).'/</em>';
 			$htmlMain .= '<br><br>';
-			$htmlMain .= '"Backup to Client" will create the backup archive and prompt you to save in your web browser.<br><br><strong>Please wait</strong> until the backup is complete.  Don\'t click stuff while backup archive is being created - you will be informed if something goes wrong so no need to stress it.<br>';
+			$htmlMain .= '"Backup to Client" will create the backup archive and prompt you to save in your web browser.<br><br><strong>Please wait</strong> until the backup is complete.  Don\'t click stuff while backup archive is being created - you will be informed if something goes wrong so no need to stress it.<br><br>';
+			$htmlMain .= "<hr><strong>What Data is Backed Up?</strong><br>";
+			$htmlMain .= "<ul>";
+			$htmlMain .= "<li>Document root directory structure -<br>all files underneath the webserver document root folder where you installed Torrentflux-b4rt.<br><br></li>";
+			$htmlMain .= "<li>The Transfers folder directory structure -<br>all files in the .transfers folder located in the path configured in the admin pages 'server' tab.<br><br></li>";
+			$htmlMain .= "<li>The fluxd folder directory structure -<br>all files in the .fluxd folder located in the path configured in the admin pages 'server' tab.<br><br></li>";
+			$htmlMain .= "<li>The MRTG folder directory structure -<br>all files in the .mrtg folder located in the path configuredx in the admin pages 'server' tab.<br><br></li>";
+			$htmlMain .= "<li>The Torrentflux-b4rt database -<br>the database used to store information used in the day to day running of torrentflux-b4rt.<br><br></li>";
+			$htmlMain .= "</ul><hr>";
+
 			printPage();
 			exit();
 
