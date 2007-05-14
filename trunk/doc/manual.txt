@@ -154,7 +154,7 @@ Torrentflux-b4rt Reference Manual
                 Locking access to the frontend
 
             Backups
-                Performing a backup
+                Creating a backup
                 Viewing a backup of transfer data
 
             Viewing transfer log files
@@ -2216,8 +2216,114 @@ Introduction
                     locked.
 
             Backups
-                Performing a backup
+
+                Creating a backup
+                    The 'Create Backup' linked page on the 'Backup' tab
+                    of the superadmin pages allows you to create a
+                    backup of all files associated with
+                    Torrentflux-b4rt.
+
+                    There are two options for where to store the backed
+                    up data - decide which is most appropriate for you:
+
+                    o   Backup on Server - this option will store the
+                        backup archive on the server inside a folder
+                        named '.backup' under the main path configured
+                        in the 'server' tab on the admin pages.
+
+                        Archives stored on the server can later be
+                        viewed in torrentflux-b4rt using the 'Backups
+                        currently on server' tab on the 'Backup' page of
+                        the superadmin section.
+
+                    o   Backup on Client - this option will send the
+                        backup archive to you in your web browser so you
+                        can save the backup locally.
+
+                    Once you have decided where to save the backup to,
+                    you can then choose what kind of compression to use
+                    with the archive.
+
+                    There are three compression options to choose from:
+
+                    o   gzip - this is the default compression setting.
+                        The archives will be compressed using gzip,
+                        creating smaller archives.  This option is
+                        faster than bzip2 but slower than 'none'.
+
+                    o   bzip2 - the archives will be compressed using
+                        bzip2, creating the smallest possible archives.
+                        This option is the slowest compression option.
+
+                    o   none - uses no compression when archiving.  The
+                        archives will be archived using tar only, the
+                        resulting archive size will be the same as the
+                        space taken up by the files being archived.
+                        This is the fastest compression option.
+
+                    Select the compression option you want from the
+                    dropdown list and finally click on the 'Backup'
+                    button for the location you chose to save to.
+
+                    The data that is backed up is as follows:
+
+                    o   Document root directory structure - all files
+                        underneath the webserver document root folder
+                        where you installed Torrentflux-b4rt.
+
+                        These files consist of the torrentflux-b4rt web
+                        application itself.
+
+                    o   The Transfers folder directory structure - all files
+                        in the .transfers folder located in the path
+                        configured in the admin pages 'server' tab.
+
+                        The .transfer folder contains all control files
+                        for the transfers in torrentflux-b4rt - pid,
+                        stat and log files.
+
+                    o   The fluxd folder directory structure - all files
+                        in the .fluxd folder located in the path
+                        configured in the admin pages 'server' tab.
+
+                        The .fluxd folder contains control files for the
+                        fluxd daemon - pid, socket and log files.
+
+                    o   The MRTG folder directory structure - all files
+                        in the .mrtg folder located in the path
+                        configured in the admin pages 'server' tab.
+
+                        The .mrtg folder contains control files for the
+                        MRTG traffic graphing addon component.
+
+                    o   The Torrentflux-b4rt database - the database
+                        used to store information used in the day to day
+                        running of torrentflux-b4rt.
+
+                    An archive is made for each of the options listed
+                    above and the resulting archives are then archived
+                    again into a single archive.  In the case of the
+                    filesystem backups, a backup is only made if the
+                    relevant directory actually exists - so for example
+                    if no '.mrtg' folder exists, no mrtg backup will be
+                    made.
+
                 Viewing a backup of transfer data
+
+                    Any backups that are created on the server can be
+                    viewed by clicking on the 'Backups currently on
+                    server' link on the 'Backup' tab of the superadmin
+                    pages.
+
+                    Any backups created by torrentflux-b4rt on the
+                    server are listed on the page, including information
+                    about what version the backup is from, the date the
+                    backup was created, what compression was used and
+                    the size of the archive.
+
+                    An archive can be downloaded or deleted by clicking
+                    on the respective icon to the right of the backup
+                    item in the list.
 
             Viewing transfer log files
 
