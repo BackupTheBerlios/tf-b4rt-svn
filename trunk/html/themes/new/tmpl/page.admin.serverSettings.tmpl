@@ -20,10 +20,10 @@
 							<tmpl_if name="is_writable" value="1">
 								Path
 							<tmpl_else>
-								Path is not Writable
+								Path is not writable
 							</tmpl_if>
 						<tmpl_else>
-							Path is not Valid
+							Path is not valid
 						</tmpl_if>
 					</td>
 					<td class="settingsSetting" rowspan="2">
@@ -32,16 +32,15 @@
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Define the main torrentflux parent-PATH.<br />
-						Dir must be writable for the webserver-user.
+						Define the main torrentflux-b4rt parent path.<br/>Directory must be writable by the webserver user.
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
 						<tmpl_if name="is_docroot" value="1">
-							Document-Root
+							Document Root
 						<tmpl_else>
-							Document-Root is not Valid
+							Document Root is not valid
 						</tmpl_if>
 					</td>
 					<td class="settingsSetting" rowspan="2">
@@ -50,7 +49,7 @@
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Define the Document-Root of the Installation.
+						Define the Document Root of the installation.
 					</td>
 				</tr>
 			</table>
@@ -61,7 +60,7 @@
 			<div id="uploadLast"></div>
 			<div id="uploadFirst">
 				<span class="upload">
-					Homedirs
+					Home Directories
 				</span>
 			</div>
 		</div>
@@ -69,7 +68,7 @@
 			<table>
 				<tr>
 					<td class="settingsTitle">
-						Enable Homedirs
+						Enable Homedirectories
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<select name="enable_home_dirs">
@@ -84,8 +83,7 @@
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Enable/Disable Homedirs.<br />
-						If disabled all downloads are saved to the incoming-directory.on.
+						Enable/disable home directories.<br/>If disabled all downloads are saved to the 'incoming' directory specified below.
 					</td>
 				</tr>
 				<tr>
@@ -93,7 +91,7 @@
 						<tmpl_if name="path_incoming_ok" value="1">
 							Incoming
 						<tmpl_else>
-							Incoming is not Valid
+							Incoming is not valid
 						</tmpl_if>
 					</td>
 					<td class="settingsSetting" rowspan="2">
@@ -102,7 +100,7 @@
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Define the incoming PATH where downloads are saved when Homedirs are turned off.
+						Define the incoming path where downloads are saved when per user home directories are disabled.
 					</td>
 				</tr>
 			</table>
@@ -113,7 +111,7 @@
 			<div id="uploadLast"></div>
 			<div id="uploadFirst">
 				<span class="upload">
-					Bins
+					Binary Paths
 				</span>
 			</div>
 		</div>
@@ -121,7 +119,7 @@
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
-						Path : transmissioncli
+						Path: transmissioncli
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="btclient_transmission_bin" type="Text" maxlength="254" value="<tmpl_var name="btclient_transmission_bin">" size="30">
@@ -134,7 +132,7 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Path : wget
+						Path: wget
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="bin_wget" type="Text" maxlength="254" value="<tmpl_var name="bin_wget">" size="30">
@@ -147,7 +145,7 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Path : uudeview
+						Path: uudeview
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="bin_uudeview" type="Text" maxlength="254" value="<tmpl_var name="bin_uudeview">" size="30">
@@ -160,7 +158,7 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Path : php
+						Path: php
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="bin_php" type="Text" maxlength="254" value="<tmpl_var name="bin_php">" size="30">
@@ -168,12 +166,12 @@
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Specify the path to the php binary (/usr/bin/php).
+						Specify the path to the commandline (cli) php binary (/usr/bin/php).<br/><strong>Note: </strong>This must be the cli version of the PHP binary, NOT cgi or otherwise.
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Path : python
+						Path: python
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="pythonCmd" type="Text" maxlength="254" value="<tmpl_var name="pythonCmd">" size="30">
@@ -186,7 +184,7 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Path : perl
+						Path: perl
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="perlCmd" type="Text" maxlength="254" value="<tmpl_var name="perlCmd">" size="30">
@@ -199,7 +197,7 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Path : grep
+						Path: grep
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="bin_grep" type="Text" maxlength="254" value="<tmpl_var name="bin_grep">" size="30">
@@ -212,7 +210,7 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Path : awk
+						Path: awk
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="bin_awk" type="Text" maxlength="254" value="<tmpl_var name="bin_awk">" size="30">
@@ -225,7 +223,7 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Path : du
+						Path: du
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="bin_du" type="Text" maxlength="254" value="<tmpl_var name="bin_du">" size="30">
@@ -238,7 +236,7 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Path : unzip
+						Path: unzip
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="bin_unzip" type="Text" maxlength="254" value="<tmpl_var name="bin_unzip">" size="30">
@@ -251,7 +249,7 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Path : cksfv
+						Path: cksfv
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="bin_cksfv" type="Text" maxlength="254" value="<tmpl_var name="bin_cksfv">" size="30">
@@ -264,7 +262,7 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Path : vlc
+						Path: vlc
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="bin_vlc" type="Text" maxlength="254" value="<tmpl_var name="bin_vlc">" size="30">
@@ -283,7 +281,7 @@
 			<div id="uploadLast"></div>
 			<div id="uploadFirst">
 				<span class="upload">
-					OS-specific (<tmpl_var name="php_uname1"> <tmpl_var name="php_uname2">)
+					OS Specific (<tmpl_var name="php_uname1"> <tmpl_var name="php_uname2">)
 				</span>
 			</div>
 		</div>
@@ -292,7 +290,7 @@
 				<tmpl_if name="_OS" value="1">
 					<tr>
 						<td class="settingsTitle">
-							Path : loadavg
+							Path: loadavg
 						</td>
 						<td class="settingsSetting" rowspan="2">
 							<input name="loadavg_path" type="Text" maxlength="254" value="<tmpl_var name="loadavg_path">" size="30">
@@ -305,7 +303,7 @@
 					</tr>
 					<tr>
 						<td class="settingsTitle">
-							Path : netstat
+							Path: netstat
 						</td>
 						<td class="settingsSetting" rowspan="2">
 							<input name="bin_netstat" type="Text" maxlength="254" value="<tmpl_var name="bin_netstat">" size="30">
@@ -318,7 +316,7 @@
 					</tr>
 					<tr>
 						<td class="settingsTitle">
-							Path : unrar
+							Path: unrar
 						</td>
 						<td class="settingsSetting" rowspan="2">
 							<input name="bin_unrar" type="Text" maxlength="254" value="<tmpl_var name="bin_unrar">" size="30">
@@ -332,7 +330,7 @@
 				<tmpl_elseif name="_OS" value="2">
 					<tr>
 						<td class="settingsTitle">
-							Path : sockstat
+							Path: sockstat
 						</td>
 						<td class="settingsSetting" rowspan="2">
 							<input name="bin_sockstat" type="Text" maxlength="254" value="<tmpl_var name="bin_sockstat">" size="30">
@@ -345,7 +343,7 @@
 					</tr>
 					<tr>
 						<td class="settingsTitle">
-							Path : rarbsd
+							Path: rarbsd
 						</td>
 						<td class="settingsSetting" rowspan="2">
 							<input name="bin_unrar" type="Text" maxlength="254" value="<tmpl_var name="bin_unrar">" size="30">
@@ -353,7 +351,7 @@
 					</tr>
 					<tr>
 						<td class="settingsText">
-							Specify the path to the rarbsd binary.
+							Specify the path to the rarbsd binary.<br/><strong>Note: </strong>On some BSDs, this binary is the 'unrar' installed from the ports collection.
 						</td>
 					</tr>
 				</tmpl_if>
