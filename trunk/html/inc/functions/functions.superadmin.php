@@ -1749,7 +1749,7 @@ function printPageStart($echoMode = 0) {
 	global $cfg, $statusImage, $statusMessage, $htmlTitle, $htmlTop, $htmlMain;
 	doEcho('<HTML>',$echoMode);
 	doEcho('<HEAD>',$echoMode);
-	doEcho('<TITLE>torrentflux-b4rt - SuperAdmin</TITLE>',$echoMode);
+	doEcho('<TITLE>'.$cfg["pagetitle"].' - SuperAdmin</TITLE>',$echoMode);
 	doEcho('<link rel="icon" href="themes/'.$cfg["theme"].'/images/favicon.ico" type="image/x-icon" />',$echoMode);
 	doEcho('<link rel="shortcut icon" href="themes/'.$cfg["theme"].'/images/favicon.ico" type="image/x-icon" />',$echoMode);
 	// theme-switch
