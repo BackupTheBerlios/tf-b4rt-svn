@@ -1697,7 +1697,7 @@ function buildPage($action) {
 			$statusImage = "black.gif";
 			$htmlMain = '<br><div align="left">';
 			$htmlMain .= '<p>Select the superadmin task you wish to perform below:<br><br>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?t=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Transfers" border="0"> Transfers</a> - bulk start/stop/resume transfers';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?t=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Transfer Bulk Ops" border="0"> Transfer Bulk Ops</a> - bulk start/stop/resume transfers';
 			$htmlMain .= '<p>';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?p=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Processes" border="0"> Processes</a> - view detailed process info; force stop transfer processes';
 			$htmlMain .= '<p>';
