@@ -189,13 +189,13 @@ if (IsSuperAdmin()) {
 
 	// superadmin-main-links
 	$sa_links_main = array();
-	array_push($sa_links_main, array("sa_link" => getSuperAdminLink('?t=0', $linkPrefix.' title="Superadmin - Transfers" border="0"> Transfers</a>')));
+	array_push($sa_links_main, array("sa_link" => getSuperAdminLink('?t=0', $linkPrefix.' title="Superadmin - Transfer Bulk Ops" border="0"> Transfer Bulk Ops</a>')));
 	array_push($sa_links_main, array("sa_link" => getSuperAdminLink('?p=0', $linkPrefix.' title="Superadmin - Processes" border="0"> Processes</a>')));
 	array_push($sa_links_main, array("sa_link" => getSuperAdminLink('?m=0', $linkPrefix.' title="Superadmin - Maintenance" border="0"> Maintenance</a>')));
 	array_push($sa_links_main, array("sa_link" => getSuperAdminLink('?b=0', $linkPrefix.' title="Superadmin - Backup" border="0"> Backup</a>')));
 	array_push($sa_links_main, array("sa_link" => getSuperAdminLink('?l=0', $linkPrefix.' title="Superadmin - Log" border="0"> Log</a>')));
 	array_push($sa_links_main, array("sa_link" => getSuperAdminLink('?y=0', $linkPrefix.' title="Superadmin - Misc" border="0"> Misc</a>')));
-	array_push($sa_links_main, array("sa_link" => getSuperAdminLink('?z=0', $linkPrefix.' title="Superadmin - tf-b4rt" border="0"> tf-b4rt</a>')));
+	array_push($sa_links_main, array("sa_link" => getSuperAdminLink('?z=0', $linkPrefix.' title="Superadmin - About" border="0"> About</a>')));
 	$tmpl->setloop('superadminlinks_main', $sa_links_main);
 
 	// check-links
