@@ -44,6 +44,7 @@ function transfer_init() {
 	// set transfer vars
 	$tmpl->setvar('transfer', $transfer);
 	$tmpl->setvar('transferLabel', $transferLabel);
+	$tmpl->setvar('transfer_exists', (transferExists($transfer)) ? 1 : 0);
 }
 
 /**
