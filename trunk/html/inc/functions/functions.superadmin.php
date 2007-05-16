@@ -1046,7 +1046,7 @@ function sa_tfb($action = "") {
 			break;
 
 		case "1": // Version
-			$htmlTitle = "tf-b4rt - Version";
+			$htmlTitle = "About - Version";
 			// version-check
 			$versionAvailable = trim(getDataFromUrl(_SUPERADMIN_URLBASE._SUPERADMIN_PROXY));
 			if ((isset($versionAvailable)) && ($versionAvailable != "")) {
@@ -1114,14 +1114,14 @@ function sa_tfb($action = "") {
 			break;
 
 		case "2": // News
-			$htmlTitle = "tf-b4rt - News";
+			$htmlTitle = "About - News";
 			$htmlMain .= '<br>';
 			$htmlMain .= @gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=0"));
 			$htmlMain .= '<br><br>';
 			break;
 
 		case "3": // Changelog;
-			$htmlTitle = "tf-b4rt - Changelog";
+			$htmlTitle = "About - Changelog";
 			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 			$htmlMain .= '<pre>';
 			$htmlMain .= @gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=1"));
@@ -1130,7 +1130,7 @@ function sa_tfb($action = "") {
 			break;
 
 		case "9": // Misc-main
-			$htmlTitle = "tf-b4rt - Checksum Validation";
+			$htmlTitle = "About - Checksum Validation";
 			$htmlMain .= '<p>';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?z=95" target="_blank"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Checksums of '._VERSION.'" border="0"> Checksums of '._VERSION.'</a>';
 			$htmlMain .= '<p>';
@@ -1709,7 +1709,7 @@ function buildPage($action) {
 			$htmlMain .= '<p>';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?y=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Misc" border="0"> Misc</a> - test for PHP and Perl requirements; view list of installed files';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?z=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="tf-b4rt" border="0"> About</a> - version checking, updates, news, changelog; check installed file integrity';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?z=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="About" border="0"> About</a> - version checking, updates, news, changelog; check installed file integrity';
 			$htmlMain .= '</div><br><br>';
 			break;
 	}

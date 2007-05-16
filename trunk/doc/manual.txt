@@ -1972,7 +1972,7 @@ Introduction
                 o	Misc - test for PHP and Perl requirements; view list
                     of installed files
 
-                o	tf-b4rt - version checking, updates, news,
+                o	About - version checking, updates, news,
                     changelog; check installed file integrity
 
                 Be careful when using the superadmin features as many of
