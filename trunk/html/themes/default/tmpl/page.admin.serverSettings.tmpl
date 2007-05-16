@@ -15,8 +15,9 @@
 				<div align="center">
 					<form name="theForm" action="admin.php?op=updateServerSettings" method="post" onsubmit="return validateSettings('server')">
 						<table cellpadding="5" cellspacing="0" border="0" width="100%">
+							<tr><td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">"><strong>Torrentflux-b4rt Paths</strong></td></tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Path:</strong><br>
+								<td align="left" width="350" valign="top"><strong>Transfer Parent Path:</strong><br>
 									Define the main torrentflux-b4rt parent path.<br>Directory must be writable by the webserver user.
 								</td>
 								<td valign="top">
@@ -33,8 +34,8 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Document Root:</strong><br>
-									Define the Document Root of the installation.
+								<td align="left" width="350" valign="top"><strong>Document Root Path:</strong><br>
+									Define the Document Root path of the installation.<br/>Directory must be readable by the webserver user.
 								</td>
 								<td valign="top">
 									<input name="docroot" type="Text" maxlength="254" value="<tmpl_var name="docroot">" size="55">
@@ -76,7 +77,7 @@
 							</tr>
 							<tr><td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">"><strong>Binary Paths</strong></td></tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Path: transmissioncli</strong><br>
+								<td align="left" width="350" valign="top"><strong>transmissioncli</strong><br>
 									Specify the path to the Transmission binary (/usr/local/bin/transmissioncli).
 								</td>
 								<td valign="top">
@@ -84,7 +85,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Path: wget</strong><br>
+								<td align="left" width="350" valign="top"><strong>wget</strong><br>
 								Specify the path to the wget binary (/usr/bin/wget).
 								</td>
 								<td valign="top">
@@ -92,7 +93,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Path: uudeview</strong><br>
+								<td align="left" width="350" valign="top"><strong>uudeview</strong><br>
 								Specify the path to the uudeview binary (needed for nzbperl) (/usr/local/bin/uudeview).
 								</td>
 								<td valign="top">
@@ -100,7 +101,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Path: php</strong><br>
+								<td align="left" width="350" valign="top"><strong>php</strong><br>
 								Specify the path to the commandline (cli) php binary (/usr/bin/php).<br/><strong>Note: </strong>This must be the cli version of the PHP binary, NOT cgi or otherwise.
 								</td>
 								<td valign="top">
@@ -108,7 +109,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Path: python</strong><br>
+								<td align="left" width="350" valign="top"><strong>python</strong><br>
 								Specify the path to the python binary (/usr/bin/python).
 								</td>
 								<td valign="top">
@@ -116,7 +117,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Path: perl</strong><br>
+								<td align="left" width="350" valign="top"><strong>perl</strong><br>
 									Specify the path to perl (/usr/bin/perl).
 								</td>
 								<td valign="top">
@@ -124,7 +125,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Path: grep</strong><br>
+								<td align="left" width="350" valign="top"><strong>grep</strong><br>
 								Specify the path to the grep binary (/bin/grep).
 								</td>
 								<td valign="top">
@@ -132,7 +133,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Path: awk</strong><br>
+								<td align="left" width="350" valign="top"><strong>awk</strong><br>
 								Specify the path to the awk binary (/usr/bin/awk).
 								</td>
 								<td valign="top">
@@ -140,7 +141,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Path: du</strong><br>
+								<td align="left" width="350" valign="top"><strong>du</strong><br>
 								Specify the path to the du binary (/usr/bin/du).
 								</td>
 								<td valign="top">
@@ -148,7 +149,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Path: unzip</strong><br>
+								<td align="left" width="350" valign="top"><strong>unzip</strong><br>
 								Specify the path to the unzip binary (/usr/bin/unzip).
 								</td>
 								<td valign="top">
@@ -156,7 +157,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Path: cksfv</strong><br>
+								<td align="left" width="350" valign="top"><strong>cksfv</strong><br>
 								Specify the path to the cksfv binary (/usr/bin/cksfv).
 								</td>
 								<td valign="top">
@@ -164,17 +165,25 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Path: vlc</strong><br>
+								<td align="left" width="350" valign="top"><strong>vlc</strong><br>
 								Specify the path to the vlc binary (/usr/local/bin/vlc).
 								</td>
 								<td valign="top">
 									<input name="bin_vlc" type="Text" maxlength="254" value="<tmpl_var name="bin_vlc">" size="55"><tmpl_var name="validate_vlc">
 								</td>
 							</tr>
-							<tr><td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">"><strong>OS Specific</strong> <em>(<tmpl_var name="php_uname1"> <tmpl_var name="php_uname2">)</em></td></tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>unrar</strong><br>
+								Specify the path to the unrar binary (/usr/bin/unrar).
+								</td>
+								<td valign="top">
+									<input name="bin_unrar" type="Text" maxlength="254" value="<tmpl_var name="bin_unrar">" size="55"><tmpl_var name="validate_unrar">
+								</td>
+							</tr>
+							<tr><td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">"><strong>OS Specific Binary Paths</strong> <em>(<tmpl_var name="php_uname1"> <tmpl_var name="php_uname2">)</em></td></tr>
 							<tmpl_if name="_OS" value="1">
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Path: loadavg</strong><br>
+									<td align="left" width="350" valign="top"><strong>loadavg</strong><br>
 									Path to the loadavg file (/proc/loadavg).
 									</td>
 									<td valign="top">
@@ -182,36 +191,20 @@
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Path: netstat</strong><br>
+									<td align="left" width="350" valign="top"><strong>netstat</strong><br>
 									Specify the path to the netstat binary (/bin/netstat).
 									</td>
 									<td valign="top">
 										<input name="bin_netstat" type="Text" maxlength="254" value="<tmpl_var name="bin_netstat">" size="55"><tmpl_var name="validate_netstat">
 									</td>
 								</tr>
-								<tr>
-									<td align="left" width="350" valign="top"><strong>Path: unrar</strong><br>
-									Specify the path to the unrar binary (/usr/bin/unrar).
-									</td>
-									<td valign="top">
-										<input name="bin_unrar" type="Text" maxlength="254" value="<tmpl_var name="bin_unrar">" size="55"><tmpl_var name="validate_unrar">
-									</td>
-								</tr>
 							<tmpl_elseif name="_OS" value="2">
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Path: sockstat</strong><br>
+									<td align="left" width="350" valign="top"><strong>sockstat</strong><br>
 									Specify the path to the sockstat binary (/usr/bin/sockstat).
 									</td>
 									<td valign="top">
 										<input name="bin_sockstat" type="Text" maxlength="254" value="<tmpl_var name="bin_sockstat">" size="55"><tmpl_var name="validate_sockstat">
-									</td>
-								</tr>
-								<tr>
-									<td align="left" width="350" valign="top"><strong>Path: rarbsd</strong><br>
-									Specify the path to the rarbsd binary.<br/><strong>Note: </strong>On some BSDs, this binary is the 'unrar' installed from the ports collection.
-									</td>
-									<td valign="top">
-										<input name="bin_unrar" type="Text" maxlength="254" value="<tmpl_var name="bin_unrar">" size="55"><tmpl_var name="validate_unrar">
 									</td>
 								</tr>
 							</tmpl_if>

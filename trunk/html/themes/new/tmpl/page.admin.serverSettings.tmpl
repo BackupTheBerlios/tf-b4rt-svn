@@ -8,7 +8,7 @@
 			<div id="uploadLast"></div>
 			<div id="uploadFirst">
 				<span class="upload">
-					Server Settings
+					Torrentflux-b4rt Paths
 				</span>
 			</div>
 		</div>
@@ -18,12 +18,12 @@
 					<td class="settingsTitle">
 						<tmpl_if name="is_path" value="1">
 							<tmpl_if name="is_writable" value="1">
-								Path
+								Transfer Parent Path
 							<tmpl_else>
-								Path is not writable
+								Transfer Parent Path is not writable
 							</tmpl_if>
 						<tmpl_else>
-							Path is not valid
+							Transfer Parent Path is not valid
 						</tmpl_if>
 					</td>
 					<td class="settingsSetting" rowspan="2">
@@ -38,9 +38,9 @@
 				<tr>
 					<td class="settingsTitle">
 						<tmpl_if name="is_docroot" value="1">
-							Document Root
+							Document Root Path
 						<tmpl_else>
-							Document Root is not valid
+							Document Root Path is not valid
 						</tmpl_if>
 					</td>
 					<td class="settingsSetting" rowspan="2">
@@ -49,7 +49,7 @@
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Define the Document Root of the installation.
+						Define the Document Root path of the installation.<br/>Directory must be readable by the webserver user.
 					</td>
 				</tr>
 			</table>
@@ -119,7 +119,7 @@
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
-						Path: transmissioncli
+						transmissioncli
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="btclient_transmission_bin" type="Text" maxlength="254" value="<tmpl_var name="btclient_transmission_bin">" size="30">
@@ -132,7 +132,7 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Path: wget
+						wget
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="bin_wget" type="Text" maxlength="254" value="<tmpl_var name="bin_wget">" size="30">
@@ -145,7 +145,7 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Path: uudeview
+						uudeview
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="bin_uudeview" type="Text" maxlength="254" value="<tmpl_var name="bin_uudeview">" size="30">
@@ -158,7 +158,7 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Path: php
+						php
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="bin_php" type="Text" maxlength="254" value="<tmpl_var name="bin_php">" size="30">
@@ -171,7 +171,7 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Path: python
+						python
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="pythonCmd" type="Text" maxlength="254" value="<tmpl_var name="pythonCmd">" size="30">
@@ -184,7 +184,7 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Path: perl
+						perl
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="perlCmd" type="Text" maxlength="254" value="<tmpl_var name="perlCmd">" size="30">
@@ -197,7 +197,7 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Path: grep
+						grep
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="bin_grep" type="Text" maxlength="254" value="<tmpl_var name="bin_grep">" size="30">
@@ -210,7 +210,7 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Path: awk
+						awk
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="bin_awk" type="Text" maxlength="254" value="<tmpl_var name="bin_awk">" size="30">
@@ -223,7 +223,7 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Path: du
+						du
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="bin_du" type="Text" maxlength="254" value="<tmpl_var name="bin_du">" size="30">
@@ -236,7 +236,7 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Path: unzip
+						unzip
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="bin_unzip" type="Text" maxlength="254" value="<tmpl_var name="bin_unzip">" size="30">
@@ -249,7 +249,7 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Path: cksfv
+						cksfv
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="bin_cksfv" type="Text" maxlength="254" value="<tmpl_var name="bin_cksfv">" size="30">
@@ -262,7 +262,7 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Path: vlc
+						vlc
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="bin_vlc" type="Text" maxlength="254" value="<tmpl_var name="bin_vlc">" size="30">
@@ -271,6 +271,19 @@
 				<tr>
 					<td class="settingsText">
 						Specify the path to the vlc binary (/usr/local/bin/vlc).
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsTitle">
+						unrar
+					</td>
+					<td class="settingsSetting" rowspan="2">
+						<input name="bin_unrar" type="Text" maxlength="254" value="<tmpl_var name="bin_unrar">" size="30">
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsText">
+						Specify the path to the unrar binary (/usr/bin/unrar).
 					</td>
 				</tr>
 			</table>
@@ -290,7 +303,7 @@
 				<tmpl_if name="_OS" value="1">
 					<tr>
 						<td class="settingsTitle">
-							Path: loadavg
+							loadavg
 						</td>
 						<td class="settingsSetting" rowspan="2">
 							<input name="loadavg_path" type="Text" maxlength="254" value="<tmpl_var name="loadavg_path">" size="30">
@@ -303,7 +316,7 @@
 					</tr>
 					<tr>
 						<td class="settingsTitle">
-							Path: netstat
+							netstat
 						</td>
 						<td class="settingsSetting" rowspan="2">
 							<input name="bin_netstat" type="Text" maxlength="254" value="<tmpl_var name="bin_netstat">" size="30">
@@ -314,23 +327,10 @@
 							Specify the path to the netstat binary (/bin/netstat).
 						</td>
 					</tr>
-					<tr>
-						<td class="settingsTitle">
-							Path: unrar
-						</td>
-						<td class="settingsSetting" rowspan="2">
-							<input name="bin_unrar" type="Text" maxlength="254" value="<tmpl_var name="bin_unrar">" size="30">
-						</td>
-					</tr>
-					<tr>
-						<td class="settingsText">
-							Specify the path to the unrar binary (/usr/bin/unrar).
-						</td>
-					</tr>
 				<tmpl_elseif name="_OS" value="2">
 					<tr>
 						<td class="settingsTitle">
-							Path: sockstat
+							sockstat
 						</td>
 						<td class="settingsSetting" rowspan="2">
 							<input name="bin_sockstat" type="Text" maxlength="254" value="<tmpl_var name="bin_sockstat">" size="30">
@@ -339,19 +339,6 @@
 					<tr>
 						<td class="settingsText">
 							Specify the path to the sockstat binary (/usr/bin/sockstat).
-						</td>
-					</tr>
-					<tr>
-						<td class="settingsTitle">
-							Path: rarbsd
-						</td>
-						<td class="settingsSetting" rowspan="2">
-							<input name="bin_unrar" type="Text" maxlength="254" value="<tmpl_var name="bin_unrar">" size="30">
-						</td>
-					</tr>
-					<tr>
-						<td class="settingsText">
-							Specify the path to the rarbsd binary.<br/><strong>Note: </strong>On some BSDs, this binary is the 'unrar' installed from the ports collection.
 						</td>
 					</tr>
 				</tmpl_if>
