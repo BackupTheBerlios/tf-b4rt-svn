@@ -2752,7 +2752,223 @@ Introduction
                         torrentflux-b4rt.
 
                 Binary path configuration
+
+                    Torrentflux-b4rt integrates with many third party
+                    applications to make performing operations on
+                    transferred files seamless from the frontend.
+
+                    For this integration to work, the associated
+                    applications must of course be installed correctly
+                    first.  For the best results you should use the
+                    distribution management system for your particular
+                    operating system to install the applications - apt,
+                    rpm, etc on linux, the ports systems on BSD.
+
+                    Once the applications required are installed, the
+                    paths to the binaries must be set correctly on the
+                    server admin page for the integration of that
+                    application to work correctly.
+
+                    There are various methods to find the location of
+                    the binary on the server:
+
+                    o   Use 'which':
+
+                        The 'which' command can be executed in a shell
+                        to display the full path to an application if it
+                        exists:
+
+                        shell> which unrar
+                        /usr/local/bin/unrar
+
+                    o   Using 'locate':
+
+                        The 'locate' utility allows you to search
+                        quickly for files on your server containing a
+                        string you specify:
+
+                        shell> locate unrar
+                        /usr/local/bin/unrar
+                        /usr/local/share/doc/unrar
+                        /usr/local/share/doc/unrar/license.txt
+                        -snip-
+
+                        Note: you must have a locate database built to
+                        be able to use the locate command.  See the
+                        manpage for locate on your system - 'man
+                        locate'.
+
+                    o   Using your package management system:
+
+                        Most package management systems include a
+                        utility that can describe what files are
+                        installed by a package.
+
+                        For example on FreeBSD, the 'pkg_info' utility
+                        can be used with the -L switch to describe what
+                        files are installed by a package:
+
+                        shell> pkg_info -L unrar-3.70.b7,4
+                        Information for unrar-3.70.b7,4:
+
+                        Files:
+                        /usr/local/bin/unrar
+                        /usr/local/share/doc/unrar/license.txt
+                        /usr/local/share/doc/unrar/readme.txt
+
+                    The following binary paths are configured on the
+                    server admin page:
+
+                    o	transmissioncli
+
+                        Transmission is a torrent client which can be
+                        used as an alternative to bittorrent or
+                        bittornado.  A modified version of transmission
+                        must be used with torrentflux-b4rt.
+
+                        The modified transmission source can be
+                        found in the 'clients/transmission' folder -
+                        once extracted, build and install it to your
+                        desired location.
+
+                        It must be built and installed on
+                        the system on which you are running it before it
+                        can be used.
+
+                    o	wget
+
+                        Wget transfers can be controlled using
+                        torrentflux-b4rt.
+
+                    o	uudeview
+
+                        uudeview is required for the operation of the
+                        nzbperl component of torrentflux-b4rt.
+
+                    o	php
+
+                        This is the commandline (cli) PHP binary, not to be
+                        confused with the PHP web installation!  You
+                        must have a working cli php binary for many
+                        features of torrentflux-b4rt to work correctly.
+
+                        Note that the php cgi binary WILL NOT work as a
+                        replacement to the php cli binary.
+
+                        On most OS's, the package management system will
+                        allow you to install a php cli binary as well as
+                        a web based php component (mod_php/php cgi
+                        binary).  See your package management package
+                        database for info.
+
+                    o	python
+
+                        Python is used by the BitTorrent and BitTornado
+                        torrent clients and is requisite for the most basic
+                        operation of torrentflux-b4rt as a torrent
+                        controller.
+
+                        There are various additional python related
+                        dependencies required for BitTorrent to work
+                        fully, see the README file in the
+                        torrentflux-b4rt distribution root directory for
+                        more info.
+
+                    o	perl
+
+                        Perl is used by various features in
+                        torrentflux-b4rt.  There are various perl
+                        related dependencies required for these features
+                        to work fully, see the README file in the
+                        torrentflux-b4rt distribution root directory for
+                        more info.
+
+                    o	grep
+
+                        Basic userland binary that is included in most
+                        modern Unix type OS's.
+
+                    o	awk
+
+                        Basic userland binary that is included in most
+                        modern Unix type OS's.
+
+                    o	du
+
+                        Basic userland binary that is included in most
+                        modern Unix type OS's.
+
+                    o	unzip
+
+                        Unzip is used in the directory manager frontend
+                        in torrentflux-b4rt for extracting zip archives
+                        on the server.  Unzip can be found in most
+                        package management systems on Unix type systems.
+
+                    o	cksfv
+
+                        cksfv is used in the directory manager frontend
+                        in torrentflux-b4rt for checking the integrity
+                        of transferred content against an included .sfv
+                        file.  Cksfv can be found in most package
+                        management systems on Unix type systems.
+
+                    o	vlc
+
+                        VLC can be used to stream avi content directly
+                        from the torrentflux-b4rt server where the
+                        content is located.  VLC can be found in most
+                        package management systems on Unix type systems.
+
+                    o	unrar
+
+                        Unrar is used in the directory manager frontend
+                        in torrentflux-b4rt for extracting zip archives
+                        on the server.  Unrar can be found in most
+                        package management systems on Unix type systems.
+
                 Operating system specific configuration
+
+                    There are a small number of applications that are
+                    specific to different operating systems -
+                    applications that only exist on one type of OS.
+
+                    The OS specifics, by OS, are as follows:
+
+                    o   Linux:
+
+                        *   loadavg
+
+                            Used to determine server load average for
+                            display in torrentflux-b4rt frontend stats.
+
+                            loadavg is a native app on most linuces and
+                            the path should be detected automatically.
+
+                        *   netstat
+
+                            Used to determine network connection stats for
+                            display in torrentflux-b4rt frontend.
+
+                            netstat is a native app on Linux and the
+                            path should be detected automatically.
+
+                    o   BSD:
+
+                        *   sockstat
+
+                            Used to determine network connection stats for
+                            display in torrentflux-b4rt frontend.
+
+                            sockstat is a native app on BSD and the path
+                            should be detected automatically.
+
+                            The reason for the requirement of sockstat
+                            on BSD instead of netstat is that the
+                            functionality of BSD's netstat does not work
+                            identically to that of Linux's netstat.
+                            Sockstat instead returns the information
+                            required by torrentflux-b4rt correctly.
 
             Transfer client options (transfer)
                 Setting the default transfer client to use
