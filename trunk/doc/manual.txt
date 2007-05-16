@@ -175,9 +175,7 @@ Torrentflux-b4rt Reference Manual
             General statistics and information listed on the admin page
 
             Server options (server)
-                Setting the transfer download path
-                Setting the installation document root
-                Home directory configuration
+                Torrentflux-b4rt path configuration
                 Binary path configuration
                 Operating system specific configuration
 
@@ -2611,9 +2609,148 @@ Introduction
                     more info on these items.
 
             Server options (server)
-                Setting the transfer download path
-                Setting the installation document root
-                Home directory configuration
+
+                Torrentflux-b4rt path configuration
+
+                    The following paths must be configured for
+                    torrentflux-b4rt to operate correctly:
+
+                    o   Transfer Parent Path
+                        The main torrentflux-b4rt parent path (<path>).
+
+                        This directory is used to store all files used
+                        in the day to day operation of torrentflux-b4rt.
+
+                        The folder must be writable by the webserver
+                        user and ideally owned by the webserver user.
+
+                        Files and folders stored/used by the parent path
+                        include:
+
+                        *   Storage for downloaded transfers:
+
+                            Content downloaded by torrentflux-b4rt will
+                            be downloaded into <path>/<username> if the
+                            use of home directories is enabled.
+
+                            If home directories are not enabled,
+                            downloaded content will be saved instead
+                            into the path specified by the 'Incoming'
+                            path instead.  See TODO_LINK: Admin/Server
+                            section on 'Home Directories'
+
+                        *	Transfer control files
+
+                            Files used internally by torrentflux-b4rt to
+                            control the download of individual transfers
+                            are stored in the <path>/.transfers folder.
+                            These files include:
+
+                            o   .stat files - a stat file is created
+                                when a transfer is injected into
+                                torrentflux-b4rt.
+
+                                The stat file is updated when a transfer
+                                is running with information such as how
+                                much data has been transferred, what
+                                percentage of the transfer has
+                                completed, how many seeds/peers the
+                                transfer has and other items of
+                                information.
+
+                                The stat file is then read by the
+                                torrentflux-b4rt internals to display
+                                the status of the transfer in the
+                                frontend.
+
+                            o   .pid files - a pid file (process id
+                                file) is created when a transfer is
+                                started.  The file contains the process
+                                id number of the transfer's process.
+
+                                The pid file is used as an indication of
+                                whether or not a transfer is running and
+                                to forcefully stop the transfer in the
+                                event that it becomes uncontrollable for
+                                some reason.
+
+                            o   .log files - a log file is created for
+                                each transfer when the transfer is
+                                started.  The logfile contains
+                                information specific to that transfer as
+                                it runs over time.
+
+                            o   .cmd files - a cmd file is created when
+                                torrentflux-b4rt has to send a command
+                                to a running transfer.  The transfer's
+                                client polls the .transfer folder
+                                regularly for new cmd files and if it
+                                finds one, it will read the command from
+                                the cmd file and act upon it.
+
+                                The lifetime of a cmd file should be
+                                very short since the file is deleted as
+                                soon as the command is executed.
+
+                        *	Client cache files
+
+                            Cache files used by BitTorrent Mainline,
+                            Transmission and BitTornado are stored in
+                            the .bittorrent, .BitTornado and
+                            .transmission folders under <path>.
+
+                        *	Fluxd control files
+
+                            Files used for the control of fluxd are
+                            contained in the <path>/.fluxd directory.
+                            Files include:
+
+                            o	fluxd-error.log - any error output from
+                                fluxd
+
+                            o	fluxd.log - standard output from fluxd
+
+                            o	fluxd.pid - process id of currently
+                                running fluxd service
+
+                            o	fluxd.sock - socket file used to
+                                communicate with fluxd
+
+                            Additional directories may be created under
+                            the .fluxd directory for use by the fluxd
+                            modules, particularly the rssad module.
+
+                        *	Fluazu control files
+
+                            Files used for the control of the fluazu
+                            component of torrentflux-b4rt.
+
+                        *	Torrentflux-b4rt template cache files
+
+                            If template caching is used to display the
+                            frontend HTML, template cache files are
+                            stored in the <path>/.templateCache folder.
+
+                        *	RSS cache files
+
+                            If RSS feeds are added via the RSS admin
+                            page, a cache of the feeds is stored in
+                            <path>/.rsscache.  This speeds up display of
+                            RSS feed contents in the frontend and takes
+                            the strain off the remote server where the
+                            RSS feed is fetched from.
+
+                    o   Document Root Path
+
+                        The Document Root path of the installation.
+
+                        The folder must be readable by the webserver user.
+
+                        This is the directory where you installed
+                        torrentflux-b4rt on the webserver and it should
+                        be detected/reported automatically by
+                        torrentflux-b4rt.
+
                 Binary path configuration
                 Operating system specific configuration
 
