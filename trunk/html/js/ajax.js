@@ -9,6 +9,7 @@ var ajax_updateParams = "";
 var ajax_updateTimer = 5000;
 var ajax_updateState = 0; // 0 = update off; 1 = update on
 var ajax_httpRequest = false;
+var ajax_requestOpen = false;
 
 /**
  * get http-request-instance
@@ -44,16 +45,15 @@ function ajax_update() {
 		try {
 		    if (!ajax_httpRequest)
 		        ajax_httpRequest = ajax_getHttpRequest();
-		    else {
-				ajax_httpRequest.onreadystatechange = null;
-		        ajax_httpRequest.abort();
-			}
+		    else
+				ajax_httpRequest.abort();
 			ajax_httpRequest.onreadystatechange = ajax_updateCallback;
 			ajax_httpRequest.open('GET', ajax_updateUrl + ajax_updateParams, true);
 			ajax_httpRequest.send(null);
+			ajax_requestOpen = true;
 		} catch (ajaxception) {
 			if (ajax_debug)
-				alert(ajaxception);
+				alert('name : ' + ajaxception.name + ' | message:' + ajaxception.message);
 		    ajax_updateState = 0;
 		}
 	}
@@ -63,12 +63,13 @@ function ajax_update() {
  * update-callback
  */
 function ajax_updateCallback() {
-	if (ajax_httpRequest.readyState == 4) {
+	if (ajax_httpRequest.readyState == 4 && ajax_requestOpen === true) {
 		if (ajax_httpRequest.status == 200) {
 			if (ajax_useXML)
 				ajax_processXML(ajax_httpRequest.responseXML);
 			else
 				ajax_processText(ajax_httpRequest.responseText);
+			ajax_requestOpen = false;
 		} else {
 			if (ajax_debug)
 				alert('Error in Request :' + ajax_httpRequest.status);
