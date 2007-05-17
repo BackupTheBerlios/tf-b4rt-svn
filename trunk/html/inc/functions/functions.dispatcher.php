@@ -231,7 +231,7 @@ function dispatcher_set($key, $val) {
 			$keys = array_keys($_SESSION['settings']);
 			foreach ($keys as $settingKey)
 				$_SESSION['settings'][$settingKey] = $val;
-		} elseif ($key == "_ajax_refresh_") {
+		} elseif ($key == "_refresh_") {
 			$_SESSION['settings']['index_ajax_update'] = $val;
 			$_SESSION['settings']['index_meta_refresh'] = $val;
 		} else {
