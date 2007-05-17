@@ -44,8 +44,10 @@ function ajax_update() {
 		try {
 		    if (!ajax_httpRequest)
 		        ajax_httpRequest = ajax_getHttpRequest();
-		    else if (ajax_httpRequest.readyState != 0)
+		    else {
+				ajax_httpRequest.onreadystatechange = null;
 		        ajax_httpRequest.abort();
+			}
 			ajax_httpRequest.onreadystatechange = ajax_updateCallback;
 			ajax_httpRequest.open('GET', ajax_updateUrl + ajax_updateParams, true);
 			ajax_httpRequest.send(null);
