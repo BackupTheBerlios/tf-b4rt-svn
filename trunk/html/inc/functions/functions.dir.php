@@ -304,6 +304,8 @@ function isValidEntry($entry) {
 	// check if dot-entry
 	if (substr($entry, 0, 1) == ".")
 		return false;
+	if (strpos($entry, "/.") !== false)
+		return false;
 	// check if weirdo macos-entry
 	if (substr($entry, 0, 1) == ":")
 		return false;

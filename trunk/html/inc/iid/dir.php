@@ -206,6 +206,10 @@ if (!(@is_dir($dirName))) {
 		@header("Location: index.php?iid=dir");
 	exit();
 }
+if (($dir != "") && (isValidEntry($dir) !== true)) {
+	AuditAction($cfg["constants"]["error"], "ILLEGAL DIR: ".$cfg["user"]." tried to access ".$dir);
+	@error("Invalid Dir", "index.php?iid=dir", "", array($dir));
+}
 
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.dir.tmpl");
