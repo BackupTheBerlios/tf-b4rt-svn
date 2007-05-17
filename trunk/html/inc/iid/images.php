@@ -194,6 +194,8 @@ $tmpl->setvar('target', $target);
 // more vars
 tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_ID_IMAGES']);
 tmplSetFoot();
+$tmpl->setvar('enable_multiupload', $cfg["enable_multiupload"]);
+$tmpl->setvar('_MULTIPLE_UPLOAD', $cfg['_MULTIPLE_UPLOAD']);
 $tmpl->setvar('_ID_IMAGES', $cfg['_ID_IMAGES']);
 tmplSetIidVars();
 

@@ -266,6 +266,13 @@ span.serverStats {
 	background-repeat: no-repeat;
 	background-position: bottom;
 }
+#statsDiskspaceBar2 {
+	padding-top: 5px;
+	margin-left: 20px;
+	margin-bottom: 2px;
+	width: 100px;
+	height: 30px;
+}
 #diskspace {
 	font-size: 9px;
 	margin-left: 22px;

@@ -379,6 +379,8 @@ $tmpl->setvar('type', $type);
 // more vars
 tmplSetTitleBar($cfg["pagetitle"].' - Server Stats');
 tmplSetFoot();
+$tmpl->setvar('enable_multiupload', $cfg["enable_multiupload"]);
+$tmpl->setvar('_MULTIPLE_UPLOAD', $cfg['_MULTIPLE_UPLOAD']);
 $tmpl->setvar('_ID_IMAGES', $cfg['_ID_IMAGES']);
 tmplSetIidVars();
 
