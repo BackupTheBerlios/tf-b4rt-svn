@@ -520,7 +520,7 @@ if ($_SESSION['settings']['index_ajax_update'] != 0) {
 	$ajaxInit .= ",'".$cfg['drivespacebar']."'";
 	$ajaxInit .= ",".$cfg["ui_displaybandwidthbars"];
 	$ajaxInit .= ",'".$cfg['bandwidthbar']."'";
-	$ajaxInit .= ");";
+	$ajaxInit .= ");onbeforeunload = ajax_unload;";
 	$onLoad .= $ajaxInit;
 }
 

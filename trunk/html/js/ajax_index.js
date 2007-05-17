@@ -44,6 +44,7 @@ var imgSrcBandwidthUpBlank = "themes/default/images/blank.gif";
 var imgHeightBandwidthUpBlank = 12;
 var imgSrcBandwidthDownBlank = "themes/default/images/blank.gif";
 var imgHeightBandwidthDownBlank = 12;
+var indexTimer = null;
 //
 var updateTimeLeft = 0;
 
@@ -129,24 +130,27 @@ function ajax_pageUpdate() {
 	var obj = document.getElementById("span_update");
 	if (ajax_updateState == 1) {
 		if (updateTimeLeft > 0) {
-			if (silentEnabled == 0)
+			if (silentEnabled == 0) {
 				if (obj) obj.innerHTML = "Next AJAX-Update in " + String(updateTimeLeft) + " seconds";
-			else
+			} else {
 				if (obj) obj.innerHTML = "AJAX-Update enabled";
+			}
 			updateTimeLeft--;
 		}
 		else if (updateTimeLeft == 0) {
 			updateTimeLeft = -1;
-			if (silentEnabled == 0)
+			if (silentEnabled == 0) {
 				if (obj) obj.innerHTML = "Update in progress...";
-			if ((titleChangeEnabled == 1) && (silentEnabled == 0))
+			}
+			if ((titleChangeEnabled == 1) && (silentEnabled == 0)) {
 				document.title = "Update in progress... - "+ pageTitle;
+			}
 			setTimeout("ajax_update();", 100);
 		}
+		indexTimer = setTimeout("ajax_pageUpdate();", 1000);
 	} else {
 		if (obj) obj.innerHTML = "AJAX-Update disabled";
 	}
-	setTimeout("ajax_pageUpdate();", 1000);
 }
 
 /**
@@ -353,4 +357,12 @@ function ajax_updateContent(statsServerStr, statsXferStr, usersStr, transferList
 		if (sortTableEnabled == 1)
 			sortables_init();
 	}
+}
+
+
+/**
+ * unload
+ */
+function ajax_unload() {
+	if(indexTimer) window.clearTimeout(indexTimer);
 }

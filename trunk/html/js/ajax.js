@@ -47,10 +47,13 @@ function ajax_update() {
 		        ajax_httpRequest = ajax_getHttpRequest();
 		    else
 				ajax_httpRequest.abort();
-			ajax_httpRequest.onreadystatechange = ajax_updateCallback;
-			ajax_httpRequest.open('GET', ajax_updateUrl + ajax_updateParams, true);
-			ajax_httpRequest.send(null);
-			ajax_requestOpen = true;
+			if(ajax_httpRequest && (ajax_httpRequest.readyState == 4 || ajax_httpRequest.readyState == 0))
+			{
+				ajax_httpRequest.onreadystatechange = ajax_updateCallback;
+				ajax_httpRequest.open('GET', ajax_updateUrl + ajax_updateParams, true);
+				ajax_httpRequest.send(null);
+				ajax_requestOpen = true;
+			}
 		} catch (ajaxception) {
 			if (ajax_debug)
 				alert('name : ' + ajaxception.name + ' | message:' + ajaxception.message);
