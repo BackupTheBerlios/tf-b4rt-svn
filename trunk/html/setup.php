@@ -283,7 +283,7 @@ if (isset($_REQUEST["1"])) {                                                    
 					send('<li/><font color="green">Ok:</font> Created database <em>'.$name.'</em>');
 					$databaseExists = true;
 				} else { // damn there was an error
-					send('<li/><font color="red">Error:</font> Could not created database <em>'.$name.'</em>');
+					send('<li/><font color="red">Error:</font> Could not create database <em>'.$name.'</em>');
 					$databaseExists = false;
 					$databaseTestOk = false;
 					$databaseError = "Check the database <strong>$name</strong> does not exist already to perform this step.";
