@@ -62,8 +62,8 @@ function transfer_setCustomizeVars() {
 	$tmpl->setvar('customize_settings', $customize_settings);
 	// set supported-vars for transfer
 	if ($customize_settings == 0) {
-		$tmpl->setvar('max_upload_rate_enabled', 0);
-		$tmpl->setvar('max_download_rate_enabled', 0);
+		$tmpl->setvar('upload_support_enabled', 0);
+		$tmpl->setvar('download_support_enabled', 0);
 		$tmpl->setvar('max_uploads_enabled', 0);
 		$tmpl->setvar('superseeder_enabled', 0);
 		$tmpl->setvar('die_when_done_enabled', 0);
@@ -73,8 +73,8 @@ function transfer_setCustomizeVars() {
 		$tmpl->setvar('maxcons_enabled', 0);
 		$tmpl->setvar('rerequest_enabled', 0);
 	} else {
-		$tmpl->setvar('max_upload_rate_enabled', $cfg["supportMap"][$ch->client]['max_upload_rate']);
-		$tmpl->setvar('max_download_rate_enabled', $cfg["supportMap"][$ch->client]['max_download_rate']);
+		$tmpl->setvar('upload_support_enabled', $cfg["supportMap"][$ch->client]['max_upload_rate']);
+		$tmpl->setvar('download_support_enabled', $cfg["supportMap"][$ch->client]['max_download_rate']);
 		$tmpl->setvar('max_uploads_enabled', $cfg["supportMap"][$ch->client]['max_uploads']);
 		$tmpl->setvar('superseeder_enabled', $cfg["supportMap"][$ch->client]['superseeder']);
 		$tmpl->setvar('die_when_done_enabled', $cfg["supportMap"][$ch->client]['die_when_done']);

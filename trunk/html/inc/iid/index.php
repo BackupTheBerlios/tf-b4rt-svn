@@ -346,6 +346,7 @@ foreach ($arList as $transfer) {
 		'peers' => $peers,
 		'estTime' => $estTime,
 		'clientType' => $settingsAry['type'],
+		'upload_support_enabled' => $cfg["supportMap"][$settingsAry['client']]['max_upload_rate'],
 		'client' => $client,
 		'url_path' => urlencode(str_replace($cfg["path"],'', $settingsAry['savepath']).$settingsAry['datapath']),
 		'datapath' => $settingsAry['datapath'],

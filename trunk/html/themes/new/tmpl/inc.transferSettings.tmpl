@@ -1,6 +1,6 @@
 <input type="hidden" name="client" value="<tmpl_var name="client">">
 <input type="hidden" name="type" value="<tmpl_var name="type">" />
-<tmpl_if name="max_upload_rate_enabled" value="1">
+<tmpl_if name="upload_support_enabled" value="1">
 	<tr>
 		<td align="left" width="75%">Max Upload Rate:</td>
 		<td nowrap>
@@ -10,7 +10,7 @@
 <tmpl_else>
 	<input type="hidden" name="max_upload_rate" value="<tmpl_var name="max_upload_rate">" />
 </tmpl_if>
-<tmpl_if name="max_download_rate_enabled" value="1">
+<tmpl_if name="download_support_enabled" value="1">
 	<tr>
 		<td align="left" width="75%">Max Download Rate:</td>
 		<td nowrap>
