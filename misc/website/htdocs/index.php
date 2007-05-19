@@ -405,7 +405,7 @@ function printPageAbout() {
 			Please use <a href="forum" title="Torrentflux-b4rt Forum">the torrentflux-b4rt forum</a> for any support related queries.<br/>
 			For all other <strong>non-support</strong> related queries:<br/>
 		</p>
-		<ul><li><script>printMailLink('tfb4rt[AT]gmail[DOT]com');</script><noscript>tfb4rt[AT]gmail[DOT]com</noscript></li></ul>
+		<ul><li><script language="javascript" type="text/javascript">printMailLink('tfb4rt[AT]gmail[DOT]com');</script><noscript>tfb4rt[AT]gmail[DOT]com</noscript></li></ul>
 	</div>
 <?php
 		$authors = getAuthors();
@@ -472,6 +472,26 @@ function printPageAbout() {
 		</p>
 		<p>
 			<strong>1.0-alpha is the currently stable release of torrentflux-b4rt!</strong>  Whilst this may not seem obvious given the 'alpha' tag, you can rest assured that the currently available tarball is tested enough for it to be stable to use without breaking anything.
+		</p>
+	</div>
+
+	<div class="subcontent">
+		<h1 id="irc">Torrentflux-b4rt IRC Chat</h1>
+		<p>
+			The official Internet Relay Chat (IRC) server and channel for Torrentflux-b4rt are:<br/>
+			<br/>
+			Server: <b>chat.freenode.net</b><br/>
+			Channel: <b>#tfb4rt</b><br/>
+			<br/>
+			<b>Notes:</b><br/>
+			The Freenode IRC network has a large number of servers located around the world - you can use the domain name 'chat.freenode.net', but you will be connected to a random server which might not be geographically close to you.  To find one closest to you, see this page:<br/>
+			<br/>
+			<a href="http://freenode.net/irc_servers.shtml">Freenode IRC Server List</a><br/>
+			<br/>
+			Also, please consider registering a nickname on the Freenode network if you intend to spend a lot of time (idling!) there - for the benefits of and help with registering a nick, see these pages:<br/>
+			<br/>
+			<a href="http://freenode.net/faq.shtml#registering">Why should I register a nick on Freenode</a><br/>
+			<a href="http://freenode.net/faq.shtml#nicksetup">Registering a nickname on Freenode</a><br/>
 		</p>
 	</div>
 <?php

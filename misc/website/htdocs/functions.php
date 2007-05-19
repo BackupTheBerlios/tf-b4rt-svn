@@ -177,7 +177,7 @@ function getAuthors() {
 				$mailAd = str_replace('@', '[AT]', $mailAd);
 				$mailAd = str_replace('.', '[DOT]', $mailAd);
 				$authors_list .= "<li>";
-				$authors_list .= "<script>printMailLink('".$mailAd."', '".$username."');</script>";
+				$authors_list .= "<script language=\"javascript\" type=\"text/javascript\">printMailLink('".$mailAd."', '".$username."');</script>";
 				$authors_list .= "<noscript>".$mailAd."</noscript>";
 				$authors_list .= "</li>\n";
 			}
