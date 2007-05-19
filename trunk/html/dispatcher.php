@@ -51,6 +51,9 @@ switch ($action) {
     case "deleteWithData":
     	dispatcher_deleteDataTransfer(urldecode(tfb_getRequestVar('transfer')));
     	break;
+    case "wipe":
+    	dispatcher_wipeTransfer(urldecode(tfb_getRequestVar('transfer')));
+    	break;
     case "stop":
     	dispatcher_stopTransfer(urldecode(tfb_getRequestVar('transfer')));
     	break;

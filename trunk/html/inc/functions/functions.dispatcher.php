@@ -187,7 +187,7 @@ function dispatcher_deleteDataTransfer($transfer) {
 	// ch
 	$ch = ClientHandler::getInstance($client);
 	// permission
-	dispatcher_checkTypePermission($transfer, $ch->type, "delete");
+	dispatcher_checkTypePermission($transfer, $ch->type, "deleteWithData");
 	// is transfer running ?
 	$tRunningFlag = isTransferRunning($transfer);
 	if ($tRunningFlag) {
@@ -211,6 +211,50 @@ function dispatcher_deleteDataTransfer($transfer) {
 		$ch->delete($transfer);
 		if (count($ch->messages) > 0)
 			@error("There were Problems", "", "", $ch->messages);
+	}
+}
+
+/**
+ * wipeTransfer
+ *
+ * @param $transfer
+ */
+function dispatcher_wipeTransfer($transfer) {
+	global $cfg;
+	// valid
+	if (tfb_isValidTransfer($transfer) !== true) {
+		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
+		@error("Invalid Transfer", "", "", array($transfer));
+	}
+	// client
+	$client = getTransferClient($transfer);
+	// ch
+	$ch = ClientHandler::getInstance($client);
+	// permission
+	dispatcher_checkTypePermission($transfer, $ch->type, "wipe");
+	// is transfer running ?
+	$tRunningFlag = isTransferRunning($transfer);
+	if ($tRunningFlag) {
+		// stop first
+		$ch->stop($transfer);
+		if (count($ch->messages) > 0)
+    		@error("There were Problems", "", "", $ch->messages);
+		// is transfer running ?
+		$tRunningFlag = isTransferRunning($transfer);
+	}
+	// if it was running... hope the thing is down...
+	// only continue if it is
+	if ($tRunningFlag) {
+		@error("Wipe failed, Transfer is running and stop failed", "", "", $ch->messages);
+	} else {
+		// transferData
+		$msgsDelete = deleteTransferData($transfer);
+		if (count($msgsDelete) > 0)
+			@error("There were Problems deleting Transfer-Data", "", "", $msgsDelete);
+		// totals + t
+		$msgsReset = resetTransferTotals($transfer, true);
+		if (count($msgsReset) > 0)
+			@error("There were Problems wiping the Transfer", "", "", $msgsReset);
 	}
 }
 
