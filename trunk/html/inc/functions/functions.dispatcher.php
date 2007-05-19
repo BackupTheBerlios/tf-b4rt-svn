@@ -141,15 +141,33 @@ function dispatcher_deleteTransfer($transfer) {
 		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
 		@error("Invalid Transfer", "", "", array($transfer));
 	}
+	// client
+	$client = getTransferClient($transfer);
 	// ch
-	$ch = ClientHandler::getInstance(getTransferClient($transfer));
+	$ch = ClientHandler::getInstance($client);
 	// permission
 	dispatcher_checkTypePermission($transfer, $ch->type, "delete");
-	// delete
-	$ch->delete($transfer);
-	// check
-	if (count($ch->messages) > 0)
-    	@error("There were Problems", "", "", $ch->messages);
+	// is transfer running ?
+	$tRunningFlag = isTransferRunning($transfer);
+	if ($tRunningFlag) {
+		// stop first
+		$ch->stop($transfer);
+		if (count($ch->messages) > 0)
+    		@error("There were Problems", "", "", $ch->messages);
+		// is transfer running ?
+		$tRunningFlag = isTransferRunning($transfer);
+	}
+	// if it was running... hope the thing is down...
+	// only continue if it is
+	if ($tRunningFlag) {
+		@error("Delete Failed, Transfer is running and stop failed", "", "", $ch->messages);
+	} else {
+		// delete
+		$ch->delete($transfer);
+		// check
+		if (count($ch->messages) > 0)
+	    	@error("There were Problems", "", "", $ch->messages);
+	}
 }
 
 /**
