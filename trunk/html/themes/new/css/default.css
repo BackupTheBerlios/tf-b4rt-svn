@@ -334,3 +334,13 @@ td.settingsText {
 	width: 50%;
 	text-align: right;
 }
+#statsUploadBar {
+	padding-top: 5px;
+	margin-left: 20px;
+	margin-bottom: 2px;
+	width: 100px;
+	height: 30px;
+	background-image: url("../pics/uploadBarBack.jpg");
+	background-repeat: no-repeat;
+	background-position: bottom;
+}
