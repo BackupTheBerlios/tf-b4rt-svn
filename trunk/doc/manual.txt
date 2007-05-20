@@ -2371,6 +2371,21 @@ Introduction
                     changed at some point by comparing the current
                     checksum to the checksum of the original file.
 
+                Listing and verifying checksums of installed files
+
+                    The 'Checksum Validation' linked page on the 'Misc'
+                    tab of the superadmin pages allows you to check the
+                    integrity of the files installed in your
+                    installation of torrentflux-b4rt against a list
+                    stored on the torrentflux-b4rt website.  This allows
+                    you to verify whether any of your files have changed
+                    since you installed them, alerting you to any
+                    differences.
+
+                    The script will analyse the files you have installed
+                    and provide a detailed report about all
+                    unchanged/changed/missing/new files.
+
                 Checking software requirements
 
                     The 'Check Requirements' linked page on the 'Misc'
@@ -2448,21 +2463,6 @@ Introduction
 
                     This list of changelogs is obtained from the
                     torrentflux-b4rt website.
-
-                Listing and verifying checksums of installed files
-
-                    The 'Checksum Validation' linked page on the 'About'
-                    tab of the superadmin pages allows you to check the
-                    integrity of the files installed in your
-                    installation of torrentflux-b4rt against a list
-                    stored on the torrentflux-b4rt website.  This allows
-                    you to verify whether any of your files have changed
-                    since you installed them, alerting you to any
-                    differences.
-
-                    The script will analyse the files you have installed
-                    and provide a detailed report about all
-                    unchanged/changed/missing/new files.
 
         Configuration
 

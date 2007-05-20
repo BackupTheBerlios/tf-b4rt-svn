@@ -930,7 +930,9 @@ function sa_misc($action = "") {
 			$htmlMain .= '<br>Select the task you wish to perform from below:<p>';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?y=1"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="List files installed" border="0"> Lists</a> - view a list of currently installed torrentflux-b4rt files';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?y=5"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Check requirements" border="0"> Check Requirements</a> - check your server meets the requirements to run torrentflux-b4rt';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?y=3"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Checksum Validation" border="0"> Checksum Validation</a> - check the integrity of installed torrentflux-b4rt files';
+			$htmlMain .= '<p>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?y=5"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Check Requirements" border="0"> Check Requirements</a> - check your server meets the requirements to run torrentflux-b4rt';
 			$htmlMain .= '<br><br>';
 			break;
 
@@ -960,13 +962,31 @@ function sa_misc($action = "") {
 			printFileList($cfg['docroot'], 1, 1);
 			exit();
 
-		case "13": // Misc - Checksums - html
+		case "13": // Misc - Checksums-List - html
 			printFileList($cfg['docroot'], 2, 2);
 			exit();
 
-		case "14": // Misc - Checksums - text
+		case "14": // Misc - Checksums-List - text
 			@header("Content-Type: text/plain");
 			printFileList($cfg['docroot'], 2, 1);
+			exit();
+
+		case "3": // Misc - Checksums
+			$htmlTitle = "Misc - Checksum Validation";
+			$htmlMain .= '<p>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?y=35" target="_blank"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Checksums of '._VERSION.'" border="0"> Checksums of '._VERSION.'</a>';
+			$htmlMain .= '<p>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?y=36" target="_blank"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Validate local files" border="0"> Validate local files</a>';
+			$htmlMain .= '<br><br>';
+			break;
+
+		case "35": // Misc - Checksums - Latest
+			@header("Content-Type: text/plain");
+			echo getDataFromUrl(_SUPERADMIN_URLBASE._FILE_CHECKSUMS_PRE._VERSION._FILE_CHECKSUMS_SUF);
+			exit();
+
+		case "36": // Misc - Checksums - Validate
+			validateLocalFiles();
 			exit();
 
 		case "5": // misc - Check
@@ -1035,13 +1055,11 @@ function sa_tfb($action = "") {
 		case "0": // main
 			$htmlTitle = "About";
 			$htmlMain .= '<br>Select the information you wish to view from below:<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?z=1"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Version" border="0"> Version</a>  - check your torrentflux-b4rt version is up to date';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?z=1"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Version" border="0"> Version</a> - check your torrentflux-b4rt version is up to date';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?z=2"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="News" border="0"> News</a>  - view the release news for each version of torrentflux-b4rt';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?z=2"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="News" border="0"> News</a> - view the release news for each version of torrentflux-b4rt';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?z=3"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Changelog" border="0"> Changelog</a>  - view the changelogs for each version of torrentflux-b4rt';
-			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?z=9"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Checksum Validation" border="0"> Checksum Validation</a>  - check the integrity of installed files';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?z=3"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Changelog" border="0"> Changelog</a> - view the changelogs for each version of torrentflux-b4rt';
 			$htmlMain .= '<br><br>';
 			break;
 
@@ -1128,24 +1146,6 @@ function sa_tfb($action = "") {
 			$htmlMain .= '</pre>';
 			$htmlMain .= '</div>';
 			break;
-
-		case "9": // Misc-main
-			$htmlTitle = "About - Checksum Validation";
-			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?z=95" target="_blank"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Checksums of '._VERSION.'" border="0"> Checksums of '._VERSION.'</a>';
-			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?z=96" target="_blank"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Validate local files" border="0"> Validate local files</a>';
-			$htmlMain .= '<br><br>';
-			break;
-
-		case "95": // Misc - Checksums - Latest
-			@header("Content-Type: text/plain");
-			echo getDataFromUrl(_SUPERADMIN_URLBASE._FILE_CHECKSUMS_PRE._VERSION._FILE_CHECKSUMS_SUF);
-			exit();
-
-		case "96": // Misc - Validate
-			validateLocalFiles();
-			exit();
 
 	}
 	printPage();
@@ -1651,11 +1651,13 @@ function buildPage($action) {
 			$htmlMain .= '<table width="100%" bgcolor="'.$cfg["table_data_bg"].'" border="0" cellpadding="4" cellspacing="0"><tr><td width="100%">';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?y=1">Lists</a>';
 			$htmlMain .= ' | ';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?y=3">Checksum Validation</a>';
+			$htmlMain .= ' | ';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?y=5">Check Requirements</a>';
 			$htmlMain .= '</td><td align="right" nowrap><strong>Misc</strong></td>';
 			$htmlMain .= '</tr></table>';
 			break;
-		case "z": // tf-b4rt passthru
+		case "z": // about passthru
 			$statusImage = "black.gif";
 			$htmlMain .= '<table width="100%" bgcolor="'.$cfg["table_data_bg"].'" border="0" cellpadding="4" cellspacing="0"><tr><td width="100%">';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?z=1">Version</a>';
@@ -1663,8 +1665,6 @@ function buildPage($action) {
 			$htmlMain .= '<a href="' . _FILE_THIS . '?z=2">News</a>';
 			$htmlMain .= ' | ';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?z=3">Changelog</a>';
-			$htmlMain .= ' | ';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?z=9">Checksum Validation</a>';
 			$htmlMain .= '</td><td align="right" nowrap><strong>About</strong></td>';
 			$htmlMain .= '</tr></table>';
 			break;
