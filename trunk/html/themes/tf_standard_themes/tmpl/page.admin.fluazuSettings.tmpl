@@ -19,9 +19,9 @@
 			<td bgcolor="<tmpl_var name="table_header_bg">" background="themes/<tmpl_var name="theme">/images/bar.gif">
 				<font class="title">
 					<tmpl_if name="fluazuRunning">
-						&nbsp;&nbsp;<img src="themes/tf_standard_themes/images/green.gif" align="absmiddle" align="absmiddle"> fluazu Running (pid: <tmpl_var name="fluazuPid">)
+						&nbsp;&nbsp;<img src="themes/tf_standard_themes/images/green.gif" align="absmiddle" align="absmiddle"> Fluazu Running - pid: <tmpl_var name="fluazuPid">
 					<tmpl_else>
-						&nbsp;&nbsp;<img src="themes/tf_standard_themes/images/black.gif" align="absmiddle"> fluazu Off
+						&nbsp;&nbsp;<img src="themes/tf_standard_themes/images/black.gif" align="absmiddle"> Fluazu Off
 					</tmpl_if>
 				</font>
 			</td>
@@ -126,7 +126,7 @@
 							<tmpl_if name="pythonMissing">
 								<tr>
 									<td align="center" colspan="2">
-										<strong><font color="red">Python missing</font></strong>
+										<strong><font color="red">Python Missing</font></strong>
 										<br><br>
 										Check <a href="admin.php?op=serverSettings">Server-Settings</a> Page.
 									</td>
@@ -136,14 +136,14 @@
 									<input type="Hidden" name="a" value="stop">
 									<tr>
 										<td align="center" colspan="2">
-											<input type="Submit" value="Stop fluazu">
+											<input type="Submit" value="Stop Fluazu">
 											<br><br>
 										</td>
 									</tr>
 								<tmpl_else>
 									<input type="Hidden" name="a" value="start">
 									<tr>
-										<td align="left" width="350" valign="top" colspan="2"><strong>Start fluazu:</strong><br></td>
+										<td align="left" width="350" valign="top" colspan="2"><strong>Start Fluazu:</strong><br></td>
 									</tr>
 									<tr>
 										<td align="center" colspan="2">
@@ -174,24 +174,24 @@
 								</td>
 							</tr>
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Host</strong><br>
-									Host of Azureus-server (currently only localhost is supported):
+									<td align="left" width="350" valign="top"><strong>Host:</strong><br>
+									Host of Azureus-server (currently only localhost is supported).
 									</td>
 									<td valign="top">
 										<input name="fluazu_host" type="Text" maxlength="254" value="<tmpl_var name="fluazu_host">" size="55">
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Port</strong><br>
-									Port of Azureus-server (XML/HTTP, default: 6884):
+									<td align="left" width="350" valign="top"><strong>Port:</strong><br>
+									Port of Azureus-server (XML/HTTP, default: 6884).
 									</td>
 									<td valign="top">
 										<input name="fluazu_port" type="Text" maxlength="5" value="<tmpl_var name="fluazu_port">" size="5">
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Secure</strong><br>
-									Use secure connection to azureus:
+									<td align="left" width="350" valign="top"><strong>Secure:</strong><br>
+									Use secure connection to azureus.
 									</td>
 									<td valign="bottom">
 										<select name="fluazu_secure">
@@ -205,16 +205,16 @@
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Username</strong><br>
-									Username to use when connecting to Azureus-server:
+									<td align="left" width="350" valign="top"><strong>Username:</strong><br>
+									Username to use when connecting to Azureus-server.
 									</td>
 									<td>
 										<input name="fluazu_user" type="Text" maxlength="254" value="<tmpl_var name="fluazu_user">" size="55">
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Password</strong><br>
-									Password to use when connecting to Azureus-server:
+									<td align="left" width="350" valign="top"><strong>Password:</strong><br>
+									Password to use when connecting to Azureus-server.
 									</td>
 									<td>
 										<input name="fluazu_pw" type="password" maxlength="254" value="<tmpl_var name="fluazu_pw">" size="55">
