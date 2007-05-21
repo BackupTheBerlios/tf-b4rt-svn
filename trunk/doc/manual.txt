@@ -183,6 +183,12 @@ Torrentflux-b4rt Reference Manual
                 Overview
                 BitTorrent specific settings
                 Fluazu specific settings and operation
+                    Overview
+                    Starting and stopping fluazu
+                    Configuring azureus settings via fluazu
+                    Viewing information about fluazu - logs, processes,
+                    version
+                    Configuring fluazu
                 Wget specific settings
                 Nzbperl specific settings
                 Common settings
@@ -3246,6 +3252,138 @@ Introduction
                         checking.
 
                 Fluazu specific settings and operation
+
+                    Overview
+
+                        The fluazu settings page is accessed by clicking
+                        on the 'Edit Fluazu Settings' link on the
+                        'transfer' admin page.  On the edit fluazu
+                        settings page you can start and stop fluazu,
+                        view log, process and version info and configure
+                        fluazu settings.  Settings can also be changed
+                        for the fluazu daemon on the fly whilst it is
+                        running.
+
+                    Starting and stopping fluazu
+
+                        To start the fluazu daemon, click the 'Start
+                        Fluazu' button.  The daemon will be started in
+                        the background on the server and the status of
+                        the 'Edit Fluazu Settings' page will change to
+                        'Fluazu Started'.  A number of configuration
+                        options for Azureus will also be displayed to
+                        allow you to change these via fluazu.
+
+                        To stop the fluazu daemon, click the 'Stop
+                        Fluazu' button.  The daemon will be stopped in
+                        the background on the server and the status of
+                        the page will change to 'Fluazu Off'.
+
+                    Configuring azureus settings via fluazu
+
+                        After fluazu has been started, a number of
+                        azureus options can be changed dynamically from
+                        the 'Edit Fluazu Settings' page.  Making changes
+                        to these options will send a command to the
+                        backend azureus server to make the change.
+
+                        The Azureus settings that can be changed via the
+                        'Edit Fluazu Setting' page are as follows:
+
+                        o	Max Active Torrents
+
+                            Maximum torrents to run at the same time.
+
+                        o	Max Active Torrents When Only Seeding
+
+                            Maximum torrents to run at the same time
+                            when there are only seeding torrents running
+                            - ie when not leeching anything.
+
+                        o	Max Connections Global
+
+                            Maximum number of connections for all
+                            torrents running.
+
+                        o	Max Connections Per Torrent
+
+                            Maximum number of connections for each
+                            individual torrent.
+
+                        o	Max Download Speed KBs
+
+                            Maximum download speed for all torrents.
+
+                        o	Max Downloads
+
+                            Maximum number of downloads to run
+                            consecutively.
+
+                        o	Max Upload Speed KBs
+
+                            Maximum upload speed for all torrents.
+
+                        o	Max Upload Speed When Only Seeding KBs
+
+                            Maximum upload speed to allow when only
+                            seeding - ie when not leeching
+
+                        o	Max Uploads
+
+                            Maximum number of uploads to run
+                            consecutively
+
+                        o	Max Uploads Seeding
+
+                            Maximum number of uploads to allow when
+                            seeding.
+
+                    Viewing information about fluazu - logs, processes,
+                    version
+
+                        To view the fluazu log entries, click on the
+                        'logs' link.  A new page will open with the
+                        current fluazu logfile in it.
+
+                        To view the process listing information for the
+                        fluazu daemon, click on the 'ps' link.  A new
+                        page will open containing the process listing
+                        info if available.
+
+                        To view the version information for the
+                        currently installed fluazu daemon, click the
+                        'version' link.  A new page will open containing
+                        the version details.
+
+                    Configuring fluazu
+
+                        The following options are configured on the
+                        'Edit Fluazu Settings' page:
+
+                        o   Host
+
+                            Host of Azureus-server (currently only
+                            localhost is supported).
+
+                        o   Port
+
+                            Port of Azureus-server (XML/HTTP, default:
+                            6884).
+
+                        o   Secure
+
+                            Use secure connection to azureus.
+
+                        o   Username
+
+                            Username to use when connecting to
+                            Azureus-server.
+
+                        o   Password
+
+                            Password to use when connecting to
+                            Azureus-server.
+
                 Wget specific settings
                 Nzbperl specific settings
                 Common settings
