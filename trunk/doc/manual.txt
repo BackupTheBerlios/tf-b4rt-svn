@@ -2,9 +2,6 @@
 $Id$
 
 vim: set comments=fb\:o,fb\:#,fb\:-,fb\:*,fb\:A.,fb\:Q. et tw=72 sw=4:
-
-macro for converting content list item into titled docbook <section>:
-O<section><title id=""maA>JdwA</title><para></para></section>'awwwll
 =======================================================================
 
 /**********************************************************************
@@ -2963,6 +2960,7 @@ Introduction
                             required by torrentflux-b4rt correctly.
 
             Transfer client options (transfer)
+
                 Overview
 
                     The transfer admin page allows you to configure
@@ -3385,8 +3383,160 @@ Introduction
                             Azureus-server.
 
                 Wget specific settings
+
+                    The wget specific settings are as follows:
+
+                    o   Enable Wget
+                        Set who can use wget.
+
+                        By default torrentflux-b4rt is set to allow all
+                        users to use the wget functionality.  If you
+                        wish to restrict access to wget, you can do so
+                        here.
+
+                    o   Limit Download Rate
+                        Set the default value for the max download rate
+                        per transfer (0 for no limit).
+
+                    o   Limit Number of Retries
+                        Set the max number of retries to attempt (0 for
+                        no limit).
+
+                        When accessing a URL resource using wget and the
+                        URL is unavailable for some reason, this option
+                        specifies how many times wget should continue to
+                        retry getting the resource.
+
+                    o   Enable Passive FTP
+                        Enable/disable "passive" transfer mode for FTP.
+
+                        In passive ftp transfer mode, the transfer
+                        client determines the port it uses to
+                        communicate with the remote server.  In active
+                        mode, the server determines the ports used to
+                        communicate.  Changing the transfer mode can
+                        help with communication problems because of
+                        restrictive firewalls - the subject is beyond
+                        the scope of this document.
+
                 Nzbperl specific settings
+
+                    The requirements for using nzbperl can be checked by
+                    clicking on the 'nzbperl Requirements Check' link.
+                    The requirements checker script for nzbperl will run
+                    in a new window and list all the elements required
+                    to run nzbperl and whether your current server
+                    installation meets those requirements.
+
+                    The nzbperl specific settings are as follows:
+
+                    o   Enable Nzbperl
+                        Set who can use nzbperl.
+
+                        By default access to the nzbperl functionality
+                        is disabled. If you wish to change access rights
+                        to nzbperl, you can do so here.
+
+                    o   Use Subdirectories
+                        Download nzbperl content into separate
+                        subdirectories.
+
+                        By default nzbperl will download all content
+                        into the master nzb directory.  If you wish to
+                        have content downloaded into individual
+                        subdirectories for each transfer, you can do
+                        that here.
+
+
+                    o   Bad File Action
+                        Set the action to perform on finding a bad entry
+                        in the nzb.
+
+                        By default nzbperl will drop any bad files
+                        downloaded and attempt to re-transfer them.
+                        This option can be changed here.
+
+                    o   Download Rate
+                        Set the default value for the max download rate
+                        per transfer (0 for no limit).
+
+                    o   Server
+                        Set the NNTP server nzbperl should connect to.
+
+                    o   Username
+                        Set the username to use when connecting to your
+                        NNTP server.
+
+                    o   Password
+                        Set the password to use when connecting to your
+                        NNTP server.
+
+                    o   Connections
+                        The number of simultaneous connections to the
+                        NNTP server nzbperl will create.
+
+                        Note:
+                        You can only run conn/server_max nzb downloads at once.
+
+                    o   Threads
+                        Use threading.
+
+                        Note:
+                        Enable only if your Perl installation supports threads.
+
+                    o   Extra Commandline Options
+
+                        Any extra commandline options you wish to pass
+                        to the nzbperl process can be set here.  Refer
+                        to the nzbperl documentation for more
+                        information on this TODO_LINK:nzbperl website
+
                 Common settings
+
+                    The common settings available for configuration are:
+
+                    o   Enable 0000 Umask (B+T+M+W+N)
+                        Enable/disable setting umask to 0000 when
+                        starting a client.
+
+                        Note:
+                        Resulting permissions of created files will be
+                        777 - readable, writable and executable by
+                        everyone.
+
+                        Umasking refers to the default file permissions
+                        that should be given to a newly created file.
+                        This option will set the umask to 0000 which
+                        will give all files created by all transfer
+                        processes a default permission so the files are
+                        readable/writable by everyone.
+
+                        See the manpage for 'sh' for more info on umask.
+
+                    o   Use Nice (B+T+M+W+N)
+                        Set the nice level to use for transfer
+                        processes.
+
+                        Note:
+                        The highest nice level - 19 - gives processes
+                        the lowest possible priority over other
+                        processes on the server.
+
+                        The nice utility is a feature of Unix type OSs
+                        that allows you to adjust the priority of a
+                        process.  The higher a process's 'nice' value is
+                        the less priority it has with respect to access
+                        to OS system resources - memory paging, CPU
+                        access, etc.  By setting a high nice value you
+                        are being 'nice' to the other processes on a
+                        server.
+
+                        This option is useful in the case you have a
+                        multi-purpose server and you don't want
+                        torrentflux-b4rt created processes to take all
+                        the resources up - setting a high nice value
+                        here will effectively give other processes on
+                        the webserver higher priority.
 
                 Setting the default transfer client to use
                 Setting the default .torrent metadata viewer
