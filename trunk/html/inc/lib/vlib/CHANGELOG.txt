@@ -1,6 +1,13 @@
 CHANGELOG
 ------------
 
+4.1.0
+-------------------
+
+*   Added function: Debug output without JavaScript.
+*   Fixed bug: PHP is not allowed within a template. New error message.
+    Claus van Beek (2007-01-20)
+
 4.0.2.3
 -------------------
 

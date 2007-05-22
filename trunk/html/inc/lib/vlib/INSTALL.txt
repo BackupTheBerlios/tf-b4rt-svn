@@ -4,7 +4,7 @@ INSTALLATION INSTRUCTIONS
 The vLIB Library has been built to be installed with minimal changes needed.
 The following steps will guide you through the install proceedure:
 
-1) Download the current version of vLIB from http://vlib.activefish.com/download/
+1) Download the current version of vLIB from http://vlib.clausvb.de/
 
 2) Unpack the version of vLIB that you downloaded (eg: vLIB_3-0-6.zip) into a directory of
    your choise accessible to your php scripts.

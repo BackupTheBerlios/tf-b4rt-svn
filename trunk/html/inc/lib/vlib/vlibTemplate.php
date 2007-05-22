@@ -1,14 +1,12 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4: */
 // +----------------------------------------------------------------------+
-// | PHP version 4.0                                                      |
+// | PHP version 4.3.x (and higher), tested with 5.1.4                    |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2002 Active Fish Group                                 |
+// | Copyright (c) 2002-2007 Kelvin Jones, Claus van Beek, Stefan Deuﬂen  |
 // +----------------------------------------------------------------------+
-// | Authors: Kelvin Jones <kelvin@kelvinjones.co.uk>                     |
+// | Authors: Kelvin Jones, Claus van Beek, Stefan Deuﬂen                 |
 // +----------------------------------------------------------------------+
-//
-// $Id$
 
 // check to avoid multiple including of class
 if (!defined('vlibTemplateClassLoaded')) {
@@ -23,7 +21,7 @@ if (!defined('vlibTemplateClassLoaded')) {
      * vlibTemplate.html file, located in the 'docs' directory.
      *
      * @since 07/03/2002
-     * @author Kelvin Jones <kelvin@kelvinjones.co.uk>
+     * @author Kelvin Jones, Claus van Beek, Stefan Deuﬂen
      * @package vLIB
      * @access public
      * @see vlibTemplate.html
@@ -37,7 +35,7 @@ if (!defined('vlibTemplateClassLoaded')) {
     \-----------------------------------------------------------------------------*/
 
         var $OPTIONS = array(
-                        'MAX_INCLUDES'          =>   10,
+                        'MAX_INCLUDES'          => 2,
                         'TEMPLATE_DIR'          => null,
                         'GLOBAL_VARS'           => null,
                         'GLOBAL_CONTEXT_VARS'   => null,
@@ -53,8 +51,9 @@ if (!defined('vlibTemplateClassLoaded')) {
                         'INCLUDE_PATHS'         => array(),
                         'CACHE_DIRECTORY'       => null,
                         'CACHE_LIFETIME'        => null,
-                        'CACHE_EXTENSION'       => null
-                             );
+                        'CACHE_EXTENSION'       => null,
+                        'DEBUG_WITHOUT_JAVASCRIPT' => 0,
+        );
 
         /** open and close tags used for escaping */
         var $ESCAPE_TAGS = array(
@@ -864,7 +863,7 @@ if (!defined('vlibTemplateClassLoaded')) {
          * @return mixed data/string or boolean
          */
         function _getData ($tmplfile, $do_eval=false) {
-            //check the current file depth
+            // check the current file depth
             if ($this->_includedepth > $this->OPTIONS['MAX_INCLUDES'] || $tmplfile == false) {
                 return;
             }
@@ -885,10 +884,18 @@ if (!defined('vlibTemplateClassLoaded')) {
                 $data = fread($fp = fopen($tmplfile, 'r'), filesize($tmplfile));
                 fclose($fp);
 
+				// "<?xml" creates "Parse error!"
+				$data = str_replace('<?xml', '<div style="margin-top: 20px; margin-bottom: 20px; font-size: 2.5em;"><strong>vLIB:</strong> Use "setVar()" to use &quot;&lt;?xml&quot; ...</div>', $data);
+
+				// check for PHP-Tags
+				$data = str_replace('<?php', '<div style="margin-top: 40px; margin-bottom: 40px; font-size: 2.5em;"><strong>vLIB:</strong> PHP is not allowed within the template ...</div>', $data);
+				$data = str_replace('<?=', '<div style="margin-top: 40px; margin-bottom: 40px; font-size: 2.5em;"><strong>vLIB:</strong> PHP is not allowed within the template ...</div>', $data);
+				$data = str_replace('<?', '<div style="margin-top: 40px; margin-bottom: 40px; font-size: 2.5em;"><strong>vLIB:</strong> PHP is not allowed within the template ...</div>', $data);
+
                 $regex = '/(<|<\/|{|{\/|<!--|<!--\/){1}\s*';
                 $regex.= '(?:tmpl_)';
                 if ($this->OPTIONS['ENABLE_SHORTTAGS']) $regex.= '?'; // makes the TMPL_ bit optional
-                $regex.= '(var|if|elseif|else|endif|unless|endunless|loop|endloop|include|phpinclude|comment|endcomment)\s*';
+                $regex.= '(var|if|elseif|else|endif|unless|endunless|loop|endloop|include|comment|endcomment)\s*';
                 $regex.= '(?:';
                 $regex.=    '(?:';
                 $regex.=        '(name|format|escape|op|value|file)';
@@ -1102,7 +1109,7 @@ if (!defined('vlibTemplateClassLoaded')) {
                     $retstr .= "['".$this->_namespace[$i]."'][\$_".$i."]";
                 }
             }
-            
+
             if ($this->OPTIONS['GLOBAL_VARS'] && empty($namespace)) {
                 return '(('.$retstr.'[\''.$varname.'\'] !== null) ? '.$retstr.'[\''.$varname.'\'] : $this->_vars[\''.$varname.'\'])'.$comp_str;
             }
@@ -1187,7 +1194,7 @@ if (!defined('vlibTemplateClassLoaded')) {
                 elseif (function_exists($format)) {
                     $beforevar .= $format.'(';
                     $aftervar   = ')'. $aftervar;
-                }                    
+                }
             }
 
             // build return values
@@ -1229,7 +1236,7 @@ if (!defined('vlibTemplateClassLoaded')) {
 
         /**
          * FUNCTION: _parseIncludeFile
-         * parses a string in an include tag, i.e.: 
+         * parses a string in an include tag, i.e.:
          *  <TMPL_INCLUDE FILE="footer_{var:footer_number}.html" />
          *
          * @param string file name
@@ -1239,7 +1246,7 @@ if (!defined('vlibTemplateClassLoaded')) {
             $file = preg_replace($regex, "'.\$this->_vars['\\1'].'", $file);
             return $file;
         }
-        
+
 
         /**
          * FUNCTION: _parseTag
