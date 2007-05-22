@@ -1,0 +1,429 @@
+<form name="settingsForm" action="index.php?iid=profile&op=updateSettingsUser" method="post" onsubmit="return validateSettings('')">
+	<table border="0" cellpadding="3" cellspacing="0" width="100%">
+		<tr>
+			<td align="left" width="350" valign="top"><strong>Page Refresh:</strong><br>
+			Enable/disable page refresh
+			</td>
+			<td valign="top">
+				<select name="enable_index_meta_refresh">
+					<option value="1">true</option>
+					<option value="0"
+					<tmpl_if name="enable_index_meta_refresh" value="0">
+						 selected
+					</tmpl_if>
+					>false</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350" valign="top"><strong>Page Refresh Interval:</strong><br>
+			Number of seconds between page refreshes
+			</td>
+			<td valign="top">
+				<input name="page_refresh" type="Text" maxlength="3" value="<tmpl_var name="page_refresh">" size="3">
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350" valign="top"><strong>AJAX Update:</strong><br>
+			Enable/disable AJAX updates
+			</td>
+			<td valign="top">
+				<select name="enable_index_ajax_update">
+					<option value="1">true</option>
+					<option value="0"
+					<tmpl_if name="enable_index_ajax_update" value="0">
+						 selected
+					</tmpl_if>
+					>false</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350" valign="top"><strong>Page title AJAX Update:</strong><br>
+			Enable/disable update of page title in AJAX updates
+			</td>
+			<td valign="top">
+				<select name="enable_index_ajax_update_title">
+					<option value="1">true</option>
+					<option value="0"
+					<tmpl_if name="enable_index_ajax_update_title" value="0">
+						 selected
+					</tmpl_if>
+					>false</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350" valign="top"><strong>User list AJAX Update:</strong><br>
+			Enable/disable update of the user list in AJAX Updates
+			</td>
+			<td valign="top">
+				<select name="enable_index_ajax_update_users">
+					<option value="1">true</option>
+					<option value="0"
+					<tmpl_if name="enable_index_ajax_update_users" value="0">
+						 selected
+					</tmpl_if>
+					>false</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350" valign="top"><strong>Transfer List AJAX Update:</strong><br>
+			Enable/disable update of the transfer list in AJAX updates
+			</td>
+			<td valign="top">
+				<select name="enable_index_ajax_update_list">
+					<option value="1">true</option>
+					<option value="0"
+					<tmpl_if name="enable_index_ajax_update_list" value="0">
+						 selected
+					</tmpl_if>
+					>false</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350" valign="top"><strong>Silent AJAX Update:</strong><br>
+			Do not display &quot;Update in Progress...&quot; during
+			AJAX updates
+			</td>
+			<td valign="top">
+				<select name="enable_index_ajax_update_silent">
+					<option value="1">true</option>
+					<option value="0"
+					<tmpl_if name="enable_index_ajax_update_silent" value="0">
+						 selected
+					</tmpl_if>
+					>false</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350" valign="top"><strong>AJAX Update Interval:</strong><br>
+			Number of seconds between AJAX updates<br>(default: 5)
+			</td>
+			<td valign="top">
+				<input name="index_ajax_update" type="Text" maxlength="3" value="<tmpl_var name="index_ajax_update">" size="3">
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350" valign="top"><strong>Width:</strong><br>
+			Width in pixels of the index page<br>(default: 900)
+			</td>
+			<td valign="top">
+				<input name="ui_dim_main_w" type="Text" maxlength="5" value="<tmpl_var name="ui_dim_main_w">" size="5">
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350" valign="top"><strong>Display Links:</strong><br>
+			Display list of links on the index page
+			</td>
+			<td valign="top">
+				<select name="ui_displaylinks">
+					<option value="1">true</option>
+					<option value="0"
+					<tmpl_if name="ui_displaylinks" value="0">
+						 selected
+					</tmpl_if>
+					>false</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350" valign="top"><strong>Display Users:</strong><br>
+			Display users on the index page
+			</td>
+			<td valign="top">
+				<select name="ui_displayusers">
+					<option value="1">true</option>
+					<option value="0"
+					<tmpl_if name="ui_displayusers" value="0">
+						 selected
+					</tmpl_if>
+					>false</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350" valign="top"><strong>Enable Good Looking Statistics:</strong><br>
+			Enable/disable &quot;Good looking statistics&quot;
+			</td>
+			<td valign="top">
+				<select name="enable_goodlookstats">
+					<option value="1">true</option>
+					<option value="0"
+					<tmpl_if name="enable_goodlookstats" value="0">
+						 selected
+					</tmpl_if>
+					>false</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350" valign="top"><strong>Good Looking Statistics Settings:</strong><br>
+			Select Fields shown in &quot;Good looking statistics&quot;
+			</td>
+			<td valign="top">
+				<tmpl_include name="inc.goodLookingStatsForm.tmpl">
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350" valign="top"><strong>Display Bandwidth Bars:</strong><br>
+			Display bandwidth usage bars
+			</td>
+			<td valign="top">
+				<select name="ui_displaybandwidthbars">
+					<option value="1">true</option>
+					<option value="0"
+					<tmpl_if name="ui_displaybandwidthbars" value="0">
+						 selected
+					</tmpl_if>
+					>false</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350" valign="top"><strong>Bandwidth Bars Style:</strong><br>
+			Select style of bandwidth bars
+			</td>
+			<td valign="top">
+				<select name="bandwidthbar">
+					<option value="tf"
+					<tmpl_if name="bandwidthbar" value="tf">
+						 selected
+					</tmpl_if>
+					>tf</option>
+					<option value="xfer"
+					<tmpl_if name="bandwidthbar" value="xfer">
+						 selected
+					</tmpl_if>
+					>xfer</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350" valign="top"><strong>Big Bold Drivespace Warning:</strong><br>
+			Enable/disable drivespace warning when disk space low
+			</td>
+			<td valign="top">
+				<select name="enable_bigboldwarning">
+					<option value="1">true</option>
+					<option value="0"
+					<tmpl_if name="enable_bigboldwarning" value="0">
+						 selected
+					</tmpl_if>
+					>false</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350" valign="top"><strong>Show
+			Seeding Torrents:</strong><br>
+			Display seeding torrents on index page
+			</td>
+			<td valign="top">
+				<select name="index_show_seeding">
+					<option value="1">true</option>
+					<option value="0"
+					<tmpl_if name="index_show_seeding" value="0">
+						selected
+					</tmpl_if>
+					>false</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350" valign="top"><strong>Estimated Time To Seed:</strong><br>
+				Display the estimated time until transfers reach sedding
+				cutoff ratio
+			</td>
+			<td valign="top">
+				<select name="display_seeding_time">
+                    <option value="1">true</option>
+                    <option value="0"
+                    <tmpl_if name="display_seeding_time" value="0">
+                             selected
+                    </tmpl_if>
+                    >false</option>
+                </select>
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350" valign="top"><strong>Transfer List Sorting:</strong><br>
+			Enable/disable reordering of transfer list by clicking on column
+			headings
+			</td>
+			<td valign="top">
+				<select name="enable_sorttable">
+					<option value="1">true</option>
+					<option value="0"
+					<tmpl_if name="enable_sorttable" value="0">
+						 selected
+					</tmpl_if>
+					>false</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350" valign="top"><strong>Default
+			Transfer List Sort Order:</strong><br>
+			Select default sort order of transfers in transfer list
+			</td>
+			<td valign="top">
+				<tmpl_include name="inc.sortOrderSettings.tmpl">
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350"
+			valign="top"><strong>Transfer List Display:</strong><br>
+			Select the information to display in the transfer list
+			</td>
+			<td valign="top">
+				<tmpl_include name="inc.indexPageSettingsForm.tmpl">
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350" valign="top"><strong>Default
+			Page In Transfer Settings Window:</strong><br>
+			Select the default page to display in the transfer settings window
+			</td>
+			<td valign="top">
+				<select name="transfer_window_default">
+					<tmpl_loop name="transfer_window_default_list">
+						<option value="<tmpl_var name="value">"<tmpl_if name="is_selected" value="1"> selected</tmpl_if>>
+							<tmpl_var name="name">
+						</option>
+					</tmpl_loop>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350" valign="top"><strong>Server
+			Stats:</strong><br>
+			Enable/disable display of server stats on index page
+			</td>
+			<td valign="top">
+				<select name="index_page_stats">
+					<option value="1">true</option>
+					<option value="0"
+					<tmpl_if name="index_page_stats" value="0">
+						 selected
+					</tmpl_if>
+					>false</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350" valign="top"><strong>Network
+			Connections:</strong><br>
+			Enable/disable display of total network connections
+			</td>
+			<td valign="top">
+				<select name="index_page_connections">
+					<option value="1">true</option>
+					<option value="0"
+					<tmpl_if name="index_page_connections" value="0">
+						 selected
+					</tmpl_if>
+					>false</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350" valign="top"><strong>Show
+			Server Load:</strong><br>
+			Enable/disable display of server load averages<br>(1/5/15 min
+			averages)
+			</td>
+			<td valign="top">
+				<select name="show_server_load">
+					<option value="1">true</option>
+					<option value="0"
+					<tmpl_if name="show_server_load" value="0">
+						 selected
+					</tmpl_if>
+					>false</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350" valign="top"><strong>Drivespace
+			Bar Style:</strong><br>
+			Select style of drivespace bar
+			</td>
+			<td valign="top">
+				<select name="drivespacebar">
+					<option value="tf"
+					<tmpl_if name="drivespacebar" value="tf">
+						 selected
+					</tmpl_if>
+					>tf</option>
+					<option value="xfer"
+					<tmpl_if name="drivespacebar" value="xfer">
+						 selected
+					</tmpl_if>
+					>xfer</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350"
+			valign="top"><strong>Transfer Stats Window Update
+			Method:</strong><br>
+			Select method to use to update transfer stats window
+			</td>
+			<td valign="top">
+				<select name="transferStatsType">
+					<option value="standard">standard</option>
+					<option value="ajax"
+					<tmpl_if name="transferStatsType" value="ajax">
+						 selected
+					</tmpl_if>
+					>ajax</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350"
+			valign="top"><strong>Transfer Stats Window Update
+			Interval:</strong><br>
+			Number of seconds between transfer stats updates
+			</td>
+			<td valign="top">
+				<input name="transferStatsUpdate" type="Text" maxlength="3" value="<tmpl_var name="transferStatsUpdate">" size="3">
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350" valign="top"><strong>Transfer
+			Hosts:</strong><br>
+			Enable/disable display of connected hosts in transfer hosts
+			window
+			</td>
+			<td valign="top">
+				<select name="transferHosts">
+					<option value="1">Hostnames</option>
+					<option value="0"
+					<tmpl_if name="transferHosts" value="0">
+						 selected
+					</tmpl_if>
+					>IPs</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td align="left" width="350" valign="top"><strong>Server Monitor Update Interval:</strong><br>
+				Number of seconds between server monitor updates
+				for server monitor update
+			</td>
+			<td valign="top">
+				<input name="servermon_update" type="Text" maxlength="3" value="<tmpl_var name="servermon_update">" size="3">
+			</td>
+		</tr>
+		<tr>
+			<td align="center" colspan="2">
+				<input type="Submit" value="Update Settings">
+			</td>
+		</tr>
+	</table>
+</form>
