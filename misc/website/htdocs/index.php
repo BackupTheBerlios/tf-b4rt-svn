@@ -143,7 +143,7 @@ function printPageFoot() {
 		<div id="footer" align="right"><a href="#header" title="goto top">top</a></div>
 		<div id="credits">
 			<p>
-				<a href="https://developer.berlios.de/projects/tf-b4rt/" title="BerliOS Developer Project" target="_blank"><img src="https://developer.berlios.de/bslogo.php?group_id=7000" width="124px" height="32px" border="0" alt="BerliOS Developer Logo" /></a>
+				<a href="https://developer.berlios.de/projects/tf-b4rt/" title="BerliOS Developer Project" target="_blank"><img src="https://developer.berlios.de/bslogo.php?group_id=7000" width="124" height="32" border="0" alt="BerliOS Developer Logo" /></a>
 			</p>
 			<p class="svnid">
 				<a href="wsvn-website" title="WebSVN" target="_blank">$Id$</a>
