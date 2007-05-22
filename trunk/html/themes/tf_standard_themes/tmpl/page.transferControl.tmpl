@@ -62,7 +62,7 @@
 							<table border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">" width="100%">
 								<tr>
 									<td align="center" colspan="2">
-										BitTorrent-Client : <tmpl_include name="inc.clientSelectForm.tmpl">
+										<label for="client">BitTorrent-Client:</label> <tmpl_include name="inc.clientSelectForm.tmpl">
 									</td>
 								</tr>
 							</table>
@@ -93,9 +93,9 @@
 								<td colspan="2" align="right">
 									<table border="0" cellpadding="0" cellspacing="0" width="100%">
 										<tr>
-											<td align="left" valign="top" rowspan="2">Save Path:</td>
+											<td align="left" valign="top" rowspan="2"><label for="savepath">Save Path:</label></td>
 											<td align="right" valign="top">
-												<input type="text" name="savepath" style="width:300px" value="<tmpl_var name="savepath">">
+												<input type="text" name="savepath" id="savepath" style="width:300px" value="<tmpl_var name="savepath">">
 											</td>
 										</tr>
 										<tr>
@@ -115,7 +115,7 @@
 									<tmpl_else>
 										<input type="checkbox" name="skiphashcheck" disabled>
 									</tmpl_if>
-									Don't check hashes
+									<label for="skiphashcheck">Don't check hashes</label>
 								</td>
 							</tr>
 						</tmpl_if>
@@ -123,14 +123,16 @@
 							<tmpl_if name="isAdmin">
 								<tr>
 									<td colspan="2" align="right">
-										<input type="checkbox" name="queue" id="queue" value="1">Enqueue
+										<input type="checkbox" name="queue" id="queue" value="1">
+										<label for="queue">Enqueue</label>
 									</td>
 								</tr>
 							</tmpl_if>
 						</tmpl_if>
 						<tr>
 							<td colspan="2" align="right">
-								<input type="checkbox" value="1" name="close">Close Window
+								<input type="checkbox" value="1" name="close" id="close">
+								<label for="close">Close Window</label>
 							</td>
 						</tr>
 						<tr>

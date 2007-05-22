@@ -98,27 +98,27 @@
 									<form name="theForm" action="index.php?iid=profile&op=updateProfile" method="post" onsubmit="return validateProfile(0, '<tmpl_var name="_USERIDREQUIRED">', '<tmpl_var name="_PASSWORDLENGTH">', '<tmpl_var name="_PASSWORDNOTMATCH">', '<tmpl_var name="_PLEASECHECKFOLLOWING">')">
 										<table cellpadding="5" cellspacing="0" border="0">
 											<tr>
-												<td align="right"><tmpl_var name="_USER">:</td>
+												<td align="right"><label for="user"><tmpl_var name="_USER">:</label></td>
 												<td>
-													<input readonly="true" type="Text" value="<tmpl_var name="user">" size="15">
+													<input readonly="true" id="user" type="Text" value="<tmpl_var name="user">" size="15">
 												</td>
 											</tr>
 											<tr>
-												<td align="right"><tmpl_var name="_NEWPASSWORD">:</td>
+												<td align="right"><label for="pass1"><tmpl_var name="_NEWPASSWORD">:</label></td>
 												<td>
-													<input name="pass1" type="Password" value="" size="15">
+													<input name="pass1" id="pass1" type="Password" value="" size="15">
 												</td>
 											</tr>
 											<tr>
-												<td align="right"><tmpl_var name="_CONFIRMPASSWORD">:</td>
+												<td align="right"><label for="pass2"><tmpl_var name="_CONFIRMPASSWORD">:</label></td>
 												<td>
-													<input name="pass2" type="Password" value="" size="15">
+													<input name="pass2" id="pass2" type="Password" value="" size="15">
 												</td>
 											</tr>
 											<tr>
-												<td align="right"><tmpl_var name="_THEME">:</td>
+												<td align="right"><label for="theme"><tmpl_var name="_THEME">:</label></td>
 												<td>
-													<select name="theme">
+													<select name="theme" id="theme">
 														<tmpl_loop name="theme_list">
 															<option value="<tmpl_var name="arThemes">" <tmpl_var name="selected">><tmpl_var name="arThemes"></option>
 														</tmpl_loop>
@@ -131,9 +131,9 @@
 												</td>
 											</tr>
 											<tr>
-												<td align="right"><tmpl_var name="_LANGUAGE">:</td>
+												<td align="right"><label for="language"><tmpl_var name="_LANGUAGE">:</label></td>
 												<td>
-													<select name="language">
+													<select name="language" id="language">
 														<tmpl_loop name="language_list">
 															<option value="<tmpl_var name="arLanguage">" <tmpl_var name="selected">><tmpl_var name="language_file"></option>
 														</tmpl_loop>
@@ -142,7 +142,7 @@
 											</tr>
 											<tr>
 												<td colspan="2">
-													<input name="hideOffline" type="Checkbox" value="1" <tmpl_var name="hideChecked">> <tmpl_var name="_HIDEOFFLINEUSERS"><br>
+													<input name="hideOffline" id="hideOffline" type="Checkbox" value="1" <tmpl_var name="hideChecked">> <label for="hideOffline"><tmpl_var name="_HIDEOFFLINEUSERS"></label><br>
 												</td>
 											</tr>
 											<tr>
@@ -212,18 +212,18 @@
 					</td>
 				</tr>
 				<tr>
-					<td width="80" align="right">&nbsp;Host:</td>
+					<td width="80" align="right">&nbsp;<label for="host">Host:</label></td>
 					<td>
-						<input type="Text" size="50" maxlength="255" name="host"<tmpl_var name="hostvalue">><br />
+						<input type="Text" size="50" maxlength="255" name="host" id="host"<tmpl_var name="hostvalue">><br />
 					</td>
 					<td>
 						www.host.com
 					</td>
 				</tr>
 				<tr>
-					<td width="80" align="right">&nbsp;Data:</td>
+					<td width="80" align="right">&nbsp;<label for="data">Data:</label></td>
 					<td>
-						<input type="Text" size="50" maxlength="255" name="data"<tmpl_var name="datavalue">><br />
+						<input type="Text" size="50" maxlength="255" name="data" id="data"<tmpl_var name="datavalue">><br />
 					</td>
 					<td>
 						uid=123456;pass=a1b2c3d4e5f6g7h8i9j1
@@ -299,16 +299,16 @@
 					</td>
 				</tr>
 				<tr>
-					<td width="300">&nbsp;Name:</td>
+					<td width="300">&nbsp;<label for="name">Name:</label></td>
 					<td colspan="2" nowrap>
-						<input type="Text" size="45" maxlength="255" name="name" <tmpl_var name="name">>
+						<input type="Text" size="45" maxlength="255" name="name" id="name" <tmpl_var name="name">>
 					</td>
 				</tr>
 				<tmpl_if name="isAdmin">
 				<tr>
-					<td width="300">&nbsp;Public Profile:</td>
+					<td width="300">&nbsp;<label for="public">Public Profile:</label></td>
 					<td width="180" nowrap>
-						<input name="public" type="Checkbox" value="1" <tmpl_var name="public">>
+						<input name="public" id="public" type="Checkbox" value="1" <tmpl_var name="public">>
 					</td>
 					<td width="200">
 						&nbsp;
@@ -316,45 +316,45 @@
 				</tr>
 				</tmpl_if>
 				<tr>
-					<td width="300">&nbsp;Max Upload Rate:</td>
+					<td width="300">&nbsp;<label for="rate">Max Upload Rate:</label></td>
 					<td width="180" nowrap>
-						<input type="Text" size="5" maxlength="5" name="rate" <tmpl_var name="rate">> kB/second
+						<input type="Text" size="5" maxlength="5" name="rate" id="rate" <tmpl_var name="rate">> kB/second
 					</td>
 					<td width="200">
 						(default: <tmpl_var name="default_rate">)
 					</td>
 				</tr>
 				<tr>
-					<td width="300">&nbsp;Max Download Rate:</td>
+					<td width="300">&nbsp;<label for="drate">Max Download Rate:</label></td>
 					<td width="180" nowrap>
-						<input type="Text" size="5" maxlength="5" name="drate" <tmpl_var name="drate">> kB/second
+						<input type="Text" size="5" maxlength="5" name="drate" id="drate" <tmpl_var name="drate">> kB/second
 					</td>
 					<td width="200">
 						(default: <tmpl_var name="default_drate">)
 					</td>
 				</tr>
 				<tr>
-					<td width="300">&nbsp;Max Upload Connections:</td>
+					<td width="300">&nbsp;<label for="maxuploads">Max Upload Connections:</label></td>
 					<td width="180" nowrap>
-						<input type="Text" size="5" maxlength="5" name="maxuploads" <tmpl_var name="maxuploads">>
+						<input type="Text" size="5" maxlength="5" name="maxuploads" id="maxuploads" <tmpl_var name="maxuploads">>
 					</td>
 					<td width="200">
 						(default: <tmpl_var name="default_maxuploads">)
 					</td>
 				</tr>
 				<tr>
-					<td width="300">&nbsp;Max Cons:</td>
+					<td width="300">&nbsp;<label for="maxcons">Max Cons:</label></td>
 					<td width="180" nowrap>
-						<input type="Text" size="5" maxlength="5" name="maxcons" <tmpl_var name="maxcons">>
+						<input type="Text" size="5" maxlength="5" name="maxcons" id="maxcons" <tmpl_var name="maxcons">>
 					</td>
 					<td width="200">
 						(default: <tmpl_var name="default_maxcons">)
 					</td>
 				</tr>
 				<tr>
-					<td width="300">&nbsp;Completion Activity:</td>
+					<td width="300">&nbsp;<label for="runtime">Completion Activity:</label></td>
 					<td width="180" nowrap>
-						<select name="runtime">
+						<select name="runtime" id="runtime">
 							<option value="True">Die When Done</option>
 							<option value="False"
 							<tmpl_if name="runtime" value="False">
@@ -368,27 +368,27 @@
 					</td>
 				</tr>
 				<tr>
-					<td width="300">&nbsp;Percentage When Seeding should Stop:</td>
+					<td width="300">&nbsp;<label for="sharekill">Percentage When Seeding should Stop:</label></td>
 					<td width="180" nowrap>
-						<input type="Text" size="3" maxlength="3" name="sharekill" <tmpl_var name="sharekill">>%
+						<input type="Text" size="3" maxlength="3" name="sharekill" id="sharekill" <tmpl_var name="sharekill">>%
 					</td>
 					<td width="200">
 						(default: <tmpl_var name="default_sharekill">)
 					</td>
 				</tr>
 				<tr>
-					<td width="300">&nbsp;Rerequest Interval:</td>
+					<td width="300">&nbsp;<label for="rerequest">Rerequest Interval:</label></td>
 					<td width="180" nowrap>
-						<input type="Text" size="5" maxlength="5" name="rerequest" <tmpl_var name="rerequest">>
+						<input type="Text" size="5" maxlength="5" name="rerequest" id="rerequest" <tmpl_var name="rerequest">>
 					</td>
 					<td width="200">
 						(default: <tmpl_var name="default_rerequest">)
 					</td>
 				</tr>
 				<tr>
-					<td width="300">&nbsp;Superseeder:</td>
+					<td width="300">&nbsp;<label for="superseeder">Superseeder:</label></td>
 					<td width="180" nowrap>
-						<select name="superseeder">
+						<select name="superseeder" id="superseeder">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="superseeder" value="0">
@@ -402,18 +402,18 @@
 					</td>
 				</tr>
 				<tr>
-					<td width="300">&nbsp;Min Port:</td>
+					<td width="300">&nbsp;<label for="minport">Min Port:</label></td>
 					<td width="180" nowrap>
-						<input type="Text" size="5" maxlength="5" name="minport" <tmpl_var name="minport">>
+						<input type="Text" size="5" maxlength="5" name="minport" id="minport" <tmpl_var name="minport">>
 					</td>
 					<td width="200">
 						(default: <tmpl_var name="default_minport">)
 					</td>
 				</tr>
 				<tr>
-					<td width="300">&nbsp;Max Port:</td>
+					<td width="300">&nbsp;<label for="maxport">Max Port:</label></td>
 					<td width="180" nowrap>
-						<input type="Text" size="5" maxlength="5" name="maxport" <tmpl_var name="maxport">>
+						<input type="Text" size="5" maxlength="5" name="maxport" id="maxport" <tmpl_var name="maxport">>
 					</td>
 					<td width="200">
 						(default: <tmpl_var name="default_maxport">)

@@ -32,26 +32,26 @@
 										<p>
 											<strong><tmpl_var name="file"></strong>
 										</p>
-										<label for="sout_vc">Video Codec</label>
+										<label for="vidc">Video Codec</label>
 										<select id="vidc" name="vidc">
 											<tmpl_loop name="list_vidc">
 												<option value="<tmpl_var name="name">"><tmpl_var name="name"></option>
 											</tmpl_loop>
 										</select>
-										<label for="sout_vb">Video Bitrate (kB/s)</label>
+										<label for="vbit">Video Bitrate (kB/s)</label>
 										<select id="vbit" name="vbit">
 											<tmpl_loop name="list_vbit">
 												<option value="<tmpl_var name="name">"><tmpl_var name="name"></option>
 											</tmpl_loop>
 										</select>
 										<br>
-										<label for="sout_ac">Audio Codec</label>
+										<label for="audc">Audio Codec</label>
 										<select id="audc" name="audc">
 											<tmpl_loop name="list_audc">
 												<option value="<tmpl_var name="name">"><tmpl_var name="name"></option>
 											</tmpl_loop>
 										</select>
-										<label for="sout_ac">Audio Bitrate (kB/s)</label>
+										<label for="abit">Audio Bitrate (kB/s)</label>
 										<select id="abit" name="abit">
 											<tmpl_loop name="list_abit">
 												<option value="<tmpl_var name="name">"><tmpl_var name="name"></option>

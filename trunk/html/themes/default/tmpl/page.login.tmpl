@@ -66,19 +66,19 @@
 																	<form name="theForm" action="login.php" method="post" onsubmit="return loginSubmit(0)">
 																		<table width="100%" cellpadding="5" cellspacing="0" border="0">
 																			<tr>
-																				<td align="center" colspan="2"><strong>Login as different User :</strong></td>
+																				<td align="center" colspan="2"><strong>Login as different User:</strong></td>
 																			</tr>
 																			<tr>
-																				<td align="right">Username: </td>
-																				<td><input type="text" name="username" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000;" /></td>
+																				<td align="right"><label for="username">Username:</label></td>
+																				<td><input type="text" name="username" id="username" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000;" /></td>
 																			</tr>
 																			<tr>
-																				<td align="right">Password:</td>
-																				<td><input type="password" name="iamhim" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
+																				<td align="right"><label for="iamhim">Password:</label></td>
+																				<td><input type="password" name="iamhim" id="iamhim" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
 																			</tr>
 																			<tr>
-																				<td align="right">Set "Auto-Login" Cookie</td>
-																				<td align="left"><input type="checkbox" name="setcookie" value="true" checked size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
+																				<td align="right"><label for="setcookie">Set "Auto-Login" Cookie</label></td>
+																				<td align="left"><input type="checkbox" name="setcookie" id="setcookie" value="true" checked size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
 																			</tr>
 																			<tr>
 																				<td colspan="2" align="center">
@@ -92,16 +92,16 @@
 																	<form name="theForm" action="login.php" method="post" onsubmit="return loginSubmit(0)">
 																		<table width="100%" cellpadding="5" cellspacing="0" border="0">
 																			<tr>
-																				<td align="right">Username: </td>
-																				<td><input type="text" name="username" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000;" /></td>
+																				<td align="right"><label for="username">Username:</label></td>
+																				<td><input type="text" name="username" id="username" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000;" /></td>
 																			</tr>
 																			<tr>
-																				<td align="right">Password:</td>
-																				<td><input type="password" name="iamhim" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
+																				<td align="right"><label for="iamhim">Password:</label></td>
+																				<td><input type="password" name="iamhim" id="iamhim" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
 																			</tr>
 																			<tr>
-																				<td align="right">Set "Auto-Login" Cookie</td>
-																				<td align="left"><input type="checkbox" name="setcookie" value="true" checked size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
+																				<td align="right"><label for="setcookie">Set "Auto-Login" Cookie</label></td>
+																				<td align="left"><input type="checkbox" name="setcookie" id="setcookie" value="true" checked size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
 																			</tr>
 																			<tr>
 																				<td colspan="2" align="center">
@@ -116,18 +116,18 @@
 																<form name="theForm" action="login.php" method="post" onsubmit="return loginSubmit(<tmpl_var name="imageSupported">)">
 																	<table width="100%" cellpadding="5" cellspacing="0" border="0">
 																		<tr>
-																			<td align="right">Username: </td>
-																			<td><input type="text" name="username" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000;" /></td>
+																			<td align="right"><label for="username">Username:</label></td>
+																			<td><input type="text" name="username" id="username" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000;" /></td>
 																		</tr>
 																		<tr>
-																			<td align="right">Password:</td>
-																			<td><input type="password" name="iamhim" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
+																			<td align="right"><label for="iamhim">Password:</label></td>
+																			<td><input type="password" name="iamhim" id="iamhim" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
 																		</tr>
 																		<tmpl_if name="imageSupported" value="1">
 												                            <tr>
-												                                <td align="right"><img border="1" align="middle" src="image.php?i=login&rnd=<tmpl_var name="rnd">"> : </td>
+												                                <td align="right"><label for="security"><img border="1" align="middle" src="image.php?i=login&rnd=<tmpl_var name="rnd">"></label></td>
 												                                <td>
-												                                	<input type="text" name="security" value="" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" />
+												                                	<input type="text" name="security" id="security" value="" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" />
 												                                	<input type="Hidden" name="rnd_chk" value="<tmpl_var name="rnd">">
 												                                </td>
 												                            </tr>
@@ -145,12 +145,12 @@
 																<form name="theForm" action="login.php" method="post" onsubmit="return loginSubmit(0)">
 																	<table width="100%" cellpadding="5" cellspacing="0" border="0">
 																		<tr>
-																			<td align="right">Username: </td>
-																			<td><input type="text" name="username" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000;" /></td>
+																			<td align="right"><label for="username">Username:</label></td>
+																			<td><input type="text" name="username" id="username" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000;" /></td>
 																		</tr>
 																		<tr>
-																			<td align="right">Password:</td>
-																			<td><input type="password" name="iamhim" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
+																			<td align="right"><label for="iamhim">Password:</label></td>
+																			<td><input type="password" name="iamhim" id="iamhim" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
 																		</tr>
 																		<tr>
 																			<td colspan="2" align="center"><input class="button" type="submit" value="Login" /></td>

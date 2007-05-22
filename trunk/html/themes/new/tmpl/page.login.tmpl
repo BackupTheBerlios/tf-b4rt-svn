@@ -29,35 +29,35 @@
 				<div class="cookie">Login as different User:</div>
 				<form name="theForm" action="login.php" method="post" onsubmit="return loginSubmit(0)">
 					<input name="docookieloginnew" type="Hidden" value="true">
-					Username:
-					<input type="text" name="username" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000;" /><br />
-					Password:
-					<input type="password" name="iamhim" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /><br />
-					Set "Auto-Login" Cookie
-					<input type="checkbox" name="setcookie" value="true" checked size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /><br />
+					<label for="username">Username:</label>
+					<input type="text" name="username" id="username" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000;" /><br />
+					<label for="iamhim">Password:</label>
+					<input type="password" name="iamhim" id="iamhim" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /><br />
+					<label for="setcookie">Set "Auto-Login" Cookie</label>
+					<input type="checkbox" name="setcookie" id="setcookie" value="true" checked size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /><br />
 					<input class="button" type="submit" value="Login" />
 				</form>
 			<tmpl_else>
 				<form name="theForm" action="login.php" method="post" onsubmit="return loginSubmit(0)">
 					<input name="docookieloginnew" type="Hidden" value="true">
-					Username:
-					<input type="text" name="username" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000;" /><br />
-					Password:
-					<input type="password" name="iamhim" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /><br />
-					Set "Auto-Login" Cookie
-					<input type="checkbox" name="setcookie" value="true" checked size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /><br />
+					<label for="username">Username:</label>
+					<input type="text" name="username" id="username" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000;" /><br />
+					<label for="iamhim">Password:</label>
+					<input type="password" name="iamhim" id="iamhim" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /><br />
+					<label for="setcookie">Set "Auto-Login" Cookie</label>
+					<input type="checkbox" name="setcookie" id="setcookie" value="true" checked size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /><br />
 					<input class="button" type="submit" value="Login" />
 				</form>
 			</tmpl_if>
 		<tmpl_elseif name="auth_type" value="4">
 			<form name="theForm" action="login.php" method="post" onsubmit="return loginSubmit(<tmpl_var name="imageSupported">)">
-				Username:
-				<input type="text" name="username" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000;" /><br />
-				Password:
-				<input type="password" name="iamhim" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /><br />
+				<label for="username">Username:</label>
+				<input type="text" name="username" id="username" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000;" /><br />
+				<label for="iamhim">Password:</label>
+				<input type="password" name="iamhim" id="iamhim" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /><br />
 				<tmpl_if name="imageSupported" value="1">
-					<img border="1" align="middle" src="image.php?i=login&rnd=<tmpl_var name="rnd">">:
-					<input type="text" name="security" value="" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /><br />
+					<label for="security"><img border="1" align="middle" src="image.php?i=login&rnd=<tmpl_var name="rnd">"></label>
+					<input type="text" name="security" id="security" value="" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /><br />
 					<input type="Hidden" name="rnd_chk" value="<tmpl_var name="rnd">">
 				<tmpl_else>
 					<img border="0" align="middle" src="image.php?i=notsup"><br />
@@ -66,10 +66,10 @@
 			</form>
 		<tmpl_else>
 			<form name="theForm" action="login.php" method="post" onsubmit="return loginSubmit(0)">
-				Username:
-				<input type="text" name="username" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000;" /><br />
-				Password:
-				<input type="password" name="iamhim" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /><br />
+				<label for="username">Username:</label>
+				<input type="text" name="username" id="username" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000;" /><br />
+				<label for="iamhim">Password:</label>
+				<input type="password" name="iamhim" id="iamhim" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /><br />
 				<input class="button" type="submit" value="Login" />
 			</form>
 		</tmpl_if>

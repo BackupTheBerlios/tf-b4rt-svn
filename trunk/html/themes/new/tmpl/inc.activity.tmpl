@@ -23,18 +23,18 @@
 		<table id="settings">
 			<tr>
 				<td class="settingsTitle">
-					<tmpl_var name="_FILE">
+					<label for="srchFile"><tmpl_var name="_FILE"></label>
 				</td>
 				<td class="settingsSetting">
-					<input type="Text" name="srchFile" value="<tmpl_var name="activity_srchFile">" width="30">
+					<input type="Text" name="srchFile" id="srchFile" value="<tmpl_var name="activity_srchFile">" width="30">
 				</td>
 			</tr>
 			<tr>
 				<td class="settingsTitle">
-					<tmpl_var name="_ACTION">
+					<label for="srchAction"><tmpl_var name="_ACTION"></label>
 				</td>
 				<td class="settingsSetting">
-					<select name="srchAction">
+					<select name="srchAction" id="srchAction">
 						<option value="">-- <tmpl_var name="_ALL"> --</option>
 						<tmpl_loop name="activity_action_list">
 							<option value="<tmpl_var name="action">" <tmpl_var name="selected">><tmpl_var name="action"></option>
@@ -44,10 +44,10 @@
 			</tr>
 			<tr>
 				<td class="settingsTitle">
-					<tmpl_var name="_USER">
+					<label for="user_id"><tmpl_var name="_USER"></label>
 				</td>
 				<td class="settingsSetting">
-					<select name="user_id">
+					<select name="user_id" id="user_id">
 						<option value="">-- <tmpl_var name="_ALL"> --</option>
 						<tmpl_loop name="activity_user_list">
 							<option value="<tmpl_var name="user">" <tmpl_var name="selected">><tmpl_var name="user"></option>

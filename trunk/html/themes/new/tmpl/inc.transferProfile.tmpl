@@ -1,8 +1,8 @@
 <input type="hidden" name="transfer" value="<tmpl_var name="transfer">" />
 <table border="1" bordercolor="#94ABC0" cellpadding="2" cellspacing="0" bgcolor="#A2BED4" width="100%">
 	<tr>
-		<td align="center" colspan="2">Profile:
-			<select name="profile" size="1" onChange="javascript:submit();">
+		<td align="center" colspan="2"><label for="profile">Profile:</label>
+			<select name="profile" id="profile" size="1" onChange="javascript:submit();">
 				<tmpl_if name="transfer_exists">
 					<option value="last_used" selected>Last used Settings</option>
 				<tmpl_else>

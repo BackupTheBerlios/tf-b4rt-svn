@@ -30,13 +30,13 @@
 <tmpl_else>
 	<div align="center">
 		<table border="0" cellpadding="0" cellspacing="0">
-			<tr><td><tmpl_var name="_SENDMESSAGETO">
+			<tr><td><label for="to_user"><tmpl_var name="_SENDMESSAGETO"></label>
 				<form name="formMessage" action="index.php?iid=message" method="post">
-					<select name="to_user">
+					<select name="to_user" id="to_user">
 						<tmpl_loop name="messageList_user">
 							<option><tmpl_var name="user"></option>
 						</tmpl_loop>
-					</select>
+					</select>&nbsp;&nbsp;
 					<input type="Submit" value="<tmpl_var name="_COMPOSE">">
 				</form>
 			</td></tr>

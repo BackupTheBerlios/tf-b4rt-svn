@@ -16,22 +16,22 @@
 			<tr>
 				<td>
 					<strong><tmpl_var name="_ACTIVITYSEARCH"></strong>&nbsp;&nbsp;&nbsp;
-					<tmpl_var name="_FILE">
-					<input type="Text" name="srchFile" value="<tmpl_var name="activity_srchFile">" width="30"> &nbsp;&nbsp;
-					<tmpl_var name="_ACTION">
-					<select name="srchAction">
+					<label for="srchFile"><tmpl_var name="_FILE"></label>
+					<input type="Text" name="srchFile" id="srchFile" value="<tmpl_var name="activity_srchFile">" width="30">&nbsp;&nbsp;
+					<label for="srchAction"><tmpl_var name="_ACTION"></label>
+					<select name="srchAction" id="srchAction">
 						<option value="">-- <tmpl_var name="_ALL"> --</option>
 						<tmpl_loop name="activity_action_list">
 							<option value="<tmpl_var name="action">" <tmpl_var name="selected">><tmpl_var name="action"></option>
 						</tmpl_loop>
 					</select>&nbsp;&nbsp;
-					<tmpl_var name="_USER">:
-					<select name="user_id">
+					<label for="user_id"><tmpl_var name="_USER"></label>
+					<select name="user_id" id="user_id">
 						<option value="">-- <tmpl_var name="_ALL"> --</option>
 						<tmpl_loop name="activity_user_list">
 							<option value="<tmpl_var name="user">" <tmpl_var name="selected">><tmpl_var name="user"></option>
 						</tmpl_loop>
-					</select>
+					</select>&nbsp;&nbsp;
 					<input type="Submit" value="<tmpl_var name="_SEARCH">">
 				</td>
 			</tr>

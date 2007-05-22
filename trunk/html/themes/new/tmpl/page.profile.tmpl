@@ -17,34 +17,34 @@
 				<table id="settings">
 					<tr>
 						<td class="settingsTitle">
-							<tmpl_var name="_USER">
+							<label for="user"><tmpl_var name="_USER"></label>
 						</td>
 						<td class="settingsSetting">
-							<input readonly="true" type="Text" value="<tmpl_var name="user">" size="15">
+							<input readonly="true" id="user" type="Text" value="<tmpl_var name="user">" size="15">
 						</td>
 					</tr>
 					<tr>
 						<td class="settingsTitle">
-							<tmpl_var name="_NEWPASSWORD">
+							<label for="pass1"><tmpl_var name="_NEWPASSWORD"></label>
 						</td>
 						<td class="settingsSetting">
-							<input name="pass1" type="Password" value="" size="15">
+							<input name="pass1" id="pass1" type="Password" value="" size="15">
 						</td>
 					</tr>
 					<tr>
 						<td class="settingsTitle">
-							<tmpl_var name="_CONFIRMPASSWORD">
+							<label for="pass2"><tmpl_var name="_CONFIRMPASSWORD"></label>
 						</td>
 						<td class="settingsSetting">
-							<input name="pass2" type="Password" value="" size="15">
+							<input name="pass2" id="pass2" type="Password" value="" size="15">
 						</td>
 					</tr>
 					<tr>
 						<td class="settingsTitle">
-							<tmpl_var name="_THEME">
+							<label for="theme"><tmpl_var name="_THEME"></label>
 						</td>
 						<td class="settingsSetting">
-							<select name="theme">
+							<select name="theme" id="theme">
 								<tmpl_loop name="theme_list">
 									<option value="<tmpl_var name="arThemes">" <tmpl_var name="selected">><tmpl_var name="arThemes"></option>
 								</tmpl_loop>
@@ -58,10 +58,10 @@
 					</tr>
 					<tr>
 						<td class="settingsTitle">
-							<tmpl_var name="_LANGUAGE">
+							<label for="language"><tmpl_var name="_LANGUAGE"></label>
 						</td>
 						<td class="settingsSetting">
-							<select name="language">
+							<select name="language" id="language">
 								<tmpl_loop name="language_list">
 									<option value="<tmpl_var name="arLanguage">" <tmpl_var name="selected">><tmpl_var name="language_file"></option>
 								</tmpl_loop>
@@ -70,10 +70,10 @@
 					</tr>
 					<tr>
 						<td class="settingsTitle">
-							<tmpl_var name="_HIDEOFFLINEUSERS">
+							<label for="hideOffline"><tmpl_var name="_HIDEOFFLINEUSERS"></label>
 						</td>
 						<td class="settingsSetting">
-							<input name="hideOffline" type="Checkbox" value="1" <tmpl_var name="hideChecked">>
+							<input name="hideOffline" id="hideOffline" type="Checkbox" value="1" <tmpl_var name="hideChecked">>
 						</td>
 					</tr>
 					<tr>
@@ -133,10 +133,10 @@
 				<table id="settings">
 					<tr>
 						<td class="settingsTitle">
-							Host
+							<label for="host">Host</label>
 						</td>
 						<td class="settingsSetting" rowspan="2">
-							<input type="Text" size="30" maxlength="255" name="host"<tmpl_var name="hostvalue">>
+							<input type="Text" size="30" maxlength="255" name="host" id="host"<tmpl_var name="hostvalue">>
 						</td>
 					</tr>
 					<tr>
@@ -146,10 +146,10 @@
 					</tr>
 					<tr>
 						<td class="settingsTitle">
-							Data
+							<label for="data">Data</label>
 						</td>
 						<td class="settingsSetting" rowspan="2">
-							<input type="Text" size="30" maxlength="255" name="data"<tmpl_var name="datavalue">>
+							<input type="Text" size="30" maxlength="255" name="data" id="data"<tmpl_var name="datavalue">>
 						</td>
 					</tr>
 					<tr>
@@ -239,28 +239,28 @@
 				<table id="settings">
 					<tr>
 						<td class="settingsTitle">
-							Name
+							<label for="name">Name</label>
 						</td>
 						<td class="settingsSetting">
-							<input type="Text" size="30" maxlength="255" name="name" <tmpl_var name="name">>
+							<input type="Text" size="30" maxlength="255" name="name" id="name" <tmpl_var name="name">>
 						</td>
 					</tr>
 					<tmpl_if name="isAdmin">
 						<tr>
 							<td class="settingsTitle">
-								Public Profile
+								<label for="public">Public Profile</label>
 							</td>
 							<td class="settingsSetting">
-								<input name="public" type="Checkbox" value="1" <tmpl_var name="public">>
+								<input name="public" id="public" type="Checkbox" value="1" <tmpl_var name="public">>
 							</td>
 						</tr>
 					</tmpl_if>
 					<tr>
 						<td class="settingsTitle">
-							Max Upload Rate
+							<label for="rate">Max Upload Rate</label>
 						</td>
 						<td class="settingsSetting" rowspan="2">
-							<input type="Text" size="5" maxlength="5" name="rate" <tmpl_var name="rate">> kB/second
+							<input type="Text" size="5" maxlength="5" name="rate" id="rate" <tmpl_var name="rate">> kB/second
 						</td>
 					</tr>
 					<tr>
@@ -270,10 +270,10 @@
 					</tr>
 					<tr>
 						<td class="settingsTitle">
-							Max Download Rate
+							<label for="drate">Max Download Rate</label>
 						</td>
 						<td class="settingsSetting" rowspan="2">
-							<input type="Text" size="5" maxlength="5" name="drate" <tmpl_var name="drate">> kB/second
+							<input type="Text" size="5" maxlength="5" name="drate" id="drate" <tmpl_var name="drate">> kB/second
 						</td>
 					</tr>
 					<tr>
@@ -283,10 +283,10 @@
 					</tr>
 					<tr>
 						<td class="settingsTitle">
-							Max Upload Connections
+							<label for="maxuploads">Max Upload Connections</label>
 						</td>
 						<td class="settingsSetting" rowspan="2">
-							<input type="Text" size="5" maxlength="5" name="maxuploads" <tmpl_var name="maxuploads">>
+							<input type="Text" size="5" maxlength="5" name="maxuploads" id="maxuploads" <tmpl_var name="maxuploads">>
 						</td>
 					</tr>
 					<tr>
@@ -296,10 +296,10 @@
 					</tr>
 					<tr>
 						<td class="settingsTitle">
-							Max Cons
+							<label for="maxcons">Max Cons</label>
 						</td>
 						<td class="settingsSetting" rowspan="2">
-							<input type="Text" size="5" maxlength="5" name="maxcons" <tmpl_var name="maxcons">>
+							<input type="Text" size="5" maxlength="5" name="maxcons" id="maxcons" <tmpl_var name="maxcons">>
 						</td>
 					</tr>
 					<tr>
@@ -309,10 +309,10 @@
 					</tr>
 					<tr>
 						<td class="settingsTitle">
-							Completion Activity
+							<label for="runtime">Completion Activity</label>
 						</td>
 						<td class="settingsSetting" rowspan="2">
-							<select name="runtime">
+							<select name="runtime" id="runtime">
 								<option value="True">Die When Done</option>
 								<option value="False"
 								<tmpl_if name="runtime" value="False">
@@ -329,10 +329,10 @@
 					</tr>
 					<tr>
 						<td class="settingsTitle">
-							Percentage When Seeding should Stop
+							<label for="sharekill">Percentage When Seeding should Stop</label>
 						</td>
 						<td class="settingsSetting" rowspan="2">
-							<input type="Text" size="3" maxlength="3" name="sharekill" <tmpl_var name="sharekill">>%
+							<input type="Text" size="3" maxlength="3" name="sharekill" id="sharekill" <tmpl_var name="sharekill">>%
 						</td>
 					</tr>
 					<tr>
@@ -342,10 +342,10 @@
 					</tr>
 					<tr>
 						<td class="settingsTitle">
-							Rerequest Interval
+							<label for="rerequest">Rerequest Interval</label>
 						</td>
 						<td class="settingsSetting" rowspan="2">
-							<input type="Text" size="5" maxlength="5" name="rerequest" <tmpl_var name="rerequest">>
+							<input type="Text" size="5" maxlength="5" name="rerequest" id="rerequest" <tmpl_var name="rerequest">>
 						</td>
 					</tr>
 					<tr>
@@ -355,10 +355,10 @@
 					</tr>
 					<tr>
 						<td class="settingsTitle">
-							Superseeder
+							<label for="superseeder">Superseeder</label>
 						</td>
 						<td class="settingsSetting" rowspan="2">
-							<select name="superseeder">
+							<select name="superseeder" id="superseeder">
 								<option value="1">true</option>
 								<option value="0"
 								<tmpl_if name="superseeder" value="0">
@@ -375,10 +375,10 @@
 					</tr>
 					<tr>
 						<td class="settingsTitle">
-							Min Port
+							<label for="minport">Min Port</label>
 						</td>
 						<td class="settingsSetting" rowspan="2">
-							<input type="Text" size="5" maxlength="5" name="minport" <tmpl_var name="minport">>
+							<input type="Text" size="5" maxlength="5" name="minport" id="minport" <tmpl_var name="minport">>
 						</td>
 					</tr>
 					<tr>
@@ -388,10 +388,10 @@
 					</tr>
 					<tr>
 						<td class="settingsTitle">
-							Max Port
+							<label for="maxport">Max Port</label>
 						</td>
 						<td class="settingsSetting" rowspan="2">
-							<input type="Text" size="5" maxlength="5" name="maxport" <tmpl_var name="maxport">>
+							<input type="Text" size="5" maxlength="5" name="maxport" id="maxport" <tmpl_var name="maxport">>
 						</td>
 					</tr>
 					<tr>

@@ -38,8 +38,8 @@
 			<div id="uploadFirst">
 				<form name="formMessage" action="index.php?iid=message" method="post">
 					<span class="upload">
-						<tmpl_var name="_SENDMESSAGETO">
-						<select name="to_user">
+						<label for="to_user"><tmpl_var name="_SENDMESSAGETO"></label>
+						<select name="to_user" id="to_user">
 							<tmpl_loop name="messageList_user">
 								<option><tmpl_var name="user"></option>
 							</tmpl_loop>

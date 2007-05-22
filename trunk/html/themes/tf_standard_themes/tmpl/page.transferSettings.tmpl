@@ -57,7 +57,7 @@
 							<table border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">" width="100%">
 								<tr>
 									<td align="center" colspan="2">
-										BitTorrent-Client : <tmpl_include name="inc.clientSelectForm.tmpl">
+										<label for="client">BitTorrent-Client:</label> <tmpl_include name="inc.clientSelectForm.tmpl">
 									</td>
 								</tr>
 							</table>
@@ -81,9 +81,9 @@
 								<td colspan="2" align="right">
 									<table border="0" cellpadding="0" cellspacing="0" width="100%">
 										<tr>
-											<td align="left" valign="top" rowspan="2">Save Path:</td>
+											<td align="left" valign="top" rowspan="2"><label for="savepath">Save Path:</label></td>
 											<td align="right" valign="top">
-												<input type="text" name="savepath" style="width:300px" value="<tmpl_var name="savepath">">
+												<input type="text" name="savepath" id="savepath" style="width:300px" value="<tmpl_var name="savepath">">
 											</td>
 										</tr>
 										<tr>
@@ -98,7 +98,7 @@
 						<tr>
 							<td colspan="2" align="right">
 								<tmpl_if name="sendboxShow" value="1">
-									<input type="checkbox" name="sendbox" id="sendbox" <tmpl_var name="sendboxAttr">>Send Changes to Client&nbsp;
+									<input type="checkbox" name="sendbox" id="sendbox" <tmpl_var name="sendboxAttr">><label for="sendbox">Send Changes to Client</label>&nbsp;
 								</tmpl_if>
 								<input type="Submit" value="Save">
 							</td>
