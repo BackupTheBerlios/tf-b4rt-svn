@@ -16,8 +16,8 @@
 					<form name="theForm" action="admin.php?op=updateControlSettings" method="post" onsubmit="return validateSettings('control')">
 						<table cellpadding="5" cellspacing="0" border="0" width="100%">
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Customize Settings</strong><br>
-								 Define who can customize Settings :
+								<td align="left" width="350" valign="top"><strong>Customize Settings:</strong><br>
+									Define who can customize transfer settings.
 								</td>
 								<td valign="top">
 									<select name="transfer_customize_settings">
@@ -36,8 +36,8 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Transfer profiles</strong><br>
-								 Define who can use Profiles :
+								<td align="left" width="350" valign="top"><strong>Transfer profiles:</strong><br>
+									Define who can use transfer profiles.
 								</td>
 								<td valign="top">
 									<select name="transfer_profiles">
@@ -61,39 +61,38 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Enable Client-Chooser</strong><br>
-									When enabled, users will be given the option to choose the Transfer-Client:
+								<td align="left" width="350" valign="top"><strong>Enable Client Chooser:</strong><br>
+									When enabled, allow users to choose which transfer client to use.
 								</td>
 								<td valign="top">
 									<select name="enable_btclient_chooser">
-										<option value="1">true</option>
+										<option value="1">True</option>
 										<option value="0"
 										<tmpl_if name="enable_btclient_chooser" value="0">
 											 selected
 										</tmpl_if>
-										>false</option>
+										>False</option>
 									</select>
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Enable Specific save path</strong><br>
-								Show Directory Tree allowing you to select the path for the file(s).
+								<td align="left" width="350" valign="top"><strong>Enable Save Path Chooser:</strong><br>
+								When enabled, displays a directory tree to allow users to downloaded transfers to any existing folder under their home directory.
 								</td>
 								<td valign="top">
 									<select name="showdirtree">
-										<option value="1">true</option>
+										<option value="1">True</option>
 										<option value="0"
 										<tmpl_if name="showdirtree" value="0">
 											 selected
 										</tmpl_if>
-										>false</option>
+										>False</option>
 									</select>
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Max Depth in Directory Tree</strong><br>
-								Set the max depth of subfolders when displaying directory tree.
-								Set it to 0 if you want to display all subfolders.
+								<td align="left" width="350" valign="top"><strong>Save Path Chooser Max Depth:</strong><br>
+								Set the maximum depth of subfolders to display in the save path chooser directory tree (set to '0' to display all subfolders).
 								</td>
 								<td valign="top">
 									<input name="maxdepth" type="Text" maxlength="1" value="<tmpl_var name="maxdepth">" size="1">
