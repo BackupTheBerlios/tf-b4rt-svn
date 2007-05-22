@@ -164,7 +164,7 @@ function printPageHome() {
 ?>
 		<h1 id="home">Home</h1>
 		<p>
-			<a href="images/screenshots/1.0-alpha7/index.png" title="torrentflux-b4rt 1.0 alpha7: Index-Page" target="_blank"><img src="images/10a7_index_small.png" width="252px" height="184px" border="0" alt="torrentflux-b4rt 1.0 alpha7: Index-Page" align="right" class="img_right" /></a>
+			<a href="images/screenshots/1.0-alpha7/index.png" title="torrentflux-b4rt 1.0 alpha7: Index-Page" target="_blank"><img src="images/10a7_index_small.png" width="252" height="184" border="0" alt="torrentflux-b4rt 1.0 alpha7: Index-Page" align="right" class="img_right" /></a>
 		</p>
 		<p><strong>Torrentflux-b4rt</strong> is a web based transfer control client.
 		</p>
@@ -430,7 +430,7 @@ function printPageAbout() {
 	<div class="subcontent">
 		<h1 id="history">Torrentflux-b4rt History</h1>
 		<p>
-			<a href="images/screenshots/1.0-alpha7/profile.png" title="torrentflux-b4rt 1.0 alpha7: Profile-Page" target="_blank"><img src="images/10a7_profile_small.png" width="341px" height="365px" border="0" alt="torrentflux-b4rt 1.0 alpha7: Profile-Page" align="right" class="img_right" /></a>
+			<a href="images/screenshots/1.0-alpha7/profile.png" title="torrentflux-b4rt 1.0 alpha7: Profile-Page" target="_blank"><img src="images/10a7_profile_small.png" width="341" height="365" border="0" alt="torrentflux-b4rt 1.0 alpha7: Profile-Page" align="right" class="img_right" /></a>
 		</p>
 		<p>
 			The <strong>Torrentflux-b4rt</strong> project started as an enhancement to the base <a href="http://www.torrentflux.com/" title="Torrentflux">TorrentFlux</a> 2.1 installation.
@@ -515,7 +515,7 @@ function printPageChangelog() {
 function printPageScreenshots() {
 ?>
 		<h1 id="screenshots">Screenshots</h1>
-		<h2 id="screenshots - 1.0 alpha7">1.0 alpha7</h2>
+		<h2 id="screenshots-1.0-alpha7">1.0 alpha7</h2>
 		<?php echo getScreenshotList('images/screenshots/1.0-alpha7/'); ?>
 <?php
 }
