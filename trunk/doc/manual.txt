@@ -190,12 +190,9 @@ Torrentflux-b4rt Reference Manual
                 Nzbperl specific settings
                 Common settings
 
-            Transfer control options (control)
-                Allowing users to customize their settings
-                Allowing users to use transfer profiles
-                Allowing users to choose which transfer client to use
-                Allowing users to choose which directory to save transfers to
-                Setting the maximum directory depth to drill down to for the save path
+            Transfer control settings (control)
+                Overview
+                Configuration
 
             Web application frontend operational options (webapp)
                 Setting the authentication type to use
@@ -3538,29 +3535,96 @@ Introduction
                         here will effectively give other processes on
                         the webserver higher priority.
 
-                Setting the default transfer client to use
-                Setting the default .torrent metadata viewer
-                Setting extra commandline options for the clients
-                Setting the default maximum upload/download rates
-                Setting the default maximum connections
-                Setting the default port range
-                Setting the default tracker rerequest interval
-                Setting the default action to perform on transfer completion
-                Setting the default percentage at which a torrent should stop seeding
-                Using cumulative sharekill ratios
-                Using file prioritization
-                Using superseeding
-                Skipping hash checking
+            Transfer control settings (control)
 
-                Enabling the setting of umask on transfer start
-                Using nice to limit transfer process utilization
+                Overview
 
-            Transfer control options (control)
-                Allowing users to customize their settings
-                Allowing users to use transfer profiles
-                Allowing users to choose which transfer client to use
-                Allowing users to choose which directory to save transfers to
-                Setting the maximum directory depth to drill down to for the save path
+                    The 'control settings' tab ('control') on the admin
+                    pages allows you to specify settings related to the
+                    control of transfers in torrentflux-b4rt.
+
+                Configuration
+
+                    The settings available on the 'control' tab are as
+                    follows:
+
+                    o   Customize Transfer Settings
+                        Define who can customize transfer settings.
+
+                        This option allows you to determine who can
+                        modify the transfer settings when starting a
+                        transfer - ie max upload/download rate, max
+                        connections, completion activity, port
+                        configuration, etc.
+
+                        Access to the transfer settings customization
+                        functionality can be configured as follows:
+
+                        *   Only Admins - only admins can modify
+                            transfer settings.
+
+                        *   All Users - all users can modify transfer
+                            settings.
+
+                        *   Disabled - customization of transfer
+                            settings is disabled.
+
+                    o   Transfer Profiles
+                        Define who can use transfer profiles.
+
+                        Transfer profiles allow users to configure
+                        different profiles for different transfer
+                        requirements.  TODO_LINK: see user operation
+                        section - Transfer profile management
+
+                        Access to the transfer profile functionality can
+                        be configured as follows:
+
+                        *   All Users - all users can create and use the
+                            transfer profile functionality.
+
+                        *   Only Predefined - only predefined transfer
+                            profiles can be used.  Create transfer
+                            profiles as admin first.
+
+                        *   Only Admins - only admins can create and use
+                            transfer profiles.
+
+                        *   Disabled - transfer profile functionality is
+                            disabled.
+
+                    o   Enable Client Chooser
+                        When enabled, allow users to choose which
+                        transfer client to use.
+
+                    o   Enable Save Path Chooser
+                        When enabled, displays a directory tree to allow
+                        users to downloaded transfers to any existing
+                        folder under their home directory.
+
+                        With this option enabled, each recursive
+                        subdirectory within the user's configured home
+                        directory will be displayed in a directory tree
+                        list, up to 'max depth' levels deep.
+
+                        The user can then choose one of those
+                        directories as the location to save newly
+                        transferred content to.
+
+                    o   Save Path Chooser Max Depth
+                        Set the maximum depth of subfolders to display
+                        in the save path chooser directory tree (set to
+                        '0' to display all subfolders).
+
+                        If 'enable save path chooser' is enabled, the
+                        list of directories displayed in the save path
+                        chooser will drill down by default as far as
+                        necessary to display all recursive folders.
+
+                        If you have a large number of complex folder
+                        structures within the user's home directories,
+                        you can change the depth to which the 'save path
+                        chooser' drills down by changing this option.
 
             Web application frontend operational options (webapp)
                 Setting the authentication type to use
