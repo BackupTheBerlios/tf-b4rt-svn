@@ -4,7 +4,7 @@
 		alert('<tmpl_var name="_WARNING">: <tmpl_var name="drivespace">% <tmpl_var name="_DRIVESPACEUSED">');
 	</script>
 </tmpl_if>
-<body onLoad="actionInProgress = false; <tmpl_if name="onLoad"><tmpl_var name="onLoad"></tmpl_if>">
+<body onload="actionInProgress = false; <tmpl_if name="onLoad"><tmpl_var name="onLoad"></tmpl_if>">
 <center>
 	<table cellspacing="0" style="width:<tmpl_var name="ui_dim_main_w">px;">
 	<tbody>
@@ -67,9 +67,9 @@
 								
 								<tr>
 									<td>
-										<hr style="width:95%;">
+										<hr style="width:95%;" />
 										<form name="form_url_torrent" action="dispatcher.php?action=urlUpload" method="post" onsubmit="return actionSubmit()">
-											<label for="url_torrent"><tmpl_var name="_URLFILE">:</label><br>
+											<label for="url_torrent"><tmpl_var name="_URLFILE">:</label><br />
 											<input type="hidden" name="type" value="torrent" />
 											<input type="text" name="url" id="url_torrent" size="40" />
 											<select name="aid" style="width:100px">
@@ -83,16 +83,16 @@
 													<option value="2"><tmpl_var name="_GETFILE">+Start</option>
 												</tmpl_if>
 											</select>
-											<input type="Submit" value="Go" />
+											<input type="submit" value="Go" />
 										</form>
 									</td>
 								</tr>
 								<tmpl_if name="enable_nzbperl">
 									<tr>
 										<td>
-											<hr style="width:95%;">
+											<hr style="width:95%;" />
 											<form name="form_url_nzb" action="dispatcher.php?action=urlUpload" method="post" onsubmit="return actionSubmit()">
-												<label for="url_nzb">URL for the nzb-File:</label><br>
+												<label for="url_nzb">URL for the nzb-File:</label><br />
 												<input type="hidden" name="type" value="nzb" />
 												<input type="text" name="url" id="url_nzb" size="40" />
 												<select name="aid" style="width:100px">
@@ -106,7 +106,7 @@
 														<option value="2"><tmpl_var name="_GETFILE">+Start</option>
 													</tmpl_if>
 												</select>
-												<input type="Submit" value="Go" />
+												<input type="submit" value="Go" />
 											</form>
 										</td>
 									</tr>
@@ -114,9 +114,9 @@
 								<tmpl_if name="enable_wget">
 									<tr>
 										<td>
-											<hr style="width:95%;">
+											<hr style="width:95%;" />
 											<form name="form_wget" action="dispatcher.php?action=wget" method="post" onsubmit="return actionSubmit()">
-												<label for="url_wget">URL for the File to wget:</label><br>
+												<label for="url_wget">URL for the File to wget:</label><br />
 												<input type="text" name="url" id="url_wget" size="40" />
 												<select name="aid" style="width:100px">
 													<option value="1" selected="selected">Inject</option>
@@ -129,7 +129,7 @@
 														<option value="2">Inject+Start</option>
 													</tmpl_if>
 												</select>
-												<input type="Submit" value="Go" />
+												<input type="submit" value="Go" />
 											</form>
 										</td>
 									</tr>
@@ -137,9 +137,9 @@
 								<tmpl_if name="enable_search">
 									<tr>
 										<td>
-											<hr style="width:95%;">
+											<hr style="width:95%;" />
 											<form name="form_search" action="index.php" method="get" onsubmit="return actionSubmit()">
-												<label for="searchterm">Torrent <tmpl_var name="_SEARCH">:</label><br>
+												<label for="searchterm">Torrent <tmpl_var name="_SEARCH">:</label><br />
 												<input type="hidden" name="iid" value="torrentSearch" />
 												<input type="text" name="searchterm" id="searchterm" size="40" maxlength="50" />
 												<select name="searchEngine" style="width:100px">
@@ -217,12 +217,12 @@
 											<div style="width:80px;float:right;"><a href="index.php?iid=serverStats&amp;type=who"><span id="g_speedUp"><tmpl_var name="settingsHackStats22"></span> kB/s</a></div><div style="float:right;"><a href="index.php?iid=serverStats&amp;type=who"><img src="themes/<tmpl_var name="theme">/images/upload.gif" alt="" style="vertical-align:bottom;" /></a></div><br class="clear" />
 										</tmpl_if>
 										<tmpl_if name="settingsHackStats3">
-											<hr style="width:70%;float:right;"><br class="clear" />
+											<hr style="width:70%;float:right;" /><br class="clear" />
 											<div style="width:80px;float:right;"><a href="index.php?iid=serverStats&amp;type=who"><span id="g_speedTotal"><tmpl_var name="settingsHackStats33"></span> kB/s</a></div><div style="float:right;"><a href="index.php?iid=serverStats&amp;type=who"><img src="themes/<tmpl_var name="theme">/images/updown.gif" alt="" style="vertical-align:bottom;" /></a></div><br class="clear" />
 										</tmpl_if>
 										<tmpl_if name="settingsHackStats4">
 											<b><tmpl_var name="_ID_CONNECTIONS">:</b><br />
-											<a href="index.php?iid=serverStats&amp;type=all"><img src="themes/<tmpl_var name="theme">/images/all.gif" alt="" style="vertical-align:bottom;" /><span id="g_cons"><tmpl_var name="settingsHackStats44"></span></a><br>
+											<a href="index.php?iid=serverStats&amp;type=all"><img src="themes/<tmpl_var name="theme">/images/all.gif" alt="" style="vertical-align:bottom;" /><span id="g_cons"><tmpl_var name="settingsHackStats44"></span></a><br />
 										</tmpl_if>
 										<tmpl_if name="settingsHackStats5">
 											<b><tmpl_var name="_DRIVESPACE">:</b><br />
@@ -239,6 +239,10 @@
 						</table>
 					</td>
 				</tr>
+			</tbody>
+			</table>
+			<table class="table" cellspacing="0" style="margin-top:2px;">
+			<thead>
 				<tr class="tableheading">
 					<td colspan="2" style="white-space:nowrap;padding:2px;">
 						<center>
@@ -272,6 +276,8 @@
 						</center>
 					</td>
 				</tr>
+			</thead>
+			<tbody>
 				<tr class="tablecontent">
 					<td colspan="2">
 					<tmpl_if name="drivespacebar_type" value="xfer">
@@ -318,7 +324,7 @@
 			</tbody>
 			</table>
 		<form action="dispatcher.php" method="post" onsubmit="return actionSubmit()">
-			<div id="transferList"><tmpl_include name="inc.transferList.tmpl"></div>
+			<div id="transferList" style="margin-top:2px;"><tmpl_include name="inc.transferList.tmpl"></div>
 			<table bgcolor="<tmpl_var name="table_data_bg">" width="100%" bordercolor="<tmpl_var name="table_border_dk">" border="0" cellpadding=3 cellspacing=0>
 				<tr>
 					<td bgcolor="<tmpl_var name="table_header_bg">">
@@ -413,40 +419,40 @@
 										<a href="dispatcher.php?action=set&key=index_meta_refresh&val=0" onclick="return actionClick(true)" style="font-size:10px; text-decoration:none;">
 											<tmpl_var name="_PAGEWILLREFRESH"> <span id='span_refresh'><tmpl_var name="page_refresh"></span> <tmpl_var name="_SECONDS">
 										</a>
-										<br>
+										<br />
 									<tmpl_else>
 										<a href="dispatcher.php?action=set&key=index_meta_refresh&val=1" onclick="return actionClick(true)" style="font-size:10px; text-decoration:none;">
 											<tmpl_var name="_TURNONREFRESH">
 										</a>
-										<br>
+										<br />
 									</tmpl_if>
 									<tmpl_if name="index_ajax_update">
 										<a href="dispatcher.php?action=set&key=index_ajax_update&val=0" onclick="return actionClick(true)" style="font-size:10px; text-decoration:none;">
 											<span id='span_update'>Next AJAX-Update in <tmpl_var name="index_ajax_update"> seconds</span>
 										</a>
-										<br>
+										<br />
 									<tmpl_else>
 										<a href="dispatcher.php?action=set&key=index_ajax_update&val=1" onclick="return actionClick(true)" style="font-size:10px; text-decoration:none;">
 											Turn ON AJAX-Update
 										</a>
-										<br>
+										<br />
 									</tmpl_if>
 									<tmpl_if name="onLoad">
 										<a href="dispatcher.php?action=set&key=_refresh_&val=0" onclick="return actionClick(true)" style="font-size:10px; text-decoration:none;">
 											<tmpl_var name="_TURNOFFREFRESH"> AND AJAX-Update
 										</a>
-										<br>
+										<br />
 									</tmpl_if>
 									<tmpl_if name="index_show_seeding">
 										<a href="dispatcher.php?action=set&key=index_show_seeding&val=0" onclick="return actionClick(true)" style="font-size:10px; text-decoration:none;">
 											Hide Seeding Torrents
 										</a>
-										<br>
+										<br />
 									<tmpl_else>
 										<a href="dispatcher.php?action=set&key=index_show_seeding&val=1" onclick="return actionClick(true)" style="font-size:10px; text-decoration:none;">
 											Show Seeding Torrents
 										</a>
-										<br>
+										<br />
 									</tmpl_if>
 								</div>
 								<tmpl_if name="index_page_stats">
@@ -455,39 +461,39 @@
 											<tr>
 												<tmpl_if name="xfer_realtime">
 													<td class="tiny" align="left" valign="bottom">
-														<b><tmpl_var name="_SERVERXFERSTATS"></b><br>
-														<tmpl_var name="_TOTALXFER">: <strong><label id="xferGlobalTotal"><tmpl_var name="totalxfer1"></label></strong><br>
-														<tmpl_var name="_MONTHXFER">: <strong><label id="xferGlobalMonth"><tmpl_var name="monthxfer1"></label></strong><br>
-														<tmpl_var name="_WEEKXFER">: <strong><label id="xferGlobalWeek"><tmpl_var name="weekxfer1"></label></strong><br>
-														<tmpl_var name="_DAYXFER">: <strong><label id="xferGlobalDay"><tmpl_var name="dayxfer1"></label></strong><br>
+														<b><tmpl_var name="_SERVERXFERSTATS"></b><br />
+														<tmpl_var name="_TOTALXFER">: <strong><label id="xferGlobalTotal"><tmpl_var name="totalxfer1"></label></strong><br />
+														<tmpl_var name="_MONTHXFER">: <strong><label id="xferGlobalMonth"><tmpl_var name="monthxfer1"></label></strong><br />
+														<tmpl_var name="_WEEKXFER">: <strong><label id="xferGlobalWeek"><tmpl_var name="weekxfer1"></label></strong><br />
+														<tmpl_var name="_DAYXFER">: <strong><label id="xferGlobalDay"><tmpl_var name="dayxfer1"></label></strong><br />
 													</td>
 												</tmpl_if>
 												<tmpl_if name="queueActive" value="1">
 													<td align="center" valign="bottom">
 														<div class="tiny">
-															<b><tmpl_var name="_QUEUEMANAGER"></b><br>
-															<strong><label id="running"><tmpl_var name="runningTransferCount"></label></strong> transfer(s) running and <strong><label id="queued"><tmpl_var name="countQueuedTransfers"></label></strong> queued.<br>
-															Total transfers server will run: <strong><tmpl_var name="limitGlobal"></strong><br>
-															Total transfers a user may run: <strong><tmpl_var name="limitUser"></strong><br>
+															<b><tmpl_var name="_QUEUEMANAGER"></b><br />
+															<strong><label id="running"><tmpl_var name="runningTransferCount"></label></strong> transfer(s) running and <strong><label id="queued"><tmpl_var name="countQueuedTransfers"></label></strong> queued.<br />
+															Total transfers server will run: <strong><tmpl_var name="limitGlobal"></strong><br />
+															Total transfers a user may run: <strong><tmpl_var name="limitUser"></strong><br />
 														</div>
 													</td>
 												</tmpl_if>
 												<td class="tiny" align="center" valign="bottom">
-													<b><tmpl_var name="_OTHERSERVERSTATS"></b><br>
-													<tmpl_var name="_DOWNLOADSPEED">: <strong><label id="b_speedDown"><tmpl_var name="downloadspeed1"></label> (<tmpl_var name="downloadspeed11">)</strong> kB/s<br>
-													<tmpl_var name="_UPLOADSPEED">: <strong><label id="b_speedUp"><tmpl_var name="uploadspeed1"></label> (<tmpl_var name="uploadspeed11">)</strong> kB/s<br>
-													<tmpl_var name="_TOTALSPEED">: <strong><label id="b_speedTotal"><tmpl_var name="totalspeed1"></label> (<tmpl_var name="totalspeed11">)</strong> kB/s<br>
-													<tmpl_var name="_ID_CONNECTIONS">: <strong><label id="b_cons"><tmpl_var name="id_connections1"></label> <tmpl_var name="id_connections11"></strong><br>
-													<tmpl_var name="_DRIVESPACE">: <strong><label id="b_freeSpace"><tmpl_var name="drivespace1"></label></strong><br>
+													<b><tmpl_var name="_OTHERSERVERSTATS"></b><br />
+													<tmpl_var name="_DOWNLOADSPEED">: <strong><label id="b_speedDown"><tmpl_var name="downloadspeed1"></label> (<tmpl_var name="downloadspeed11">)</strong> kB/s<br />
+													<tmpl_var name="_UPLOADSPEED">: <strong><label id="b_speedUp"><tmpl_var name="uploadspeed1"></label> (<tmpl_var name="uploadspeed11">)</strong> kB/s<br />
+													<tmpl_var name="_TOTALSPEED">: <strong><label id="b_speedTotal"><tmpl_var name="totalspeed1"></label> (<tmpl_var name="totalspeed11">)</strong> kB/s<br />
+													<tmpl_var name="_ID_CONNECTIONS">: <strong><label id="b_cons"><tmpl_var name="id_connections1"></label> <tmpl_var name="id_connections11"></strong><br />
+													<tmpl_var name="_DRIVESPACE">: <strong><label id="b_freeSpace"><tmpl_var name="drivespace1"></label></strong><br />
 													<tmpl_var name="_SERVERLOAD">: <strong><label id="b_loadavg"><tmpl_var name="serverload1"></label></strong>
 												</td>
 												<tmpl_if name="xfer_realtime">
 													<td class="tiny" align="right" valign="bottom">
-														<b><tmpl_var name="_YOURXFERSTATS"></b><br>
-														<tmpl_var name="_TOTALXFER">: <strong><label id="xferUserTotal"><tmpl_var name="total2"></label></strong><br>
-														<tmpl_var name="_MONTHXFER">: <strong><label id="xferUserMonth"><tmpl_var name="month2"></label></strong><br>
-														<tmpl_var name="_WEEKXFER">: <strong><label id="xferUserWeek"><tmpl_var name="week2"></label></strong><br>
-														<tmpl_var name="_DAYXFER">: <strong><label id="xferUserDay"><tmpl_var name="day2"></label></strong><br>
+														<b><tmpl_var name="_YOURXFERSTATS"></b><br />
+														<tmpl_var name="_TOTALXFER">: <strong><label id="xferUserTotal"><tmpl_var name="total2"></label></strong><br />
+														<tmpl_var name="_MONTHXFER">: <strong><label id="xferUserMonth"><tmpl_var name="month2"></label></strong><br />
+														<tmpl_var name="_WEEKXFER">: <strong><label id="xferUserWeek"><tmpl_var name="week2"></label></strong><br />
+														<tmpl_var name="_DAYXFER">: <strong><label id="xferUserDay"><tmpl_var name="day2"></label></strong><br />
 													</td>
 												</tmpl_if>
 											</tr>
