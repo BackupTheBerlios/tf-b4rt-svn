@@ -16,14 +16,14 @@
 			<td bgcolor="<tmpl_var name="table_header_bg">">
 				<form id="searchForm" name="searchForm" action="index.php" method="get">
 					<input type="hidden" name="iid" value="torrentSearch">
-					<tmpl_var name="_SEARCH"> Torrents:<br>
-					<input type="text" name="searchterm" value="<tmpl_var name="searchterm">" size=30 maxlength=50>&nbsp;
+					<label for="searchterm"><tmpl_var name="_SEARCH"> Torrents:</label><br>
+					<input type="text" name="searchterm" id="searchterm" value="<tmpl_var name="searchterm">" size=30 maxlength=50>
 					<select name="searchEngine" <tmpl_if name="autoSubmit">onchange="this.form.submit();"</tmpl_if> STYLE="width: 125px">
 					<tmpl_loop name="Engine_List">
 						<option <tmpl_if name="selected">selected</tmpl_if>><tmpl_var name="Engine"></option>
 					</tmpl_loop>
 					</select>
-					&nbsp;<input type="Submit" value="<tmpl_var name="_SEARCH">">&nbsp;&nbsp;
+					<input type="Submit" value="<tmpl_var name="_SEARCH">">&nbsp;&nbsp;
 
 					&nbsp;&nbsp;<a href="#" onclick="javascript:getLatest()");"><img src="themes/default/images/properties.png" width="18"" height="13" title="Show Latest Torrents" align="absmiddle" border=0>Show Latest Torrents</a>
 				</form><br>
@@ -69,7 +69,7 @@
 					<form method=get id="subLatest" name="subLatest" action=index.php>
 						<input type=hidden name="iid" value="torrentSearch">
 						<input type=hidden name="searchEngine" value="<tmpl_var name="searchEngine">">
-						Category: <b><tmpl_var name="mainGenreName"></a></b> ->
+						Category: <b><tmpl_var name="mainGenreName"></a></b> -&gt;
 						<select name=subGenre>
 							<tmpl_loop name=list_cats">
 								<option value="<tmpl_var name="subId">#"><tmpl_var name="subName"></option>

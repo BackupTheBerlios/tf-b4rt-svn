@@ -4,10 +4,10 @@
 <div id="content">
 	<form name="form_file" action="dispatcher.php?action=fileUpload" method="post" enctype="multipart/form-data">
 		<tmpl_loop name="row_list">
-			<tmpl_var name="_SELECTFILE">:
-			<input type="File" name="upload_files[]" size="40"><br>
-			<tmpl_var name="_SELECTFILE">:
-			<input type="File" name="upload_files[]" size="40"><br>
+			<label for="upload_files_1_<tmpl_var name="__ROWNUM__">"><tmpl_var name="_SELECTFILE">:</label>
+			<input type="file" name="upload_files[]" id="upload_files_1_<tmpl_var name="__ROWNUM__">" size="40"><br>
+			<label for="upload_files_2_<tmpl_var name="__ROWNUM__">"><tmpl_var name="_SELECTFILE">:</label>
+			<input type="file" name="upload_files[]" id="upload_files_2_<tmpl_var name="__ROWNUM__">" size="40"><br>
 		</tmpl_loop>
 		<select name="aid" size="1">
 			<option value="1" selected><tmpl_var name="_UPLOAD"></option>

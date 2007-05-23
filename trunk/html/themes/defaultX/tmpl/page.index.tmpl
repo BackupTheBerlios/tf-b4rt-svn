@@ -26,12 +26,12 @@
 								<tr>
 									<td>
 										<form name="form_file" action="dispatcher.php?action=fileUpload" method="post" enctype="multipart/form-data" onsubmit="return actionSubmit()">
-											<tmpl_var name="_SELECTFILE"> (<tmpl_var name="file_types_label">):<br />
+											<label for="upload_files_first"><tmpl_var name="_SELECTFILE"> (<tmpl_var name="file_types_label">):</label><br />
 											<table cellspacing="0" class="uploadfiletable">
 											<tbody>
 												<tr>
 													<td id="fileUploadCell">
-														<input type="File" name="upload_files[]" size="40" /><span id="fileUploadSpan"></span>
+														<input type="file" name="upload_files[]" id="upload_files_first" size="40" /><span id="fileUploadSpan"></span>
 													</td>
 													<td style="vertical-align:top;">
 														<script src="js/multiup.js" type="text/javascript"></script>
@@ -69,9 +69,9 @@
 									<td>
 										<hr style="width:95%;">
 										<form name="form_url_torrent" action="dispatcher.php?action=urlUpload" method="post" onsubmit="return actionSubmit()">
-											<tmpl_var name="_URLFILE">:<br>
+											<label for="url_torrent"><tmpl_var name="_URLFILE">:</label><br>
 											<input type="hidden" name="type" value="torrent" />
-											<input type="text" name="url" size="40" />
+											<input type="text" name="url" id="url_torrent" size="40" />
 											<select name="aid" style="width:100px">
 												<option value="1" selected="selected"><tmpl_var name="_GETFILE"></option>
 												<tmpl_if name="queueActive" value="1">
@@ -92,9 +92,9 @@
 										<td>
 											<hr style="width:95%;">
 											<form name="form_url_nzb" action="dispatcher.php?action=urlUpload" method="post" onsubmit="return actionSubmit()">
-												URL for the nzb-File:<br>
+												<label for="url_nzb">URL for the nzb-File:</label><br>
 												<input type="hidden" name="type" value="nzb" />
-												<input type="text" name="url" size="40" />
+												<input type="text" name="url" id="url_nzb" size="40" />
 												<select name="aid" style="width:100px">
 													<option value="1" selected="select"><tmpl_var name="_GETFILE"></option>
 													<tmpl_if name="queueActive" value="1">
@@ -116,8 +116,8 @@
 										<td>
 											<hr style="width:95%;">
 											<form name="form_wget" action="dispatcher.php?action=wget" method="post" onsubmit="return actionSubmit()">
-												URL for the File to wget:<br>
-												<input type="text" name="url" size="40" />
+												<label for="url_wget">URL for the File to wget:</label><br>
+												<input type="text" name="url" id="url_wget" size="40" />
 												<select name="aid" style="width:100px">
 													<option value="1" selected="selected">Inject</option>
 													<tmpl_if name="queueActive" value="1">
@@ -139,14 +139,14 @@
 										<td>
 											<hr style="width:95%;">
 											<form name="form_search" action="index.php" method="get" onsubmit="return actionSubmit()">
-												Torrent <tmpl_var name="_SEARCH">:<br>
-												<input type="text" name="searchterm" size="40" maxlength="50" />
+												<label for="searchterm">Torrent <tmpl_var name="_SEARCH">:</label><br>
+												<input type="hidden" name="iid" value="torrentSearch" />
+												<input type="text" name="searchterm" id="searchterm" size="40" maxlength="50" />
 												<select name="searchEngine" style="width:100px">
 												<tmpl_loop name="Engine_List">
 													<option <tmpl_if name="selected">selected="selected"</tmpl_if>><tmpl_var name="Engine"></option>
 												</tmpl_loop>
 												</select>
-												<input type="hidden" name="iid" value="torrentSearch" />
 												<input type="Submit" value="<tmpl_var name="_SEARCH">" />
 											</form>
 										</td>

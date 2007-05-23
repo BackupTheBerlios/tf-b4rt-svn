@@ -11,12 +11,12 @@
 								<tmpl_loop name="row_list">
 									<tr>
 										<td>
-											<tmpl_var name="_SELECTFILE">:<br>
-											<input type="File" name="upload_files[]" size="40">
+											<label for="upload_files_1_<tmpl_var name="__ROWNUM__">"><tmpl_var name="_SELECTFILE">:</label><br>
+											<input type="file" name="upload_files[]" id="upload_files_1_<tmpl_var name="__ROWNUM__">" size="40">
 										</td>
 										<td>
-											<tmpl_var name="_SELECTFILE">:<br>
-											<input type="File" name="upload_files[]" size="40">
+											<label for="upload_files_2_<tmpl_var name="__ROWNUM__">"><tmpl_var name="_SELECTFILE">:</label><br>
+											<input type="file" name="upload_files[]" id="upload_files_2_<tmpl_var name="__ROWNUM__">" size="40">
 										</td>
 									</tr>
 								</tmpl_loop>
@@ -35,7 +35,8 @@
 								<tmpl_else>
 									<option value="2"><tmpl_var name="_UPLOAD">+Start</option>
 								</tmpl_if>
-							</select><input type="Submit" value="Go">
+							</select>
+							<input type="Submit" value="Go">
 						</td>
 					</tr>
 					<tr>
