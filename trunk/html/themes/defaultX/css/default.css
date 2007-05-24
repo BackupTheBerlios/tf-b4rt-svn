@@ -20,7 +20,8 @@ img
 	border-style:none;
 }
 
-form 
+form ,
+span
 {
 	margin: 0px;
 	padding: 0px;
@@ -43,7 +44,7 @@ textarea
 
 hr
 {
-	border: 1px solid #8badcf;
+	border: 1px solid #a0b9d8;
 }
 
 .small{
@@ -80,21 +81,22 @@ a:hover.titlebarbutton
 }
 
 /* Table Styles */
-.table
-{
-	border:2px solid #8ba9c7;
-	width:100%;
-}
-.tableheading
-{
-	background-color: #8ba9c7;
-	font-size:100%;
-}
+.tableheading,
 .tableheading_alt
 {
-	background-color: #8ba9c7;
-	color:#FFFFFF;
+	background-color:#a0b9d8;
 	font-size:100%;
+}
+
+.table
+{
+	border:2px solid #a0b9d8;
+	width:100%;
+}
+
+.tableheading_alt
+{
+	color:#FFFFFF;
 	font-weight:bold;
 }
 a.tableheadlink,
@@ -127,6 +129,7 @@ a:hover.tableheadlink
 TEXTAREA	{BORDER-TOP-COLOR: #000000; BORDER-LEFT-COLOR: #000000; BORDER-RIGHT-COLOR: #000000; BORDER-BOTTOM-COLOR: #000000; BORDER-TOP-WIDTH: 1px; BORDER-LEFT-WIDTH: 1px; FONT-SIZE: 12px; BORDER-BOTTOM-WIDTH: 1px; FONT-FAMILY: Verdana,Helvetica; BORDER-RIGHT-WIDTH: 1px}
 SELECT 		{BORDER-TOP-COLOR: #000000; BORDER-LEFT-COLOR: #000000; BORDER-RIGHT-COLOR: #000000; BORDER-BOTTOM-COLOR: #000000; BORDER-TOP-WIDTH: 1px; BORDER-LEFT-WIDTH: 1px; FONT-SIZE: 12px; BORDER-BOTTOM-WIDTH: 1px; FONT-FAMILY: Verdana,Helvetica; BORDER-RIGHT-WIDTH: 1px}
 */
+/*
 .titleblack 		{BACKGROUND: none; COLOR: #000000; FONT-SIZE: 14px; FONT-WEIGHT: bold; FONT-FAMILY: Verdana, Helvetica; TEXT-DECORATION: none}
 .content 	{BACKGROUND: none; COLOR: #000000; FONT-SIZE: 12px; FONT-FAMILY: Verdana, Helvetica}
 .block-title	{BACKGROUND: none; COLOR: #FFFFFF; FONT-SIZE: 12px; FONT-FAMILY: Verdana, Helvetica}
@@ -145,6 +148,5 @@ SELECT 		{BORDER-TOP-COLOR: #000000; BORDER-LEFT-COLOR: #000000; BORDER-RIGHT-CO
 	border-right-width: 1px;
 	border-right-style: solid;
 	border-right-color: #000000;
-}
-hr{ color: #94ABC0; noshade }
+}*/
 /* #transferList { overflow: auto; } */
