@@ -87,7 +87,7 @@ if ((strpos($cfg["theme"], '/')) === false)
 	$link .= $cfg["theme"].'/images/';
 else
 	$link .= 'tf_standard_themes/images/';
-$link .= 'arrow.gif" width="9" height="9" title="clean template-cache" border="0"> clean template-cache</a>';
+$link .= 'arrow.gif" width="9" height="9" title="Clean Template Cache Now" border="0"> Clean Template Cache Now</a>';
 $tmpl->setvar('SuperAdminLink_tmplCache', getSuperAdminLink('?m=35', $link));
 $tmpl->setvar('enable_personal_settings', $cfg["enable_personal_settings"]);
 $tmpl->setvar('enable_dereferrer', $cfg["enable_dereferrer"]);
