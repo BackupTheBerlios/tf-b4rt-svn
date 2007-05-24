@@ -1,7 +1,7 @@
 /* $Id$ */
 
 // fields
-var formContent = '<br><input type="file" name="upload_files[]" size="40"><span id="fileUploadSpan"></span>';
+var formContent = '<br /><input type="file" name="upload_files[]" size="40" /><span id="fileUploadSpan"></span>';
 
 /**
  * addUploadField
