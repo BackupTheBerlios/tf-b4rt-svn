@@ -86,8 +86,12 @@ function isAuthenticated() {
 	if (!isset($_SESSION['user']))
 		return 0;
 	// user changed password and needs to login again
-	if ($_SESSION['user'] == md5($cfg["pagetitle"]))
+	if ($_SESSION['user'] == md5($cfg["pagetitle"])) {
+		// flush users cookie
+		@setcookie("autologin", "", time() - 3600);
+		// return
 		return 0;
+	}
 	// user exists ?
 	$recordset = $db->Execute("SELECT uid, hits FROM tf_users WHERE user_id=".$db->qstr($cfg["user"]));
 	if ($recordset->RecordCount() != 1) {
