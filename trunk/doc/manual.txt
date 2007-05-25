@@ -574,6 +574,9 @@ Introduction
                     you don't want to spend a long time having the
                     torrent client rechecking the integrity of the
                     download before continuing on to seed the torrent.
+                    Note: Skip Hash Check is not supported for "fresh"
+                    transfers. (which have not written any data to the
+                    disk yet)
 
                     For full information on changing a transfer's
                     settings see the section on
@@ -597,9 +600,13 @@ Introduction
                     in 'quick' mode.
 
                     Starting a transfer in quick mode allows you to skip
-                    the advanced settings window.  Instead, the default
-                    client and settings configured by the administrator
-                    will be used instead to start the transfer.
+                    the advanced settings window. When a Transfer is
+                    resumed, the last used client and settings of this
+                    transfer are used to start it and if it is new one
+                    the default client and settings configured by the
+                    administrator will be used to start the transfer.
+                    (unless the settings are changed on the settings-
+                    page of a transfer prior to starting it)
 
                     See the section on TODO_link:transfer_client_options
 
@@ -909,7 +916,7 @@ Introduction
                     The settings available for a transfer will differ
                     depending on the client chosen to perform the
                     transfer.  Not all settings are available for all
-                    choices of client.
+                    choices of clients.
 
                 Starting, stopping and restarting a transfer
 
@@ -1010,7 +1017,7 @@ Introduction
                 Overview
                     The server statistics page provides detailed
                     information on server status, including drivespace,
-                    logged-in user, process, network and transfer usage.
+                    logged-in users, process, network and transfer usage.
 
                     The server statistics page can be opened using the
                     following methods:
@@ -1672,8 +1679,9 @@ Introduction
                     directory
                 o	Making torrents
                 o	Downloading files and directories
-                o	Downloading files and directories as tar archives
-                o	Streaming movie files using VLC
+                o	Downloading files and directories as tar or
+                    zip archives
+                o	Streaming media files using VLC
                 o	Viewing NFO files
                 o   Extracting archive files (zip/rar files)
                 o   Checking the integrity of files using .sfv files
@@ -1745,18 +1753,14 @@ Introduction
                 Files and directories can be moved out of the master
                 transfer directory by clicking on the 'Move File/Folder'
                 icon.  A window will open asking you to specify the
-                destination directory in a drop down list and the final
-                name of the file/folder within that destination
-                directory.
+                destination directory in a drop down list or textbox.
 
                 Note:
                 -----
                 The destination folders for move actions must be
                 configured by the administrator.  Any destination folders
                 configured by the admin will be listed in the 'Move'
-                window dropdown box.  Without this configuration, the
-                move folder action has little more effect than the
-                'rename' action.
+                window dropdown box.
 
                 For more info on setting a list of directories to move
                 files/folders into, see: TODO_LINK: Setting a list of
@@ -1828,11 +1832,11 @@ Introduction
                 considerable amount of time if the directory structure
                 is very large.
 
-            Streaming movie files using VLC
+            Streaming media files using VLC
 
-                Movie files can be streamed in real time from the server
-                by clicking on the 'Stream Multimedia (vlc)' icon to the
-                right of the file.
+                Audio and Movie files can be streamed in real time from
+                the server by clicking on the 'Stream Multimedia (vlc)'
+                icon to the right of the file.
 
                 This action will open a window with a form for you to
                 specify the details for the streaming action.
@@ -1890,18 +1894,18 @@ Introduction
                 attempt at fixing this kind of problem is to flush the
                 template cache.
 
-                The template cache can be flushed by clicking on the
-                'Flush Cache' icon located at the bottom of the transfer
-                list next to the bulk operations links.  The icon is a
-                'recycle' symbol.
-
                 If you are unable to click on the icon, try browsing to
                 the following URL:
 
-                http://example.com/dispatcher.php?action=cacheFlush
+                http://example.com/superadmin.php?m=35
 
                 replacing 'example.com' with the URL of your
                 torrentflux-b4rt installation.
+
+                Alternatively delete the files direct which are located
+                inside your main-path-directory:
+
+                /path/to/maindir/.templateCache
 
             Running a maintenance operation
 
@@ -2019,7 +2023,8 @@ Introduction
                     to the transfer.
 
                     This force stop method sends a SIGKILL signal to the
-                    process associated with the transfer.
+                    process associated with the transfer if it is
+                    refusing to shutdown graceful in time.
 
             Performing maintenance tasks
 
@@ -2316,7 +2321,7 @@ Introduction
                 Overview
 
                     The 'Log' tab on the superadmin pages allows you to
-                    view the log files for various components
+                    view the log files for various components of
                     torrentflux-b4rt:
 
                     o	fluxd - STDOUT logfiles for the torrentflux-b4rt
@@ -2565,7 +2570,7 @@ Introduction
                         Expression support is built into PHP (required)
 
                     *	sockets - whether or not socket support is built
-                        into PHP (required)
+                        into PHP (required for fluxd)
 
                     *	safe_mode - whether PHP is running in safe mode
                         or not (must be off)
@@ -2580,7 +2585,7 @@ Introduction
                     *	imagetypes - the image types supported by GD; GD
                         support must be built into PHP and at least one
                         of GIF, JPEG or PNG image types must be
-                        supported.
+                        supported for image-display (pies, captcha).
 
                     The following software requirement checks can also
                     be run from the 'Other Stats' column if logged in as
@@ -2704,7 +2709,8 @@ Introduction
 
                             Additional directories may be created under
                             the .fluxd directory for use by the fluxd
-                            modules, particularly the rssad module.
+                            modules, particularly the Qmgr and Rssad
+                            modules.
 
                         *	Fluazu control files
 
@@ -2809,8 +2815,14 @@ Introduction
 
                         Transmission is a torrent client which can be
                         used as an alternative to bittorrent or
-                        bittornado.  A modified version of transmission
-                        must be used with torrentflux-b4rt.
+                        bittornado. Release-Tarballs include a cli-
+                        version of transmissioncli written to be used
+                        with torrentflux-b4rt. This version has only
+                        some additions specific to tfb-operation and
+                        is using an unmodified "libtransmission".
+                        (exact version of libtransmission can be found
+                        in the file transmission.revision or in help-
+                        page of transmissioncli)
 
                         The modified transmission source can be
                         found in the 'clients/transmission' folder -
@@ -2927,9 +2939,6 @@ Introduction
 
                             Used to determine server load average for
                             display in torrentflux-b4rt frontend stats.
-
-                            loadavg is a native app on most linuces and
-                            the path should be detected automatically.
 
                         *   netstat
 
@@ -3098,6 +3107,10 @@ Introduction
                         range minimum and maximum at least 10 ports
                         apart.
 
+                        When choosing Azureus as transfer-client the
+                        port-setting has no affect. Azureus uses a
+                        single port set in the used Azureus-Server.
+
                     o   Rerequest Interval (B+M)
                         Set the default value for the rerequest interval
                         to the tracker (default 1800 seconds).
@@ -3151,13 +3164,12 @@ Introduction
 
                         This option is very useful for private trackers
                         who require that you maintain a certain minimum
-                        sharing ratio.  For example the default minimum
-                        share ratio to maintain 'power user' level on
-                        the torrentbits source tracker is 1.05.  So, to
-                        ensure this ratio is kept up, you can use the
-                        'default percentage when seeding should stop'
-                        option here and set it to 105 (percent) and this
-                        will ensure you keep the 1.05 ratio.
+                        sharing ratio.  If for example the default
+                        minimum share ratio to maintain 'power user' level
+                        on a particular tracker is 1.05 you can ensure that
+                        this ratio is kept up by using the 'default
+                        percentage when seeding should stop' option and set
+                        it to 105 (percent).
 
                     o   Enable Cumulative Sharekill (B+T+M+A)
                         Recalculate the sharekill value passed to
@@ -3443,7 +3455,6 @@ Introduction
                         have content downloaded into individual
                         subdirectories for each transfer, you can do
                         that here.
-
 
                     o   Bad File Action
                         Set the action to perform on finding a bad entry
