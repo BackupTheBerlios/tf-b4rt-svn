@@ -71,12 +71,18 @@ function performAuthentication($username = '', $password = '', $md5password = ''
 		@session_write_close();
 		return 1;
 	} else { // wrong credentials
+		// log
 		AuditAction($cfg["constants"]["access_denied"], "FAILED AUTH: ".$username);
+		// unset
 		unset($_SESSION['user']);
 		unset($_SESSION['uid']);
 		unset($cfg["user"]);
+		// flush users cookie
+		@setcookie("autologin", "", time() - 3600);
+		// return
 		return 0;
 	}
+	// return
 	return 0;
 }
 
