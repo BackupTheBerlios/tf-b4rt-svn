@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: utils.c 1763 2007-04-20 02:05:07Z joshe $
+ * $Id: utils.c 1868 2007-05-11 18:56:59Z livings124 $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -395,6 +395,8 @@ tr_errorString( int code )
             return "Insufficient permissions";
         case TR_ERROR_IO_SPACE:
             return "Insufficient free space";
+        case TR_ERROR_IO_DUP_DOWNLOAD:
+            return "Already active transfer with same name and download folder";
         case TR_ERROR_IO_RESOURCES:
             return "Insufficient resources";
         case TR_ERROR_IO_OTHER:

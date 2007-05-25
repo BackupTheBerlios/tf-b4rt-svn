@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: ratecontrol.h 1320 2007-01-08 21:53:55Z livings124 $
+ * $Id: ratecontrol.h 1869 2007-05-16 02:03:18Z livings124 $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -25,7 +25,6 @@
 typedef struct tr_ratecontrol_s tr_ratecontrol_t;
 
 tr_ratecontrol_t * tr_rcInit();
-int                tr_rcCanGlobalTransfer( tr_handle_t * h, int isUpload );
 void               tr_rcSetLimit( tr_ratecontrol_t *, int );
 int                tr_rcCanTransfer( tr_ratecontrol_t * );
 void               tr_rcTransferred( tr_ratecontrol_t *, int );

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: bencode.c 1751 2007-04-18 16:41:37Z joshe $
+ * $Id: bencode.c 1857 2007-05-09 07:00:08Z joshe $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -187,7 +187,7 @@ static void __bencPrint( benc_val_t * val, int space )
     switch( val->type )
     {
         case TYPE_INT:
-            fprintf( stderr, "int:  %"PRIu64"\n", val->val.i );
+            fprintf( stderr, "int:  %"PRId64"\n", val->val.i );
             break;
 
         case TYPE_STR:
@@ -431,7 +431,7 @@ int tr_bencSave( benc_val_t * val, char ** buf, int * used, int * max )
     switch( val->type )
     {
         case TYPE_INT:
-            if( tr_sprintf( buf, used, max, "i%"PRIu64"e", val->val.i ) )
+            if( tr_sprintf( buf, used, max, "i%"PRId64"e", val->val.i ) )
             {
                 return 1;
             }

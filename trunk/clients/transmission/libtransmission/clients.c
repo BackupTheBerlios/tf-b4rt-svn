@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: clients.c 1811 2007-04-30 01:29:00Z livings124 $
+ * $Id: clients.c 1895 2007-05-21 15:25:28Z livings124 $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -46,9 +46,18 @@ char * tr_clientForId( uint8_t * id )
     {
         if( !memcmp( &id[1], "TR", 2 ) )
         {
-            asprintf( &ret, "Transmission %d.%d",
-                      charToInt( id[3] ) * 10 + charToInt( id[4] ),
-                      charToInt( id[5] ) * 10 + charToInt( id[6] ) );
+            /* support old-style Transmission id without maintenance number */
+            if ( !memcmp( &id[3], "00", 2 ) )
+            {
+                asprintf( &ret, "Transmission 0.%d",
+                        charToInt( id[5] ) * 10 + charToInt( id[6] ) );
+            }
+            else
+            {
+                asprintf( &ret, "Transmission %d.%c%c",
+                        charToInt( id[3] ) * 10 + charToInt( id[4] ),
+                        id[5], id[6] );
+            }
         }
         else if( !memcmp( &id[1], "AZ", 2 ) )
         {
@@ -315,7 +324,7 @@ char * tr_clientForId( uint8_t * id )
     else if( !memcmp( id, "XBT", 3 ) )
     {
         asprintf( &ret, "XBT Client %c%c%c%s", id[3], id[4], id[5],
-                  id[6] == 'd' ? " (debug)" : "" );
+                    id[6] == 'd' ? " (debug)" : "" );
     }
     else if( !memcmp( id, "Mbrst", 5 ) )
     {
@@ -324,6 +333,15 @@ char * tr_clientForId( uint8_t * id )
     else if( !memcmp( id, "btpd", 4 ) )
     {
         asprintf( &ret, "BT Protocol Daemon %c%c%c", id[5], id[6], id[7] );
+    }
+    else if( id[0] == 'Q' && !memcmp( &id[4], "--", 2 ) )
+    {
+        asprintf( &ret, "BTQueue %d.%d.%d", charToInt( id[1] ),
+                    charToInt( id[2] ), charToInt( id[3] ) );
+    }
+    else if( !memcmp( id, "BLZ", 3 ) )
+    {
+        asprintf( &ret, "Blizzard Downloader %d.%d", id[3] + 1, id[4] );
     }
     else if( !memcmp( id, "LIME", 4 ) )
     {

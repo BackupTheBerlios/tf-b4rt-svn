@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: internal.h 1750 2007-04-18 16:39:10Z joshe $
+ * $Id: internal.h 1940 2007-05-24 15:57:04Z livings124 $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -195,6 +195,7 @@ struct tr_torrent_s
     tr_tracker_t    * tracker;
     tr_io_t         * io;
     uint64_t          stopDate;
+    int               ioLoaded;
 
     int               peerCount;
     tr_peer_t       * peers[TR_MAX_PEER_COUNT];
@@ -219,14 +220,16 @@ struct tr_torrent_s
 
 struct tr_handle_s
 {
-    int            torrentCount;
-    tr_torrent_t * torrentList;
+    int                torrentCount;
+    tr_torrent_t     * torrentList;
 
-    char         * tag;
-    int            isPortSet;
-    int            uploadLimit;
-    int            downloadLimit;
-    tr_shared_t  * shared;
+    char             * tag;
+    int                isPortSet;
+
+    tr_ratecontrol_t * upload;
+    tr_ratecontrol_t * download;
+
+    tr_shared_t      * shared;
 
 #define TR_ID_LEN               20
     char           id[TR_ID_LEN+1];

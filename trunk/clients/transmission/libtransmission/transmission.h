@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.h 1807 2007-04-28 01:34:39Z livings124 $
+ * $Id: transmission.h 1912 2007-05-23 04:45:20Z joshe $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -32,8 +32,11 @@ extern "C" {
 #include "version.h"
 
 #include <inttypes.h>
+#ifndef PRId64
+# define PRId64 "lld"
+#endif
 #ifndef PRIu64
-# define PRIu64 "lld"
+# define PRIu64 "llu"
 #endif
 #include <time.h>
 
@@ -61,20 +64,23 @@ extern "C" {
  * Error codes
  **********************************************************************/
 /* General errors */
-#define TR_OK                   0x00000000
-#define TR_ERROR                0x81000000
-#define TR_ERROR_ASSERT         0x82000000
+#define TR_OK                       0x00000000
+#define TR_ERROR                    0x81000000
+#define TR_ERROR_ASSERT             0x82000000
 /* I/O errors */
-#define TR_ERROR_IO_MASK        0x000000FF
-#define TR_ERROR_IO_PARENT      0x80000001
-#define TR_ERROR_IO_PERMISSIONS 0x80000002
-#define TR_ERROR_IO_SPACE       0x80000004
-#define TR_ERROR_IO_RESOURCES   0x80000008
-#define TR_ERROR_IO_OTHER       0x80000010
+#define TR_ERROR_IO_MASK            0x000000FF
+#define TR_ERROR_IO_PARENT          0x80000001
+#define TR_ERROR_IO_PERMISSIONS     0x80000002
+#define TR_ERROR_IO_SPACE           0x80000004
+#define TR_ERROR_IO_RESOURCES       0x80000008
+#define TR_ERROR_IO_DUP_DOWNLOAD    0x8000000A
+#define TR_ERROR_IO_OTHER           0x80000010
 /* Misc */
-#define TR_ERROR_TC_MASK        0x00000F00
-#define TR_ERROR_TC_ERROR       0x80000100
-#define TR_ERROR_TC_WARNING     0x80000200
+#define TR_ERROR_TC_MASK            0x00000F00
+#define TR_ERROR_TC_ERROR           0x80000100
+#define TR_ERROR_TC_WARNING         0x80000200
+
+#define TR_ERROR_ISSET( num, code ) ( (code) == ( (code) & (num) ) )
 
 /***********************************************************************
  * tr_init
@@ -263,14 +269,17 @@ tr_info_t * tr_torrentInfo( tr_torrent_t * );
  **********************************************************************/
 int tr_torrentScrape( tr_torrent_t *, int * s, int * l, int * d );
 
+void   tr_torrentSetFolder( tr_torrent_t *, const char * );
+char * tr_torrentGetFolder( tr_torrent_t * );
+
+int tr_torrentDuplicateDownload( tr_torrent_t * tor );
+
 /***********************************************************************
  * tr_torrentStart
  ***********************************************************************
  * Starts downloading. The download is launched in a seperate thread,
  * therefore tr_torrentStart returns immediately.
  **********************************************************************/
-void   tr_torrentSetFolder( tr_torrent_t *, const char * );
-char * tr_torrentGetFolder( tr_torrent_t * );
 void   tr_torrentStart( tr_torrent_t * );
 
 /***********************************************************************
@@ -358,7 +367,7 @@ void tr_torrentRemoveFastResume( tr_torrent_t * tor );
  * Frees memory allocated by tr_torrentInit. If the torrent was running,
  * you must call tr_torrentStop() before closing it.
  **********************************************************************/
-void tr_torrentClose( tr_handle_t *, tr_torrent_t * );
+void tr_torrentClose( tr_torrent_t * );
 
 /***********************************************************************
  * tr_info_s

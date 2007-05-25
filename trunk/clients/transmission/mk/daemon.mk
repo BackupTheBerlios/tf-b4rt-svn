@@ -1,9 +1,9 @@
-# $Id: daemon.mk 1750 2007-04-18 16:39:10Z joshe $
+# $Id: daemon.mk 1923 2007-05-24 03:44:40Z joshe $
 
 include ../mk/config.mk
 include ../mk/common.mk
 
-COMSRCS  = errors.c ipc.c misc.c
+COMSRCS  = errors.c misc.c
 SRVSRCS  = daemon.c server.c torrents.c
 CLISRCS  = client.c remote.c
 PXYSRCS  = proxy.c

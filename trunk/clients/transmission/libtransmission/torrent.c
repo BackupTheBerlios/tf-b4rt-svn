@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: torrent.c 1807 2007-04-28 01:34:39Z livings124 $
+ * $Id: torrent.c 1941 2007-05-24 16:01:20Z livings124 $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -230,7 +230,10 @@ int tr_torrentScrape( tr_torrent_t * tor, int * s, int * l, int * d )
 void tr_torrentSetFolder( tr_torrent_t * tor, const char * path )
 {
     tor->destination = strdup( path );
-    tr_ioLoadResume( tor );
+    if ( !tor->ioLoaded )
+    {
+        tr_ioLoadResume( tor );
+    }
 }
 
 char * tr_torrentGetFolder( tr_torrent_t * tor )
@@ -238,14 +241,40 @@ char * tr_torrentGetFolder( tr_torrent_t * tor )
     return tor->destination;
 }
 
+int tr_torrentDuplicateDownload( tr_torrent_t * tor )
+{
+    tr_torrent_t * current;
+    
+    /* Check if a torrent with the same name and destination is already active */
+    for( current = tor->handle->torrentList; current; current = current->next )
+    {
+        if( current != tor && current->status != TR_STATUS_PAUSE
+            && !strcmp( tor->destination, current->destination )
+            && !strcmp( tor->info.name, current->info.name ) )
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 void tr_torrentStart( tr_torrent_t * tor )
 {
     char name[32];
-
+    
     if( tor->status & ( TR_STATUS_STOPPING | TR_STATUS_STOPPED ) )
     {
         /* Join the thread first */
         torrentReallyStop( tor );
+    }
+    
+    /* Don't start if a torrent with the same name and destination is already active */
+    if( tr_torrentDuplicateDownload( tor ) )
+    {
+        tor->error = TR_ERROR_IO_DUP_DOWNLOAD;
+        snprintf( tor->errorString, sizeof( tor->errorString ),
+                    "%s", tr_errorString( TR_ERROR_IO_DUP_DOWNLOAD ) );
+        return;
     }
 
     tr_lockLock( &tor->lock );
@@ -637,8 +666,9 @@ void tr_torrentRemoveFastResume( tr_torrent_t * tor )
  ***********************************************************************
  * Frees memory allocated by tr_torrentInit.
  **********************************************************************/
-void tr_torrentClose( tr_handle_t * h, tr_torrent_t * tor )
+void tr_torrentClose( tr_torrent_t * tor )
 {
+    tr_handle_t * h = tor->handle;
     tr_info_t * inf = &tor->info;
 
     if( tor->status & ( TR_STATUS_STOPPING | TR_STATUS_STOPPED ) )

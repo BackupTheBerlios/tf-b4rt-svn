@@ -1,4 +1,4 @@
-# $Id: common.mk 1739 2007-04-17 22:38:42Z joshe $
+# $Id: common.mk 1921 2007-05-24 02:54:21Z joshe $
 
 TMPCFLAGS   = -g -Wall -W -O3 -funroll-loops -D_FILE_OFFSET_BITS=64 \
               -D_LARGEFILE_SOURCE -D_GNU_SOURCE \

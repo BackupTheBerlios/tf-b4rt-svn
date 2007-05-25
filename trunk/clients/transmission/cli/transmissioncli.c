@@ -485,7 +485,7 @@ int main(int argc, char ** argv) {
  * cleanup
  */
 cleanup:
-	tr_torrentClose(h, tor);
+	tr_torrentClose(tor);
 	tr_close(h);
 	return EXIT_SUCCESS;
 
@@ -493,7 +493,7 @@ cleanup:
  * failed
  */
 failed:
-	tr_torrentClose(h, tor);
+	tr_torrentClose(tor);
 	tr_close(h);
 	return EXIT_FAILURE;
 

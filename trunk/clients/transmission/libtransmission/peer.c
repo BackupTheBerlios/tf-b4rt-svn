@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peer.c 1653 2007-04-03 18:43:26Z joshe $
+ * $Id: peer.c 1942 2007-05-24 20:09:32Z livings124 $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -25,6 +25,19 @@
 #include "transmission.h"
 #include "peertree.h"
 
+#define PERCENT_PEER_WANTED     25      /* Percent before we start relax peers min activeness */
+#define MIN_UPLOAD_IDLE         60000   /* In high peer situations we wait only 1 min
+                                            until dropping peers for idling */
+#define MAX_UPLOAD_IDLE         240000  /* In low peer situations we wait the
+                                            4 mins until dropping peers for idling */
+#define MIN_KEEP_ALIVE          180000  /* In high peer situations we wait only 3 min
+                                            without a keep-alive */
+#define MAX_KEEP_ALIVE          360000  /* In low peer situations we wait the
+                                            6 mins without a keep-alive */
+#define MIN_CON_TIMEOUT         8000    /* Time to timeout connecting to peer,
+                                            during low peer situations */
+#define MAX_CON_TIMEOUT         30000   /* Time to timeout connecting to peer, 
+                                            during high peer situations */
 #define MAX_REQUEST_COUNT       32
 #define OUR_REQUEST_COUNT       8  /* TODO: we should detect if we are on a
                                       high-speed network and adapt */
@@ -280,22 +293,11 @@ int tr_peerRead( tr_peer_t * peer )
     {
         if( tor )
         {
-            if( tor->customDownloadLimit )
+            if( tor->customDownloadLimit
+                ? !tr_rcCanTransfer( tor->download )
+                : !tr_rcCanTransfer( tor->handle->download ) )
             {
-                if( !tr_rcCanTransfer( tor->download ) )
-                {
-                    break;
-                }
-            }
-            else
-            {
-                tr_lockUnlock( &tor->lock );
-                if( !tr_rcCanGlobalTransfer( tor->handle, 0 ) )
-                {
-                    tr_lockLock( &tor->lock );
-                    break;
-                }
-                tr_lockLock( &tor->lock );
+                break;
             }
         }
 
@@ -328,6 +330,11 @@ int tr_peerRead( tr_peer_t * peer )
         {
             tr_rcTransferred( peer->download, ret );
             tr_rcTransferred( tor->download, ret );
+            if ( !tor->customDownloadLimit )
+            {
+                tr_rcTransferred( tor->handle->download, ret );
+            }
+            
             if( ( ret = parseBuf( tor, peer ) ) )
             {
                 return ret;
@@ -405,6 +412,12 @@ int tr_peerPulse( tr_peer_t * peer )
             return TR_ERROR;
         }
         peer->status = PEER_STATUS_CONNECTING;
+    }
+    
+    /* Disconnect if seeder and torrent is seeding */
+    if( peer->tor->status == TR_STATUS_SEED && peer->progress >= 1.0 )
+    {
+        return TR_ERROR;
     }
 
     /* Try to send handshake */
@@ -489,22 +502,11 @@ writeBegin:
     /* Send pieces if we can */
     while( ( p = blockPending( tor, peer, &size ) ) )
     {
-        if( tor->customUploadLimit )
+        if( tor->customUploadLimit
+            ? !tr_rcCanTransfer( tor->upload )
+            : !tr_rcCanTransfer( tor->handle->upload ) )
         {
-            if( !tr_rcCanTransfer( tor->upload ) )
-            {
-                break;
-            }
-        }
-        else
-        {
-            tr_lockUnlock( &tor->lock );
-            if( !tr_rcCanGlobalTransfer( tor->handle, 1 ) )
-            {
-                tr_lockLock( &tor->lock );
-                break;
-            }
-            tr_lockLock( &tor->lock );
+            break;
         }
 
         ret = tr_netSend( peer->socket, p, size );
@@ -520,6 +522,10 @@ writeBegin:
         blockSent( peer, ret );
         tr_rcTransferred( peer->upload, ret );
         tr_rcTransferred( tor->upload, ret );
+        if ( !tor->customUploadLimit )
+        {
+            tr_rcTransferred( tor->handle->upload, ret );
+        }
 
         tor->uploadedCur += ret;
         peer->outTotal   += ret;

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: ratecontrol.c 1452 2007-02-02 17:33:32Z livings124 $
+ * $Id: ratecontrol.c 1869 2007-05-16 02:03:18Z livings124 $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -80,42 +80,6 @@ tr_ratecontrol_t * tr_rcInit()
     tr_lockInit( &r->lock );
 
     return r;
-}
-
-int tr_rcCanGlobalTransfer( tr_handle_t * h, int isUpload )
-{
-    tr_torrent_t * tor;
-    tr_ratecontrol_t * r;
-    float rate = 0;
-    int limit = isUpload ? h->uploadLimit : h->downloadLimit;
-    
-    if( limit <= 0 )
-    {
-        return limit < 0;
-    }
-    
-    tr_sharedLock( h->shared );
-    for( tor = h->torrentList; tor; tor = tor->next )
-    {
-        if( isUpload ? tor->customUploadLimit : tor->customDownloadLimit )
-        {
-            continue;
-        }
-        
-        r = isUpload ? tor->upload : tor->download;
-        tr_lockLock( &r->lock );
-        rate += rateForInterval( r, SHORT_INTERVAL );
-        tr_lockUnlock( &r->lock );
-        
-        if( rate >= (float)limit )
-        {
-            tr_sharedUnlock( h->shared );
-            return 0;
-        }
-    }
-    tr_sharedUnlock( h->shared );
-    
-    return 1;
 }
 
 void tr_rcSetLimit( tr_ratecontrol_t * r, int limit )

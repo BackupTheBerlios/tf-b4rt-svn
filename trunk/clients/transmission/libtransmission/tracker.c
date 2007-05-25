@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: tracker.c 1810 2007-04-29 15:28:56Z livings124 $
+ * $Id: tracker.c 1826 2007-05-04 17:44:31Z livings124 $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -713,8 +713,7 @@ static void readAnswer( tr_tracker_t * tc, const char * data, int len,
     tc->lastError = 0;
     tc->allUnreachIfError = 0;
 
-    /* Get the tracker interval, force to between
-       10 sec and 5 mins */
+    /* Get the tracker interval */
     beFoo = tr_bencDictFind( &beAll, "interval" );
     if( !beFoo || TYPE_INT != beFoo->type )
     {
@@ -726,8 +725,7 @@ static void readAnswer( tr_tracker_t * tc, const char * data, int len,
     tr_inf( "Tracker: interval = %d seconds", tc->interval );
     tc->interval = MAX( 10, tc->interval );
 
-    /* Get the tracker minimum interval, force to between
-       10 sec and 5 mins  */
+    /* Get the tracker minimum interval */
     beFoo = tr_bencDictFind( &beAll, "min interval" );
     if( beFoo && TYPE_INT == beFoo->type )
     {
