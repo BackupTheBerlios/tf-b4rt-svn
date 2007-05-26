@@ -404,16 +404,17 @@ class Transfer(object):
                     return
 
                 # die-on-seed-limit
-                sk = float(self.tf.sharekill)
-                if sk > 0 and self.state_azu == Transfer.AZ_SEEDING:
-                    try:
-                        shareRatio = (float(stats.getShareRatio())) / 10
-                        if shareRatio >= sk:
-                            self.log("seed-limit %s reached (%s), setting shutdown-flag..." % (self.tf.sharekill, str(shareRatio)))
-                            self.stop(download)
-                            return
-                    except:
-                        printException()
+                if self.state_azu == Transfer.AZ_SEEDING:
+                    sk = float(self.tf.sharekill)
+                    if sk > 0:
+                        try:
+                            shareRatio = (float(stats.getShareRatio())) / 10
+                            if shareRatio >= sk:
+                                self.log("seed-limit %s reached (%s), setting shutdown-flag..." % (self.tf.sharekill, str(shareRatio)))
+                                self.stop(download)
+                                return
+                        except:
+                            printException()
 
                 # completed
                 try:
