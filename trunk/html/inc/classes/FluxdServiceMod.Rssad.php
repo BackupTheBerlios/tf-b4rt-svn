@@ -343,7 +343,7 @@ class FluxdRssad extends FluxdServiceMod
 		if (!$handle) {
 			$msg = "cannot open ".$file.".";
 			array_push($this->messages , $msg);
-			AuditAction($cfg["constants"]["fluxd"], "Rssad Filter Load-Error : ".$msg);
+			AuditAction($cfg["constants"]["error"], "Rssad Filter Load-Error : ".$msg);
 			return false;
 		}
 		$data = "";
@@ -369,7 +369,7 @@ class FluxdRssad extends FluxdServiceMod
 		if (!$handle) {
 			$msg = "cannot open ".$file." for writing.";
 			array_push($this->messages , $msg);
-			AuditAction($cfg["constants"]["fluxd"], "Rssad Filter Save-Error : ".$msg);
+			AuditAction($cfg["constants"]["error"], "Rssad Filter Save-Error : ".$msg);
 			return false;
 		}
         $result = @fwrite($handle, str_replace("\r\n", "\n", $content));
@@ -377,7 +377,7 @@ class FluxdRssad extends FluxdServiceMod
 		if ($result === false) {
 			$msg = "cannot write content to ".$file.".";
 			array_push($this->messages , $msg);
-			AuditAction($cfg["constants"]["fluxd"], "Rssad Filter Save-Error : ".$msg);
+			AuditAction($cfg["constants"]["error"], "Rssad Filter Save-Error : ".$msg);
 			return false;
 		}
 		// log
@@ -418,7 +418,7 @@ class FluxdRssad extends FluxdServiceMod
 			return true;
 		} else {
 			// log + return
-			AuditAction($cfg["constants"]["fluxd"], "Rssad Filter Delete Error : ".$filtername." (".$deleted."/".$fileCount.")");
+			AuditAction($cfg["constants"]["error"], "Rssad Filter Delete Error : ".$filtername." (".$deleted."/".$fileCount.")");
 			return false;
 		}
 	}

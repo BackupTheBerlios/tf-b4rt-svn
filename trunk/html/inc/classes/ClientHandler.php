@@ -917,7 +917,10 @@ class ClientHandler
     			// message
 	            $msg = "data-size = '".$transferSize."' when recalcing share-kill for ".$this->transfer.", setting sharekill-param to ".$this->sharekill_param;
 	            array_push($this->messages , $msg);
-				AuditAction($cfg["constants"]["debug"], $msg);
+	            // debug-log
+				if ($cfg['debuglevel'] > 0)
+					AuditAction($cfg["constants"]["debug"], $msg);
+				// log
 				$this->logMessage($msg."\n", true);
 				// set sharekill param
 				$this->sharekill_param = $this->sharekill;
@@ -934,7 +937,10 @@ class ClientHandler
     			// message
 	            $msg = "problems getting totals (upTotal: ".$upTotal."; downTotal: ".$downTotal.") when recalcing share-kill for ".$this->transfer.", setting sharekill-param to ".$this->sharekill_param;
 	            array_push($this->messages , $msg);
-				AuditAction($cfg["constants"]["debug"], $msg);
+	            // debug-log
+				if ($cfg['debuglevel'] > 0)
+					AuditAction($cfg["constants"]["debug"], $msg);
+				// log
 				$this->logMessage($msg."\n", true);
 				// set sharekill param
 				$this->sharekill_param = $this->sharekill;
@@ -948,7 +954,10 @@ class ClientHandler
     			// message
 	            $msg = "problems calculating wanted upload (upWanted: ".$upWanted.") when recalcing share-kill for ".$this->transfer.", setting sharekill-param to ".$this->sharekill_param;
 	            array_push($this->messages , $msg);
-				AuditAction($cfg["constants"]["debug"], $msg);
+	            // debug-log
+				if ($cfg['debuglevel'] > 0)
+					AuditAction($cfg["constants"]["debug"], $msg);
+				// log
 				$this->logMessage($msg."\n", true);
 				// set sharekill param
 				$this->sharekill_param = $this->sharekill;
@@ -962,7 +971,10 @@ class ClientHandler
     			// message
 	            $msg = "problems calculating share percentage (sharePercentage: ".$sharePercentage.") when recalcing share-kill for ".$this->transfer.", setting sharekill-param to ".$this->sharekill_param;
 	            array_push($this->messages , $msg);
-				AuditAction($cfg["constants"]["debug"], $msg);
+	            // debug-log
+				if ($cfg['debuglevel'] > 0)
+					AuditAction($cfg["constants"]["debug"], $msg);
+				// log
 				$this->logMessage($msg."\n", true);
 				// set sharekill param
 				$this->sharekill_param = $this->sharekill;
@@ -984,7 +996,10 @@ class ClientHandler
     			// message
 	            $msg = "skip ".$this->transfer." due to share-ratio (has: ".@number_format($sharePercentage, 2)."; set:".$this->sharekill."; upTotal: ".$upTotal."; upWanted: ".$upWanted.")";
 	            array_push($this->messages , $msg);
-				AuditAction($cfg["constants"]["debug"], $msg);
+	            // debug-log
+				if ($cfg['debuglevel'] > 0)
+					AuditAction($cfg["constants"]["debug"], $msg);
+				// log
 				$this->logMessage($msg."\n", true);
 				// write Skipped to stat
 				$sf = new StatFile($this->transfer, $this->owner);

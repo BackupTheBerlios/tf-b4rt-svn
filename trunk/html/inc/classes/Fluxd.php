@@ -314,14 +314,14 @@ class Fluxd
     function instance_start() {
     	global $cfg;
         if ($this->state == FLUXD_STATE_RUNNING) {
-            AuditAction($cfg["constants"]["fluxd"], "fluxd already started");
+            AuditAction($cfg["constants"]["error"], "fluxd already started");
             return false;
         } else {
 			// check the needed bins
 			// perl
 			if (@file_exists($cfg['perlCmd']) !== true) {
 				$msg = "cannot start fluxd, specified Perl-binary does not exist: ".$cfg['perlCmd'];
-            	AuditAction($cfg["constants"]["admin"], $msg);
+            	AuditAction($cfg["constants"]["error"], $msg);
             	array_push($this->messages , $msg);
             	// Set the state
             	$this->state = FLUXD_STATE_ERROR;
@@ -331,7 +331,7 @@ class Fluxd
 			// php-cli
 			if (@file_exists($cfg['bin_php']) !== true) {
 				$msg = "cannot start fluxd, specified php-cli-binary does not exist: ".$cfg['bin_php'];
-            	AuditAction($cfg["constants"]["admin"], $msg);
+            	AuditAction($cfg["constants"]["error"], $msg);
             	array_push($this->messages , $msg);
             	// Set the state
             	$this->state = FLUXD_STATE_ERROR;
@@ -342,7 +342,7 @@ class Fluxd
 			$loadedExtensions = get_loaded_extensions();
 			if (!in_array("sockets", $loadedExtensions)) {
 				$msg = "refusing to start fluxd, PHP does not have support for sockets";
-            	AuditAction($cfg["constants"]["admin"], $msg);
+            	AuditAction($cfg["constants"]["error"], $msg);
             	array_push($this->messages , $msg);
             	// Set the state
             	$this->state = FLUXD_STATE_ERROR;
@@ -393,7 +393,7 @@ class Fluxd
             	// return
             	return true;
             } else {
-            	AuditAction($cfg["constants"]["fluxd"], "errors starting fluxd");
+            	AuditAction($cfg["constants"]["error"], "errors starting fluxd");
             	// add startcommand to messages for debug
             	// TODO : set better message
             	array_push($this->messages , $startCommand);
@@ -434,7 +434,7 @@ class Fluxd
             return 0;
         } else {
         	$msg = "errors stopping fluxd as was not running.";
-        	AuditAction($cfg["constants"]["fluxd"], $msg);
+        	AuditAction($cfg["constants"]["error"], $msg);
         	array_push($this->messages , $msg);
             // Set the state
             $this->state = FLUXD_STATE_ERROR;

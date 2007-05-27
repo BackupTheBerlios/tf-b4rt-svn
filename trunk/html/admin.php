@@ -32,7 +32,7 @@ require_once('inc/functions/functions.admin.php');
 // access-check
 if ((!isset($cfg['isAdmin'])) || (!$cfg['isAdmin'])) {
 	 // the user probably hit this page direct
-	AuditAction($cfg["constants"]["access_denied"], $_SERVER['PHP_SELF']);
+	AuditAction($cfg["constants"]["access_denied"], "ILLEGAL ACCESS: No Admin");
 	@header("location: index.php?iid=index");
 }
 

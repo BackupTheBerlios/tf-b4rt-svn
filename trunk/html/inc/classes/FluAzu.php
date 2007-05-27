@@ -339,14 +339,14 @@ class FluAzu
     function instance_start() {
     	global $cfg;
         if ($this->state == FLUAZU_STATE_RUNNING) {
-            AuditAction($cfg["constants"]["admin"], "fluazu already started");
+            AuditAction($cfg["constants"]["error"], "fluazu already started");
             return false;
         } else {
 			// check the needed bins
 			// python
 			if (@file_exists($cfg['pythonCmd']) !== true) {
 				$msg = "cannot start fluazu, specified python-binary does not exist: ".$cfg['pythonCmd'];
-            	AuditAction($cfg["constants"]["admin"], $msg);
+            	AuditAction($cfg["constants"]["error"], $msg);
             	array_push($this->messages , $msg);
             	// Set the state
             	$this->state = FLUAZU_STATE_ERROR;
@@ -402,7 +402,7 @@ class FluAzu
             	// return
             	return true;
             } else {
-            	AuditAction($cfg["constants"]["admin"], "errors starting fluazu");
+            	AuditAction($cfg["constants"]["error"], "errors starting fluazu");
             	// Set the state
             	$this->state = FLUAZU_STATE_ERROR;
             	// return
@@ -440,7 +440,7 @@ class FluAzu
             return 0;
         } else {
         	$msg = "errors stopping fluazu as was not running.";
-        	AuditAction($cfg["constants"]["admin"], $msg);
+        	AuditAction($cfg["constants"]["error"], $msg);
         	array_push($this->messages , $msg);
             // Set the state
             $this->state = FLUAZU_STATE_ERROR;
@@ -526,7 +526,9 @@ class FluAzu
     function instance_delTransfer($transfer) {
     	global $cfg;
         if ($this->state == FLUAZU_STATE_RUNNING) {
-        	AuditAction($cfg["constants"]["admin"], "fluazu deleting transfer ".$transfer);
+        	// debug-log
+			if ($cfg['debuglevel'] > 0)
+        		AuditAction($cfg["constants"]["debug"], "fluazu deleting transfer ".$transfer);
         	// write file
         	$file = $this->_pathTransfersDel.$transfer;
 			$handle = false;
@@ -571,7 +573,7 @@ class FluAzu
             }
         } else {
         	$msg = "fluazu not running, cannot delete transfer ".$transfer;
-        	AuditAction($cfg["constants"]["admin"], $msg);
+        	AuditAction($cfg["constants"]["error"], $msg);
         	array_push($this->messages , $msg);
             // Set the state
             $this->state = FLUAZU_STATE_ERROR;
