@@ -16,13 +16,13 @@
 					<form name="theForm" action="admin.php?op=updateWebappSettings" method="post" onsubmit="return validateSettings('webapp')">
 						<table cellpadding="5" cellspacing="0" border="0" width="100%">
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Select Authentication Type:</strong><br>
+								<td align="left" width="350" valign="top"><strong>Select Authentication Type:</strong><br/>
 									<ul>
-										<li><strong>Form Auth</strong><br/>Standard form based authentication</li>
-										<li><strong>Form Auth + Cookie</strong><br/>Standard form based authentication using an 'autologin' cookie (expires after 30 days)</li>
-										<li><strong>Form Auth + Image</strong><br/>Standard form based authentication using image based captcha validation (user must enter the characters displayed in a dynamically created image to validate)</li>
-										<li><strong>Basic Auth</strong><br/>Use HTTP Basic Authentication scheme (browser will handle user/password input)</li>
-										<li><strong>Basic Auth + Passthrough</strong><br/>Pass the credentials of an User already authenticated via Basic Auth to the Webapp.</li>
+										<li><strong>Form Auth</strong><br/>Standard form based authentication.</li>
+										<li><strong>Form Auth + Cookie</strong><br/>Standard form based authentication using an 'autologin' cookie (expires after 30 days).</li>
+										<li><strong>Form Auth + Image</strong><br/>Standard form based authentication using image based captcha validation (user must enter the characters displayed in a dynamically created image to validate).</li>
+										<li><strong>Basic Auth</strong><br/>Use HTTP Basic Authentication scheme (browser will handle user/password input).</li>
+										<li><strong>Basic Auth + Passthrough</strong><br/>Pass the credentials of a user authenticated externally via basic auth to the webapp.</li>
 									</ul>
 								</td>
 								<td valign="top">
@@ -38,7 +38,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Basic Authentication Realm:</strong><br>
+								<td align="left" width="350" valign="top"><strong>Basic Authentication Realm:</strong><br/>
 									Specify the realm name to use if Basic Authentication method is used.
 								</td>
 								<td valign="top">
@@ -46,7 +46,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Default Page Title:</strong><br>
+								<td align="left" width="350" valign="top"><strong>Default Page Title:</strong><br/>
 									Specify the default page title.
 								</td>
 								<td valign="top">
@@ -54,7 +54,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Enable Personal Settings:</strong><br>
+								<td align="left" width="350" valign="top"><strong>Enable Personal Settings:</strong><br/>
 									Allow users to change their personal settings.
 								</td>
 								<td valign="top">
@@ -69,7 +69,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Display Torrentflux-B4rt Site Link:</strong><br>
+								<td align="left" width="350" valign="top"><strong>Display Torrentflux-B4rt Site Link:</strong><br/>
 									When enabled, will display a small link to the Torrentflux-b4rt website at the bottom of all pages.
 								</td>
 								<td valign="top">
@@ -84,7 +84,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Drivespace Bar Style:</strong><br>
+								<td align="left" width="350" valign="top"><strong>Drivespace Bar Style:</strong><br/>
 									Select the styling of the drivespace bar in the frontend.
 								</td>
 								<td valign="top">
@@ -103,7 +103,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Transfer Statistics Update Method:</strong><br>
+								<td align="left" width="350" valign="top"><strong>Transfer Statistics Update Method:</strong><br/>
 									Choose the method used to update the transfer statistics window.
 								</td>
 								<td valign="top">
@@ -118,7 +118,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Transfer Statistics Update Interval:</strong><br>
+								<td align="left" width="350" valign="top"><strong>Transfer Statistics Update Interval:</strong><br/>
 									Specify the interval in seconds between updates in the transfer statistics window.
 								</td>
 								<td valign="top">
@@ -126,7 +126,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Resolve Hostnames In Transfer Window Hosts Tab:</strong><br>
+								<td align="left" width="350" valign="top"><strong>Resolve Hostnames In Transfer Window Hosts Tab:</strong><br/>
 									Whether to resolve transfer peer hostnames to IP addresses in the Hosts tab of the transfer window - selecting Hostnames will add load to the server.
 								</td>
 								<td valign="top">
@@ -141,7 +141,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Server Monitor Update Interval:</strong><br>
+								<td align="left" width="350" valign="top"><strong>Server Monitor Update Interval:</strong><br/>
 									Specify the interval in seconds between updates in the Server Monitor window.
 								</td>
 								<td valign="top">
@@ -149,7 +149,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Hide Referer When Following Links:</strong><br>
+								<td align="left" width="350" valign="top"><strong>Hide Referer When Following Links:</strong><br/>
 									When enabled, referer information will not be forwarded to websites visited by clicking on links within torrentflux-b4rt.
 								</td>
 								<td valign="top">
@@ -164,10 +164,10 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Default Theme:</strong><br>
-									Select the default theme.<br>
-									<strong>Note:</strong><br>
-									This is also the Theme of the the Login-Screen when a Form-Based Auth-Method is used.
+								<td align="left" width="350" valign="top"><strong>Default Theme:</strong><br/>
+									Select the default theme.<br/>
+									<strong>Note:</strong><br/>
+									This theme will also be used for the login screen when a form based authentication method is used.
 								</td>
 								<td valign="top">
 									<select name="default_theme">
@@ -183,7 +183,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Default Language:</strong><br>
+								<td align="left" width="350" valign="top"><strong>Default Language:</strong><br/>
 									Select the default language.
 								</td>
 								<td valign="top">
@@ -195,7 +195,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Days To Keep Logged Audit Actions:</strong><br>
+								<td align="left" width="350" valign="top"><strong>Days To Keep Logged Audit Actions:</strong><br/>
 									Number of days that audit actions will be held in the database.
 								</td>
 								<td valign="top">
@@ -203,7 +203,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Minutes To Keep User Online Status:</strong><br>
+								<td align="left" width="350" valign="top"><strong>Minutes To Keep User Online Status:</strong><br/>
 									Number of minutes after ending a browser session that user status changes to offline.
 								</td>
 								<td valign="top">
@@ -211,7 +211,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Minutes To Cache RSS Feeds:</strong><br>
+								<td align="left" width="350" valign="top"><strong>Minutes To Cache RSS Feeds:</strong><br/>
 									Number of minutes to cache RSS XML feeds on the server.
 								</td>
 								<td valign="top">
@@ -219,7 +219,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Enable Template Cache:</strong><br>
+								<td align="left" width="350" valign="top"><strong>Enable Template Cache:</strong><br/>
 									Enable caching of HTML template files.<br/><tmpl_var name="SuperAdminLink_tmplCache">
 								</td>
 								<td valign="top">
@@ -230,7 +230,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Debug Level:</strong><br>
+								<td align="left" width="350" valign="top"><strong>Debug Level:</strong><br/>
 									Set the debug level - higher values increase the debugging output in the logs.
 								</td>
 								<td valign="top">
@@ -242,7 +242,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Show SQL Debug Statements:</strong><br>
+								<td align="left" width="350" valign="top"><strong>Show SQL Debug Statements:</strong><br/>
 								SQL Errors will always be displayed but when this feature is enabled the SQL Statement that caused the error will be displayed as well.
 								</td>
 								<td valign="top">
@@ -257,11 +257,11 @@
 								</td>
 							</tr>
 						</table>
-						<br>
+						<br/>
 						<input type="Submit" value="Update Settings">
 					</form>
 				</div>
-				<br>
+				<br/>
 			</td>
 		</tr>
 	</table>

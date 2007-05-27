@@ -33,11 +33,11 @@
 				<tr>
 					<td class="settingsText">
 						<ul>
-							<li><strong>Form Auth</strong><br/>Standard form based authentication</li>
-							<li><strong>Form Auth + Cookie</strong><br/>Standard form based authentication using an 'autologin' cookie (expires after 30 days)</li>
-							<li><strong>Form Auth + Image</strong><br/>Standard form based authentication using image based captcha validation (user must enter the characters displayed in a dynamically created image to validate)</li>
-							<li><strong>Basic Auth</strong><br/>Use HTTP Basic Authentication scheme (browser will handle user/password input)</li>
-							<li><strong>Basic Auth + Passthrough</strong><br/>Pass the credentials of an User already authenticated via Basic Auth to the Webapp.</li>
+							<li><strong>Form Auth</strong><br/>Standard form based authentication.</li>
+							<li><strong>Form Auth + Cookie</strong><br/>Standard form based authentication using an 'autologin' cookie (expires after 30 days).</li>
+							<li><strong>Form Auth + Image</strong><br/>Standard form based authentication using image based captcha validation (user must enter the characters displayed in a dynamically created image to validate).</li>
+							<li><strong>Basic Auth</strong><br/>Use HTTP Basic Authentication scheme (browser will handle user/password input).</li>
+							<li><strong>Basic Auth + Passthrough</strong><br/>Pass the credentials of a user authenticated externally via basic auth to the webapp.</li>
 						</ul>
 					</td>
 				</tr>
@@ -219,9 +219,9 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Default Theme.<br>
-						<strong>Note:</strong><br>
-						This is also the Theme of the the Login-Screen when a Form-Based Auth-Method is used.
+						Default Theme.<br/>
+						<strong>Note:</strong><br/>
+						This theme will also be used for the login screen when a form based authentication method is used.
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<select name="default_theme">
