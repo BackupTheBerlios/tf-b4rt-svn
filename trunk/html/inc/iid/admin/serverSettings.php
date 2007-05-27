@@ -56,7 +56,7 @@ $tmpl->setvar('validate_perl', validateBinary($cfg["perlCmd"]));
 $tmpl->setvar('bin_grep', $cfg["bin_grep"]);
 $tmpl->setvar('validate_grep', validateBinary($cfg["bin_grep"]));
 $tmpl->setvar('bin_php', $cfg["bin_php"]);
-$tmpl->setvar('validate_php', validateBinary($cfg["bin_php"]));
+$tmpl->setvar('validate_php', validatePhpCli($cfg["bin_php"]));
 $tmpl->setvar('pythonCmd', $cfg["pythonCmd"]);
 $tmpl->setvar('validate_python', validateBinary($cfg["pythonCmd"]));
 $tmpl->setvar('bin_awk', $cfg["bin_awk"]);

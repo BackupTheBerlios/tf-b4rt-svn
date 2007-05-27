@@ -790,6 +790,26 @@ function validateBinary($the_file) {
 }
 
 /**
+ * Validates existence + exec + valid version pf PHP-cli and returns the status image
+ *
+ * @param $the_file
+ * @return string
+ */
+function validatePhpCli($the_file) {
+	global $cfg;
+	if (isFile($the_file)) {
+		if (is_executable($the_file)) {
+			$phpVersion = shell_exec($the_file.' -v');
+			return (((strpos($phpVersion, 'PHP')) !== false) && ((strpos($phpVersion, '(cli)')) !== false))
+				? '<img src="themes/'.$cfg['theme'].'/images/green.gif" align="absmiddle" title="Valid">'
+				: '<img src="themes/'.$cfg['theme'].'/images/red.gif" align="absmiddle" title="PHP-CLI required"><br><font color="#ff0000">PHP-CLI required</font>';
+		}
+		return '<img src="themes/'.$cfg['theme'].'/images/red.gif" align="absmiddle" title="File exists but is not executable"><br><font color="#ff0000">File exists but is not executable</font>';
+	}
+	return '<img src="themes/'.$cfg['theme'].'/images/red.gif" align="absmiddle" title="Path is not Valid"><br><font color="#ff0000">Path is not Valid</font>';
+}
+
+/**
  * setUserState
  */
 function setUserState() {
