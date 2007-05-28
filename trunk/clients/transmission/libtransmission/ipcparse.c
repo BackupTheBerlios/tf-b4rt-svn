@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: ipcparse.c 1931 2007-05-24 07:11:59Z joshe $
+ * $Id: ipcparse.c 1958 2007-05-27 16:30:04Z joshe $
  *
  * Copyright (c) 2007 Joshua Elsasser
  *
@@ -28,11 +28,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "transmission.h"
+
 #include "bsdtree.h"
 #include "ipcparse.h"
-
-#include "transmission.h"
-#include "bencode.h"
 
 /* begin copy-paste from daemon/misc.h */
 

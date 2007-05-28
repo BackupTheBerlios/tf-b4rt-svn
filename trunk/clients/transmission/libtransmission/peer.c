@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peer.c 1942 2007-05-24 20:09:32Z livings124 $
+ * $Id: peer.c 1953 2007-05-25 21:44:26Z livings124 $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -287,6 +287,7 @@ int tr_peerRead( tr_peer_t * peer )
 {
     tr_torrent_t * tor = peer->tor;
     int ret;
+    uint64_t date;
 
     /* Try to read */
     for( ;; )
@@ -324,7 +325,8 @@ int tr_peerRead( tr_peer_t * peer )
         {
             break;
         }
-        peer->date  = tr_date();
+        date        = tr_date();
+        peer->date  = date;
         peer->pos  += ret;
         if( NULL != tor )
         {
@@ -333,6 +335,11 @@ int tr_peerRead( tr_peer_t * peer )
             if ( !tor->customDownloadLimit )
             {
                 tr_rcTransferred( tor->handle->download, ret );
+            }
+            
+            if( tr_peerAmInterested( peer ) && !tr_peerIsChoking( peer ) )
+            {
+                tor->activityDate = date;
             }
             
             if( ( ret = parseBuf( tor, peer ) ) )
@@ -397,6 +404,7 @@ int tr_peerPulse( tr_peer_t * peer )
     tr_torrent_t * tor = peer->tor;
     int ret, size;
     uint8_t * p;
+    uint64_t date;
 
     if( ( ret = checkPeer( peer ) ) )
     {
@@ -529,7 +537,14 @@ writeBegin:
 
         tor->uploadedCur += ret;
         peer->outTotal   += ret;
-        peer->outDate     = tr_date();
+        
+        date              = tr_date();
+        peer->outDate     = date;
+        
+        if( !tr_peerAmChoking( peer ) )
+        {
+            tor->activityDate = date;
+        }
 
         /* In case this block is done, you may have messages
            pending. Send them before we start the next block */

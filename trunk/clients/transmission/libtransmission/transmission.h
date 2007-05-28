@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.h 1912 2007-05-23 04:45:20Z joshe $
+ * $Id: transmission.h 1946 2007-05-25 19:14:42Z livings124 $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -460,6 +460,9 @@ struct tr_stat_s
 
 #define TR_RATIO_NA  -1
     float               ratio;
+    
+    uint64_t            startDate;
+    uint64_t            activityDate;
 };
 
 struct tr_peer_stat_s
