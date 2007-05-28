@@ -16,10 +16,10 @@
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
-						<tmpl_var name="_USER">:
+						<label for="newUser"><tmpl_var name="_USER">:</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="newUser" type="Text" value="" size="15">
+						<input name="newUser" id="newUser" type="Text" value="" size="15">
 					</td>
 				</tr>
 				<tr>
@@ -28,10 +28,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						<tmpl_var name="_PASSWORD">:
+						<label for="pass1"><tmpl_var name="_PASSWORD">:</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="pass1" type="Password" value="" size="15">
+						<input name="pass1" id="pass1" type="Password" value="" size="15">
 					</td>
 				</tr>
 				<tr>
@@ -40,10 +40,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						<tmpl_var name="_CONFIRMPASSWORD">:
+						<label for="pass2"><tmpl_var name="_CONFIRMPASSWORD">:</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="pass2" type="Password" value="" size="15">
+						<input name="pass2" id="pass2" type="Password" value="" size="15">
 					</td>
 				</tr>
 				<tr>
@@ -52,10 +52,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						<tmpl_var name="_USERTYPE">:
+						<label for="userType"><tmpl_var name="_USERTYPE">:</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="userType">
+						<select name="userType" id="userType">
 							<option value="0"><tmpl_var name="_NORMALUSER"></option>
 							<option value="1"><tmpl_var name="_ADMINISTRATOR"></option>
 						</select>

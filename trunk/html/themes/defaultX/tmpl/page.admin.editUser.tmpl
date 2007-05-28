@@ -77,29 +77,29 @@
 						<form name="theForm" action="admin.php?op=updateUser" method="post" onsubmit="return validateUser('<tmpl_var name="_USERIDREQUIRED">', '<tmpl_var name="_PASSWORDLENGTH">', '<tmpl_var name="_PASSWORDNOTMATCH">', '<tmpl_var name="_PLEASECHECKFOLLOWING">')">
 							<table cellpadding="5" cellspacing="0" border="0">
 								<tr>
-									<td align="right"><tmpl_var name="_USER">:</td>
+									<td align="right"><label for="user_id"><tmpl_var name="_USER">:</label></td>
 									<td>
-										<input name="user_id" type="Text" value="<tmpl_var name="user_id">" size="15">
+										<input name="user_id" id="user_id" type="Text" value="<tmpl_var name="user_id">" size="15">
 										<input name="org_user_id" type="Hidden" value="<tmpl_var name="user_id">">
 									</td>
 								</tr>
 								<tr>
-									<td align="right"><tmpl_var name="_NEWPASSWORD">:</td>
+									<td align="right"><label for="pass1"><tmpl_var name="_NEWPASSWORD">:</label></td>
 									<td>
-									<input name="pass1" type="Password" value="" size="15">
+									<input name="pass1" id="pass1" type="Password" value="" size="15">
 									</td>
 								</tr>
 								<tr>
-									<td align="right"><tmpl_var name="_CONFIRMPASSWORD">:</td>
+									<td align="right"><label for="pass2"><tmpl_var name="_CONFIRMPASSWORD">:</label></td>
 									<td>
-									<input name="pass2" type="Password" value="" size="15">
+									<input name="pass2" id="pass2" type="Password" value="" size="15">
 									</td>
 								</tr>
 								<tr>
-									<td align="right"><tmpl_var name="_USERTYPE">:</td>
+									<td align="right"><label for="userType"><tmpl_var name="_USERTYPE">:</label></td>
 									<td>
 										<tmpl_if name="user_level" op="<=" value="1">
-											<select name="userType">
+											<select name="userType" id="userType">
 												<option value="0" <tmpl_var name="selected_n">><tmpl_var name="_NORMALUSER"></option>
 												<option value="1" <tmpl_var name="selected_a">><tmpl_var name="_ADMINISTRATOR"></option>
 											</select>
@@ -111,7 +111,7 @@
 								</tr>
 								<tr>
 									<td colspan="2">
-										<input name="hideOffline" type="Checkbox" value="1" <tmpl_var name="hide_checked">> <tmpl_var name="_HIDEOFFLINEUSERS"><br>
+										<input name="hideOffline" id="hideOffline" type="Checkbox" value="1" <tmpl_var name="hide_checked">> <label for="hideOffline"><tmpl_var name="_HIDEOFFLINEUSERS"></label><br>
 									</td>
 								</tr>
 								<tr>

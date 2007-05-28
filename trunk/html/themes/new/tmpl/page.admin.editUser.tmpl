@@ -86,32 +86,32 @@
 						<table>
 							<tr>
 								<td class="buttonLinks">
-									<tmpl_var name="_USER">:
+									<label for="user_id"><tmpl_var name="_USER">:</label>
 								</td>
 								<td class="buttonLinks">
-									<input name="user_id" type="Text" value="<tmpl_var name="user_id">" size="15"><input name="org_user_id" type="Hidden" value="<tmpl_var name="user_id">">
+									<input name="user_id" id="user_id" type="Text" value="<tmpl_var name="user_id">" size="15"><input name="org_user_id" type="Hidden" value="<tmpl_var name="user_id">">
 								</td>
 							</tr>
 							<tr>
 								<td class="buttonLinks" rowspan="2">
-									<tmpl_var name="_NEWPASSWORD">:
+									<label for="pass1"><tmpl_var name="_NEWPASSWORD">:</label>
 								</td>
 								<td class="buttonLinks">
-									<input name="pass1" type="Password" value="" size="15">
-								</td>
-							</tr>
-							<tr>
-								<td class="buttonLinks">
-									<input name="pass2" type="Password" value="" size="15">
+									<input name="pass1" id="pass1" type="Password" value="" size="15">
 								</td>
 							</tr>
 							<tr>
 								<td class="buttonLinks">
-									<tmpl_var name="_USERTYPE">:
+									<input name="pass2" id="pass2" type="Password" value="" size="15">
+								</td>
+							</tr>
+							<tr>
+								<td class="buttonLinks">
+									<label for="userType"><tmpl_var name="_USERTYPE">:</label>
 								</td>
 								<td class="buttonLinks">
 									<tmpl_if name="user_level" op="<=" value="1">
-										<select name="userType">
+										<select name="userType" id="userType">
 											<option value="0" <tmpl_var name="selected_n">><tmpl_var name="_NORMALUSER"></option>
 											<option value="1" <tmpl_var name="selected_a">><tmpl_var name="_ADMINISTRATOR"></option>
 										</select>
@@ -123,7 +123,7 @@
 							</tr>
 							<tr>
 								<td colspan="2">
-									<input name="hideOffline" type="Checkbox" value="1" <tmpl_var name="hide_checked">> <tmpl_var name="_HIDEOFFLINEUSERS">
+									<input name="hideOffline" id="hideOffline" type="Checkbox" value="1" <tmpl_var name="hide_checked">> <label for="hideOffline"><tmpl_var name="_HIDEOFFLINEUSERS"></label>
 								</td>
 							</tr>
 						</table>

@@ -11,10 +11,10 @@
 		<tr>
 			<td colspan=2 align="center">
 				<form action="admin.php?op=addLink" method="post">
-					<tmpl_var name="_FULLURLLINK">:
-					<input type="Text" size="30" maxlength="255" name="newLink">
-					<tmpl_var name="_FULLSITENAME">:
-					<input type="Text" size="30" maxlength="255" name="newSite">
+					<label for="newLink"><tmpl_var name="_FULLURLLINK">:</label>
+					<input type="Text" size="30" maxlength="255" name="newLink" id="newLink">
+					<label for="newSite"><tmpl_var name="_FULLSITENAME">:</label>
+					<input type="Text" size="30" maxlength="255" name="newSite" id="newSite">
 					<input type="Submit" value="<tmpl_var name="_UPDATE">"><br>
 				</form>
 			</td>
@@ -24,11 +24,11 @@
 				<tmpl_if name="is_edit">
 					<td colspan="2">
 						<form action="admin.php?op=editLink" method="post">
-							<tmpl_var name="_FULLURLLINK">:
-							<input type="Text" size="30" maxlength="255" name="editLink" value="<tmpl_var escape="html" name="url">">
-							<tmpl_var name="_FULLSITENAME">:
-							<input type="Text" size="30" maxlength="255" name="editSite" value="<tmpl_var escape="html" name="sitename">">
 							<input type="hidden" name="lid" value="<tmpl_var name="lid">">
+							<label for="editLink"><tmpl_var name="_FULLURLLINK">:</label>
+							<input type="Text" size="30" maxlength="255" name="editLink" id="editLink" value="<tmpl_var escape="html" name="url">">
+							<label for="editSite"><tmpl_var name="_FULLSITENAME">:</label>
+							<input type="Text" size="30" maxlength="255" name="editSite" id="editSite" value="<tmpl_var escape="html" name="sitename">">
 							<input type="Submit" value="<tmpl_var name="_UPDATE">"><br>
 						</form>
 					</td>
