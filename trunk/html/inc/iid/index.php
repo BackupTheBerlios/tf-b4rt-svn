@@ -137,9 +137,6 @@ foreach ($arList as $transfer) {
 	// status-image
 	$hd = getStatusImage($sf);
 
-	// more vars
-	$detailsLinkString = "<a style=\"font-size:9px; text-decoration:none;\" href=\"JavaScript:showTransfer('index.php?iid=".$cfg["transfer_window_default"]."&transfer=".urlencode($transfer)."')\">";
-
 	// ---------------------------------------------------------------------
 	//XFER: update1: add upload/download stats to the xfer array
 	if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
@@ -168,11 +165,11 @@ foreach ($arList as $transfer) {
 	$show_run = true;
 	switch ($transferRunning) {
 		case 2: // new
-			$statusStr = $detailsLinkString."<font color=\"#32cd32\">New</font></a>";
+			$statusStr = "New";
 			$is_no_file = 1;
 			break;
 		case 3: // queued
-			$statusStr = $detailsLinkString."Queued</a>";
+			$statusStr = "Queued";
 			$estTime = "Waiting...";
 			$is_no_file = 1;
 			break;
@@ -200,13 +197,13 @@ foreach ($arList as $transfer) {
 			}
 			// $show_run + $statusStr
 			if ($percentDone >= 100) {
-				$statusStr = (trim($sf->up_speed) != "" && $transferRunning == 1) ? $detailsLinkString.'Seeding</a>' : $detailsLinkString.'Done</a>';
+				$statusStr = (trim($sf->up_speed) != "" && $transferRunning == 1) ? "Seeding" : "Done";
 				$show_run = false;
 			} else if ($percentDone < 0) {
-				$statusStr = $detailsLinkString."Stopped</a>";
+				$statusStr = "Stopped";
 				$show_run = true;
 			} else {
-				$statusStr = $detailsLinkString."Leeching</a>";
+				$statusStr = "Leeching";
 			}
 			// pid-file
 			$is_no_file = (is_file($cfg["transfer_file_path"].$transfer.".pid")) ? 0 : 1;
