@@ -32,15 +32,15 @@ function loginSubmit(useImageCode) {
 		return false;
 	}
 	var loginDivForm = document.getElementById("login_form");
-	if (loginDivForm != null) {
-		if (navigator.appName == "Microsoft Internet Explorer" && navigator.userAgent.indexOf("MSIE 7") == -1)
-			loginDivForm.style.top = document.documentElement.scrollTop;
+	if (loginDivForm != null)
 		loginDivForm.style.display = "none";
-	}
+		
 	var loginDivAction = document.getElementById("login_in_progress");
-	if (loginDivAction != null) {
-		if (navigator.appName == "Microsoft Internet Explorer" && navigator.userAgent.indexOf("MSIE 7") == -1)
-			loginDivAction.style.top = document.documentElement.scrollTop;
-		loginDivAction.style.display = "block";
+	if (loginDivAction != null) 
+	{
+		if(loginDivAction.className == 'hidden')
+			loginDivAction.className = '';
+		else
+			loginDivAction.style.display = 'block';
 	}
 }
