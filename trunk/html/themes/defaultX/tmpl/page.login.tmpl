@@ -1,180 +1,164 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-	<title><tmpl_var name="pagetitle"></title>
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-	<link rel="stylesheet" type="text/css" href="themes/<tmpl_var name="theme">/css/default.css" />
-	<meta http-equiv="pragma" content="no-cache" />
-	<script src="js/login.js" type="text/javascript"></script>
-	<style>
-		form {margin: 0px; padding: 0px; display: inline;}
-		#login_in_progress { background: #829FB5; color: #FFFFFF; text-align: center; font-weight: bold; font-size: 18px; width: 100%; }
-	</style>
-</head>
-<body bgcolor="#829FB5">
+<tmpl_include name="inc.head.tmpl">
+<body>
 <br />
-<br />
-<br />
-<div id="login_in_progress" style="display: none;">Login...</div>
-<div id="login_form" align="center">
-	<table border="1" bordercolor="#A2BED4" cellpadding="0" cellspacing="0">
+<div id="login_in_progress" style="display:none;"><img src="themes/<tmpl_var name="theme">/images/loading_big.gif" alt="" style="vertical-align:middle;" />&nbsp;Logging you in</div>
+<div id="login_form">
+<center>
+<table class="table" cellspacing="0" style="width:300px;">
+	<thead>
 		<tr>
-			<td>
-				<table border="0" cellpadding="4" cellspacing="0" width="100%">
-					<tr>
-						<td align="left" background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="#829FB5">
-							<font class="title"><tmpl_var name="pagetitle"> Login</font>
-						</td>
-					</tr>
-				</table>
-			</td>
+			<td class="tableheading titleleft">Login</td>
 		</tr>
-		<tr>
-			<td bgcolor="#A2BED4">
-				<div align="center">
-					<table width="100%" bgcolor="#A2BED4">
-						<tr>
-							<td>
-								<table bgcolor="#A2BED4" width="352 pixels" cellpadding="1">
+	</thead>
+	<tbody>
+			<tmpl_if name="login_failed">
+				<tr class="tablecontent"><td class="login_td" style="text-align:center;">Login failed. Please try again.</td></tr>
+			</tmpl_if>
+			<tmpl_if name="auth_type" value="1">
+				<tmpl_if name="cookie_set" value="1">
+					<tr class="tablecontent">
+						<td>
+							<form name="cookieLogin" action="login.php" method="post">
+							<table style="width:100%;" cellspacing="0">
+							<tbody>
+								<tr>
+									<td class="login_td" style="text-align:center;font-weight:bold;" colspan="2">Cookie found</td>
+								</tr>
+								<tr>
+									<td class="login_td" colspan="2" align="center">
+										<input name="docookielogin" type="hidden" value="true" />
+										<input name="username" type="hidden" value="<tmpl_var name="cookieuser">" />
+										<input name="md5pass" type="hidden" value="<tmpl_var name="cookiepass">" />
+										<input class="button" type="submit" value="Login as <tmpl_var name="cookieuser">" />
+									</td>
+								</tr>
+							</tbody>
+							</table>
+							</form>
+							<form name="theForm" action="login.php" method="post" onsubmit="return loginSubmit(0)">
+								<table style="width:100%;" cellspacing="0">
+								<tbody>
 									<tr>
-										<td>
-											<div align="center">
-												<table border="0" cellpadding="4" cellspacing="0">
-													<tr>
-														<td>
-															<tmpl_if name="login_failed">
-																<div align="center">Login failed.<br />Please try again.</div>
-															</tmpl_if>
-															<tmpl_if name="auth_type" value="1">
-																<tmpl_if name="cookie_set" value="1">
-																	<form name="cookieLogin" action="login.php" method="post">
-																		<table width="100%" cellpadding="5" cellspacing="0" border="0">
-																			<tr>
-																				<td align="center" colspan="2"><strong>Cookie found</strong></td>
-																			</tr>
-																			<tr>
-																				<td colspan="2" align="center">
-																					<input name="docookielogin" type="Hidden" value="true">
-																					<input name="username" type="Hidden" value="<tmpl_var name="cookieuser">">
-																					<input name="md5pass" type="Hidden" value="<tmpl_var name="cookiepass">">
-																					<input class="button" type="submit" value="Login as <tmpl_var name="cookieuser">" />
-																					<br><br>
-																				</td>
-																			</tr>
-																		</table>
-																	</form>
-																	<form name="theForm" action="login.php" method="post" onsubmit="return loginSubmit(0)">
-																		<table width="100%" cellpadding="5" cellspacing="0" border="0">
-																			<tr>
-																				<td align="center" colspan="2"><strong>Login as different User:</strong></td>
-																			</tr>
-																			<tr>
-																				<td align="right"><label for="username">Username:</label></td>
-																				<td><input type="text" name="username" id="username" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000;" /></td>
-																			</tr>
-																			<tr>
-																				<td align="right"><label for="iamhim">Password:</label></td>
-																				<td><input type="password" name="iamhim" id="iamhim" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
-																			</tr>
-																			<tr>
-																				<td align="right"><label for="setcookie">Set "Auto-Login" Cookie</label></td>
-																				<td align="left"><input type="checkbox" name="setcookie" id="setcookie" value="true" checked size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
-																			</tr>
-																			<tr>
-																				<td colspan="2" align="center">
-																					<input name="docookieloginnew" type="Hidden" value="true">
-																					<input class="button" type="submit" value="Login" />
-																				</td>
-																			</tr>
-																		</table>
-																	</form>
-																<tmpl_else>
-																	<form name="theForm" action="login.php" method="post" onsubmit="return loginSubmit(0)">
-																		<table width="100%" cellpadding="5" cellspacing="0" border="0">
-																			<tr>
-																				<td align="right"><label for="username">Username:</label></td>
-																				<td><input type="text" name="username" id="username" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000;" /></td>
-																			</tr>
-																			<tr>
-																				<td align="right"><label for="iamhim">Password:</label></td>
-																				<td><input type="password" name="iamhim" id="iamhim" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
-																			</tr>
-																			<tr>
-																				<td align="right"><label for="setcookie">Set "Auto-Login" Cookie</label></td>
-																				<td align="left"><input type="checkbox" name="setcookie" id="setcookie" value="true" checked size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
-																			</tr>
-																			<tr>
-																				<td colspan="2" align="center">
-																					<input name="docookieloginnew" type="Hidden" value="true">
-																					<input class="button" type="submit" value="Login" />
-																				</td>
-																			</tr>
-																		</table>
-																	</form>
-																</tmpl_if>
-															<tmpl_elseif name="auth_type" value="4">
-																<form name="theForm" action="login.php" method="post" onsubmit="return loginSubmit(<tmpl_var name="imageSupported">)">
-																	<table width="100%" cellpadding="5" cellspacing="0" border="0">
-																		<tr>
-																			<td align="right"><label for="username">Username:</label></td>
-																			<td><input type="text" name="username" id="username" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000;" /></td>
-																		</tr>
-																		<tr>
-																			<td align="right"><label for="iamhim">Password:</label></td>
-																			<td><input type="password" name="iamhim" id="iamhim" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
-																		</tr>
-																		<tmpl_if name="imageSupported" value="1">
-												                            <tr>
-												                                <td align="right"><label for="security"><img border="1" align="middle" src="image.php?i=login&rnd=<tmpl_var name="rnd">"></label></td>
-												                                <td>
-												                                	<input type="text" name="security" id="security" value="" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" />
-												                                	<input type="Hidden" name="rnd_chk" value="<tmpl_var name="rnd">">
-												                                </td>
-												                            </tr>
-												                        <tmpl_else>
-												                            <tr>
-												                                <td colspan="2" align="center"><img border="0" align="middle" src="image.php?i=notsup"></td>
-												                            </tr>
-												                        </tmpl_if>
-																		<tr>
-																			<td colspan="2" align="center"><input class="button" type="submit" value="Login" /></td>
-																		</tr>
-																	</table>
-																</form>
-															<tmpl_else>
-																<form name="theForm" action="login.php" method="post" onsubmit="return loginSubmit(0)">
-																	<table width="100%" cellpadding="5" cellspacing="0" border="0">
-																		<tr>
-																			<td align="right"><label for="username">Username:</label></td>
-																			<td><input type="text" name="username" id="username" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000;" /></td>
-																		</tr>
-																		<tr>
-																			<td align="right"><label for="iamhim">Password:</label></td>
-																			<td><input type="password" name="iamhim" id="iamhim" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
-																		</tr>
-																		<tr>
-																			<td colspan="2" align="center"><input class="button" type="submit" value="Login" /></td>
-																		</tr>
-																	</table>
-																</form>
-															</tmpl_if>
-														</td>
-													</tr>
-												</table>
-											</div>
+										<td class="login_td" style="text-align:center;font-wight:bold;" colspan="2">Login as different User:</td>
+									</tr>
+									<tr>
+										<td class="login_td" style="text-align:right;"><label for="username">Username:</label></td>
+										<td class="login_td"><input type="text" name="username" id="username" size="15" /></td>
+									</tr>
+									<tr>
+										<td class="login_td" style="text-align:right;"><label for="iamhim">Password:</label></td>
+										<td class="login_td"><input type="password" name="iamhim" id="iamhim" size="15" /></td>
+									</tr>
+									<tr>
+										<td class="login_td" style="text-align:right;"><label for="setcookie">Set "Auto-Login" Cookie</label></td>
+										<td class="login_td" style="text-align:left;"><input type="checkbox" name="setcookie" id="setcookie" value="true" checked="checked" size="15" /></td>
+									</tr>
+									<tr>
+										<td class="login_td" colspan="2" align="center">
+											<input name="docookieloginnew" type="hidden" value="true" />
+											<input type="submit" value="Login" />
 										</td>
 									</tr>
+								</tbody>
 								</table>
-							</td>
-						</tr>
-					</table>
-				</div>
-			</td>
-		</tr>
+							</form>
+						</td>
+					</tr>
+				<tmpl_else>
+					<tr class="tablecontent">
+						<td>
+							<form name="theForm" action="login.php" method="post" onsubmit="return loginSubmit(0)">
+								<table style="width:100%" cellspacing="0">
+								<tbody>
+									<tr>
+										<td class="login_td" style="text-align:right;"><label for="username">Username:</label></td>
+										<td class="login_td"><input type="text" name="username" id="username" size="15" /></td>
+									</tr>
+									<tr>
+										<td class="login_td" style="text-align:right;"><label for="iamhim">Password:</label></td>
+										<td class="login_td"><input type="password" name="iamhim" id="iamhim" size="15" /></td>
+									</tr>
+									<tr>
+										<td class="login_td" style="text-align:right;"><label for="setcookie">Set "Auto-Login" Cookie</label></td>
+										<td class="login_td" style="text-align:left;"><input type="checkbox" name="setcookie" id="setcookie" value="true" checked="checked" size="15" /></td>
+									</tr>
+									<tr>
+										<td class="login_td" colspan="2" align="center">
+											<input name="docookieloginnew" type="hidden" value="true" />
+											<input type="submit" value="Login" />
+										</td>
+									</tr>
+								</tbody>
+								</table>
+							</form>
+						</td>
+					</tr>
+				</tmpl_if>
+			<tmpl_elseif name="auth_type" value="4">
+				<tr class="tablecontent">
+					<td>
+					<form name="theForm" action="login.php" method="post" onsubmit="return loginSubmit(<tmpl_var name="imageSupported">)">
+						<table style="width:100%;" cellspacing="0">
+						<tbody>
+							<tr>
+								<td class="login_td" style="text-align:right;"><label for="username">Username:</label></td>
+								<td class="login_td"><input type="text" name="username" id="username" size="15" /></td>
+							</tr>
+							<tr>
+								<td class="login_td" style="text-align:right;"><label for="iamhim">Password:</label></td>
+								<td class="login_td"><input type="password" name="iamhim" id="iamhim" size="15" /></td>
+							</tr>
+						<tmpl_if name="imageSupported" value="1">
+							<tr>
+								<td style="text-align:right;" class="login_td">
+									<label for="security">
+										<img src="image.php?i=login&amp;rnd=<tmpl_var name="rnd">" style="border:1px solid #000000;" />
+									</label>
+								</td>
+								<td class="login_td">
+									<input type="text" name="security" id="security" value="" size="15" />
+									<input type="hidden" name="rnd_chk" value="<tmpl_var name="rnd">" />
+								</td>
+							</tr>
+						<tmpl_else>
+							<tr>
+								<td colspan="2" class="login_td" style="text-align:center;"><img src="image.php?i=notsup" /></td>
+							</tr>
+						</tmpl_if>
+							<tr>
+								<td colspan="2" class="login_td" style="text-align:center;"><input type="submit" value="Login" /></td>
+							</tr>
+						</tbody>
+						</table>
+					</form>
+					</td>
+				</tr>
+			<tmpl_else>
+					<tr class="tablecontent">
+						<td>
+							<form name="theForm" action="login.php" method="post" onsubmit="return loginSubmit(0)">
+								<table style="width:100%;" cellspacing="0">
+								<tbody>
+									<tr>
+										<td class="login_td" style="text-align:right;"><label for="username">Username:</label></td>
+										<td class="login_td"><input type="text" name="username" id="username" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000;" /></td>
+									</tr>
+									<tr>
+										<td class="login_td" style="text-align:right;"><label for="iamhim">Password:</label></td>
+										<td class="login_td"><input type="password" name="iamhim" id="iamhim" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
+									</tr>
+									<tr>
+										<td class="login_td" colspan="2" style="text-align:center;"><input class="button" type="submit" value="Login" /></td>
+									</tr>
+								</tbody>
+								</table>
+							</form>
+						</td>
+					</tr>
+			</tmpl_if>
+		</tbody>
 	</table>
+</center>
 </div>
-<script type="text/javascript">
-	document.theForm.username.focus();
-</script>
 </body>
 </html>

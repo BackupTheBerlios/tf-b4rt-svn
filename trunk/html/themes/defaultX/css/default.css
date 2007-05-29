@@ -124,6 +124,39 @@ a:hover.tableheadlink
 	background-color:#A2BED4;
 }
 
+.hidden
+{
+	visibility:hidden;
+}
+
+#action_in_progress 
+{ 
+	background: #DDDDFF;
+	border:3px solid #a0b9d8;
+	color: #EE2222;
+	text-align: center;
+	font-weight: bold;
+	font-size: 100%;
+	padding: 3px;
+	position: fixed;
+	top:0px;
+	left:0px;
+	z-index:10102 !important;
+}
+
+#grey_out
+{
+	position: fixed;
+	height:100%;
+	width:100%;
+	z-index:10100 !important;
+	top: 0px;
+	left: 0px;
+	background-color:#000000;
+	filter:alpha(opacity=50);
+	-moz-opacity: 0.5;
+	opacity: 0.5;
+}
 
 /*INPUT 		{BORDER-TOP-COLOR: #000000; BORDER-LEFT-COLOR: #000000; BORDER-RIGHT-COLOR: #000000; BORDER-BOTTOM-COLOR: #000000; BORDER-TOP-WIDTH: 1px; BORDER-LEFT-WIDTH: 1px; FONT-SIZE: 12px; BORDER-BOTTOM-WIDTH: 1px; FONT-FAMILY: Verdana,Helvetica; BORDER-RIGHT-WIDTH: 1px}
 TEXTAREA	{BORDER-TOP-COLOR: #000000; BORDER-LEFT-COLOR: #000000; BORDER-RIGHT-COLOR: #000000; BORDER-BOTTOM-COLOR: #000000; BORDER-TOP-WIDTH: 1px; BORDER-LEFT-WIDTH: 1px; FONT-SIZE: 12px; BORDER-BOTTOM-WIDTH: 1px; FONT-FAMILY: Verdana,Helvetica; BORDER-RIGHT-WIDTH: 1px}

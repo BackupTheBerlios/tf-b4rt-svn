@@ -81,7 +81,7 @@
 							<img src="themes/<tmpl_var name="theme">/images/down.gif" alt="" title="Download Metafile" />
 						</a>
 					</tmpl_if>
-					<a href="index.php?iid=dir&amp;dir=<tmpl_var name="url_path">" onclick="return actionClick(true)">
+					<a href="index.php?iid=dir&amp;dir=<tmpl_var name="url_path">" onclick="return actionClick(true,'Opening Directory')">
 						<img src="themes/<tmpl_var name="theme">/images/datadir.gif" alt="" title="<tmpl_var name="datapath">" />
 					</a>
 				</td>
@@ -110,8 +110,6 @@
 									</div>
 									<div class="clear"></div>
 								</div>
-						
-							<!--<a href="JavaScript:showTransfer('index.php?iid=<tmpl_var name="twd">&amp;transfer=<tmpl_var name="url_entry">')"><tmpl_var name="percentage"></a>-->
 						<tmpl_else>
 							<tmpl_if name="transferRunning" op="<" value="2">
 								<div style="position:relative;padding:0px;margin:0px;width:100px;font-size:90%;margin-bottom:10px;">
@@ -120,7 +118,7 @@
 										<div style="padding:0px;margin:0px 2px 0px 0px;"><tmpl_var name="percentage"></div>
 									</tmpl_if>
 									</div>
-									<div style="position:absolute;top:0px;right:0px;height:10px;text-align:left;width:<tmpl_var name="100_graph_width">px;background-color:<tmpl_var name="background">;background-image:url(themes/<tmpl_var name="theme">/images/progressbar_grey.gif);">
+									<div style="position:absolute;top:0px;left:<tmpl_var name="graph_width">px;height:10px;text-align:left;width:<tmpl_var name="100_graph_width">px;background-color:<tmpl_var name="background">;background-image:url(themes/<tmpl_var name="theme">/images/progressbar_grey.gif);">
 									<tmpl_if name="graph_width" op="<" value="50">
 										<div style="padding:0px;margin:0px 0px 0px 2px;"><tmpl_var name="percentage"></div>
 									</tmpl_if>
@@ -191,7 +189,7 @@
 							</a>
 							<tmpl_if name="transferRunning" value="1">
 								<img src="themes/<tmpl_var name="theme">/images/blank.gif" style="width:16px;height:16px;" alt="" />
-								<a href="dispatcher.php?action=stop&amp;transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)">
+								<a href="dispatcher.php?action=stop&amp;transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true,'Stopping Transfer')">
 									<img src="themes/<tmpl_var name="theme">/images/bulkstop.gif" title="<tmpl_var name="_STOPTRANSFER">" alt="" />
 								</a>
 								<img src="themes/<tmpl_var name="theme">/images/delete_off.gif" alt="" />
@@ -205,7 +203,7 @@
 								<tmpl_else>
 									<tmpl_if name="transferRunning" value="3">
 										<img src="themes/<tmpl_var name="theme">/images/blank.gif" style="width:16px;height:16px;" alt="" />
-										<a href="dispatcher.php?action=deQueue&amp;transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)">
+										<a href="dispatcher.php?action=deQueue&amp;transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true,'Deleting Transfer from Queue')">
 											<img src="themes/<tmpl_var name="theme">/images/queued.gif" alt="" title="<tmpl_var name="_DELQUEUE">" />
 										</a>
 									<tmpl_else>
@@ -224,12 +222,12 @@
 												</tmpl_if>
 											</tmpl_if>
 											<tmpl_if name="show_run" value="1">
-												<a href="dispatcher.php?action=start&amp;transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)">
+												<a href="dispatcher.php?action=start&amp;transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true,'Starting Transfer')">
 													<img src="themes/<tmpl_var name="theme">/images/bulkresume.gif"title="<tmpl_var name="_RUNTRANSFER">" alt="" />
 												</a>
 											<tmpl_else>
 												<tmpl_if name="upload_support_enabled" value="1">
-													<a href="dispatcher.php?action=start&amp;transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)">
+													<a href="dispatcher.php?action=start&amp;transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true,'Starting Transfer')">
 														<img src="themes/<tmpl_var name="theme">/images/seedstart.gif" title="<tmpl_var name="_SEEDTRANSFER">" alt="" />
 													</a>
 												<tmpl_else>
@@ -343,7 +341,7 @@
 							<img src="themes/<tmpl_var name="theme">/images/down.gif" alt="" title="Download Metafile" />
 						</a>
 					</tmpl_if>
-					<a href="index.php?iid=dir&amp;dir=<tmpl_var name="url_path">" onclick="return actionClick(true)">
+					<a href="index.php?iid=dir&amp;dir=<tmpl_var name="url_path">" onclick="return actionClick(true,'Opening Directory')">
 						<img src="themes/<tmpl_var name="theme">/images/datadir.gif" alt="" title="<tmpl_var name="datapath">" />
 					</a>
 				</td>
@@ -453,7 +451,7 @@
 							</a>
 							<tmpl_if name="transferRunning" value="1">
 								<img src="themes/<tmpl_var name="theme">/images/blank.gif" style="width:16px;height:16px;" alt="" />
-								<a href="dispatcher.php?action=stop&amp;transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)">
+								<a href="dispatcher.php?action=stop&amp;transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true,'Stopping Transfer')">
 									<img src="themes/<tmpl_var name="theme">/images/bulkstop.gif" title="<tmpl_var name="_STOPTRANSFER">" alt="" />
 								</a>
 								<img src="themes/<tmpl_var name="theme">/images/delete_off.gif" alt="" />
@@ -467,7 +465,7 @@
 								<tmpl_else>
 									<tmpl_if name="transferRunning" value="3">
 										<img src="themes/<tmpl_var name="theme">/images/blank.gif" style="width:16px;height:16px;" alt="" />
-										<a href="dispatcher.php?action=deQueue&amp;transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)">
+										<a href="dispatcher.php?action=deQueue&amp;transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true,'Deleting Transfer from Queue')">
 											<img src="themes/<tmpl_var name="theme">/images/queued.gif" alt="" title="<tmpl_var name="_DELQUEUE">" />
 										</a>
 									<tmpl_else>
@@ -486,12 +484,12 @@
 												</tmpl_if>
 											</tmpl_if>
 											<tmpl_if name="show_run" value="1">
-												<a href="dispatcher.php?action=start&amp;transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)">
+												<a href="dispatcher.php?action=start&amp;transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true,'Starting Transfer')">
 													<img src="themes/<tmpl_var name="theme">/images/bulkresume.gif"title="<tmpl_var name="_RUNTRANSFER">" alt="" />
 												</a>
 											<tmpl_else>
 												<tmpl_if name="upload_support_enabled" value="1">
-													<a href="dispatcher.php?action=start&amp;transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)">
+													<a href="dispatcher.php?action=start&amp;transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true,'Starting Transfer')">
 														<img src="themes/<tmpl_var name="theme">/images/seedstart.gif" title="<tmpl_var name="_SEEDTRANSFER">" alt="" />
 													</a>
 												<tmpl_else>
