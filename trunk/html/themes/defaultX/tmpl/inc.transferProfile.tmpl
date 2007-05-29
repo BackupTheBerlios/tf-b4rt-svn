@@ -3,7 +3,7 @@
 	<tr>
 		<td align="center" colspan="2"><label for="profile">Profile:</label>
 			<select name="profile" id="profile" size="1" onChange="javascript:submit();">
-				<tmpl_if name="transfer_exists">
+				<tmpl_if name="settings_exist">
 					<option value="last_used" selected>Last used Settings</option>
 				<tmpl_else>
 					<option value="">default</option>
