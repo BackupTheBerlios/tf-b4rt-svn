@@ -40,12 +40,7 @@ var bandwidthBarsEnabled = 0;
 var bandwidthBarsStyle = "tf";
 var imgSrcDriveSpaceBlank = "themes/default/images/blank.gif";
 var imgHeightDriveSpaceBlank = 12;
-var imgSrcBandwidthUpBlank = "themes/default/images/blank.gif";
-var imgHeightBandwidthUpBlank = 12;
-var imgSrcBandwidthDownBlank = "themes/default/images/blank.gif";
-var imgHeightBandwidthDownBlank = 12;
 var indexTimer = null;
-//
 var updateTimeLeft = 0;
 
 /**
@@ -98,21 +93,6 @@ function ajax_initialize(timer, delim, sEnabled, tChangeEnabled, pTitle, glsEnab
 	// gls
 	if (goodLookingStatsEnabled == 1)
 		goodLookingStatsSettings = glsSettings.split(":");
-	// tf-style drivespace bar init
-	if (driveSpaceBarStyle == "xfer") {
-		elementBlank = document.getElementById("imgDriveSpaceBlank");
-		imgSrcDriveSpaceBlank = elementBlank.src;
-		imgHeightDriveSpaceBlank = elementBlank.height;
-	}
-	// tf-style bandwidth bars init
-	if ((bandwidthBarsEnabled == 1) && (bandwidthBarsStyle == "xfer")) {
-		elementBlank = document.getElementById("imgBandwidthUpBlank");
-		imgSrcBandwidthUpBlank = elementBlank.src;
-		imgHeightBandwidthUpBlank = elementBlank.height;
-		elementBlank = document.getElementById("imgBandwidthDownBlank");
-		imgSrcBandwidthDownBlank = elementBlank.src;
-		imgHeightBandwidthDownBlank = elementBlank.height;
-	}
 	// state
 	ajax_updateState = 1;
 	// http-request
@@ -229,24 +209,15 @@ function ajax_updateContent(statsServerStr, statsXferStr, usersStr, transferList
 	var dSpace = statsServer[10];
 	document.getElementById("barFreeSpace").innerHTML = statsServer[4];
 	document.getElementById("barDriveSpacePercent").innerHTML = (100 - dSpace);
-	if (dSpace == 0)
-		document.getElementById("barDriveSpace1").width = 1;
-	else
-		document.getElementById("barDriveSpace1").width = dSpace + "%";
-	if (dSpace == 100)
-		document.getElementById("barDriveSpace2").width = 1;
-	else
-		document.getElementById("barDriveSpace2").width = (100 - dSpace) + "%";
+	document.getElementById("barDriveSpace1").style.width = dSpace + "%";
+	document.getElementById("barDriveSpace2").style.width = (100 - dSpace) + "%";
 	if (driveSpaceBarStyle == "xfer") {
 		// set color
 		var dsbCol = 'rgb(';
 		dsbCol += parseInt(255 - 255 * ((100 - dSpace) / 100));
 		dsbCol += ',' + parseInt(255 * ((100 - dSpace) / 100));
 		dsbCol += ',0)';
-		var dsbDiv  = '<div style="background:' + dsbCol + ';">';
-		dsbDiv += '<img id="imgDriveSpaceBlank" src="' + imgSrcDriveSpaceBlank + '" width="1" height="' + imgHeightDriveSpaceBlank + '" border="0">';
-		dsbDiv += '</div>';
-		document.getElementById("barDriveSpace2").innerHTML = dsbDiv;
+		document.getElementById("barDriveSpace2").style.backgroundcolor = dsbCol;
 	}
 	// bandwidth-bars
 	if (bandwidthBarsEnabled == 1) {
@@ -254,27 +225,17 @@ function ajax_updateContent(statsServerStr, statsXferStr, usersStr, transferList
 		var upPer = statsServer[9];
 		document.getElementById("barSpeedUpPercent").innerHTML = upPer;
 		document.getElementById("barSpeedUp").innerHTML = statsServer[1];
-		if (upPer == 0)
-			document.getElementById("barSpeedUp1").width = 1;
-		else
-			document.getElementById("barSpeedUp1").width = upPer + "%";
+		
+		document.getElementById("barSpeedUp1").style.width = upPer + "%";
 
-		if (upPer == 100)
-			document.getElementById("barSpeedUp2").width = 1;
-		else
-			document.getElementById("barSpeedUp2").width = (100 - upPer) + "%";
+		document.getElementById("barSpeedUp2").style.width = (100 - upPer) + "%";
 		// down
 		var downPer = statsServer[8];
 		document.getElementById("barSpeedDownPercent").innerHTML = downPer;
 		document.getElementById("barSpeedDown").innerHTML = statsServer[0];
-		if (downPer == 0)
-			document.getElementById("barSpeedDown1").width = 1;
-		else
-			document.getElementById("barSpeedDown1").width = downPer + "%";
-		if (downPer == 100)
-			document.getElementById("barSpeedDown2").width = 1;
-		else
-			document.getElementById("barSpeedDown2").width = (100 - downPer) + "%";
+		document.getElementById("barSpeedDown2").style.width = (100 - downPer) + "%";
+			
+		document.getElementById("barSpeedDown1").style.width = downPer + "%";
 		if (bandwidthBarsStyle == "xfer") {
 			// set color
 			// up
@@ -282,19 +243,14 @@ function ajax_updateContent(statsServerStr, statsXferStr, usersStr, transferList
 			bwbCol += parseInt(255 - 255 * ((100 - upPer) / 150));
 			bwbCol += ',' + parseInt(255 * ((100 - upPer) / 150));
 			bwbCol += ',0)';
-			var bwbDiv  = '<div style="background:' + bwbCol + ';">';
-			bwbDiv += '<img id="imgBandwidthUpBlank" src="' + imgSrcBandwidthUpBlank + '" width="1" height="' + imgHeightBandwidthUpBlank + '" border="0">';
-			bwbDiv += '</div>';
-			document.getElementById("barSpeedUp1").innerHTML = bwbDiv;
+			document.getElementById("barSpeedUp1").style.backgroundcolor = bwbCol;
+
 			// down
 			bwbCol  = 'rgb(';
 			bwbCol += parseInt(255 - 255 * ((100 - downPer) / 150));
 			bwbCol += ',' + parseInt(255 * ((100 - downPer) / 150));
 			bwbCol += ',0)';
-			bwbDiv  = '<div style="background:' + bwbCol + ';">';
-			bwbDiv += '<img id="imgBandwidthDownBlank" src="' + imgSrcBandwidthDownBlank + '" width="1" height="' + imgHeightBandwidthDownBlank + '" border="0">';
-			bwbDiv += '</div>';
-			document.getElementById("barSpeedDown1").innerHTML = bwbDiv;
+			document.getElementById("barSpeedDown1").style.backgroundcolor = bwbCol;
 		}
 	}
 	// bottom stats
