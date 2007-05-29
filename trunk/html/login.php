@@ -161,10 +161,10 @@ if ($isLoginRequest) {
 
 // defines
 $tmpl->setvar('auth_type', $cfg["auth_type"]);
-$tmpl->setvar('iid', 'login');
 tmplSetTitleBar($cfg["pagetitle"], false);
 tmplSetFoot(false);
 tmplSetIidVars();
+$tmpl->setvar('iid', 'login');
 
 
 // parse template
