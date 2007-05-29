@@ -35,5 +35,37 @@ A:hover         {BACKGROUND: none; COLOR: #363636; FONT-SIZE: 12px; FONT-FAMILY:
 	border-right-style: solid;
 	border-right-color: #000000;
 }
+.hidden
+{
+	visibility:hidden;
+}
+#action_in_progress 
+{ 
+	background: #DDDDFF;
+	border:3px solid #a0b9d8;
+	color: #EE2222;
+	text-align: center;
+	font-weight: bold;
+	font-size: 100%;
+	padding: 3px;
+	position: fixed;
+	top:0px;
+	left:0px;
+	z-index:10102 !important;
+}
+
+#grey_out
+{
+	position: fixed;
+	height:100%;
+	width:100%;
+	z-index:10100 !important;
+	top: 0px;
+	left: 0px;
+	background-color:#000000;
+	filter:alpha(opacity=50);
+	-moz-opacity: 0.5;
+	opacity: 0.5;
+}
 hr{ color: #94ABC0; noshade }
 /* #transferList { overflow: auto; } */
