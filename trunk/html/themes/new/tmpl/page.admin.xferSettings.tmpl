@@ -43,10 +43,10 @@
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
-						Enable xfer
+						<label for="enable_xfer">Enable xfer</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_xfer">
+						<select name="enable_xfer" id="enable_xfer">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="enable_xfer" value="0">
@@ -63,10 +63,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Enable xfer realtime
+						<label for="xfer_realtime">Enable xfer realtime</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="xfer_realtime">
+						<select name="xfer_realtime" id="xfer_realtime">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="xfer_realtime" value="0">
@@ -83,10 +83,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Enable public xfer
+						<label for="enable_public_xfer">Enable public xfer</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_public_xfer">
+						<select name="enable_public_xfer" id="enable_public_xfer">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="enable_public_xfer" value="0">
@@ -103,10 +103,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						xfer - total
+						<label for="xfer_total">xfer - total</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="xfer_total" type="Text" maxlength="20" value="<tmpl_var name="xfer_total">" size="20">
+						<input name="xfer_total" id="xfer_total" type="Text" maxlength="20" value="<tmpl_var name="xfer_total">" size="20">
 					</td>
 				</tr>
 				<tr>
@@ -116,10 +116,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						xfer - month
+						<label for="xfer_month">xfer - month</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="xfer_month" type="Text" maxlength="20" value="<tmpl_var name="xfer_month">" size="20">
+						<input name="xfer_month" id="xfer_month" type="Text" maxlength="20" value="<tmpl_var name="xfer_month">" size="20">
 					</td>
 				</tr>
 				<tr>
@@ -129,10 +129,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						xfer - week
+						<label for="xfer_week">xfer - week</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="xfer_week" type="Text" maxlength="20" value="<tmpl_var name="xfer_week">" size="20">
+						<input name="xfer_week" id="xfer_week" type="Text" maxlength="20" value="<tmpl_var name="xfer_week">" size="20">
 					</td>
 				</tr>
 				<tr>
@@ -142,10 +142,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						xfer - day
+						<label for="xfer_day">xfer - day</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="xfer_day" type="Text" maxlength="20" value="<tmpl_var name="xfer_day">" size="20">
+						<input name="xfer_day" id="xfer_day" type="Text" maxlength="20" value="<tmpl_var name="xfer_day">" size="20">
 					</td>
 				</tr>
 				<tr>
@@ -155,10 +155,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						xfer - week start
+						<label for="week_start">xfer - week start</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="week_start">
+						<select name="week_start" id="week_start">
 							<option value="Monday"
 							<tmpl_if name="week_start" value="Monday">
 								 selected
@@ -204,10 +204,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						xfer - month start
+						<label for="month_start">xfer - month start</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="month_start">
+						<select name="month_start" id="month_start">
 							<tmpl_loop name="month_list">
 								<option value="<tmpl_var name="i">"
 									<tmpl_if name="month_start_true" value="1">

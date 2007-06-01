@@ -16,11 +16,12 @@
 					<form name="theForm" action="admin.php?op=updateStatsSettings" method="post" onsubmit="return validateSettings('stats')">
 						<table cellpadding="5" cellspacing="0" border="0" width="100%">
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Enable Public Stats</strong><br>
-								If Public Stats are enabled stats show complete (superadmin-level) stats without authentication.
+								<td align="left" width="350" valign="top">
+									<label for="stats_enable_public"><strong>Enable Public Stats</strong></label><br/>
+									If Public Stats are enabled stats show complete (superadmin-level) stats without authentication.
 								</td>
 								<td valign="top">
-									<select name="stats_enable_public">
+									<select name="stats_enable_public" id="stats_enable_public">
 										<option value="1">true</option>
 										<option value="0"
 										<tmpl_if name="stats_enable_public" value="0">
@@ -31,15 +32,16 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Show Usage</strong><br>
-								Show Usage when stats is called without arguments.<br>
-								<a href="stats.php?usage" target="_blank">
-									<img src="themes/default/images/arrow.gif" width="9" height="9" title="Show Usage" border="0">
-									Show Usage
-								</a>
+								<td align="left" width="350" valign="top">
+									<label for="stats_show_usage"><strong>Show Usage</strong></label><br/>
+									Show Usage when stats is called without arguments.<br>
+									<a href="stats.php?usage" target="_blank">
+										<img src="themes/default/images/arrow.gif" width="9" height="9" title="Show Usage" border="0">
+										Show Usage
+									</a>
 								</td>
 								<td valign="top">
-									<select name="stats_show_usage">
+									<select name="stats_show_usage" id="stats_show_usage">
 										<option value="1">true</option>
 										<option value="0"
 										<tmpl_if name="stats_show_usage" value="0">
@@ -50,11 +52,12 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Deflate Level</strong><br>
-								Specify level of deflate compression. (default is "9"):
+								<td align="left" width="350" valign="top">
+									<label for="stats_deflate_level"><strong>Deflate Level</strong></label><br/>
+									Specify level of deflate compression. (default is "9"):
 								</td>
 								<td valign="bottom">
-									<select name="stats_deflate_level">
+									<select name="stats_deflate_level" id="stats_deflate_level">
 										<tmpl_loop name="deflate_list">
 											<option value="<tmpl_var name="i">"
 												<tmpl_if name="is_selected" value="1">
@@ -66,19 +69,22 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Text Delim Char</strong><br>
-								Specify delim-char for text-format. (default is ';'):
+								<td align="left" width="350" valign="top">
+									<label for="stats_txt_delim"><strong>Text Delim Char</strong></label><br/>
+									Specify delim-char for text-format. (default is ';'):
 								</td>
 								<td valign="bottom">
-									<input name="stats_txt_delim" type="Text" maxlength="1" value="<tmpl_var name="stats_txt_delim">" size="1">
+									<input name="stats_txt_delim" id="stats_txt_delim" type="Text" maxlength="1" value="<tmpl_var name="stats_txt_delim">" size="1">
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Default : Header</strong><br>
-								Specify default for send-header. <br><em>Note</em>: Only used in txt-format.
+								<td align="left" width="350" valign="top">
+									<label for="stats_default_header"><strong>Default : Header</strong></label><br/>
+									Specify default for send-header.<br>
+									<em>Note</em>: Only used in txt-format.
 								</td>
 								<td valign="top">
-									<select name="stats_default_header">
+									<select name="stats_default_header" id="stats_default_header">
 										<option value="1">true</option>
 										<option value="0"
 										<tmpl_if name="stats_default_header" value="0">
@@ -89,11 +95,12 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Default : type</strong><br>
-								Specify default-type :
+								<td align="left" width="350" valign="top">
+									<label for="stats_default_type"><strong>Default : type</strong></label><br/>
+									Specify default-type :
 								</td>
 								<td valign="bottom">
-									<select name="stats_default_type">
+									<select name="stats_default_type" id="stats_default_type">
 										<option value="all"
 										<tmpl_if name="stats_default_type" value="all">
 											 selected
@@ -123,11 +130,12 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Default : format</strong><br>
-								Specify default-format :
+								<td align="left" width="350" valign="top">
+									<label for="stats_default_format"><strong>Default : format</strong></label><br/>
+									Specify default-format :
 								</td>
 								<td valign="bottom">
-									<select name="stats_default_format">
+									<select name="stats_default_format" id="stats_default_format">
 										<option value="xml"
 										<tmpl_if name="stats_default_format" value="xml">
 											 selected
@@ -147,11 +155,12 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Default : Compress</strong><br>
-								Specify default for send-compressed :
+								<td align="left" width="350" valign="top">
+									<label for="stats_default_compress"><strong>Default : Compress</strong></label><br/>
+									Specify default for send-compressed :
 								</td>
 								<td valign="top">
-									<select name="stats_default_compress">
+									<select name="stats_default_compress" id="stats_default_compress">
 										<option value="1">true</option>
 										<option value="0"
 										<tmpl_if name="stats_default_compress" value="0">
@@ -162,11 +171,12 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Default : Attachment</strong><br>
-								Specify default for send-as-attachment :
+								<td align="left" width="350" valign="top">
+									<label for="stats_default_attach"><strong>Default : Attachment</strong></label><br/>
+									Specify default for send-as-attachment :
 								</td>
 								<td valign="top">
-									<select name="stats_default_attach">
+									<select name="stats_default_attach" id="stats_default_attach">
 										<option value="1">true</option>
 										<option value="0"
 										<tmpl_if name="stats_default_attach" value="0">

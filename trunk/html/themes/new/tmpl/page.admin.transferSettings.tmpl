@@ -4,6 +4,7 @@
 <script src="js/adminSettings.js" type="text/javascript"></script>
 <div id="content">
 	<form name="theForm" action="admin.php?op=updateTransferSettings" method="post" onsubmit="return validateSettings('transfer')">
+		<div align="left"><strong>Legend:</strong><br/>B = BitTornado<br/>T = Transmission<br/>M = BitTorrent Mainline<br/>A = Azureus<br/>W = Wget<br/>N = Nzbperl<br/><br/></div>
 		<div id="upload">
 			<div id="uploadLast"></div>
 			<div id="uploadFirst">
@@ -13,14 +14,13 @@
 			</div>
 		</div>
 		<div class="uploadClass">
-		<div align="left"><strong>Legend:</strong><br/>B = BitTornado<br/>T = Transmission<br/>M = Bittorrent Mainline<br/>A = Azureus</div>
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
-						Default BitTorrent Client
+						<label for="btclient">Default BitTorrent Client</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="btclient">
+						<select name="btclient" id="btclient">
 							<option value="tornado"
 							<tmpl_if name="btclient" value="tornado">
 								 selected
@@ -51,10 +51,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Torrent Metainfo Client
+						<label for="metainfoclient">Torrent Metainfo Client</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="metainfoclient">
+						<select name="metainfoclient" id="metainfoclient">
 							<option value="btshowmetainfo.py"
 							<tmpl_if name="metainfoclient" value="btshowmetainfo.py">
 								 selected
@@ -85,34 +85,34 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						BitTornado - Extra Commandline Options:
+						<label for="btclient_tornado_options">BitTornado - Extra Commandline Options:</label>
 					</td>
 					<td class="settingsSetting">
-						<input name="btclient_tornado_options" type="Text" maxlength="254" value="<tmpl_var name="btclient_tornado_options">" size="30">
+						<input name="btclient_tornado_options" id="btclient_tornado_options" type="Text" maxlength="254" value="<tmpl_var name="btclient_tornado_options">" size="30">
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Transmission - Extra Commandline Options:
+						<label for="btclient_transmission_options">Transmission - Extra Commandline Options:</label>
 					</td>
 					<td class="settingsSetting">
-						<input name="btclient_transmission_options" type="Text" maxlength="254" value="<tmpl_var name="btclient_transmission_options">" size="30">
+						<input name="btclient_transmission_options" id="btclient_transmission_options" type="Text" maxlength="254" value="<tmpl_var name="btclient_transmission_options">" size="30">
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						BitTorrent Mainline - Extra Commandline Options:
+						<label for="btclient_mainline_options">BitTorrent Mainline - Extra Commandline Options:</label>
 					</td>
 					<td class="settingsSetting">
-						<input name="btclient_mainline_options" type="Text" maxlength="254" value="<tmpl_var name="btclient_mainline_options">" size="30">
+						<input name="btclient_mainline_options" id="btclient_mainline_options" type="Text" maxlength="254" value="<tmpl_var name="btclient_mainline_options">" size="30">
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Max Upload Rate (B+T+M+A)
+						<label for="max_upload_rate">Max Upload Rate (B+T+M+A)</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="max_upload_rate" type="Text" maxlength="5" value="<tmpl_var name="max_upload_rate">" size="5"> kB/second
+						<input name="max_upload_rate" id="max_upload_rate" type="Text" maxlength="5" value="<tmpl_var name="max_upload_rate">" size="5"> kB/second
 					</td>
 				</tr>
 				<tr>
@@ -122,10 +122,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Max Download Rate (B+T+M+A)
+						<label for="max_download_rate">Max Download Rate (B+T+M+A)</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="max_download_rate" type="Text" maxlength="5" value="<tmpl_var name="max_download_rate">" size="5"> kB/second
+						<input name="max_download_rate" id="max_download_rate" type="Text" maxlength="5" value="<tmpl_var name="max_download_rate">" size="5"> kB/second
 					</td>
 				</tr>
 				<tr>
@@ -135,10 +135,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Max Upload Connections (B+M)
+						<label for="max_uploads">Max Upload Connections (B+M)</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="max_uploads" type="Text" maxlength="5" value="<tmpl_var name="max_uploads">" size="5">
+						<input name="max_uploads" id="max_uploads" type="Text" maxlength="5" value="<tmpl_var name="max_uploads">" size="5">
 					</td>
 				</tr>
 				<tr>
@@ -148,10 +148,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Max Connections (B+M)
+						<label for="maxcons">Max Connections (B+M)</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="maxcons" type="Text" maxlength="5" value="<tmpl_var name="maxcons">" size="5">
+						<input name="maxcons" id="maxcons" type="Text" maxlength="5" value="<tmpl_var name="maxcons">" size="5">
 					</td>
 				</tr>
 				<tr>
@@ -161,25 +161,26 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Port Range (B+T+M)
+						<label for="minport">Port Range (B+T+M)</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="minport" type="Text" maxlength="5" value="<tmpl_var name="minport">" size="5">
+						<input name="minport" id="minport" type="Text" maxlength="5" value="<tmpl_var name="minport">" size="5">
 						-
-						<input name="maxport" type="Text" maxlength="5" value="<tmpl_var name="maxport">" size="5">
+						<input name="maxport" id="maxport" type="Text" maxlength="5" value="<tmpl_var name="maxport">" size="5">
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Set the default values for the for port range (min - max).<br/><strong>Note:</strong><br/>One port is required per torrent; ensure the port range is large enough for the maximum number of torrents you will be running.
+						Set the default values for the for port range (min - max).<br/>
+						<strong>Note:</strong> One port is required per torrent; ensure the port range is large enough for the maximum number of torrents you will be running.
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Rerequest Interval (B+M)
+						<label for="rerequest_interval">Rerequest Interval (B+M)</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="rerequest_interval" type="Text" maxlength="5" value="<tmpl_var name="rerequest_interval">" size="5">
+						<input name="rerequest_interval" id="rerequest_interval" type="Text" maxlength="5" value="<tmpl_var name="rerequest_interval">" size="5">
 					</td>
 				</tr>
 				<tr>
@@ -189,10 +190,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Default Torrent Completion Activity (B+T+M+A)
+						<label for="die_when_done">Default Torrent Completion Activity (B+T+M+A)</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="die_when_done">
+						<select name="die_when_done" id="die_when_done">
 							<option value="True">Die When Done</option>
 							<option value="False"
 								<tmpl_if name="die_when_done" value="False">
@@ -209,10 +210,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Default Percentage When Seeding Should Stop (B+T+M+A)
+						<label for="sharekill">Default Percentage When Seeding Should Stop (B+T+M+A)</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="sharekill" type="Text" maxlength="3" value="<tmpl_var name="sharekill">" size="3">%
+						<input name="sharekill" id="sharekill" type="Text" maxlength="3" value="<tmpl_var name="sharekill">" size="3">%
 					</td>
 				</tr>
 				<tr>
@@ -222,10 +223,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Enable Cumulative Sharekill (B+T+M+A)
+						<label for="enable_sharekill">Enable Cumulative Sharekill (B+T+M+A)</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_sharekill">
+						<select name="enable_sharekill" id="enable_sharekill">
 							<option value="1">True</option>
 							<option value="0"
 							<tmpl_if name="enable_sharekill" value="0">
@@ -242,10 +243,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Enable File Priority (B)
+						<label for="enable_file_priority">Enable File Priority (B)</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_file_priority">
+						<select name="enable_file_priority" id="enable_file_priority">
 							<option value="1">True</option>
 							<option value="0"
 							<tmpl_if name="enable_file_priority" value="0">
@@ -262,10 +263,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Superseeder (B)
+						<label for="superseeder">Superseeder (B)</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="superseeder">
+						<select name="superseeder" id="superseeder">
 							<option value="1">True</option>
 							<option value="0"
 							<tmpl_if name="superseeder" value="0">
@@ -282,10 +283,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Skip HashCheck (B+M)
+						<label for="skiphashcheck">Skip HashCheck (B+M)</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="skiphashcheck">
+						<select name="skiphashcheck" id="skiphashcheck">
 							<option value="1">True</option>
 							<option value="0"
 							<tmpl_if name="skiphashcheck" value="0">
@@ -343,10 +344,10 @@
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
-						Enable Wget
+						<label for="enable_wget">Enable Wget</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_wget">
+						<select name="enable_wget" id="enable_wget">
 							<option value="0" <tmpl_if name="enable_wget" value="0"> selected</tmpl_if>>Wget Disabled</option>
 							<option value="1" <tmpl_if name="enable_wget" value="1"> selected</tmpl_if>>Only Admins</option>
 							<option value="2" <tmpl_if name="enable_wget" value="2"> selected</tmpl_if>>All Users</option>
@@ -360,10 +361,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Limit Download Rate
+						<label for="wget_limit_rate">Limit Download Rate</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="wget_limit_rate" type="Text" maxlength="5" value="<tmpl_var name="wget_limit_rate">" size="5"> kB/second
+						<input name="wget_limit_rate" id="wget_limit_rate" type="Text" maxlength="5" value="<tmpl_var name="wget_limit_rate">" size="5"> kB/second
 					</td>
 				</tr>
 				<tr>
@@ -373,10 +374,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Limit Number of Retries
+						<label for="wget_limit_retries">Limit Number of Retries</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="wget_limit_retries" type="Text" maxlength="5" value="<tmpl_var name="wget_limit_retries">" size="5">
+						<input name="wget_limit_retries" id="wget_limit_retries" type="Text" maxlength="5" value="<tmpl_var name="wget_limit_retries">" size="5">
 					</td>
 				</tr>
 				<tr>
@@ -386,10 +387,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Enable Passive FTP
+						<label for="wget_ftp_pasv">Enable Passive FTP</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="wget_ftp_pasv">
+						<select name="wget_ftp_pasv" id="wget_ftp_pasv">
 							<option value="1">True</option>
 							<option value="0"
 							<tmpl_if name="wget_ftp_pasv" value="0">
@@ -433,10 +434,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Enable Nzbperl
+						<label for="enable_nzbperl">Enable Nzbperl</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_nzbperl">
+						<select name="enable_nzbperl" id="enable_nzbperl">
 							<option value="0" <tmpl_if name="enable_nzbperl" value="0"> selected</tmpl_if>>Nzbperl Disabled</option>
 							<option value="1" <tmpl_if name="enable_nzbperl" value="1"> selected</tmpl_if>>Only Admins</option>
 							<option value="2" <tmpl_if name="enable_nzbperl" value="2"> selected</tmpl_if>>All Users</option>
@@ -450,10 +451,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Use Subdirectories
+						<label for="nzbperl_create">Use Subdirectories</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="nzbperl_create">
+						<select name="nzbperl_create" id="nzbperl_create">
 							<option value="0" <tmpl_if name="nzbperl_create" value="0"> selected</tmpl_if>>No Extra Dir</option>
 							<option value="1" <tmpl_if name="nzbperl_create" value="1"> selected</tmpl_if>>Use Nzb Filename</option>
 							<option value="2" <tmpl_if name="nzbperl_create" value="2"> selected</tmpl_if>>Use Usenet Group Name</option>
@@ -467,10 +468,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Bad File Action
+						<label for="nzbperl_badAction">Bad File Action</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="nzbperl_badAction">
+						<select name="nzbperl_badAction" id="nzbperl_badAction">
 							<option value="0" <tmpl_if name="nzbperl_badAction" value="0"> selected</tmpl_if>>Drop Bad Files</option>
 							<option value="1" <tmpl_if name="nzbperl_badAction" value="1"> selected</tmpl_if>>Download Anyway</option>
 						</select>
@@ -483,10 +484,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Download Rate
+						<label for="nzbperl_rate">Download Rate</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="nzbperl_rate" type="Text" maxlength="5" value="<tmpl_var name="nzbperl_rate">" size="5"> kB/second
+						<input name="nzbperl_rate" id="nzbperl_rate" type="Text" maxlength="5" value="<tmpl_var name="nzbperl_rate">" size="5"> kB/second
 					</td>
 				</tr>
 				<tr>
@@ -496,10 +497,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Server
+						<label for="nzbperl_server">Server</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="nzbperl_server" type="Text" maxlength="254" value="<tmpl_var name="nzbperl_server">" size="30">
+						<input name="nzbperl_server" id="nzbperl_server" type="Text" maxlength="254" value="<tmpl_var name="nzbperl_server">" size="30">
 					</td>
 				</tr>
 				<tr>
@@ -509,10 +510,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Username
+						<label for="nzbperl_user">Username</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="nzbperl_user" type="Text" maxlength="254" value="<tmpl_var name="nzbperl_user">" size="30">
+						<input name="nzbperl_user" id="nzbperl_user" type="Text" maxlength="254" value="<tmpl_var name="nzbperl_user">" size="30">
 					</td>
 				</tr>
 				<tr>
@@ -522,10 +523,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Password
+						<label for="nzbperl_pw">Password</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="nzbperl_pw" type="password" maxlength="254" value="<tmpl_var name="nzbperl_pw">" size="30">
+						<input name="nzbperl_pw" id="nzbperl_pw" type="password" maxlength="254" value="<tmpl_var name="nzbperl_pw">" size="30">
 					</td>
 				</tr>
 				<tr>
@@ -535,23 +536,24 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Connections
+						<label for="nzbperl_conn">Connections</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="nzbperl_conn" type="text" maxlength="5" value="<tmpl_var name="nzbperl_conn">" size="5">
+						<input name="nzbperl_conn" id="nzbperl_conn" type="text" maxlength="5" value="<tmpl_var name="nzbperl_conn">" size="5">
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsText">
-						The number of simultaneous connections to the NNTP server nzbperl will create.<br/><strong>Note:</strong><br/>You can only run conn/server_max nzb downloads at once.
+						The number of simultaneous connections to the NNTP server nzbperl will create.<br/>
+						<strong>Note:</strong> You can only run conn/server_max nzb downloads at once.
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Threads
+						<label for="nzbperl_threads">Threads</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="nzbperl_threads">
+						<select name="nzbperl_threads" id="nzbperl_threads">
 							<tmpl_loop name="nzbperl_threadList">
 								<option value="<tmpl_var name="value">"<tmpl_if name="is_selected" value="1"> selected</tmpl_if>>
 									<tmpl_var name="name">
@@ -562,15 +564,16 @@
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Use threading.<br/><strong>Note:</strong><br/>Enable only if your Perl installation supports threads.
+						Use threading.<br/>
+						<strong>Note:</strong> Enable only if your Perl installation supports threads.
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Nzbperl - Extra Commandline Options
+						<label for="nzbperl_options">Nzbperl - Extra Commandline Options</label>
 					</td>
 					<td class="settingsSetting">
-						<input name="nzbperl_options" type="Text" maxlength="254" value="<tmpl_var name="nzbperl_options">" size="30">
+						<input name="nzbperl_options" id="nzbperl_options" type="Text" maxlength="254" value="<tmpl_var name="nzbperl_options">" size="30">
 					</td>
 				</tr>
 			</table>
@@ -589,10 +592,10 @@
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
-						Enable 0000 Umask (B+T+M+W+N)
+						<label for="enable_umask">Enable 0000 Umask (B+T+M+W+N)</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_umask">
+						<select name="enable_umask" id="enable_umask">
 							<option value="1">True</option>
 							<option value="0"
 							<tmpl_if name="enable_umask" value="0">
@@ -604,15 +607,16 @@
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Enable/disable setting umask to 0000 when starting a client.<br/><strong>Note:</strong><br/>Resulting permissions of created files will be 666 - readable and writable by everyone - and directories will be 777 - readable/writable/executable by everyone.
+						Enable/disable setting umask to 0000 when starting a client.<br/>
+						<strong>Note:</strong> Resulting permissions of created files will be 666 - readable and writable by everyone - and directories will be 777 - readable/writable/executable by everyone.
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Use Nice (B+T+M+W+N)
+						<label for="nice_adjust">Use Nice (B+T+M+W+N)</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="nice_adjust">
+						<select name="nice_adjust" id="nice_adjust">
 							<tmpl_loop name="nice_list">
 								<option value="<tmpl_var name="i">"
 									<tmpl_if name="nice_adjust_true" value="1">
@@ -631,7 +635,8 @@
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Set the nice level to use for transfer processes.<br/><strong>Note:</strong><br/>The highest nice level - 19 - gives processes the lowest possible priority over other processes on the server.
+						Set the nice level to use for transfer processes.<br/>
+						<strong>Note:</strong> The highest nice level - 19 - gives processes the lowest possible priority over other processes on the server.
 					</td>
 				</tr>
 				<tr>

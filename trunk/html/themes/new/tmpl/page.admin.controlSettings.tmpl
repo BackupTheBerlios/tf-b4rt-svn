@@ -16,10 +16,10 @@
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
-						Customize Transfer Settings
+						<label for="transfer_customize_settings">Customize Transfer Settings</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="transfer_customize_settings">
+						<select name="transfer_customize_settings" id="transfer_customize_settings">
 							<option value="2">All Users</option>
 							<option value="1"
 							<tmpl_if name="transfer_customize_settings" value="1">
@@ -41,10 +41,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Transfer Profiles
+						<label for="transfer_profiles">Transfer Profiles</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="transfer_profiles">
+						<select name="transfer_profiles" id="transfer_profiles">
 							<option value="3">All Users</option>
 							<option value="2"
 							<tmpl_if name="transfer_profiles" value="2">
@@ -71,10 +71,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Enable Client Chooser
+						<label for="enable_btclient_chooser">Enable Client Chooser</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_btclient_chooser">
+						<select name="enable_btclient_chooser" id="enable_btclient_chooser">
 							<option value="1">True</option>
 							<option value="0"
 							<tmpl_if name="enable_btclient_chooser" value="0">
@@ -91,10 +91,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Enable Save Path Chooser
+						<label for="showdirtree">Enable Save Path Chooser</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="showdirtree">
+						<select name="showdirtree" id="showdirtree">
 							<option value="1">True</option>
 							<option value="0"
 							<tmpl_if name="showdirtree" value="0">
@@ -106,15 +106,15 @@
 				</tr>
 				<tr>
 					<td class="settingsText">
-						When enabled, displays a directory tree to allow users to downloaded transfers to any existing folder under their home directory.
+						When enabled, displays a directory tree to allow users to save downloaded transfers to any existing folder under their home directory.
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Save Path Chooser Max Depth
+						<label for="maxdepth">Save Path Chooser Max Depth</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-					<input name="maxdepth" type="Text" maxlength="1" value="<tmpl_var name="maxdepth">" size="1">
+					<input name="maxdepth" id="maxdepth" type="Text" maxlength="1" value="<tmpl_var name="maxdepth">" size="1">
 					</td>
 				</tr>
 				<tr>

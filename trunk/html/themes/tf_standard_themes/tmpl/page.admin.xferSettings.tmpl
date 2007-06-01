@@ -28,11 +28,12 @@
 					<form name="theForm" action="admin.php?op=updateXferSettings" method="post" onsubmit="return validateSettings('xfer')">
 						<table cellpadding="5" cellspacing="0" border="0" width="100%">
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Enable xfer</strong><br>
-								Enable/Disable xfer :
+								<td align="left" width="350" valign="top">
+									<label for="enable_xfer"><strong>Enable xfer</strong></label><br/>
+									Enable/Disable xfer :
 								</td>
 								<td valign="top">
-									<select name="enable_xfer">
+									<select name="enable_xfer" id="enable_xfer">
 										<option value="1">true</option>
 										<option value="0"
 										<tmpl_if name="enable_xfer" value="0">
@@ -43,11 +44,12 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Enable xfer realtime</strong><br>
-								Enable/Disable xfer-realtime-stats updated on every index-reload :
+								<td align="left" width="350" valign="top">
+									<label for="xfer_realtime"><strong>Enable xfer realtime</strong></label><br/>
+									Enable/Disable xfer-realtime-stats updated on every index-reload :
 								</td>
 								<td valign="top">
-									<select name="xfer_realtime">
+									<select name="xfer_realtime" id="xfer_realtime">
 										<option value="1">true</option>
 										<option value="0"
 										<tmpl_if name="xfer_realtime" value="0">
@@ -58,11 +60,12 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Enable public xfer</strong><br>
-								Enable/Disable public xfer :
+								<td align="left" width="350" valign="top">
+									<label for="enable_public_xfer"><strong>Enable public xfer</strong></label><br/>
+									Enable/Disable public xfer :
 								</td>
 								<td valign="top">
-									<select name="enable_public_xfer">
+									<select name="enable_public_xfer" id="enable_public_xfer">
 										<option value="1">true</option>
 										<option value="0"
 										<tmpl_if name="enable_public_xfer" value="0">
@@ -73,43 +76,48 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>xfer - total</strong><br>
-								Specify xfer_total. (default is "0"; 1TB is "1048576"):
+								<td align="left" width="350" valign="top">
+									<label for="xfer_total"><strong>xfer - total</strong></label><br/>
+									Specify xfer_total. (default is "0"; 1TB is "1048576"):
 								</td>
 								<td valign="bottom">
-									<input name="xfer_total" type="Text" maxlength="20" value="<tmpl_var name="xfer_total">" size="20">
+									<input name="xfer_total" id="xfer_total" type="Text" maxlength="20" value="<tmpl_var name="xfer_total">" size="20">
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>xfer - month</strong><br>
-								Specify xfer_month. (default is "0"; 1GB is "1024"):
+								<td align="left" width="350" valign="top">
+									<label for="xfer_month"><strong>xfer - month</strong></label><br/>
+									Specify xfer_month. (default is "0"; 1GB is "1024"):
 								</td>
 								<td valign="bottom">
-									<input name="xfer_month" type="Text" maxlength="20" value="<tmpl_var name="xfer_month">" size="20">
+									<input name="xfer_month" "xfer_month" type="Text" maxlength="20" value="<tmpl_var name="xfer_month">" size="20">
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>xfer - week</strong><br>
-								Specify xfer_week. (default is "0"):
+								<td align="left" width="350" valign="top">
+									<label for="xfer_week"><strong>xfer - week</strong></label><br/>
+									Specify xfer_week. (default is "0"):
 								</td>
 								<td valign="bottom">
-									<input name="xfer_week" type="Text" maxlength="20" value="<tmpl_var name="xfer_week">" size="20">
+									<input name="xfer_week" id="xfer_week" type="Text" maxlength="20" value="<tmpl_var name="xfer_week">" size="20">
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>xfer - day</strong><br>
-								Specify xfer_day. (default is "0"):
+								<td align="left" width="350" valign="top">
+									<label for="xfer_day"><strong>xfer - day</strong></label><br/>
+									Specify xfer_day. (default is "0"):
 								</td>
 								<td valign="bottom">
-									<input name="xfer_day" type="Text" maxlength="20" value="<tmpl_var name="xfer_day">" size="20">
+									<input name="xfer_day" id="xfer_day" type="Text" maxlength="20" value="<tmpl_var name="xfer_day">" size="20">
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>xfer - week start</strong><br>
-								Specify week_start. (default is "Monday"):
+								<td align="left" width="350" valign="top">
+									<label for="week_start"><strong>xfer - week start</strong></label><br/>
+									Specify week_start. (default is "Monday"):
 								</td>
 								<td valign="bottom">
-									<select name="week_start">
+									<select name="week_start" id="week_start">
 										<option value="Monday"
 										<tmpl_if name="week_start" value="Monday">
 											 selected
@@ -149,11 +157,12 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>xfer - month start</strong><br>
-								Specify month_start. (default is "1"):
+								<td align="left" width="350" valign="top">
+									<label for="month_start"><strong>xfer - month start</strong></label><br/>
+									Specify month_start. (default is "1"):
 								</td>
 								<td valign="bottom">
-									<select name="month_start">
+									<select name="month_start" id="month_start">
 										<tmpl_loop name="month_list">
 											<option value="<tmpl_var name="i">"
 												<tmpl_if name="month_start_true" value="1">

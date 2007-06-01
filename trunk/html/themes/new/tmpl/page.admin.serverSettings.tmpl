@@ -16,40 +16,46 @@
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
-						<tmpl_if name="is_path" value="1">
-							<tmpl_if name="is_writable" value="1">
-								Transfer Parent Path
+						<label for="path">
+							<tmpl_if name="is_path" value="1">
+								<tmpl_if name="is_writable" value="1">
+									Transfer Parent Path
+								<tmpl_else>
+									Transfer Parent Path is not writable
+								</tmpl_if>
 							<tmpl_else>
-								Transfer Parent Path is not writable
+								Transfer Parent Path is not valid
 							</tmpl_if>
-						<tmpl_else>
-							Transfer Parent Path is not valid
-						</tmpl_if>
+						</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="path" type="Text" maxlength="254" value="<tmpl_var name="path">" size="30">
+						<input name="path" id="path" type="Text" maxlength="254" value="<tmpl_var name="path">" size="30">
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Define the main torrentflux-b4rt parent path.<br/>Directory must be writable by the webserver user.
+						Define the main torrentflux-b4rt parent path.<br/>
+						Directory must be writable by the webserver user.
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						<tmpl_if name="is_docroot" value="1">
-							Document Root Path
-						<tmpl_else>
-							Document Root Path is not valid
-						</tmpl_if>
+						<label for="docroot">
+							<tmpl_if name="is_docroot" value="1">
+								Document Root Path
+							<tmpl_else>
+								Document Root Path is not valid
+							</tmpl_if>
+						</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="docroot" type="Text" maxlength="254" value="<tmpl_var name="docroot">" size="30">
+						<input name="docroot" id="docroot" type="Text" maxlength="254" value="<tmpl_var name="docroot">" size="30">
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Define the Document Root path of the installation.<br/>Directory must be readable by the webserver user.
+						Define the Document Root path of the installation.<br/>
+						Directory must be readable by the webserver user.
 					</td>
 				</tr>
 			</table>
@@ -68,10 +74,10 @@
 			<table>
 				<tr>
 					<td class="settingsTitle">
-						Enable Home Directories
+						<label for="enable_home_dirs">Enable Home Directories</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_home_dirs">
+						<select name="enable_home_dirs" id="enable_home_dirs">
 							<option value="1">True</option>
 							<option value="0"
 							<tmpl_if name="enable_home_dirs" value="0">
@@ -83,19 +89,22 @@
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Enable/disable home directories.<br/>If disabled all downloads are saved to the 'incoming' directory specified below.
+						Enable/disable home directories.<br/>
+						If disabled all downloads are saved to the 'incoming' directory specified below.
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						<tmpl_if name="path_incoming_ok" value="1">
-							Incoming
-						<tmpl_else>
-							Incoming is not valid
-						</tmpl_if>
+						<label for="path_incoming">
+							<tmpl_if name="path_incoming_ok" value="1">
+								Incoming
+							<tmpl_else>
+								Incoming is not valid
+							</tmpl_if>
+						</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="path_incoming" type="Text" maxlength="254" value="<tmpl_var name="path_incoming">" size="30">
+						<input name="path_incoming" id="path_incoming" type="Text" maxlength="254" value="<tmpl_var name="path_incoming">" size="30">
 					</td>
 				</tr>
 				<tr>
@@ -119,10 +128,10 @@
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
-						transmissioncli
+						<label for="btclient_transmission_bin">transmissioncli</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="btclient_transmission_bin" type="Text" maxlength="254" value="<tmpl_var name="btclient_transmission_bin">" size="30">
+						<input name="btclient_transmission_bin" id="btclient_transmission_bin" type="Text" maxlength="254" value="<tmpl_var name="btclient_transmission_bin">" size="30">
 					</td>
 				</tr>
 				<tr>
@@ -132,10 +141,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						wget
+						<label for="bin_wget">wget</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="bin_wget" type="Text" maxlength="254" value="<tmpl_var name="bin_wget">" size="30">
+						<input name="bin_wget" id="bin_wget" type="Text" maxlength="254" value="<tmpl_var name="bin_wget">" size="30">
 					</td>
 				</tr>
 				<tr>
@@ -145,10 +154,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						uudeview
+						<label for="bin_uudeview">uudeview</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="bin_uudeview" type="Text" maxlength="254" value="<tmpl_var name="bin_uudeview">" size="30">
+						<input name="bin_uudeview" id="bin_uudeview" type="Text" maxlength="254" value="<tmpl_var name="bin_uudeview">" size="30">
 					</td>
 				</tr>
 				<tr>
@@ -158,23 +167,24 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						php
+						<label for="bin_php">php</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="bin_php" type="Text" maxlength="254" value="<tmpl_var name="bin_php">" size="30">
+						<input name="bin_php" id="bin_php" type="Text" maxlength="254" value="<tmpl_var name="bin_php">" size="30">
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Specify the path to the commandline (cli) php binary (/usr/bin/php).<br/><strong>Note: </strong>This must be the cli version of the PHP binary, NOT cgi or otherwise.
+						Specify the path to the commandline (cli) php binary (/usr/bin/php).<br/>
+						<strong>Note: </strong>This must be the cli version of the PHP binary, NOT cgi or otherwise.
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						python
+						<label for="pythonCmd">python</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="pythonCmd" type="Text" maxlength="254" value="<tmpl_var name="pythonCmd">" size="30">
+						<input name="pythonCmd" id="pythonCmd" type="Text" maxlength="254" value="<tmpl_var name="pythonCmd">" size="30">
 					</td>
 				</tr>
 				<tr>
@@ -184,10 +194,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						perl
+						<label for="perlCmd">perl</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="perlCmd" type="Text" maxlength="254" value="<tmpl_var name="perlCmd">" size="30">
+						<input name="perlCmd" id="perlCmd" type="Text" maxlength="254" value="<tmpl_var name="perlCmd">" size="30">
 					</td>
 				</tr>
 				<tr>
@@ -197,10 +207,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						grep
+						<label for="bin_grep">grep</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="bin_grep" type="Text" maxlength="254" value="<tmpl_var name="bin_grep">" size="30">
+						<input name="bin_grep" id="bin_grep" type="Text" maxlength="254" value="<tmpl_var name="bin_grep">" size="30">
 					</td>
 				</tr>
 				<tr>
@@ -210,10 +220,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						awk
+						<label for="bin_awk">awk</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="bin_awk" type="Text" maxlength="254" value="<tmpl_var name="bin_awk">" size="30">
+						<input name="bin_awk" id="bin_awk" type="Text" maxlength="254" value="<tmpl_var name="bin_awk">" size="30">
 					</td>
 				</tr>
 				<tr>
@@ -223,10 +233,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						du
+						<label for="bin_du">du</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="bin_du" type="Text" maxlength="254" value="<tmpl_var name="bin_du">" size="30">
+						<input name="bin_du" id="bin_du" type="Text" maxlength="254" value="<tmpl_var name="bin_du">" size="30">
 					</td>
 				</tr>
 				<tr>
@@ -236,10 +246,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						unzip
+						<label for="bin_unzip">unzip</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="bin_unzip" type="Text" maxlength="254" value="<tmpl_var name="bin_unzip">" size="30">
+						<input name="bin_unzip" id="bin_unzip" type="Text" maxlength="254" value="<tmpl_var name="bin_unzip">" size="30">
 					</td>
 				</tr>
 				<tr>
@@ -249,10 +259,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						cksfv
+						<label for="bin_cksfv">cksfv</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="bin_cksfv" type="Text" maxlength="254" value="<tmpl_var name="bin_cksfv">" size="30">
+						<input name="bin_cksfv" id="bin_cksfv" type="Text" maxlength="254" value="<tmpl_var name="bin_cksfv">" size="30">
 					</td>
 				</tr>
 				<tr>
@@ -262,10 +272,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						vlc
+						<label for="bin_vlc">vlc</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="bin_vlc" type="Text" maxlength="254" value="<tmpl_var name="bin_vlc">" size="30">
+						<input name="bin_vlc" id="bin_vlc" type="Text" maxlength="254" value="<tmpl_var name="bin_vlc">" size="30">
 					</td>
 				</tr>
 				<tr>
@@ -275,10 +285,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						unrar
+						<label for="bin_unrar">unrar</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="bin_unrar" type="Text" maxlength="254" value="<tmpl_var name="bin_unrar">" size="30">
+						<input name="bin_unrar" id="bin_unrar" type="Text" maxlength="254" value="<tmpl_var name="bin_unrar">" size="30">
 					</td>
 				</tr>
 				<tr>
@@ -303,10 +313,10 @@
 				<tmpl_if name="_OS" value="1">
 					<tr>
 						<td class="settingsTitle">
-							loadavg
+							<label for="loadavg_path">loadavg</label>
 						</td>
 						<td class="settingsSetting" rowspan="2">
-							<input name="loadavg_path" type="Text" maxlength="254" value="<tmpl_var name="loadavg_path">" size="30">
+							<input name="loadavg_path" id="loadavg_path" type="Text" maxlength="254" value="<tmpl_var name="loadavg_path">" size="30">
 						</td>
 					</tr>
 					<tr>
@@ -316,10 +326,10 @@
 					</tr>
 					<tr>
 						<td class="settingsTitle">
-							netstat
+							<label for="bin_netstat">netstat</label>
 						</td>
 						<td class="settingsSetting" rowspan="2">
-							<input name="bin_netstat" type="Text" maxlength="254" value="<tmpl_var name="bin_netstat">" size="30">
+							<input name="bin_netstat" id="bin_netstat" type="Text" maxlength="254" value="<tmpl_var name="bin_netstat">" size="30">
 						</td>
 					</tr>
 					<tr>
@@ -330,10 +340,10 @@
 				<tmpl_elseif name="_OS" value="2">
 					<tr>
 						<td class="settingsTitle">
-							sockstat
+							<label for="bin_sockstat">sockstat</label>
 						</td>
 						<td class="settingsSetting" rowspan="2">
-							<input name="bin_sockstat" type="Text" maxlength="254" value="<tmpl_var name="bin_sockstat">" size="30">
+							<input name="bin_sockstat" id="bin_sockstat" type="Text" maxlength="254" value="<tmpl_var name="bin_sockstat">" size="30">
 						</td>
 					</tr>
 					<tr>

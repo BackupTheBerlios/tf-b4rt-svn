@@ -16,10 +16,10 @@
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
-						Enable Public Stats
+						<label for="stats_enable_public">Enable Public Stats</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="stats_enable_public">
+						<select name="stats_enable_public" id="stats_enable_public">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="stats_enable_public" value="0">
@@ -36,10 +36,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Show Usage
+						<label for="stats_show_usage">Show Usage</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="stats_show_usage">
+						<select name="stats_show_usage" id="stats_show_usage">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="stats_show_usage" value="0">
@@ -57,10 +57,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Deflate Level
+						<label for="stats_deflate_level">Deflate Level</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="stats_deflate_level">
+						<select name="stats_deflate_level" id="stats_deflate_level">
 							<tmpl_loop name="deflate_list">
 								<option value="<tmpl_var name="i">"
 									<tmpl_if name="is_selected" value="1">
@@ -78,10 +78,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Text Delim Char
+						<label for="stats_txt_delim">Text Delim Char</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="stats_txt_delim" type="Text" maxlength="1" value="<tmpl_var name="stats_txt_delim">" size="1">
+						<input name="stats_txt_delim" id="stats_txt_delim" type="Text" maxlength="1" value="<tmpl_var name="stats_txt_delim">" size="1">
 					</td>
 				</tr>
 				<tr>
@@ -91,10 +91,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Default : Header
+						<label for="stats_default_header">Default : Header</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="stats_default_header">
+						<select name="stats_default_header" id="stats_default_header">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="stats_default_header" value="0">
@@ -112,10 +112,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Default : type
+						<label for="stats_default_type">Default : type</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="stats_default_type">
+						<select name="stats_default_type" id="stats_default_type">
 							<option value="all"
 							<tmpl_if name="stats_default_type" value="all">
 								 selected
@@ -151,10 +151,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Default : format
+						<label for="stats_default_format">Default : format</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="stats_default_format">
+						<select name="stats_default_format" id="stats_default_format">
 							<option value="xml"
 							<tmpl_if name="stats_default_format" value="xml">
 								 selected
@@ -180,10 +180,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Default : Compress
+						<label for="stats_default_compress">Default : Compress</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="stats_default_compress">
+						<select name="stats_default_compress" id="stats_default_compress">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="stats_default_compress" value="0">
@@ -200,10 +200,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Default : Attachment
+						<label for="stats_default_attach">Default : Attachment</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="stats_default_attach">
+						<select name="stats_default_attach" id="stats_default_attach">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="stats_default_attach" value="0">
