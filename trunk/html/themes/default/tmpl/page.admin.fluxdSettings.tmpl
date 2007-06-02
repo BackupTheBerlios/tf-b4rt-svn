@@ -107,11 +107,12 @@
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Database-Mode</strong><br>
-									Specify the Mode to get data from the Database.
+									<td align="left" width="350" valign="top">
+										<label for="fluxd_dbmode"><strong>Database-Mode</strong></label><br/>
+										Specify the Mode to get data from the Database.
 									</td>
 									<td valign="top">
-										<select name="fluxd_dbmode">
+										<select name="fluxd_dbmode" id="fluxd_dbmode">
 											<option value="php"
 											<tmpl_if name="fluxd_dbmode" value="php">
 												selected
@@ -126,11 +127,12 @@
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Loglevel</strong><br>
-									Specify the level of logging (default is 0):
+									<td align="left" width="350" valign="top">
+										<label for="fluxd_loglevel"><strong>Loglevel</strong></label><br/>
+										Specify the level of logging (default is 0):
 									</td>
 									<td valign="top">
-										<input name="fluxd_loglevel" type="Text" maxlength="2" value="<tmpl_var name="fluxd_loglevel">" size="5">
+										<input name="fluxd_loglevel" id="fluxd_loglevel" type="Text" maxlength="2" value="<tmpl_var name="fluxd_loglevel">" size="5">
 									</td>
 								</tr>
 								<tr><td colspan="2" align="center"><br></td></tr>
@@ -155,11 +157,12 @@
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Qmgr enabled</strong><br>
-									Specify whether or not to load the Qmgr module.
+									<td align="left" width="350" valign="top">
+										<label for="fluxd_Qmgr_enabled"><strong>Qmgr enabled</strong></label><br/>
+										Specify whether or not to load the Qmgr module.
 									</td>
 									<td valign="top">
-										<select name="fluxd_Qmgr_enabled">
+										<select name="fluxd_Qmgr_enabled" id="fluxd_Qmgr_enabled">
 											<option value="1"
 											<tmpl_if name="fluxd_Qmgr_enabled" value="1">
 												selected
@@ -174,27 +177,30 @@
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Qmgr Interval</strong><br>
+									<td align="left" width="350" valign="top">
+										<label for="fluxd_Qmgr_interval"><strong>Qmgr Interval</strong></label><br/>
 										Interval in seconds to have run Qmgr.
 									</td>
 									<td valign="top">
-										<input name="fluxd_Qmgr_interval" type="Text" maxlength="10" value="<tmpl_var name="fluxd_Qmgr_interval">" size="5">
+										<input name="fluxd_Qmgr_interval" id="fluxd_Qmgr_interval" type="Text" maxlength="10" value="<tmpl_var name="fluxd_Qmgr_interval">" size="5">
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Limit Transfer Global</strong><br>
-									Specify the maximum number of transfers the server will allow to run at one time (admins may override this):
+									<td align="left" width="350" valign="top">
+										<label for="fluxd_Qmgr_maxTotalTransfers"><strong>Limit Transfer Global</strong></label><br/>
+										Specify the maximum number of transfers the server will allow to run at one time (admins may override this):
 									</td>
 									<td valign="top">
-										<input name="fluxd_Qmgr_maxTotalTransfers" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Qmgr_maxTotalTransfers">" size="5">
+										<input name="fluxd_Qmgr_maxTotalTransfers" id="fluxd_Qmgr_maxTotalTransfers" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Qmgr_maxTotalTransfers">" size="5">
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Limit Transfer Per User</strong><br>
-									Specify the maximum number of transfers a single user may run at one time:
+									<td align="left" width="350" valign="top">
+										<label for="fluxd_Qmgr_maxUserTransfers"><strong>Limit Transfer Per User</strong></label><br/>
+										Specify the maximum number of transfers a single user may run at one time:
 									</td>
 									<td valign="top">
-										<input name="fluxd_Qmgr_maxUserTransfers" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Qmgr_maxUserTransfers">" size="5">
+										<input name="fluxd_Qmgr_maxUserTransfers" id="fluxd_Qmgr_maxUserTransfers" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Qmgr_maxUserTransfers">" size="5">
 									</td>
 								</tr>
 								<tr>
@@ -212,11 +218,12 @@
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Watch enabled</strong><br>
-									Specify whether or not to load the Watch module.
+									<td align="left" width="350" valign="top">
+										<label for="fluxd_Watch_enabled"><strong>Watch enabled</strong></label><br/>
+										Specify whether or not to load the Watch module.
 									</td>
 									<td valign="top">
-										<select name="fluxd_Watch_enabled">
+										<select name="fluxd_Watch_enabled" id="fluxd_Watch_enabled">
 											<option value="1"
 											<tmpl_if name="fluxd_Watch_enabled" value="1">
 												selected
@@ -231,15 +238,17 @@
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Watch Interval</strong><br>
+									<td align="left" width="350" valign="top">
+										<label for="fluxd_Watch_interval"><strong>Watch Interval</strong></label><br/>
 										Interval in seconds to have run Watch.
 									</td>
 									<td valign="top">
-										<input name="fluxd_Watch_interval" type="Text" maxlength="10" value="<tmpl_var name="fluxd_Watch_interval">" size="5">
+										<input name="fluxd_Watch_interval" id="fluxd_Watch_interval" type="Text" maxlength="10" value="<tmpl_var name="fluxd_Watch_interval">" size="5">
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Watch Jobs</strong><br>
+									<td align="left" width="350" valign="top">
+										<strong>Watch Jobs</strong><br/>
 										Configure the Watch-Jobs.
 									</td>
 									<td valign="top">
@@ -261,11 +270,12 @@
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Rssad enabled</strong><br>
-									Specify whether or not to load the Rssad module.
+									<td align="left" width="350" valign="top">
+										<label for="fluxd_Rssad_enabled"><strong>Rssad enabled</strong></label><br/>
+										Specify whether or not to load the Rssad module.
 									</td>
 									<td valign="top">
-										<select name="fluxd_Rssad_enabled">
+										<select name="fluxd_Rssad_enabled" id="fluxd_Rssad_enabled">
 											<option value="1"
 											<tmpl_if name="fluxd_Rssad_enabled" value="1">
 												selected
@@ -280,15 +290,17 @@
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Rssad Interval</strong><br>
+									<td align="left" width="350" valign="top">
+										<label for="fluxd_Rssad_interval"><strong>Rssad Interval</strong></label><br/>
 										Interval in seconds to have run Rssad.
 									</td>
 									<td valign="top">
-										<input name="fluxd_Rssad_interval" type="Text" maxlength="10" value="<tmpl_var name="fluxd_Rssad_interval">" size="5">
+										<input name="fluxd_Rssad_interval" id="fluxd_Rssad_interval" type="Text" maxlength="10" value="<tmpl_var name="fluxd_Rssad_interval">" size="5">
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Rssad Filters and Jobs</strong><br>
+									<td align="left" width="350" valign="top">
+										<strong>Rssad Filters and Jobs</strong><br/>
 										Configure the Rssad-Filters and Jobs.
 									</td>
 									<td valign="top">
@@ -310,11 +322,12 @@
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Fluxinet enabled</strong><br>
-									Specify whether or not to load the Fluxinet module.
+									<td align="left" width="350" valign="top">
+										<label for="fluxd_Fluxinet_enabled"><strong>Fluxinet enabled</strong></label><br/>
+										Specify whether or not to load the Fluxinet module.
 									</td>
 									<td valign="top">
-										<select name="fluxd_Fluxinet_enabled">
+										<select name="fluxd_Fluxinet_enabled" id="fluxd_Fluxinet_enabled">
 											<option value="1"
 											<tmpl_if name="fluxd_Fluxinet_enabled" value="1">
 												selected
@@ -329,11 +342,12 @@
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="250" valign="top"><strong>Fluxinet port</strong><br>
-										the port number to run the Fluxinet socket on:
+									<td align="left" width="250" valign="top">
+										<label for="fluxd_Fluxinet_port"><strong>Fluxinet port</strong></label><br/>
+										The port number to run the Fluxinet socket on:
 									</td>
 									<td valign="top">
-										<input name="fluxd_Fluxinet_port" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Fluxinet_port">" size="5">
+										<input name="fluxd_Fluxinet_port" id="fluxd_Fluxinet_port" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Fluxinet_port">" size="5">
 									</td>
 								</tr>
 								<tr>
@@ -351,11 +365,12 @@
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Maintenance enabled</strong><br>
-									Specify whether or not to load the Maintenance module.
+									<td align="left" width="350" valign="top">
+										<label for="fluxd_Maintenance_enabled"><strong>Maintenance enabled</strong></label><br/>
+										Specify whether or not to load the Maintenance module.
 									</td>
 									<td valign="top">
-										<select name="fluxd_Maintenance_enabled">
+										<select name="fluxd_Maintenance_enabled" id="fluxd_Maintenance_enabled">
 											<option value="1"
 											<tmpl_if name="fluxd_Maintenance_enabled" value="1">
 												selected
@@ -370,19 +385,21 @@
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Maintenance Interval</strong><br>
+									<td align="left" width="350" valign="top">
+										<label for="fluxd_Maintenance_interval"><strong>Maintenance Interval</strong></label><br/>
 										Interval in seconds to have run Maintenance.
 									</td>
 									<td valign="top">
-										<input name="fluxd_Maintenance_interval" type="Text" maxlength="10" value="<tmpl_var name="fluxd_Maintenance_interval">" size="5">
+										<input name="fluxd_Maintenance_interval" id="fluxd_Maintenance_interval" type="Text" maxlength="10" value="<tmpl_var name="fluxd_Maintenance_interval">" size="5">
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Maintenance Transfer-Restart</strong><br>
-									Specify whether died Transfers should be restarted.
+									<td align="left" width="350" valign="top">
+										<label for="fluxd_Maintenance_trestart"><strong>Maintenance Transfer-Restart</strong></label><br/>
+										Specify whether died Transfers should be restarted.
 									</td>
 									<td valign="top">
-										<select name="fluxd_Maintenance_trestart">
+										<select name="fluxd_Maintenance_trestart" id="fluxd_Maintenance_trestart">
 											<option value="1"
 											<tmpl_if name="fluxd_Maintenance_trestart" value="1">
 												selected
@@ -412,11 +429,12 @@
 								</tr>
 								<tr><td colspan="2"><u>Note</u> : Trigger module does nothing.</td></tr>
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Trigger enabled</strong><br>
-									Specify whether or not to load the Trigger module.
+									<td align="left" width="350" valign="top">
+										<label for="fluxd_Trigger_enabled"><strong>Trigger enabled</strong></label><br/>
+										Specify whether or not to load the Trigger module.
 									</td>
 									<td valign="top">
-										<select name="fluxd_Trigger_enabled">
+										<select name="fluxd_Trigger_enabled" id="fluxd_Trigger_enabled">
 											<option value="1"
 											<tmpl_if name="fluxd_Trigger_enabled" value="1">
 												selected
@@ -431,11 +449,12 @@
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Trigger Interval</strong><br>
+									<td align="left" width="350" valign="top">
+										<label for="fluxd_Trigger_interval"><strong>Trigger Interval</strong></label><br/>
 										Interval in seconds to have run Trigger.
 									</td>
 									<td valign="top">
-										<input name="fluxd_Trigger_interval" type="Text" maxlength="10" value="<tmpl_var name="fluxd_Trigger_interval">" size="5">
+										<input name="fluxd_Trigger_interval" id="fluxd_Trigger_interval" type="Text" maxlength="10" value="<tmpl_var name="fluxd_Trigger_interval">" size="5">
 									</td>
 								</tr>
 								<tr><td colspan="2"><hr noshade></td></tr>

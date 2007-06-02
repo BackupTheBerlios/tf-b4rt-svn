@@ -43,7 +43,7 @@
 				<td align="center">
 					<form name="theForm" action="admin.php?op=fluxdRssadSettings" method="post" onsubmit="return validateSettings('fluxd_Rssad_filter_new')">
 						<input type="hidden" name="pageop" value="addFilter">
-						Name : <input type="Text" size="30" maxlength="255" name="filtername">
+						<label for="filtername">Name:</label> <input type="Text" size="30" maxlength="255" name="filtername" id="filtername">
 						<input type="Submit" value="Add Filter">
 					</form>
 				</td>
@@ -104,7 +104,6 @@
 				</td>
 			</tr>
 		</table>
-		<br>
 	<tmpl_elseif name="pageop" value="addFilter">
 		<table width="100%" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
 			<tr>
@@ -119,11 +118,11 @@
 							<input type="hidden" name="pageop" value="saveFilter">
 							<input type="hidden" name="new" value="true">
 							<input type="hidden" name="rssad_filtercontent" value="<tmpl_var name="rssad_filtercontent">">
-							Name : <input type="Text" size="30" maxlength="255" name="filtername" value="<tmpl_var name="filtername">">
+							<label for="filtername">Name:</label> <input type="Text" size="30" maxlength="255" name="filtername" id="filtername" value="<tmpl_var name="filtername">">
 							<br><br>
-							Filter-Entries :
+							<label for="rssad_filters">Filter-Entries:</label>
 							<br><br>
-							<select name="rssad_filters" size="10">
+							<select name="rssad_filters" id="rssad_filters" size="10">
 								<tmpl_if name="rssad_filter_list">
 									<tmpl_loop name="rssad_filter_list">
 										<option value="<tmpl_var name="filter">"><tmpl_var name="filter"></option>
@@ -132,7 +131,7 @@
 							</select>
 							<input type="button" name="remButton" value="remove" onclick="removeRssadFilterEntry()">
 							<br><br>
-							Add Filter-Entry : <input type="text" name="rssad_filter_entry" size="50">
+							<label for="rssad_filter_entry">Add Filter-Entry:</label> <input type="text" name="rssad_filter_entry" id="rssad_filter_entry" size="50">
 							<input type="button" name="addButton" value="add" onclick="addRssadFilterEntry()" size="30">
 							<br><br>
 							<input type="Submit" value="Add Filter">
@@ -166,9 +165,9 @@
 							<input type="hidden" name="filtername" value="<tmpl_var name="filtername">">
 							<strong><tmpl_var name="filtername"></strong>
 							<br><br>
-							Filter-Entries :
+							<label for="rssad_filters">Filter-Entries:</label>
 							<br><br>
-							<select name="rssad_filters" size="10">
+							<select name="rssad_filters" id="rssad_filters" size="10">
 								<tmpl_if name="rssad_filter_list">
 									<tmpl_loop name="rssad_filter_list">
 										<option value="<tmpl_var name="filter">"><tmpl_var name="filter"></option>
@@ -177,7 +176,7 @@
 							</select>
 							<input type="button" name="remButton" value="remove" onclick="removeRssadFilterEntry()">
 							<br><br>
-							Add Filter-Entry : <input type="text" name="rssad_filter_entry" size="50">
+							<label for="rssad_filter_entry">Add Filter-Entry:</label> <input type="text" name="rssad_filter_entry" id="rssad_filter_entry" size="50">
 							<input type="button" name="addButton" value="add" onclick="addRssadFilterEntry()" size="30">
 							<br><br>
 							<input type="Submit" value="Save Filter">
@@ -261,19 +260,19 @@
 					</td>
 				</tr>
 				<tr bgcolor="<tmpl_var name="table_border_dk">">
-					<td align="center">Savedir</td>
-					<td align="center">URL</td>
-					<td align="center">Filter</td>
+					<td align="center"><label for="savedir">Savedir</label></td>
+					<td align="center"><label for="url">URL</label></td>
+					<td align="center"><label for="filtername">Filter</label></td>
 				</tr>
 				<tr>
 					<td>
-						<input type="text" size="40" name="savedir">
+						<input type="text" size="40" name="savedir" id="savedir">
 					</td>
 					<td>
-						<input type="text" size="50" name="url">
+						<input type="text" size="50" name="url" id="url">
 					</td>
 					<td>
-						<select name="filtername">
+						<select name="filtername" id="filtername">
 							<tmpl_loop name="rssad_filters">
 								<option value="<tmpl_var name="filtername">"><tmpl_var name="filtername"></option>
 							</tmpl_loop>
@@ -282,7 +281,7 @@
 				</tr>
 				<tr>
 					<td colspan="3" align="center">
-						Check/Create dir <input type="checkbox" name="checkdir" value="true" checked>
+						<label for="checkdir">Check/Create dir</label> <input type="checkbox" name="checkdir" id="checkdir" value="true" checked>
 						<br>
 						<input type="hidden" name="pageop" value="saveJob">
 						<input type="Submit" value="Add Job">
@@ -301,19 +300,19 @@
 				</tr>
 				<tmpl_if name="rssad_job_loaded" value="1">
 					<tr bgcolor="<tmpl_var name="table_border_dk">">
-						<td align="center">Savedir</td>
-						<td align="center">URL</td>
-						<td align="center">Filter</td>
+						<td align="center"><label for="savedir">Savedir</label></td>
+						<td align="center"><label for="url">URL</label></td>
+						<td align="center"><label for="filtername">Filter</label></td>
 					</tr>
 					<tr>
 						<td>
-							<input type="text" size="40" name="savedir" value="<tmpl_var name="rssad_savedir">">
+							<input type="text" size="40" name="savedir" id="savedir" value="<tmpl_var name="rssad_savedir">">
 						</td>
 						<td>
-							<input type="text" size="50" name="url" value="<tmpl_var escape="html" name="rssad_url">">
+							<input type="text" size="50" name="url" id="url" value="<tmpl_var escape="html" name="rssad_url">">
 						</td>
 						<td>
-							<select name="filtername">
+							<select name="filtername" id="filtername">
 								<tmpl_loop name="rssad_filters">
 									<option value="<tmpl_var name="filtername">"<tmpl_var name="selected">><tmpl_var name="filtername"></option>
 								</tmpl_loop>
@@ -322,7 +321,7 @@
 					</tr>
 					<tr>
 						<td colspan="3" align="center">
-							Check/Create dir <input type="checkbox" name="checkdir" value="true" checked>
+							<label for="checkdir">Check/Create dir</label> <input type="checkbox" name="checkdir" id="checkdir" value="true" checked>
 							<br>
 							<input type="hidden" name="pageop" value="saveJob">
 							<input type="hidden" name="job" value="<tmpl_var name="jobnumber">">

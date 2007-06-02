@@ -14,10 +14,11 @@
 					<form name="theForm" action="admin.php?op=searchSettings" method="post">
 						<table cellpadding="5" cellspacing="0" border="0" width="100%">
 							<tr>
-								<td align="right" width="350" valign="top"><strong>Select Search Engine</strong><br>
+								<td align="right" width="350">
+									<label for="searchEngine"><strong>Select Search Engine</strong></label>
 								</td>
-								<td valign="top">
-									<select name="searchEngine" <tmpl_if name="autoSubmit">onchange="this.form.submit();"</tmpl_if> STYLE="width: 125px">
+								<td>
+									<select name="searchEngine" id="searchEngine" <tmpl_if name="autoSubmit">onchange="this.form.submit();"</tmpl_if> STYLE="width: 125px">
 									<tmpl_loop name="Engine_List">
 										<option <tmpl_if name="selected">selected</tmpl_if>><tmpl_var name="Engine"></option>
 									</tmpl_loop>
@@ -70,11 +71,12 @@
 											</tmpl_if>
 											<tmpl_if name="cat_pos">
 												<tr>
-													<td align="left" width="350" valign="top"><strong>Search Filter:</strong><br>
+													<td align="left" width="350" valign="top">
+														<label for="catsselect"><strong>Search Filter:</strong></label><br/>
 														Select the items that you DO NOT want to show in the torrent search:
 													</td>
 													<td valign="top">
-														<select multiple name="<tmpl_var name="catFilterName">[]" size="8" STYLE="width: 125px">
+														<select multiple name="<tmpl_var name="catFilterName">[]" id="catsselect" size="8" STYLE="width: 125px">
 															<option value="">[NO FILTER]</option>
 															<tmpl_loop name="cats">
 																<option value="<tmpl_var name="mainId">"

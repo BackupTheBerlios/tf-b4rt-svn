@@ -14,10 +14,10 @@
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
-						Select Search Engine
+						<label for="searchEngine">Select Search Engine</label>
 					</td>
 					<td class="settingsSetting">
-						<select name="searchEngine" <tmpl_if name="autoSubmit">onchange="this.form.submit();"</tmpl_if> STYLE="width: 125px">
+						<select name="searchEngine" id="searchEngine" <tmpl_if name="autoSubmit">onchange="this.form.submit();"</tmpl_if> STYLE="width: 125px">
 							<tmpl_loop name="Engine_List">
 								<option <tmpl_if name="selected">selected</tmpl_if>><tmpl_var name="Engine"></option>
 							</tmpl_loop>
@@ -79,10 +79,10 @@
 					<tmpl_if name="cat_pos">
 						<tr>
 							<td class="settingsTitle">
-								Search Filter
+								<label for="catsselect">Search Filter</label>
 							</td>
 							<td class="settingsSetting" rowspan="2">
-								<select multiple name="<tmpl_var name="catFilterName">[]" size="8" STYLE="width: 125px">
+								<select multiple name="<tmpl_var name="catFilterName">[]" id="catsselect" size="8" STYLE="width: 125px">
 									<option value="">[NO FILTER]</option>
 									<tmpl_loop name="cats">
 										<option value="<tmpl_var name="mainId">"

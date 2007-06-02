@@ -97,23 +97,23 @@
 					<table id="statusInfos">
 						<tr>
 							<td class="buttonLinks2">
-								Watchdir
+								<label for="watchdir">Watchdir</label>
 							</td>
 							<td class="buttonLinks2">
-								User
+								<label for="user">User</label>
 							</td>
 							<tmpl_if name="with_profiles">
 								<td class="buttonLinks2">
-									Transfer Profile
+									<label for="profile">Transfer Profile</label>
 								</td>
 							</tmpl_if>
 						</tr>
 						<tr>
 							<td class="buttonLinks">
-								<input type="text" style="width: 100%;" size="40" maxlength="255" name="watchdir" value="<tmpl_var escape="html" name="watchdir">">
+								<input type="text" style="width: 100%;" size="40" maxlength="255" name="watchdir" id="watchdir" value="<tmpl_var escape="html" name="watchdir">">
 							</td>
 							<td class="buttonLinks" width="100">
-								<select name="user"<tmpl_if name="with_profiles"> onchange="performRefresh();"</tmpl_if>>
+								<select name="user" id="user"<tmpl_if name="with_profiles"> onchange="performRefresh();"</tmpl_if>>
 									<tmpl_loop name="watch_users">
 										<option value="<tmpl_var escape="html" name="name">"<tmpl_if name="is_selected"> selected</tmpl_if>><tmpl_var escape="htmlkeepspaces" name="name"></option>
 									</tmpl_loop>
@@ -121,7 +121,7 @@
 							</td>
 							<tmpl_if name="with_profiles">
 								<td class="buttonLinks" width="150">
-									<select name="profile">
+									<select name="profile" id="profile">
 										<option value="">default</option>
 										<tmpl_if name="profiles">
 											<tmpl_loop name="profiles">
@@ -140,7 +140,7 @@
 							</tmpl_if>
 						</tr>
 					</table>
-					Check/Create dir <input type="checkbox" name="checkdir"<tmpl_if name="checkdir"> checked</tmpl_if>>
+					<label for="checkdir">Check/Create dir</label> <input type="checkbox" name="checkdir" id="checkdir"<tmpl_if name="checkdir"> checked</tmpl_if>>
 					<input type="hidden" name="pageop" value="<tmpl_var escape="html" name="pageop">">
 					<input type="hidden" name="job" value="<tmpl_var escape="html" name="jobnumber">">
 					<input type="hidden" name="postback" value="1">

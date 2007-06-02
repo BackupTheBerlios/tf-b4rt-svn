@@ -58,10 +58,10 @@
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
-						Database-Mode
+						<label for="fluxd_dbmode">Database-Mode</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="fluxd_dbmode">
+						<select name="fluxd_dbmode" id="fluxd_dbmode">
 							<option value="php"
 							<tmpl_if name="fluxd_dbmode" value="php">
 								selected
@@ -82,10 +82,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Loglevel
+						<label for="fluxd_loglevel">Loglevel</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="fluxd_loglevel" type="Text" maxlength="2" value="<tmpl_var name="fluxd_loglevel">" size="5">
+						<input name="fluxd_loglevel" id="fluxd_loglevel" type="Text" maxlength="2" value="<tmpl_var name="fluxd_loglevel">" size="5">
 					</td>
 				</tr>
 				<tr>
@@ -118,10 +118,10 @@
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
-						Qmgr enabled
+						<label for="fluxd_Qmgr_enabled">Qmgr enabled</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="fluxd_Qmgr_enabled">
+						<select name="fluxd_Qmgr_enabled" id="fluxd_Qmgr_enabled">
 							<option value="1"
 							<tmpl_if name="fluxd_Qmgr_enabled" value="1">
 								selected
@@ -142,10 +142,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Limit Transfer Global
+						<label for="fluxd_Qmgr_maxTotalTransfers">Limit Transfer Global</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="fluxd_Qmgr_maxTotalTransfers" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Qmgr_maxTotalTransfers">" size="5">
+						<input name="fluxd_Qmgr_maxTotalTransfers" id="fluxd_Qmgr_maxTotalTransfers" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Qmgr_maxTotalTransfers">" size="5">
 					</td>
 				</tr>
 				<tr>
@@ -155,10 +155,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Limit Transfer Per User
+						<label for="fluxd_Qmgr_maxUserTransfers">Limit Transfer Per User</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="fluxd_Qmgr_maxUserTransfers" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Qmgr_maxUserTransfers">" size="5">
+						<input name="fluxd_Qmgr_maxUserTransfers" id="fluxd_Qmgr_maxUserTransfers" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Qmgr_maxUserTransfers">" size="5">
 					</td>
 				</tr>
 				<tr>
@@ -168,10 +168,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Qmgr Interval
+						<label for="fluxd_Qmgr_interval">Qmgr Interval</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="fluxd_Qmgr_interval" type="Text" maxlength="10" value="<tmpl_var name="fluxd_Qmgr_interval">" size="5">
+						<input name="fluxd_Qmgr_interval" id="fluxd_Qmgr_interval" type="Text" maxlength="10" value="<tmpl_var name="fluxd_Qmgr_interval">" size="5">
 					</td>
 				</tr>
 				<tr>
@@ -204,10 +204,10 @@
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
-						Watch enabled
+						<label for="fluxd_Watch_enabled">Watch enabled</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="fluxd_Watch_enabled">
+						<select name="fluxd_Watch_enabled" id="fluxd_Watch_enabled">
 							<option value="1"
 							<tmpl_if name="fluxd_Watch_enabled" value="1">
 								selected
@@ -228,10 +228,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Watch Interval
+						<label for="fluxd_Watch_interval">Watch Interval</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="fluxd_Watch_interval" type="Text" maxlength="10" value="<tmpl_var name="fluxd_Watch_interval">" size="5">
+						<input name="fluxd_Watch_interval" id="fluxd_Watch_interval" type="Text" maxlength="10" value="<tmpl_var name="fluxd_Watch_interval">" size="5">
 					</td>
 				</tr>
 				<tr>
@@ -277,10 +277,10 @@
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
-						Rssad enabled
+						<label for="fluxd_Rssad_enabled">Rssad enabled</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="fluxd_Rssad_enabled">
+						<select name="fluxd_Rssad_enabled" id="fluxd_Rssad_enabled">
 							<option value="1"
 							<tmpl_if name="fluxd_Rssad_enabled" value="1">
 								selected
@@ -301,10 +301,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Rssad Interval
+						<label for="fluxd_Rssad_interval">Rssad Interval</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="fluxd_Rssad_interval" type="Text" maxlength="10" value="<tmpl_var name="fluxd_Rssad_interval">" size="5">
+						<input name="fluxd_Rssad_interval" id="fluxd_Rssad_interval" type="Text" maxlength="10" value="<tmpl_var name="fluxd_Rssad_interval">" size="5">
 					</td>
 				</tr>
 				<tr>
@@ -350,10 +350,10 @@
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
-						Fluxinet enabled
+						<label for="fluxd_Fluxinet_enabled">Fluxinet enabled</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="fluxd_Fluxinet_enabled">
+						<select name="fluxd_Fluxinet_enabled" id="fluxd_Fluxinet_enabled">
 							<option value="1"
 							<tmpl_if name="fluxd_Fluxinet_enabled" value="1">
 								selected
@@ -374,10 +374,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Fluxinet port
+						<label for="fluxd_Fluxinet_port">Fluxinet port</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="fluxd_Fluxinet_port" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Fluxinet_port">" size="5">
+						<input name="fluxd_Fluxinet_port" id="fluxd_Fluxinet_port" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Fluxinet_port">" size="5">
 					</td>
 				</tr>
 				<tr>
@@ -410,10 +410,10 @@
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
-						Maintenance enabled
+						<label for="fluxd_Maintenance_enabled">Maintenance enabled</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="fluxd_Maintenance_enabled">
+						<select name="fluxd_Maintenance_enabled" id="fluxd_Maintenance_enabled">
 							<option value="1"
 							<tmpl_if name="fluxd_Maintenance_enabled" value="1">
 								selected
@@ -434,10 +434,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Maintenance Interval
+						<label for="fluxd_Maintenance_interval">Maintenance Interval</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="fluxd_Maintenance_interval" type="Text" maxlength="10" value="<tmpl_var name="fluxd_Maintenance_interval">" size="5">
+						<input name="fluxd_Maintenance_interval" id="fluxd_Maintenance_interval" type="Text" maxlength="10" value="<tmpl_var name="fluxd_Maintenance_interval">" size="5">
 					</td>
 				</tr>
 				<tr>
@@ -447,10 +447,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Maintenance Transfer-Restart
+						<label for="fluxd_Maintenance_trestart">Maintenance Transfer-Restart</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="fluxd_Maintenance_trestart">
+						<select name="fluxd_Maintenance_trestart" id="fluxd_Maintenance_trestart">
 							<option value="1"
 							<tmpl_if name="fluxd_Maintenance_trestart" value="1">
 								selected
@@ -494,10 +494,10 @@
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
-						Trigger enabled
+						<label for="fluxd_Trigger_enabled">Trigger enabled</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="fluxd_Trigger_enabled">
+						<select name="fluxd_Trigger_enabled" id="fluxd_Trigger_enabled">
 							<option value="1"
 							<tmpl_if name="fluxd_Trigger_enabled" value="1">
 								selected
@@ -518,10 +518,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Trigger Interval
+						<label for="fluxd_Trigger_interval">Trigger Interval</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="fluxd_Trigger_interval" type="Text" maxlength="10" value="<tmpl_var name="fluxd_Trigger_interval">" size="5">
+						<input name="fluxd_Trigger_interval" id="fluxd_Trigger_interval" type="Text" maxlength="10" value="<tmpl_var name="fluxd_Trigger_interval">" size="5">
 					</td>
 				</tr>
 				<tr>
