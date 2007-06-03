@@ -3,19 +3,20 @@
 						<tmpl_if name="is_start">
 							<form method="POST" action="index.php?iid=move" name="move_form">
 								<p>
-									<tmpl_var name="_MOVE_FILE"><input disabled="true" type="text" name="T1" size="91" value="<tmpl_var name="path">">
+									<label for="T1"><tmpl_var name="_MOVE_FILE"></label>
+									<input disabled="true" type="text" name="T1" id="T1" size="91" value="<tmpl_var name="path">">
 								</p>
 								<p>
-									<tmpl_var name="_MOVE_STRING"><br>
+									<label for="<tmpl_if name="move_start">selector<tmpl_else>dest</tmpl_if>"><tmpl_var name="_MOVE_STRING"></label><br>
 									<tmpl_if name="move_start">
-										<select size="1" name="selector">
+										<select size="1" name="selector" id="selector">
 											<tmpl_loop name="dir_list">
 												<option value="<tmpl_var name="target">"><tmpl_var name="target"></option>
 											</tmpl_loop>
 										</select>
-										<br>/<br>
+										<br><label for="dest">or:</label><br>
 									</tmpl_if>
-									<input name="dest" type="Text" maxlength="254" value="" size="55">
+									<input name="dest" id="dest" type="Text" maxlength="254" value="" size="55">
 									<br><br>
 									<input type="submit" value="OK" name="OK">
 									<input type="hidden" name="file" value="<tmpl_var name="path">"/>

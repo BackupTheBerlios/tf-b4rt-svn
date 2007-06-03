@@ -2,10 +2,10 @@
 	<table id="settings">
 		<tr>
 			<td class="settingsTitle">
-				Page Refresh
+				<label for="enable_index_meta_refresh">Page Refresh</label>
 			</td>
 			<td class="settingsSetting" rowspan="2">
-				<select name="enable_index_meta_refresh">
+				<select name="enable_index_meta_refresh" id="enable_index_meta_refresh">
 					<option value="1">true</option>
 					<option value="0"
 					<tmpl_if name="enable_index_meta_refresh" value="0">
@@ -22,10 +22,10 @@
 		</tr>
 		<tr>
 			<td class="settingsTitle">
-				Page Refresh Interval
+				<label for="page_refresh">Page Refresh Interval</label>
 			</td>
 			<td class="settingsSetting" rowspan="2">
-				<input name="page_refresh" type="Text" maxlength="3" value="<tmpl_var name="page_refresh">" size="3">
+				<input name="page_refresh" id="page_refresh" type="Text" maxlength="3" value="<tmpl_var name="page_refresh">" size="3">
 			</td>
 		</tr>
 		<tr>
@@ -35,10 +35,10 @@
 		</tr>
 		<tr>
 			<td class="settingsTitle">
-				AJAX Update
+				<label for="enable_index_ajax_update">AJAX Update</label>
 			</td>
 			<td class="settingsSetting" rowspan="2">
-				<select name="enable_index_ajax_update">
+				<select name="enable_index_ajax_update" id="enable_index_ajax_update">
 					<option value="1">true</option>
 					<option value="0"
 					<tmpl_if name="enable_index_ajax_update" value="0">
@@ -55,10 +55,10 @@
 		</tr>
 		<tr>
 			<td class="settingsTitle">
-				Page title AJAX Update
+				<label for="enable_index_ajax_update_title">Page title AJAX Update</label>
 			</td>
 			<td class="settingsSetting" rowspan="2">
-				<select name="enable_index_ajax_update_title">
+				<select name="enable_index_ajax_update_title" id="enable_index_ajax_update_title">
 					<option value="1">true</option>
 					<option value="0"
 					<tmpl_if name="enable_index_ajax_update_title" value="0">
@@ -75,10 +75,10 @@
 		</tr>
 		<tr>
 			<td class="settingsTitle">
-				User list AJAX Update
+				<label for="enable_index_ajax_update_users">User list AJAX Update</label>
 			</td>
 			<td class="settingsSetting" rowspan="2">
-				<select name="enable_index_ajax_update_users">
+				<select name="enable_index_ajax_update_users" id="enable_index_ajax_update_users">
 					<option value="1">true</option>
 					<option value="0"
 					<tmpl_if name="enable_index_ajax_update_users" value="0">
@@ -95,10 +95,10 @@
 		</tr>
 				<tr>
 			<td class="settingsTitle">
-				Transfer List AJAX Update
+				<label for="enable_index_ajax_update_list">Transfer List AJAX Update</label>
 			</td>
 			<td class="settingsSetting" rowspan="2">
-				<select name="enable_index_ajax_update_list">
+				<select name="enable_index_ajax_update_list" id="enable_index_ajax_update_list">
 					<option value="1">true</option>
 					<option value="0"
 					<tmpl_if name="enable_index_ajax_update_list" value="0">
@@ -115,10 +115,10 @@
 		</tr>
 		<tr>
 			<td class="settingsTitle">
-				Silent AJAX Update
+				<label for="enable_index_ajax_update_silent">Silent AJAX Update</label>
 			</td>
 			<td class="settingsSetting" rowspan="2">
-				<select name="enable_index_ajax_update_silent">
+				<select name="enable_index_ajax_update_silent" id="enable_index_ajax_update_silent">
 					<option value="1">true</option>
 					<option value="0"
 					<tmpl_if name="enable_index_ajax_update_silent" value="0">
@@ -135,10 +135,10 @@
 		</tr>
 		<tr>
 			<td class="settingsTitle">
-				AJAX Update Interval
+				<label for="index_ajax_update">AJAX Update Interval</label>
 			</td>
 			<td class="settingsSetting" rowspan="2">
-				<input name="index_ajax_update" type="Text" maxlength="3" value="<tmpl_var name="index_ajax_update">" size="3">
+				<input name="index_ajax_update" id="index_ajax_update" type="Text" maxlength="3" value="<tmpl_var name="index_ajax_update">" size="3">
 			</td>
 		</tr>
 		<tr>
@@ -148,10 +148,10 @@
 		</tr>
 		<tr>
 			<td class="settingsTitle">
-				Width
+				<label for="ui_dim_main_w">Width</label>
 			</td>
 			<td class="settingsSetting" rowspan="2">
-				<input name="ui_dim_main_w" type="Text" maxlength="5" value="<tmpl_var name="ui_dim_main_w">" size="5">
+				<input name="ui_dim_main_w" id="ui_dim_main_w" type="Text" maxlength="5" value="<tmpl_var name="ui_dim_main_w">" size="5">
 			</td>
 		</tr>
 		<tr>
@@ -161,10 +161,10 @@
 		</tr>
 		<tr>
 			<td class="settingsTitle">
-				Display Links
+				<label for="ui_displaylinks">Display Links</label>
 			</td>
 			<td class="settingsSetting" rowspan="2">
-				<select name="ui_displaylinks">
+				<select name="ui_displaylinks" id="ui_displaylinks">
 					<option value="1">true</option>
 					<option value="0"
 					<tmpl_if name="ui_displaylinks" value="0">
@@ -181,10 +181,10 @@
 		</tr>
 		<tr>
 			<td class="settingsTitle">
-				Display Users
+				<label for="ui_displayusers">Display Users</label>
 			</td>
 			<td class="settingsSetting" rowspan="2">
-				<select name="ui_displayusers">
+				<select name="ui_displayusers" id="ui_displayusers">
 					<option value="1">true</option>
 					<option value="0"
 					<tmpl_if name="ui_displayusers" value="0">
@@ -201,10 +201,10 @@
 		</tr>
 		<tr>
 			<td class="settingsTitle">
-				Enable Good Looking Statistics
+				<label for="enable_goodlookstats">Enable Good Looking Statistics</label>
 			</td>
 			<td class="settingsSetting" rowspan="2">
-				<select name="enable_goodlookstats">
+				<select name="enable_goodlookstats" id="enable_goodlookstats">
 					<option value="1">true</option>
 					<option value="0"
 					<tmpl_if name="enable_goodlookstats" value="0">
@@ -234,10 +234,10 @@
 		</tr>
 		<tr>
 			<td class="settingsTitle">
-				Display Bandwidth Bars
+				<label for="ui_displaybandwidthbars"Display Bandwidth Bars</label>
 			</td>
 			<td class="settingsSetting" rowspan="2">
-				<select name="ui_displaybandwidthbars">
+				<select name="ui_displaybandwidthbars" id="ui_displaybandwidthbars">
 					<option value="1">true</option>
 					<option value="0"
 					<tmpl_if name="ui_displaybandwidthbars" value="0">
@@ -254,10 +254,10 @@
 		</tr>
 		<tr>
 			<td class="settingsTitle">
-				Bandwidth Bars Style
+				<label for="bandwidthbar">Bandwidth Bars Style</label>
 			</td>
 			<td class="settingsSetting" rowspan="2">
-				<select name="bandwidthbar">
+				<select name="bandwidthbar" id="bandwidthbar">
 					<option value="tf"
 					<tmpl_if name="bandwidthbar" value="tf">
 						 selected
@@ -278,10 +278,10 @@
 		</tr>
 		<tr>
 			<td class="settingsTitle">
-				Big Bold Drivespace Warning
+				<label for="enable_bigboldwarning">Big Bold Drivespace Warning</label>
 			</td>
 			<td class="settingsSetting" rowspan="2">
-				<select name="enable_bigboldwarning">
+				<select name="enable_bigboldwarning" id="enable_bigboldwarning">
 					<option value="1">true</option>
 					<option value="0"
 					<tmpl_if name="enable_bigboldwarning" value="0">
@@ -298,10 +298,10 @@
 		</tr>
 		<tr>
 			<td class="settingsTitle">
-				Show Seeding Torrents
+				<label for="index_show_seeding">Show Seeding Torrents</label>
 			</td>
 			<td class="settingsSetting" rowspan="2">
-				<select name="index_show_seeding">
+				<select name="index_show_seeding" id="index_show_seeding">
 					<option value="1">true</option>
 					<option value="0"
 					<tmpl_if name="index_show_seeding" value="0">
@@ -318,10 +318,10 @@
 		</tr>
 		<tr>
 			<td class="settingsTitle">
-				Estimated Time To Seed
+				<label for="display_seeding_time">Estimated Time To Seed</label>
 			</td>
 			<td class="settingsSetting" rowspan="2">
-				<select name="display_seeding_time">
+				<select name="display_seeding_time" id="display_seeding_time">
                     <option value="1">true</option>
                     <option value="0"
                     <tmpl_if name="display_seeding_time" value="0">
@@ -338,10 +338,10 @@
 		</tr>
 		<tr>
 			<td class="settingsTitle">
-				Transfer List Sorting
+				<label for="enable_sorttable">Transfer List Sorting</label>
 			</td>
 			<td class="settingsSetting" rowspan="2">
-				<select name="enable_sorttable">
+				<select name="enable_sorttable" id="enable_sorttable">
 					<option value="1">true</option>
 					<option value="0"
 					<tmpl_if name="enable_sorttable" value="0">
@@ -358,10 +358,10 @@
 		</tr>
 		<tr>
 			<td class="settingsTitle">
-				Default Transfer List Sort Order
+				<label for="index_page_sortorder">Default Transfer List Sort Order</label>
 			</td>
 			<td class="settingsSetting" rowspan="2">
-				<select name="index_page_sortorder">
+				<select name="index_page_sortorder" id="index_page_sortorder">
 					<option value="da" <tmpl_if name="index_page_sortorder" value="da">selected</tmpl_if>>
 						Date - Ascending
 					</option>
@@ -397,10 +397,10 @@
 		</tr>
 		<tr>
 			<td class="settingsTitle">
-				Default Page In Transfer Settings Window
+				<label for="transfer_window_default">Default Page In Transfer Settings Window</label>
 			</td>
 			<td class="settingsSetting" rowspan="2">
-				<select name="transfer_window_default">
+				<select name="transfer_window_default" id="transfer_window_default">
 					<tmpl_loop name="transfer_window_default_list">
 						<option value="<tmpl_var name="value">"<tmpl_if name="is_selected" value="1"> selected</tmpl_if>>
 							<tmpl_var name="name">
@@ -416,10 +416,10 @@
 		</tr>
 		<tr>
 			<td class="settingsTitle">
-				Server Stats
+				<label for="index_page_stats">Server Stats</label>
 			</td>
 			<td class="settingsSetting" rowspan="2">
-				<select name="index_page_stats">
+				<select name="index_page_stats" id="index_page_stats">
 					<option value="1">true</option>
 					<option value="0"
 					<tmpl_if name="index_page_stats" value="0">
@@ -436,10 +436,10 @@
 		</tr>
 		<tr>
 			<td class="settingsTitle">
-				Network Connections
+				<label for="index_page_connections">Network Connections</label>
 			</td>
 			<td class="settingsSetting" rowspan="2">
-				<select name="index_page_connections">
+				<select name="index_page_connections" id="index_page_connections">
 					<option value="1">true</option>
 					<option value="0"
 					<tmpl_if name="index_page_connections" value="0">
@@ -456,10 +456,10 @@
 		</tr>
 		<tr>
 			<td class="settingsTitle">
-				Show Server Load
+				<label for="show_server_load">Show Server Load</label>
 			</td>
 			<td class="settingsSetting" rowspan="2">
-				<select name="show_server_load">
+				<select name="show_server_load" id="show_server_load">
 					<option value="1">true</option>
 					<option value="0"
 					<tmpl_if name="show_server_load" value="0">
@@ -471,15 +471,15 @@
 		</tr>
 		<tr>
 			<td class="settingsText">
-				Enable/disable display of server load averages<br>(1/5/15 min averages)
+				Enable/disable display of average server load over the last 15 minutes
 			</td>
 		</tr>
 		<tr>
 			<td class="settingsTitle">
-				Drivespace Bar Style
+				<label for="drivespacebar">Drivespace Bar Style</label>
 			</td>
 			<td class="settingsSetting" rowspan="2">
-				<select name="drivespacebar">
+				<select name="drivespacebar" id="drivespacebar">
 					<option value="tf"
 					<tmpl_if name="drivespacebar" value="tf">
 						 selected
@@ -500,10 +500,10 @@
 		</tr>
 		<tr>
 			<td class="settingsTitle">
-				Transfer Stats Window Update Method
+				<label for="transferStatsType">Transfer Stats Window Update Method</label>
 			</td>
 			<td class="settingsSetting" rowspan="2">
-				<select name="transferStatsType">
+				<select name="transferStatsType" id="transferStatsType">
 					<option value="standard">standard</option>
 					<option value="ajax"
 					<tmpl_if name="transferStatsType" value="ajax">
@@ -520,10 +520,10 @@
 		</tr>
 		<tr>
 			<td class="settingsTitle">
-				Transfer Stats Window Update Interval
+				<label for="transferStatsUpdate">Transfer Stats Window Update Interval</label>
 			</td>
 			<td class="settingsSetting" rowspan="2">
-				<input name="transferStatsUpdate" type="Text" maxlength="3" value="<tmpl_var name="transferStatsUpdate">" size="3">
+				<input name="transferStatsUpdate" id="transferStatsUpdate" type="Text" maxlength="3" value="<tmpl_var name="transferStatsUpdate">" size="3">
 			</td>
 		</tr>
 		<tr>
@@ -533,10 +533,10 @@
 		</tr>
 		<tr>
 			<td class="settingsTitle">
-				Transfer Hosts
+				<label for="transferHosts">Transfer Hosts</label>
 			</td>
 			<td class="settingsSetting" rowspan="2">
-				<select name="transferHosts">
+				<select name="transferHosts" id="transferHosts">
 					<option value="1">Hostnames</option>
 					<option value="0"
 					<tmpl_if name="transferHosts" value="0">
@@ -553,10 +553,10 @@
 		</tr>
 		<tr>
 			<td class="settingsTitle">
-				Server Monitor Update Interval
+				<label for="servermon_update">Server Monitor Update Interval</label>
 			</td>
 			<td class="settingsSetting" rowspan="2">
-				<input name="servermon_update" type="Text" maxlength="3" value="<tmpl_var name="servermon_update">" size="3">
+				<input name="servermon_update" id="servermon_update" type="Text" maxlength="3" value="<tmpl_var name="servermon_update">" size="3">
 			</td>
 		</tr>
 		<tr>

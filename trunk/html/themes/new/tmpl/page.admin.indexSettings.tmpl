@@ -16,10 +16,10 @@
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
-						Page Refresh
+						<label for="enable_index_meta_refresh">Page Refresh</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_index_meta_refresh">
+						<select name="enable_index_meta_refresh" id="enable_index_meta_refresh">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="enable_index_meta_refresh" value="0">
@@ -36,10 +36,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Page Refresh Interval
+						<label for="page_refresh">Page Refresh Interval</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="page_refresh" type="Text" maxlength="3" value="<tmpl_var name="page_refresh">" size="3">
+						<input name="page_refresh" id="page_refresh" type="Text" maxlength="3" value="<tmpl_var name="page_refresh">" size="3">
 					</td>
 				</tr>
 				<tr>
@@ -49,7 +49,7 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						AJAX Update
+						<label for="enable_index_ajax_update">AJAX Update</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<select name="enable_index_ajax_update">
@@ -69,10 +69,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Page-Title AJAX Update
+						<label for="enable_index_ajax_update_title">Page-Title AJAX Update</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_index_ajax_update_title">
+						<select name="enable_index_ajax_update_title" id="enable_index_ajax_update_title">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="enable_index_ajax_update_title" value="0">
@@ -89,10 +89,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Users AJAX Update
+						<label for="enable_index_ajax_update_users">Users AJAX Update</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_index_ajax_update_users">
+						<select name="enable_index_ajax_update_users" id="enable_index_ajax_update_users">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="enable_index_ajax_update_users" value="0">
@@ -109,10 +109,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Transfer List AJAX Update
+						<label for="enable_index_ajax_update_list">Transfer List AJAX Update</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_index_ajax_update_list">
+						<select name="enable_index_ajax_update_list" id="enable_index_ajax_update_list">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="enable_index_ajax_update_list" value="0">
@@ -129,10 +129,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Silent AJAX Update
+						<label for="enable_index_ajax_update_silent">Silent AJAX Update</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_index_ajax_update_silent">
+						<select name="enable_index_ajax_update_silent" id="enable_index_ajax_update_silent">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="enable_index_ajax_update_silent" value="0">
@@ -150,10 +150,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						AJAX Update Interval
+						<label for="index_ajax_update">AJAX Update Interval</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="index_ajax_update" type="Text" maxlength="3" value="<tmpl_var name="index_ajax_update">" size="3">
+						<input name="index_ajax_update" id="index_ajax_update" type="Text" maxlength="3" value="<tmpl_var name="index_ajax_update">" size="3">
 					</td>
 				</tr>
 				<tr>
@@ -163,10 +163,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Width
+						<label for="ui_dim_main_w">Width</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="ui_dim_main_w" type="Text" maxlength="5" value="<tmpl_var name="ui_dim_main_w">" size="5">
+						<input name="ui_dim_main_w" id="ui_dim_main_w" type="Text" maxlength="5" value="<tmpl_var name="ui_dim_main_w">" size="5">
 					</td>
 				</tr>
 				<tr>
@@ -176,10 +176,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Enable multi-upload
+						<label for="enable_multiupload">Enable multi-upload</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_multiupload">
+						<select name="enable_multiupload" id="enable_multiupload">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="enable_multiupload" value="0">
@@ -196,10 +196,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Multi-upload - Rows
+						<label for="hack_multiupload_rows">Multi-upload - Rows</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="hack_multiupload_rows" type="Text" maxlength="2" value="<tmpl_var name="hack_multiupload_rows">" size="2">
+						<input name="hack_multiupload_rows" id="hack_multiupload_rows" type="Text" maxlength="2" value="<tmpl_var name="hack_multiupload_rows">" size="2">
 					</td>
 				</tr>
 				<tr>
@@ -209,10 +209,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Enable Torrent Search
+						<label for="enable_search">Enable Torrent Search</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_search">
+						<select name="enable_search" id="enable_search">
 								<option value="1">true</option>
 								<option value="0"
 							<tmpl_if name="enable_search" value="0">
@@ -229,10 +229,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Default Torrent Search Engine
+						<label for="searchEngine">Default Torrent Search Engine</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="searchEngine" <tmpl_if name="autoSubmit">onchange="this.form.submit();"</tmpl_if> STYLE="width: 125px">
+						<select name="searchEngine" id="searchEngine" <tmpl_if name="autoSubmit">onchange="this.form.submit();"</tmpl_if> STYLE="width: 125px">
 						<tmpl_loop name="Engine_List">
 							<option <tmpl_if name="selected">selected</tmpl_if>><tmpl_var name="Engine"></option>
 						</tmpl_loop>
@@ -246,10 +246,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Display Links
+						<label for="ui_displaylinks">Display Links</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="ui_displaylinks">
+						<select name="ui_displaylinks" id="ui_displaylinks">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="ui_displaylinks" value="0">
@@ -266,10 +266,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Display Users
+						<label for="ui_displayusers">Display Users</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="ui_displayusers">
+						<select name="ui_displayusers" id="ui_displayusers">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="ui_displayusers" value="0">
@@ -286,10 +286,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Enable Good looking statistics
+						<label for="enable_goodlookstats">Enable Good looking statistics</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_goodlookstats">
+						<select name="enable_goodlookstats" id="enable_goodlookstats">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="enable_goodlookstats" value="0">
@@ -319,10 +319,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Show Graphs-Link
+						<label for="enable_graphs">Show Graphs-Link</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_graphs">
+						<select name="enable_graphs" id="enable_graphs">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="enable_graphs" value="0">
@@ -339,10 +339,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Display Bandwidth-Bars
+						<label for="ui_displaybandwidthbars">Display Bandwidth-Bars</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="ui_displaybandwidthbars">
+						<select name="ui_displaybandwidthbars" id="ui_displaybandwidthbars">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="ui_displaybandwidthbars" value="0">
@@ -359,10 +359,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Bandwidth-Bars Style
+						<label for="bandwidthbar">Bandwidth-Bars Style</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="bandwidthbar">
+						<select name="bandwidthbar" id="bandwidthbar">
 							<option value="tf"
 							<tmpl_if name="bandwidthbar" value="tf">
 								 selected
@@ -383,10 +383,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Bandwidth Up
+						<label for="bandwidth_up">Bandwidth Up</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="bandwidth_up" type="Text" maxlength="10" value="<tmpl_var name="bandwidth_up">" size="6">
+						<input name="bandwidth_up" id="bandwidth_up" type="Text" maxlength="10" value="<tmpl_var name="bandwidth_up">" size="6">
 					</td>
 				</tr>
 				<tr>
@@ -396,10 +396,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Bandwidth Down
+						<label for="bandwidth_down">Bandwidth Down</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="bandwidth_down" type="Text" maxlength="10" value="<tmpl_var name="bandwidth_down">" size="6">
+						<input name="bandwidth_down" id="bandwidth_down" type="Text" maxlength="10" value="<tmpl_var name="bandwidth_down">" size="6">
 					</td>
 				</tr>
 				<tr>
@@ -409,10 +409,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Enable Big bold drivespace warning
+						<label for="enable_bigboldwarning">Enable Big bold drivespace warning</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_bigboldwarning">
+						<select name="enable_bigboldwarning" id="enable_bigboldwarning">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="enable_bigboldwarning" value="0">
@@ -429,10 +429,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Only Admin can see other users transfers
+						<label for="enable_restrictivetview">Only Admin can see other users transfers</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_restrictivetview">
+						<select name="enable_restrictivetview" id="enable_restrictivetview">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="enable_restrictivetview" value="0">
@@ -449,10 +449,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Enable Transfer File Download
+						<label for="enable_metafile_download">Enable Transfer File Download</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_metafile_download">
+						<select name="enable_metafile_download" id="enable_metafile_download">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="enable_metafile_download" value="0">
@@ -464,15 +464,15 @@
 				</tr>
 				<tr>
 					<td class="settingsText">
-						When enabled, users will be allowed to download the transfer meta file from the torrent list view.
+						When enabled, users will be allowed to download the transfer meta file from the transfer list view.
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Show Seeding Torrents
+						<label for="index_show_seeding">Show Seeding Torrents</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="index_show_seeding">
+						<select name="index_show_seeding" id="index_show_seeding">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="index_show_seeding" value="0">
@@ -489,10 +489,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Specify if we show seeding torrents on the index page
+						<label for="display_seeding_time">Specify if we show seeding torrents on the index page</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="display_seeding_time">
+						<select name="display_seeding_time" id="display_seeding_time">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="display_seeding_time" value="0">
@@ -509,10 +509,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Enable sorttable
+						<label for="enable_sorttable">Enable sorttable</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_sorttable">
+						<select name="enable_sorttable" id="enable_sorttable">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="enable_sorttable" value="0">
@@ -529,7 +529,7 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Select Sort-Order
+						<label for="index_page_sortorder">Select Sort-Order</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<tmpl_include name="inc.sortOrderSettings.tmpl">
@@ -542,10 +542,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Default Transfer Window
+						<label for="transfer_window_default">Default Transfer Window</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="transfer_window_default">
+						<select name="transfer_window_default" id="transfer_window_default">
 							<tmpl_loop name="transfer_window_default_list">
 								<option value="<tmpl_var name="value">"<tmpl_if name="is_selected" value="1"> selected</tmpl_if>>
 									<tmpl_var name="name">
@@ -561,10 +561,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Enable multi-operations
+						<label for="enable_multiops">Enable multi-operations</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_multiops">
+						<select name="enable_multiops" id="enable_multiops">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="enable_multiops" value="0">
@@ -581,10 +581,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Enable bulk-operations
+						<label for="enable_bulkops">Enable bulk-operations</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_bulkops">
+						<select name="enable_bulkops" id="enable_bulkops">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="enable_bulkops" value="0">
@@ -601,10 +601,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Show Server Stats
+						<label for="index_page_stats">Show Server Stats</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="index_page_stats">
+						<select name="index_page_stats" id="index_page_stats">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="index_page_stats" value="0">
@@ -621,10 +621,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Show Connections
+						<label for="index_page_connections">Show Connections</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="index_page_connections">
+						<select name="index_page_connections" id="index_page_connections">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="index_page_connections" value="0">
@@ -641,10 +641,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Show Server Load
+						<label for="show_server_load">Show Server Load</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="show_server_load">
+						<select name="show_server_load" id="show_server_load">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="show_server_load" value="0">

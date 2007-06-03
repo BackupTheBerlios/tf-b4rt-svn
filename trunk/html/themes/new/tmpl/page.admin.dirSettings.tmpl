@@ -18,10 +18,10 @@
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
-						Public Read
+						<label for="dir_public_read">Public Read</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="dir_public_read">
+						<select name="dir_public_read" id="dir_public_read">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="dir_public_read" value="0">
@@ -38,10 +38,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Public Write
+						<label for="dir_public_write">Public Write</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="dir_public_write">
+						<select name="dir_public_write" id="dir_public_write">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="dir_public_write" value="0">
@@ -58,10 +58,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Enable chmod
+						<label for="dir_enable_chmod">Enable chmod</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="dir_enable_chmod">
+						<select name="dir_enable_chmod" id="dir_enable_chmod">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="dir_enable_chmod" value="0">
@@ -78,10 +78,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Enable dir-stats
+						<label for="enable_dirstats">Enable dir-stats</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-					<select name="enable_dirstats">
+					<select name="enable_dirstats" id="enable_dirstats">
 						<option value="1">true</option>
 						<option value="0"
 						<tmpl_if name="enable_dirstats" value="0">
@@ -98,10 +98,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Enable Make Torrent
+						<label for="enable_maketorrent">Enable Make Torrent</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_maketorrent">
+						<select name="enable_maketorrent" id="enable_maketorrent">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="enable_maketorrent" value="0">
@@ -118,10 +118,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Default Make Torrent Client
+						<label for="dir_maketorrent_default">Default Make Torrent Client</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-					<select name="dir_maketorrent_default">
+					<select name="dir_maketorrent_default" id="dir_maketorrent_default">
 						<option value="tornado">tornado</option>
 						<option value="mainline"
 						<tmpl_if name="dir_maketorrent_default" value="mainline">
@@ -138,10 +138,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Enable File Download
+						<label for="enable_file_download">Enable File Download</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_file_download">
+						<select name="enable_file_download" id="enable_file_download">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="enable_file_download" value="0">
@@ -158,10 +158,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Download Package Type
+						<label for="package_type">Download Package Type</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="package_type">
+						<select name="package_type" id="package_type">
 							<option value="tar" selected>tar</option>
 							<option value="zip"
 							<tmpl_if name="package_type" value="zip">
@@ -178,10 +178,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Enable Text/NFO Viewer
+						<label for="enable_view_nfo">Enable Text/NFO Viewer</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_view_nfo">
+						<select name="enable_view_nfo" id="enable_view_nfo">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="enable_view_nfo" value="0">
@@ -198,10 +198,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Enable unrar
+						<label for="enable_rar">Enable unrar</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_rar">
+						<select name="enable_rar" id="enable_rar">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="enable_rar" value="0">
@@ -218,10 +218,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Enable sfv-check
+						<label for="enable_sfvcheck">Enable sfv-check</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_sfvcheck">
+						<select name="enable_sfvcheck" id="enable_sfvcheck">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="enable_sfvcheck" value="0">
@@ -238,10 +238,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Enable vlc
+						<label for="enable_vlc">Enable vlc</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_vlc">
+						<select name="enable_vlc" id="enable_vlc">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="enable_vlc" value="0">
@@ -258,10 +258,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						vlc port
+						<label for="vlc_port">vlc port</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<input name="vlc_port" type="Text" maxlength="5" value="<tmpl_var name="vlc_port">" size="5">
+						<input name="vlc_port" id="vlc_port" type="Text" maxlength="5" value="<tmpl_var name="vlc_port">" size="5">
 					</td>
 				</tr>
 				<tr>
@@ -271,10 +271,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Enable Rename Files
+						<label for="enable_rename">Enable Rename Files</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_rename">
+						<select name="enable_rename" id="enable_rename">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="enable_rename" value="0">
@@ -291,10 +291,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Enable Move
+						<label for="enable_move">Enable Move</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="enable_move">
+						<select name="enable_move" id="enable_move">
 							<option value="1">true</option>
 							<option value="0"
 							<tmpl_if name="enable_move" value="0">
@@ -311,14 +311,14 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Move Paths
+						<label for="categorylist">Move Paths</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="categorylist" size="4">
+						<select name="categorylist" id="categorylist" size="4">
 							<tmpl_if name="moveSettings_move_list">
 								<tmpl_loop name="moveSettings_move_list">
 									<option value="<tmpl_var name="target">"><tmpl_var name="target"></option>
-									</tmpl_loop>
+								</tmpl_loop>
 							</tmpl_if>
 						</select>
 						<br /><br />
@@ -328,16 +328,16 @@
 				</tr>
 				<tr>
 					<td class="settingsText">
-						<em>Note</em>:  You must specify absolute paths here. relative paths are not valid.<br />
-						<em>Note</em>:  The created dirs will not be deleted after removing a entry from the List.
+						<em>Note</em>: You must specify absolute paths here. relative paths are not valid.<br />
+						<em>Note</em>: The created dirs will not be deleted after removing a entry from the List.
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						New Target-Dir
+						<label for="category">New Target-Dir</label>
 					</td>
 					<td class="settingsSetting">
-						<input type="text" name="category" size="30">
+						<input type="text" name="category" id="category" size="30">
 						<br /><br />
 						<input type="button" name="addCatButton" value="add" onclick="addMoveEntry()" size="30">
 						<br /><br />
@@ -346,10 +346,10 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Entries
+						<label for="resdirlist">Entries</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
-						<select name="resdirlist" size="4">
+						<select name="resdirlist" id="resdirlist" size="4">
 							<tmpl_if name="dir_restricted_list">
 								<tmpl_loop name="dir_restricted_list">
 									<option value="<tmpl_var name="target">"><tmpl_var name="target"></option>
@@ -364,15 +364,15 @@
 				<tr>
 					<td class="settingsText">
 						Set the entries restricted for all dir-operations.<br />
-						<em>Note</em>:  dot-entries are always restricted.
+						<em>Note</em>: dot-entries are always restricted.
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						New Entry
+						<label for="resdirentry">New Entry</label>
 					</td>
 					<td class="settingsSetting">
-						<input type="text" name="resdirentry" size="30">
+						<input type="text" name="resdirentry" id="resdirentry" size="30">
 						<br /><br />
 						<input type="button" name="addButton" value="add" onclick="addDirEntry()" size="30">
 						<br /><br />

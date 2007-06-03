@@ -18,11 +18,12 @@
 					<form name="theForm" action="admin.php?op=updateDirSettings" method="post" onsubmit="return validateSettings('dir')">
 						<table cellpadding="5" cellspacing="0" border="0" width="100%">
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Public Read</strong><br>
-								Enable/Disable Public Read. When enabled all users can browse through all folders :
+								<td align="left" width="350" valign="top">
+									<label for="dir_public_read"><strong>Public Read</strong></label><br/>
+									Enable/Disable Public Read. When enabled all users can browse through all folders :
 								</td>
 								<td valign="top">
-									<select name="dir_public_read">
+									<select name="dir_public_read" id="dir_public_read">
 										<option value="1">true</option>
 										<option value="0"
 										<tmpl_if name="dir_public_read" value="0">
@@ -33,11 +34,12 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Public Write</strong><br>
-								Enable/Disable Public Write. When enabled all users can delete from/write to all folders :
+								<td align="left" width="350" valign="top">
+									<label for="dir_public_write"><strong>Public Write</strong></label><br/>
+									Enable/Disable Public Write. When enabled all users can delete from/write to all folders :
 								</td>
 								<td valign="top">
-									<select name="dir_public_write">
+									<select name="dir_public_write" id="dir_public_write">
 										<option value="1">true</option>
 										<option value="0"
 										<tmpl_if name="dir_public_write" value="0">
@@ -48,11 +50,12 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Enable chmod</strong><br>
+								<td align="left" width="350" valign="top">
+									<label for="dir_enable_chmod"><strong>Enable chmod</strong></label><br/>
 									Enable/Disable chmod-feature :
 								</td>
 								<td valign="top">
-									<select name="dir_enable_chmod">
+									<select name="dir_enable_chmod" id="dir_enable_chmod">
 										<option value="1">true</option>
 										<option value="0"
 										<tmpl_if name="dir_enable_chmod" value="0">
@@ -63,11 +66,12 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Enable dir-stats</strong><br>
-								Enable/Disable dir-stats :
+								<td align="left" width="350" valign="top">
+									<label for="enable_dirstats"><strong>Enable dir-stats</strong></label><br/>
+									Enable/Disable dir-stats :
 								</td>
 								<td valign="top">
-									<select name="enable_dirstats">
+									<select name="enable_dirstats" id="enable_dirstats">
 										<option value="1">true</option>
 										<option value="0"
 										<tmpl_if name="enable_dirstats" value="0">
@@ -78,11 +82,12 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Enable Make Torrent</strong><br>
+								<td align="left" width="350" valign="top">
+									<label for="enable_maketorrent"><strong>Enable Make Torrent</strong></label><br/>
 									When enabled, users will be allowed to make torrent files from the directory view:
 								</td>
 								<td valign="top">
-									<select name="enable_maketorrent">
+									<select name="enable_maketorrent" id="enable_maketorrent">
 										<option value="1">true</option>
 										<option value="0"
 										<tmpl_if name="enable_maketorrent" value="0">
@@ -93,11 +98,12 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Default Make Torrent Client</strong><br>
+								<td align="left" width="350" valign="top">
+									<label for="dir_maketorrent_default"><strong>Default Make Torrent Client</strong></label><br/>
 									Choose the default-client used to create torrent-files :
 								</td>
 								<td valign="top">
-									<select name="dir_maketorrent_default">
+									<select name="dir_maketorrent_default" id="dir_maketorrent_default">
 										<option value="tornado">tornado</option>
 										<option value="mainline"
 										<tmpl_if name="dir_maketorrent_default" value="mainline">
@@ -108,11 +114,12 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Enable File Download</strong><br>
-								When enabled, users will be allowed to download from the directory view:
+								<td align="left" width="350" valign="top">
+									<label for="enable_file_download"><strong>Enable File Download</strong></label><br/>
+									When enabled, users will be allowed to download from the directory view:
 								</td>
 								<td valign="top">
-									<select name="enable_file_download">
+									<select name="enable_file_download" id="enable_file_download">
 										<option value="1">true</option>
 										<option value="0"
 										<tmpl_if name="enable_file_download" value="0">
@@ -123,12 +130,13 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Download Package Type</strong><br>
-								When File Download is enabled, users will be allowed download from the directory view using
-								a packaging system.	 Make sure your server supports the package type you select:
+								<td align="left" width="350" valign="top">
+									<label for="package_type"><strong>Download Package Type</strong></label><br/>
+									When File Download is enabled, users will be allowed download from the directory view using
+									a packaging system.	 Make sure your server supports the package type you select:
 								</td>
 								<td valign="top">
-									<select name="package_type">
+									<select name="package_type" id="package_type">
 										<option value="tar" selected>tar</option>
 										<option value="zip"
 										<tmpl_if name="package_type" value="zip">
@@ -139,11 +147,12 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Enable Text/NFO Viewer</strong><br>
-								When enabled, users will be allowed to view Text/NFO files from the directory listing:
+								<td align="left" width="350" valign="top">
+									<label for="enable_view_nfo"><strong>Enable Text/NFO Viewer</strong></label><br/>
+									When enabled, users will be allowed to view Text/NFO files from the directory listing:
 								</td>
 								<td valign="top">
-									<select name="enable_view_nfo">
+									<select name="enable_view_nfo" id="enable_view_nfo">
 										<option value="1">true</option>
 										<option value="0"
 										<tmpl_if name="enable_view_nfo" value="0">
@@ -154,11 +163,12 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Enable unrar</strong><br>
-								Enable/Disable unrar :
+								<td align="left" width="350" valign="top">
+									<label for="enable_rar"><strong>Enable unrar</strong></label><br/>
+									Enable/Disable unrar :
 								</td>
 								<td valign="top">
-									<select name="enable_rar">
+									<select name="enable_rar" id="enable_rar">
 										<option value="1">true</option>
 										<option value="0"
 										<tmpl_if name="enable_rar" value="0">
@@ -169,11 +179,12 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Enable sfv-check</strong><br>
-								Enable/Disable SFV Check :
+								<td align="left" width="350" valign="top">
+									<label for="enable_sfvcheck"><strong>Enable sfv-check</strong></label><br/>
+									Enable/Disable SFV Check :
 								</td>
 								<td valign="top">
-									<select name="enable_sfvcheck">
+									<select name="enable_sfvcheck" id="enable_sfvcheck">
 										<option value="1">true</option>
 										<option value="0"
 										<tmpl_if name="enable_sfvcheck" value="0">
@@ -184,11 +195,12 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Enable vlc</strong><br>
-								Enable/Disable vlc-streaming :
+								<td align="left" width="350" valign="top">
+									<label for="enable_vlc"><strong>Enable vlc</strong></label><br/>
+									Enable/Disable vlc-streaming :
 								</td>
 								<td valign="top">
-									<select name="enable_vlc">
+									<select name="enable_vlc" id="enable_vlc">
 										<option value="1">true</option>
 										<option value="0"
 										<tmpl_if name="enable_vlc" value="0">
@@ -199,19 +211,21 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>vlc port </strong><br>
+								<td align="left" width="350" valign="top">
+									<label for="vlc_port"><strong>vlc port </strong></label><br/>
 									Set the port for vlc (8080).
 								</td>
 								<td valign="top">
-									<input name="vlc_port" type="Text" maxlength="5" value="<tmpl_var name="vlc_port">" size="5">
+									<input name="vlc_port" id="vlc_port" type="Text" maxlength="5" value="<tmpl_var name="vlc_port">" size="5">
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Enable Rename Files</strong><br>
+								<td align="left" width="350" valign="top">
+									<label for="enable_rename"><strong>Enable Rename Files</strong></label><br/>
 									Enable/Disable Rename Files or Folders:
 								</td>
 								<td valign="top">
-									<select name="enable_rename">
+									<select name="enable_rename" id="enable_rename">
 										<option value="1">true</option>
 										<option value="0"
 										<tmpl_if name="enable_rename" value="0">
@@ -222,11 +236,12 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Enable Move</strong><br>
-								Enable/Disable Moving Files into a specified dir:
+								<td align="left" width="350" valign="top">
+									<label for="enable_move"><strong>Enable Move</strong></label><br/>
+									Enable/Disable Moving Files into a specified dir:
 								</td>
 								<td valign="top">
-									<select name="enable_move">
+									<select name="enable_move" id="enable_move">
 										<option value="1">true</option>
 										<option value="0"
 										<tmpl_if name="enable_move" value="0">
@@ -237,7 +252,8 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Move Paths</strong><br>
+								<td align="left" width="350" valign="top">
+									<strong>Move Paths</strong><br/>
 									<em>Note</em> : You must specify absolute paths here. relative paths are not valid.<br>
 									<em>Note</em> : The created dirs will not be deleted after removing a entry from the List.
 								</td>
@@ -246,16 +262,17 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Restricted Entries</strong><br>
+								<td align="left" width="350" valign="top">
+									<strong>Restricted Entries</strong><br/>
 									Set the entries restricted for all dir-operations.<br>
 									<em>Note</em> : dot-entries are always restricted.
 								</td>
 								<td valign="top">
 									<table>
 										<tr>
-											<td valign="top" align="left">Entries :</td>
+											<td valign="top" align="left"><label for="resdirlist">Entries:</label> </td>
 											<td valign="top" align="left">
-												<select name="resdirlist" size="3">
+												<select name="resdirlist" id="resdirlist" size="3">
 													<tmpl_if name="dir_restricted_list">
 														<tmpl_loop name="dir_restricted_list">
 															<option value="<tmpl_var name="target">"><tmpl_var name="target"></option>
@@ -266,9 +283,9 @@
 											</td>
 										</tr>
 										<tr>
-											<td valign="top" align="left">New Entry :</td>
+											<td valign="top" align="left"><label for="resdirentry">New Entry:</label> </td>
 											<td valign="top" align="left">
-												<input type="text" name="resdirentry" size="30">
+												<input type="text" name="resdirentry" id="resdirentry" size="30">
 												<input type="button" name="addButton" value="add" onclick="addDirEntry()" size="30">
 												<input type="hidden" name="dir_restricted" value="<tmpl_var name="dir_restricted">">
 											</td>
