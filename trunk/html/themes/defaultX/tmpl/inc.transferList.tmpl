@@ -203,7 +203,7 @@
 								<tmpl_else>
 									<tmpl_if name="transferRunning" value="3">
 										<img src="themes/<tmpl_var name="theme">/images/blank.gif" style="width:16px;height:16px;" alt="" />
-										<a href="dispatcher.php?action=deQueue&amp;transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true,'Deleting Transfer from Queue')">
+										<a href="dispatcher.php?action=deQueue&amp;transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true,'Removing Transfer from Queue')">
 											<img src="themes/<tmpl_var name="theme">/images/queued.gif" alt="" title="<tmpl_var name="_DELQUEUE">" />
 										</a>
 									<tmpl_else>
@@ -241,7 +241,7 @@
 									</tmpl_if>
 								</tmpl_if>
 								<tmpl_if name="is_no_file">
-									<a href="dispatcher.php?action=delete&amp;transfer=<tmpl_var name="url_entry">" onclick="return actionConfirm('Delete <tmpl_var name="entry"> ?')">
+									<a href="dispatcher.php?action=delete&amp;transfer=<tmpl_var name="url_entry">" onclick="return actionConfirm('Delete <tmpl_var name="entry"> ?','Deleting Transfer')">
 										<img src="themes/<tmpl_var name="theme">/images/delete_on.gif" title="<tmpl_var name="_DELETE">" alt="" />
 									</a>
 								<tmpl_else>
@@ -465,7 +465,7 @@
 								<tmpl_else>
 									<tmpl_if name="transferRunning" value="3">
 										<img src="themes/<tmpl_var name="theme">/images/blank.gif" style="width:16px;height:16px;" alt="" />
-										<a href="dispatcher.php?action=deQueue&amp;transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true,'Deleting Transfer from Queue')">
+										<a href="dispatcher.php?action=deQueue&amp;transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true,'Removing Transfer from Queue')">
 											<img src="themes/<tmpl_var name="theme">/images/queued.gif" alt="" title="<tmpl_var name="_DELQUEUE">" />
 										</a>
 									<tmpl_else>
@@ -503,7 +503,7 @@
 									</tmpl_if>
 								</tmpl_if>
 								<tmpl_if name="is_no_file">
-									<a href="dispatcher.php?action=delete&amp;transfer=<tmpl_var name="url_entry">" onclick="return actionConfirm('Delete <tmpl_var name="entry"> ?')">
+									<a href="dispatcher.php?action=delete&amp;transfer=<tmpl_var name="url_entry">" onclick="return actionConfirm('Delete <tmpl_var name="entry"> ?','Deleting Transfer')">
 										<img src="themes/<tmpl_var name="theme">/images/delete_on.gif" title="<tmpl_var name="_DELETE">" alt="" />
 									</a>
 								<tmpl_else>

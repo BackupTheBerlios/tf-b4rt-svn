@@ -26,7 +26,7 @@
 							<tbody>
 								<tr>
 									<td>
-										<form name="form_file" action="dispatcher.php?action=fileUpload" method="post" enctype="multipart/form-data" onsubmit="return actionSubmit()">
+										<form name="form_file" action="dispatcher.php?action=fileUpload" method="post" enctype="multipart/form-data" onsubmit="return actionSubmit('Uploading File(s)')">
 											<label for="upload_files_first"><tmpl_var name="_SELECTFILE"> (<tmpl_var name="file_types_label">):</label><br />
 											<table cellspacing="0" class="uploadfiletable">
 											<tbody>
@@ -69,7 +69,7 @@
 								<tr>
 									<td>
 										<hr style="width:95%;" />
-										<form name="form_url_torrent" action="dispatcher.php?action=urlUpload" method="post" onsubmit="return actionSubmit()">
+										<form name="form_url_torrent" action="dispatcher.php?action=urlUpload" method="post" onsubmit="return actionSubmit('<tmpl_var name="_GETFILE">')">
 											<label for="url_torrent"><tmpl_var name="_URLFILE">:</label><br />
 											<input type="hidden" name="type" value="torrent" />
 											<input type="text" name="url" id="url_torrent" size="40" />
@@ -92,7 +92,7 @@
 									<tr>
 										<td>
 											<hr style="width:95%;" />
-											<form name="form_url_nzb" action="dispatcher.php?action=urlUpload" method="post" onsubmit="return actionSubmit()">
+											<form name="form_url_nzb" action="dispatcher.php?action=urlUpload" method="post" onsubmit="return actionSubmit('<tmpl_var name="_GETFILE">')">
 												<label for="url_nzb">URL for the nzb-File:</label><br />
 												<input type="hidden" name="type" value="nzb" />
 												<input type="text" name="url" id="url_nzb" size="40" />
@@ -116,7 +116,7 @@
 									<tr>
 										<td>
 											<hr style="width:95%;" />
-											<form name="form_wget" action="dispatcher.php?action=wget" method="post" onsubmit="return actionSubmit()">
+											<form name="form_wget" action="dispatcher.php?action=wget" method="post" onsubmit="return actionSubmit('Injecting File')">
 												<label for="url_wget">URL for the File to wget:</label><br />
 												<input type="text" name="url" id="url_wget" size="40" />
 												<select name="aid" style="width:100px">
@@ -139,7 +139,7 @@
 									<tr>
 										<td>
 											<hr style="width:95%;" />
-											<form name="form_search" action="index.php" method="get" onsubmit="return actionSubmit()">
+											<form name="form_search" action="index.php" method="get" onsubmit="return actionSubmit('Searching')">
 												<label for="searchterm">Torrent <tmpl_var name="_SEARCH">:</label><br />
 												<input type="hidden" name="iid" value="torrentSearch" />
 												<input type="text" name="searchterm" id="searchterm" size="40" maxlength="50" />
@@ -157,7 +157,7 @@
 						</table>
 					</td>
 					<td style="vertical-align:top;">
-						<table cellspacing="0" style="padding:5px;width:100%;">
+						<table cellspacing="0" class="indexsubtable">
 						<tbody>
 							<tr>
 								<tmpl_if name="ui_displaylinks" value="1">
@@ -358,40 +358,40 @@
 							<br /><tmpl_var name="_DELETE">
 						</td>
 						<td class="tablecontent small" style="text-align:right;padding-top:4px;vertical-align:top;">
-							<a href="dispatcher.php?action=cacheFlush" onclick="return actionClick(true)">
+							<a href="dispatcher.php?action=cacheFlush" onclick="return actionClick(true,'Flusing Cache')">
 								<img src="themes/<tmpl_var name="theme">/images/cache.gif" title="Flush Cache" alt="" />
 							</a>
-							<a href="dispatcher.php?action=maintenance" onclick="return actionClick(true)">
+							<a href="dispatcher.php?action=maintenance" onclick="return actionClick(true,'Switching Maintenance')">
 								<img src="themes/<tmpl_var name="theme">/images/maintenance.gif" title="Maintenance" alt="" />
 							</a>
 						</td>
 					<tmpl_if name="enable_bulkops">
 						<td class="tablecontent small" style="text-align:right;padding-top:4px;vertical-align:top;">
-							<a href="dispatcher.php?action=bulkStart" onclick="return actionConfirm('Start All Transfers ?')">
+							<a href="dispatcher.php?action=bulkStart" onclick="return actionConfirm('Start All Transfers ?','Starting all Transfers')">
 								<img src="themes/<tmpl_var name="theme">/images/bulkstart.gif" title="Start All Transfers" alt="" />
 							</a>
-							<a href="dispatcher.php?action=bulkResume" onclick="return actionConfirm('Resume All Transfers ?')">
+							<a href="dispatcher.php?action=bulkResume" onclick="return actionConfirm('Resume All Transfers ?','Resuming all Transfers')">
 								<img src="themes/<tmpl_var name="theme">/images/bulkresume.gif" title="Resume All Transfers" alt="" />
 							</a>
-							<a href="dispatcher.php?action=bulkStop" onclick="return actionConfirm('Stop All Transfers ?')">
+							<a href="dispatcher.php?action=bulkStop" onclick="return actionConfirm('Stop All Transfers ?','Stopping all Transfers')">
 								<img src="themes/<tmpl_var name="theme">/images/bulkstop.gif" title="Stop All Transfers" alt="" />
 							</a>
 						</td>
 					</tmpl_if>
 					<tmpl_if name="enable_multiops">
 						<td class="tablecontent" style="text-align:right;padding:4px;vertical-align:top;">
-							<select name="action" size="1">
+							<select name="action">
 								<option value="---" selected="selected">---</option>
-								<option value="transferStart" style="background-color: #00EC00">Start</option>
-								<option value="transferStop" style="background-color: #94ABC0">Stop</option>
+								<option value="transferStart" style="background-color:#00EC00;">Start</option>
+								<option value="transferStop" style="background-color:#94ABC0;">Stop</option>
 								<tmpl_if name="queueActive" value="1">
-									<option value="transferEnQueue" style="background-color: #FFFC00">EnQueue</option>
-									<option value="transferDeQueue" style="background-color: #FFFC00">DeQueue</option>
+									<option value="transferEnQueue" style="background-color:#FFFC00;">Enqueue</option>
+									<option value="transferDeQueue" style="background-color:#FFFC00;">Dequeue</option>
 								</tmpl_if>
-								<option value="transfer" style="background-color: #DDAAAA">Delete</option>
-								<option value="transferData" style="background-color: #DDAAAA">Delete with Data</option>
-								<option value="transferResetTotals" style="background-color: #DDAAAA">Reset Totals</option>
-								<option value="transferWipe" style="background-color: #DDAAAA">Wipe</option>
+								<option value="transfer" style="background-color:#DDAAAA;">Delete</option>
+								<option value="transferData" style="background-color:#DDAAAA;">Delete with Data</option>
+								<option value="transferResetTotals" style="background-color:#DDAAAA;">Reset Totals</option>
+								<option value="transferWipe" style="background-color:#DDAAAA;">Wipe</option>
 							</select>
 							<input type="submit" value="Go" />
 							<input type="checkbox" name="bulkBox" onclick="bulkCheck(this);" />
@@ -422,17 +422,17 @@
 						</tmpl_if>
 						<br />
 						<tmpl_if name="onLoad">
-							<a href="dispatcher.php?action=set&amp;key=_refresh_&amp;val=0" onclick="return actionClick(true)">
+							<a href="dispatcher.php?action=set&amp;key=_refresh_&amp;val=0" onclick="return actionClick(true,'Turning off')">
 								<tmpl_var name="_TURNOFFREFRESH"> and AJAX-Update
 							</a>
 						<br />
 						</tmpl_if>
 						<tmpl_if name="index_show_seeding">
-							<a href="dispatcher.php?action=set&amp;key=index_show_seeding&amp;val=0" onclick="return actionClick(true)">
+							<a href="dispatcher.php?action=set&amp;key=index_show_seeding&amp;val=0" onclick="return actionClick(true,'Hidding Seeds')">
 								Hide Seeding Torrents
 							</a>
 						<tmpl_else>
-							<a href="dispatcher.php?action=set&amp;key=index_show_seeding&amp;val=1" onclick="return actionClick(true)">
+							<a href="dispatcher.php?action=set&amp;key=index_show_seeding&amp;val=1" onclick="return actionClick(true,'Showing Seeds')">
 								Show Seeding Torrents
 							</a>
 						</tmpl_if>

@@ -36,32 +36,32 @@ function actionClick(showlabel,labeltext) {
 		actionRequestError();
 		return false;
 	}
-	if(window.ajax_unload) ajax_unload();
 	actionRequest(showlabel,labeltext);
 	return true;
 }
-function actionConfirm(question) {
+function actionConfirm(question,labeltext) {
 	if (actionInProgress) {
 		actionRequestError();
 		return false;
 	} else {
 		var confirmResult = confirm(question);
 		if (confirmResult)
-			actionRequest(true);
+			actionRequest(true,labeltext);
 		return confirmResult;
 	}
 }
-function actionSubmit() {
+function actionSubmit(labeltext) {
 	if (actionInProgress) {
 		actionRequestError();
 		return false;
 	}
-	actionRequest(true);
+	actionRequest(true,labeltext);
 	return true;
 }
 function actionRequest(showlabel,labeltext) {
 	actionInProgress = true;
 	ajax_updateState = 0;
+	if(window.ajax_unload) ajax_unload();
 	if (showlabel) {
 		var label = document.getElementById("action_in_progress");
 		var gray_layer = document.getElementById("grey_out");
