@@ -277,7 +277,7 @@ function setFilePriority($transfer) {
         }
         // if there are files to get then process and create a prio file.
         if (count($files) > 0) {
-            for ($i=0; $i < tfb_getRequestVar('count'); $i++) {
+            for ($i=0; $i <= tfb_getRequestVar('count'); $i++) {
                 if (in_array($i,$files)) {
                     array_push($result, 1);
                 } else {
