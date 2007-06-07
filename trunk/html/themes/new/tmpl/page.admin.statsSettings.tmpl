@@ -30,48 +30,48 @@
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
-						<label for="stats_enable_public">Enable Public Stats</label>
+						<label for="stats_enable_public">Publicly Visible Stats</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<select name="stats_enable_public" id="stats_enable_public">
-							<option value="1">true</option>
+							<option value="1">True</option>
 							<option value="0"
 							<tmpl_if name="stats_enable_public" value="0">
 								 selected
 							</tmpl_if>
-							>false</option>
+							>False</option>
 						</select>
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsText">
-						If Public Stats are enabled stats show complete (superadmin-level) stats without authentication.
+						Enable/disable publicly visible statistics - if enabled, superadmin level stats (server load, all transfer details, etc) are visible to the public without needing to authenticate.
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						<label for="stats_show_usage">Show Usage</label>
+						<label for="stats_show_usage">Show Usage When Called Without Arguments</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<select name="stats_show_usage" id="stats_show_usage">
-							<option value="1">true</option>
+							<option value="1">True</option>
 							<option value="0"
 							<tmpl_if name="stats_show_usage" value="0">
 								 selected
 							</tmpl_if>
-							>false</option>
+							>False</option>
 						</select>
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Show Usage when stats is called without arguments.<br />
+						Enable/disable the option to display usage/help when the stats.php script is called without any arguments in the URL.<br />
 						<a id="closeLink" href="stats.php?usage" target="_blank">Show Usage</a>
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						<label for="stats_deflate_level">Deflate Level</label>
+						<label for="stats_deflate_level">Compression Level</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<select name="stats_deflate_level" id="stats_deflate_level">
@@ -87,12 +87,12 @@
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Specify level of deflate compression. (default is "9").
+						Specify the level of compression to use when transferring data - level 0 = no compression (data is sent out 'as is'), level 9 = maximum compression (data is compressed as small as possible before sending but takes up some minor extra CPU time to compress).
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						<label for="stats_txt_delim">Text Delim Char</label>
+						<label for="stats_txt_delim">Delimiting Character To Use In TXT Mode</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="stats_txt_delim" id="stats_txt_delim" type="Text" maxlength="1" value="<tmpl_var name="stats_txt_delim">" size="1">
@@ -100,33 +100,32 @@
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Specify delim-char for text-format. (default is ';').
+						Specify the character to use for delimiting/separating fields when the format type is 'txt' - this character will be used to split one item in the output from the next.
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						<label for="stats_default_header">Default : Header</label>
+						<label for="stats_default_header">Send Header Fields In TXT Mode</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<select name="stats_default_header" id="stats_default_header">
-							<option value="1">true</option>
+							<option value="1">True</option>
 							<option value="0"
 							<tmpl_if name="stats_default_header" value="0">
 								 selected
 							</tmpl_if>
-							>false</option>
+							>False</option>
 						</select>
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Specify default for send-header.<br />
-						<em>Note</em>: Only used in txt-format.
+						Enable/disable sending of header fields at the top of text mode output - when enabled, each of the statistics column headers will be sent out at the top of the output.<br/><strong>Note:</strong><br/>Only used in txt mode.
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						<label for="stats_default_type">Default : type</label>
+						<label for="stats_default_type">Default Statistic Type To Send</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<select name="stats_default_type" id="stats_default_type">
@@ -160,12 +159,12 @@
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Specify default-type.
+						Specify the default type of statistic to send out.
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						<label for="stats_default_format">Default : format</label>
+						<label for="stats_default_format">Default Output Format</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<select name="stats_default_format" id="stats_default_format">
@@ -189,47 +188,47 @@
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Specify default-format.
+						Specify the default output format to use when sending statistics - rss/txt/custom xml.
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						<label for="stats_default_compress">Default : Compress</label>
+						<label for="stats_default_compress">Use Compression</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<select name="stats_default_compress" id="stats_default_compress">
-							<option value="1">true</option>
+							<option value="1">True</option>
 							<option value="0"
 							<tmpl_if name="stats_default_compress" value="0">
 								 selected
 							</tmpl_if>
-							>false</option>
+							>False</option>
 						</select>
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Specify default for send-compressed.
+						Enable/disable the use of compression by default when sending statistics - using compression uses less bandwidth but takes up more CPU time on the server
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						<label for="stats_default_attach">Default : Attachment</label>
+						<label for="stats_default_attach">Send As Attachment</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<select name="stats_default_attach" id="stats_default_attach">
-							<option value="1">true</option>
+							<option value="1">True</option>
 							<option value="0"
 							<tmpl_if name="stats_default_attach" value="0">
 								 selected
 							</tmpl_if>
-							>false</option>
+							>False</option>
 						</select>
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Specify default for send-as-attachment.
+						Enable/disable sending of statistics as an HTTP attachment - browser client will prompt to save the attachment as a file.
 					</td>
 				</tr>
 				<tr>
