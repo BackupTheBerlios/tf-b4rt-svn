@@ -16,6 +16,24 @@
 					<form name="theForm" action="admin.php?op=updateStatsSettings" method="post" onsubmit="return validateSettings('stats')">
 						<table cellpadding="5" cellspacing="0" border="0" width="100%">
 							<tr>
+								<td colspan="2">
+								<div style="width:600px">
+									<strong>Overview:</strong><br/>
+									This page contains configuration options for the <a href="stats.php?t=all" target="_blank" title="Torrentflux-b4rt stats script">stats.php</a> script.  The stats.php script is used to display various statistics for various aspects of torrentflux-b4rt, including:
+									<ul>
+										<li><a href="stats.php?t=server" target="_blank" title="Torrentflux-b4rt server stats">Server</a> - up/down bandwidth, net connections, diskspace, etc</li>
+										<li><a href="stats.php?t=xfer" target="_blank" title="Torrentflux-b4rt xfer stats">Xfer</a> - totals transferred globally and per user per day/week/month</li>
+										<li><a href="stats.php?t=users" target="_blank" title="Torrentflux-b4rt users stats">Users</a> - current online status of torrentflux-b4rt users</li>
+										<li><a href="stats.php?t=transfers" target="_blank" title="Torrentflux-b4rt transfers stats">Transfers</a> - current status, up/down bandwidth, estimated time left etc for all transfers in the transfer list</li>
+										<li><a href="stats.php?usage" target="_blank" title="Torrentflux-b4rt stats usage">Transfer</a> - stats for individual transfers in the transfer list</li>
+									</ul>
+									The stats output is available in RSS, plain text or customized XML.<br/><br/>
+									Click below for more information:<br/>
+									<a href="stats.php?usage" target="_blank" title="Torrentflux-b4rt stats usage">Stats Script Usage</a><br/>&nbsp;
+									</div>
+								</td>
+							</tr>
+							<tr>
 								<td align="left" width="350" valign="top">
 									<label for="stats_enable_public"><strong>Enable Public Stats</strong></label><br/>
 									If Public Stats are enabled stats show complete (superadmin-level) stats without authentication.
