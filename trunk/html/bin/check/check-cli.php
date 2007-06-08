@@ -49,6 +49,8 @@ echo _TITLE."\n";
 
 // PHP-Version
 echo '1. PHP-Version'."\n";
+
+// version
 $phpVersion = 'PHP-Version : '.PHP_VERSION.' ';
 if (PHP_VERSION < 4.3) {
 	$phpVersion .= 'Failed';
@@ -58,6 +60,17 @@ if (PHP_VERSION < 4.3) {
 	$phpVersion .= 'Passed';
 }
 echo $phpVersion."\n";
+// cli
+$phpcli = 'PHP-SAPI : ';
+$phpsapi = php_sapi_name();
+if ($phpsapi != 'cli') {
+	$phpcli .= $phpsapi . ' Failed';
+	$errors++;
+	array_push($errorsMessages, "PHP-SAPI : CLI version of PHP required.");
+} else {
+	$phpcli .= $phpsapi . ' Passed';
+}
+echo $phpcli."\n";
 
 // PHP-Extensions
 echo '2. PHP-Extensions'."\n";
