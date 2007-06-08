@@ -42,7 +42,12 @@
 			</form>
 		</div>
 	</div>
-	<div class="uploadClass"></div>
+	<div class="uploadClass">
+	<div align="left">
+		<strong>Overview:</strong><br/>
+		Fluxd is a service that runs in the background on the webserver to perform scheduled tasks related to torrentflux-b4rt.  The tasks performed depend on the modules that fluxd has enabled and the way that those modules are configured.<br/><br/>Details of each module and how they are configured can be found in the respective module's configuration section.
+	</div>
+	</div>
 	<div id="uploadBottom"></div>
 	<div id="uploadBottomEnd"></div>
 	<form name="theForm" action="admin.php?op=updateFluxdSettings" method="post" onsubmit="return validateSettings('fluxd')">
@@ -115,6 +120,9 @@
 			</div>
 		</div>
 		<div class="uploadClass">
+			<div align="left">
+				<strong>Overview:</strong><br/>Qmgr handles a queue of transfers waiting to be started; starts transfers one after another to ease load on the server.
+			</div>
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
@@ -201,6 +209,9 @@
 			</div>
 		</div>
 		<div class="uploadClass">
+			<div align="left">
+				<strong>Overview:</strong><br/>Watch watches a specified directory for new transfer files (.torrent etc) and when found, starts the transfers automatically.  Watch 'jobs' are configured specifying which directory to watch, which user to start the transfer as when a new transfer file is found and what transfer profile to use to start the transfer.
+			</div>
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
@@ -274,6 +285,9 @@
 			</div>
 		</div>
 		<div class="uploadClass">
+			<div align="left">
+				<strong>Overview:</strong><br/>Rssad runs scheduled checks for new torrents matching a specified pattern against a list of RSS direct download torrent feeds.  Filters are created containing patterns (regular expressions) to search for.  An Rssad 'job' is then configured to specify which filter to use, what RSS URL to use the filter on and what directory to save any found torrents to.
+			</div>
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
@@ -347,6 +361,9 @@
 			</div>
 		</div>
 		<div class="uploadClass">
+			<div align="left">
+				<strong>Overview:</strong><br/>Fluxinet allows network access directly to the fluxd daemon.
+			</div>
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
@@ -407,6 +424,9 @@
 			</div>
 		</div>
 		<div class="uploadClass">
+			<div align="left">
+				<strong>Overview:</strong><br/>Maintenance runs scheduled maintenance checks on torrentflux-b4rt and can be configured to restart any transfers that have died unexpectedly.
+			</div>
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
@@ -491,6 +511,9 @@
 			</div>
 		</div>
 		<div class="uploadClass">
+			<div align="left">
+				<strong>Overview:</strong><br/>Trigger performs an action on a transfer item when a specified event occurs.<br/><strong>Note:</strong><br/>The trigger module does not work at present.
+			</div>
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">

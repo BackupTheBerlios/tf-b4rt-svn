@@ -98,7 +98,14 @@
 											</td>
 										</tr>
 									</table>
-									<br>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2">
+									<div style="width:600px">
+										<strong>Overview:</strong><br/>
+										Fluxd is a service that runs in the background on the webserver to perform scheduled tasks related to torrentflux-b4rt.  The tasks performed depend on the modules that fluxd has enabled and the way that those modules are configured.<br/><br/>Details of each module and how they are configured can be found in the respective module's configuration section.
+									</div>
 								</td>
 							</tr>
 								<tr>
@@ -154,6 +161,13 @@
 										<tmpl_if name="fluxd_Qmgr_state" value="-1">
 											<img src="themes/default/images/red.gif" title="Qmgr error.">
 										</tmpl_if>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2">
+										<div style="width:600px">
+											<strong>Overview:</strong><br/>Qmgr handles a queue of transfers waiting to be started and starts transfers one after another to ease load on the server.
+										</div>
 									</td>
 								</tr>
 								<tr>
@@ -218,6 +232,13 @@
 									</td>
 								</tr>
 								<tr>
+									<td colspan="2">
+										<div style="width:600px">
+											<strong>Overview:</strong><br/>Watch watches a specified directory for new transfer files (.torrent etc) and when found, starts the transfers automatically.  Watch 'jobs' are configured specifying which directory to watch, which user to start the transfer as when a new transfer file is found and what transfer profile to use to start the transfer.
+										</div>
+									</td>
+								</tr>
+								<tr>
 									<td align="left" width="350" valign="top">
 										<label for="fluxd_Watch_enabled"><strong>Watch enabled</strong></label><br/>
 										Specify whether or not to load the Watch module.
@@ -267,6 +288,13 @@
 										<tmpl_if name="fluxd_Rssad_state" value="-1">
 											<img src="themes/default/images/red.gif" title="Rssad error.">
 										</tmpl_if>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2">
+										<div style="width:600px">
+											<strong>Overview:</strong><br/>Rssad runs scheduled checks for new torrents matching a specified pattern against a list of RSS direct download torrent feeds.  Filters are created containing patterns (regular expressions) to search for.  An Rssad 'job' is then configured to specify which filter to use, what RSS URL to use the filter on and what directory to save any found torrents to.
+										</div>
 									</td>
 								</tr>
 								<tr>
@@ -322,6 +350,13 @@
 									</td>
 								</tr>
 								<tr>
+									<td colspan="2">
+										<div style="width:600px">
+											<strong>Overview:</strong><br/>Fluxinet allows network access directly to the fluxd daemon.
+										</div>
+									</td>
+								</tr>
+								<tr>
 									<td align="left" width="350" valign="top">
 										<label for="fluxd_Fluxinet_enabled"><strong>Fluxinet enabled</strong></label><br/>
 										Specify whether or not to load the Fluxinet module.
@@ -362,6 +397,13 @@
 										<tmpl_if name="fluxd_Maintenance_state" value="-1">
 											<img src="themes/tf_standard_themes/images/red.gif" title="Maintenance error.">
 										</tmpl_if>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2">
+										<div style="width:600px">
+											<strong>Overview:</strong><br/>Maintenance runs scheduled maintenance checks on torrentflux-b4rt and can be configured to restart any transfers that have died unexpectedly.
+										</div>
 									</td>
 								</tr>
 								<tr>
@@ -427,7 +469,13 @@
 										</tmpl_if>
 									</td>
 								</tr>
-								<tr><td colspan="2"><u>Note</u> : Trigger module does nothing.</td></tr>
+								<tr>
+									<td colspan="2">
+										<div style="width:600px">
+											<strong>Overview:</strong><br/>Trigger performs an action on a transfer item when a specified event occurs.<br/><strong>Note:</strong><br/>The trigger module does not work at present.
+										</div>
+									</td>
+								</tr>
 								<tr>
 									<td align="left" width="350" valign="top">
 										<label for="fluxd_Trigger_enabled"><strong>Trigger enabled</strong></label><br/>
