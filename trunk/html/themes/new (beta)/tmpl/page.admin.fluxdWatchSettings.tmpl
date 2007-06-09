@@ -45,10 +45,10 @@
 					<tmpl_loop name="watch_jobs">
 						<tr>
 							<td class="buttonLinks">
-								<a href="admin.php?op=fluxdWatchSettings&pageop=deleteJob&job=<tmpl_var name="__ROWNUM__">" onclick="return confirm('Delete Job ?')"><img src='themes/new/pics/delete.jpg' alt='Delete Job'></a>
+								<a href="admin.php?op=fluxdWatchSettings&pageop=deleteJob&job=<tmpl_var name="__ROWNUM__">" onclick="return confirm('Delete Job ?')"><img src='themes/<tmpl_var name="theme">/pics/delete.jpg' alt='Delete Job'></a>
 							</td>
 							<td class="buttonLinks">
-								<a href="admin.php?op=fluxdWatchSettings&pageop=editJob&job=<tmpl_var name="__ROWNUM__">"><img src='themes/new/pics/edit.jpg' alt='Edit Job'></a>
+								<a href="admin.php?op=fluxdWatchSettings&pageop=editJob&job=<tmpl_var name="__ROWNUM__">"><img src='themes/<tmpl_var name="theme">/pics/edit.jpg' alt='Edit Job'></a>
 							</td>
 							<td class="buttonLinks">
 								<tmpl_var escape="htmlkeepspaces" name="D">

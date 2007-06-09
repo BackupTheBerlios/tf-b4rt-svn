@@ -30,10 +30,10 @@
 					<tmpl_loop name="rssad_filters">
 						<tr>
 							<td class="buttonLinks">
-								<a href="admin.php?op=fluxdRssadSettings&pageop=deleteFilter&filtername=<tmpl_var name="filtername">" onclick="return confirm('Delete Filter <tmpl_var name="filtername"> ?')"><img src='themes/new/pics/delete.jpg' alt='Delete <tmpl_var name="filtername">'></a>
+								<a href="admin.php?op=fluxdRssadSettings&pageop=deleteFilter&filtername=<tmpl_var name="filtername">" onclick="return confirm('Delete Filter <tmpl_var name="filtername"> ?')"><img src='themes/<tmpl_var name="theme">/pics/delete.jpg' alt='Delete <tmpl_var name="filtername">'></a>
 							</td>
 							<td class="buttonLinks">
-								<a href="admin.php?op=fluxdRssadSettings&pageop=editFilter&filtername=<tmpl_var name="filtername">"><img src='themes/new/pics/edit.jpg' alt='Edit <tmpl_var name="filtername">'></a>
+								<a href="admin.php?op=fluxdRssadSettings&pageop=editFilter&filtername=<tmpl_var name="filtername">"><img src='themes/<tmpl_var name="theme">/pics/edit.jpg' alt='Edit <tmpl_var name="filtername">'></a>
 							</td>
 							<td class="outlinks">
 								<tmpl_var name="filtername">
@@ -83,10 +83,10 @@
 					<tmpl_loop name="rssad_jobs">
 						<tr>
 							<td class="buttonLinks">
-								<a href="admin.php?op=fluxdRssadSettings&pageop=deleteJob&job=<tmpl_var name="__ROWNUM__">" onclick="return confirm('Delete Job ?')"><img src='themes/new/pics/delete.jpg' alt='Delete Job'></a>
+								<a href="admin.php?op=fluxdRssadSettings&pageop=deleteJob&job=<tmpl_var name="__ROWNUM__">" onclick="return confirm('Delete Job ?')"><img src='themes/<tmpl_var name="theme">/pics/delete.jpg' alt='Delete Job'></a>
 							</td>
 							<td class="buttonLinks">
-								<a href="admin.php?op=fluxdRssadSettings&pageop=editJob&job=<tmpl_var name="__ROWNUM__">"><img src='themes/new/pics/edit.jpg' alt='Edit Job'></a>
+								<a href="admin.php?op=fluxdRssadSettings&pageop=editJob&job=<tmpl_var name="__ROWNUM__">"><img src='themes/<tmpl_var name="theme">/pics/edit.jpg' alt='Edit Job'></a>
 							</td>
 							<td class="buttonLinks">
 								<tmpl_var name="savedir">

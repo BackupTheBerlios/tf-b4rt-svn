@@ -212,10 +212,10 @@
 	<div id="statsBandwidth">
 		<div id="statsBandwidthBars">
 			<div id="statsBandwidthUpload">
-				<img src="themes/new/pics/bandwidthUp.jpg" style="position: absolute; clip: rect(<tmpl_var name="bandwidthbars_upload_percent2">px 30px 100px 0px);">
+				<img src="themes/<tmpl_var name="theme">/pics/bandwidthUp.jpg" style="position: absolute; clip: rect(<tmpl_var name="bandwidthbars_upload_percent2">px 30px 100px 0px);">
 			</div>
 			<div id="statsBandwidthDownload">
-				<img src="themes/new/pics/bandwidthDown.jpg" style="position: absolute; clip: rect(<tmpl_var name="bandwidthbars_download_percent2">px 30px 100px 0px);">
+				<img src="themes/<tmpl_var name="theme">/pics/bandwidthDown.jpg" style="position: absolute; clip: rect(<tmpl_var name="bandwidthbars_download_percent2">px 30px 100px 0px);">
 			</div>
 		</div>
 		<div id="bandwidth">
@@ -232,7 +232,7 @@
 	</div>
 	<div id="statsDrivespace">
 		<div id="statsDiskspaceBar">
-			<img src="themes/new/pics/diskspace.jpg" style="position: absolute; clip: rect(0px <tmpl_var name="drivespacebar_space">px 30px 0px);">
+			<img src="themes/<tmpl_var name="theme">/pics/diskspace.jpg" style="position: absolute; clip: rect(0px <tmpl_var name="drivespacebar_space">px 30px 0px);">
 		</div>
 		<div class="serverStatsBottom">
 			<span id="diskspace"><tmpl_var name="drivespacebar_space2">% (<tmpl_var name="drivespacebar_freeSpace">) Free</span>

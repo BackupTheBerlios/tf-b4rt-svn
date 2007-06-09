@@ -33,10 +33,10 @@
 			<tmpl_loop name="link_list">
 					<tr>
 						<td class="buttonLinks">
-							<a href="admin.php?op=deleteLink&lid=<tmpl_var name="lid">" onclick="return confirm('Delete Link <tmpl_var name="sitename"> ?')"><img src='themes/new/pics/delete.jpg' alt='<tmpl_var name="_DELETE"> <tmpl_var name="lid">'></a>
+							<a href="admin.php?op=deleteLink&lid=<tmpl_var name="lid">" onclick="return confirm('Delete Link <tmpl_var name="sitename"> ?')"><img src='themes/<tmpl_var name="theme">/pics/delete.jpg' alt='<tmpl_var name="_DELETE"> <tmpl_var name="lid">'></a>
 						</td>
 						<td class="buttonLinks">
-							<a href="admin.php?op=editLinks&edit=<tmpl_var name="lid">"><img src='themes/new/pics/edit.jpg' alt='<tmpl_var name="_EDIT"> <tmpl_var name="lid">'></a>
+							<a href="admin.php?op=editLinks&edit=<tmpl_var name="lid">"><img src='themes/<tmpl_var name="theme">/pics/edit.jpg' alt='<tmpl_var name="_EDIT"> <tmpl_var name="lid">'></a>
 						</td>
 						<td class="outlinks">
 							<tmpl_if name="is_edit">
@@ -60,12 +60,12 @@
 						</td>
 						<td class="buttonLinks">
 							<tmpl_if name="counter" value="2">
-								<a href='admin.php?op=moveLink&amp;direction=up&amp;lid=<tmpl_var name="lid">'><img src='themes/new/pics/up.jpg' alt='Up'></a>
+								<a href='admin.php?op=moveLink&amp;direction=up&amp;lid=<tmpl_var name="lid">'><img src='themes/<tmpl_var name="theme">/pics/up.jpg' alt='Up'></a>
 							</tmpl_if>
 						</td>
 						<td class="buttonLinks">
 							<tmpl_if name="counter2">
-								<a href='admin.php?op=moveLink&amp;direction=down&amp;lid=<tmpl_var name="lid">'><img src='themes/new/pics/down.jpg' alt='Down'></a>
+								<a href='admin.php?op=moveLink&amp;direction=down&amp;lid=<tmpl_var name="lid">'><img src='themes/<tmpl_var name="theme">/pics/down.jpg' alt='Down'></a>
 							</tmpl_if>
 						</td>
 					</tr>
