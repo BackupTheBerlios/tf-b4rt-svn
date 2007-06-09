@@ -108,7 +108,6 @@ function tmplSetFoot($showReturn = true) {
 	// set some vars
 	$tmpl->setvar('_RETURNTOTRANSFERS', $cfg['_RETURNTOTRANSFERS']);
 	$tmpl->setvar('subfoot_showReturn', $showReturn);
-	$tmpl->setvar('subfoot_torrentFluxLink', getTorrentFluxLink());
 }
 
 /**
@@ -120,6 +119,10 @@ function tmplSetIidVars() {
 	$_iid = tfb_getRequestVar('iid');
 	$tmpl->setvar('iid', $_iid);
 	$tmpl->setvar('mainMenu', (isset($cfg['mainMenu'][$_iid])) ? $cfg['mainMenu'][$_iid] : "home");
+	$tmpl->setvar( 'fluxlink_display', $cfg['ui_displayfluxlink'] );
+	$fluxlink = getTorrentFluxLink();
+	$tmpl->setvar( 'fluxlink_url', $fluxlink['address'] );
+	$tmpl->setvar( 'fluxlink_name', $fluxlink['name'] );
 }
 
 /**
@@ -267,14 +270,9 @@ function tmplGetXferBar($total, $used, $title) {
  */
 function getTorrentFluxLink() {
 	global $cfg;
-	if ($cfg["ui_displayfluxlink"] != 0) {
-		$torrentFluxLink = "<div align=\"right\">";
-		$torrentFluxLink .= "<a href=\"http://tf-b4rt.berlios.de/\" target=\"_blank\"><font class=\"tinywhite\">torrentflux-b4rt ".$cfg["version"]."</font></a>&nbsp;&nbsp;";
-		$torrentFluxLink .= "</div>";
-		return $torrentFluxLink;
-	} else {
-		return "";
-	}
+	$torrentFluxLink['address'] = "http://tf-b4rt.berlios.de/";
+	$torrentFluxLink['name'] = "torrentflux-b4rt ".$cfg["version"];
+	return $torrentFluxLink;
 }
 
 /**

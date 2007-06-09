@@ -1,16 +1,17 @@
-<body>
-	<table border="0" cellpadding="0" cellspacing="0">
+<body onload="<tmpl_if name="onLoad"><tmpl_var name="onLoad"></tmpl_if>">
+<center>
+	<table cellspacing="0" style="width:<tmpl_var name="ui_dim_main_w">px;">
+	<tbody>
 		<tr>
 			<td>
-				<table border="1" bordercolor="#94ABC0" cellpadding="4" cellspacing="0">
+				<table cellspacing="0" class="table">
+				<thead>
 					<tr>
-						<td bgcolor="#94ABC0" background="themes/default/images/bar.gif">
+						<td colspan="2" class="tableheading" style="padding:2px;">
 							<tmpl_include name="inc.titleBar.tmpl">
 						</td>
 					</tr>
-					<tr>
-						<td bgcolor="#A2BED4">
-							<div align="center">
-								<table width="100%" bgcolor="#A2BED4">
-									<tr>
-										<td>
+				</thead>
+				<tbody>
+					<tr class="tablecontent">
+						<td>

@@ -142,7 +142,6 @@ if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 
 //
 tmplSetTitleBar($cfg["pagetitle"]." - ".$cfg['_MOVE_FILE_TITLE'], false);
-$tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
 tmplSetIidVars();
 
 // parse template

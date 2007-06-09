@@ -43,7 +43,6 @@ $tmpl->setvar('_DRIVESPACE', $cfg['_DRIVESPACE']);
 $tmpl->setvar('_SERVERLOAD', $cfg['_SERVERLOAD']);
 //
 tmplSetTitleBar($cfg["pagetitle"]." - Server Monitor", false);
-$tmpl->setvar('torrentFluxLink', getTorrentFluxLink());
 tmplSetIidVars();
 
 // parse template

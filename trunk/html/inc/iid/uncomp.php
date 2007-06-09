@@ -153,7 +153,6 @@ if ((isset($_REQUEST['file'])) && ($_REQUEST['file'] != "")) {
 }
 //
 tmplSetTitleBar('Uncompress File', false);
-$tmpl->setvar('torrentFluxLink', getTorrentFluxLink());
 tmplSetIidVars();
 
 // parse template

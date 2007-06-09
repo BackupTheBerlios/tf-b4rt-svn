@@ -160,9 +160,8 @@ switch ($pageop) {
 		break;
 }
 
-// title-bar + link
+// title-bar
 tmplSetTitleBar($cfg["pagetitle"]." - "."vlc", false);
-$tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
 
 // iid
 tmplSetIidVars();

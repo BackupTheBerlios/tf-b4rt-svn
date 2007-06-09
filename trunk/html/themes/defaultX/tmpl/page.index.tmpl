@@ -4,24 +4,7 @@
 		alert('<tmpl_var name="_WARNING">: <tmpl_var name="drivespace">% <tmpl_var name="_DRIVESPACEUSED">');
 	</script>
 </tmpl_if>
-<body onload="actionInProgress = false; <tmpl_if name="onLoad"><tmpl_var name="onLoad"></tmpl_if>">
-<center>
-	<table cellspacing="0" style="width:<tmpl_var name="ui_dim_main_w">px;">
-	<tbody>
-		<tr>
-			<td>
-				
-				<table cellspacing="0" class="table">
-				<thead>
-					<tr>
-						<td colspan="2" class="tableheading" style="padding:2px;">
-							<tmpl_include name="inc.titleBar.tmpl">
-						</td>
-					</tr>
-				</thead>
-				<tbody>
-					<tr class="tablecontent">
-						<td>
+<tmpl_include name="inc.subhead.tmpl">
 							<table cellspacing="0" class="indexsubtable">
 							<tbody>
 								<tr>
@@ -488,31 +471,7 @@
 					</tr>
 				</tbody>
 				</table>
-	<tmpl_if name="ui_displayfluxlink">
-		<div style="text-align:right;float:right;">
-			<a href="http://tf-b4rt.berlios.de" target="_blank" class="fluxlink">
-				torrentflux-b4rt <tmpl_var name="version">
-			</a>
-			&nbsp;
-			<a onclick="window.open (name_file,'_blank','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=800,height=600');" style="cursor:pointer;">
-				<img src="themes/<tmpl_var name="theme">/images/arrow.gif" title="Version" alt="" />
-			</a>
-		</div>
-	</tmpl_if>
-	<tmpl_if name="IsForceReadMsg">
-		<script language="JavaScript">
-			if (confirm("<tmpl_var name="_ADMINMESSAGE">")) {
-				document.location = "index.php?iid=readmsg";
-			}
-		</script>
-	</tmpl_if>
-</form>
-</td>
-</tr>
-	</tbody>
-	</table>
+			</form>
 	<div id="action_in_progress" class="hidden"><img src="themes/<tmpl_var name="theme">/images/loading_small.gif" alt="" style="vertical-align:middle;" />&nbsp;<span id="progress_label">Processing Request</span></div>
 	<div id="grey_out" class="hidden"></div>
-</center>
-</body>
-</html>
+<tmpl_include name="inc.subfoot.tmpl">

@@ -152,8 +152,6 @@ switch ($client) {
 		$tmpl->setvar('piecesize', $piece);
 		break;
 }
-//
-$tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
 tmplSetTitleBar($cfg["pagetitle"]." - Torrent Maker", false);
 tmplSetIidVars();
 
