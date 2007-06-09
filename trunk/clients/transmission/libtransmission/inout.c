@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: inout.c 1962 2007-05-27 23:35:59Z livings124 $
+ * $Id: inout.c 1995 2007-05-31 23:40:56Z livings124 $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -22,6 +22,7 @@
  * DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
 
+#include <stdlib.h> /* for calloc */
 #include "transmission.h"
 
 struct tr_io_s
@@ -40,10 +41,13 @@ struct tr_io_s
 
     int           slotsUsed;
 
-	int	writeCount;
-	int	readCount;
-	int	reorderCount;
-	int	hitCount;
+    int           writeCount;
+    int           readCount;
+    int           reorderCount;
+    int           hitCount;
+
+    /* private flag to keep from saving aborted fastResume data */
+    char          checkFilesAborted;
 };
 
 #include "fastresume.h"
@@ -76,7 +80,7 @@ void tr_ioLoadResume( tr_torrent_t * tor )
     tr_io_t * io;
     tr_info_t * inf = &tor->info;
 
-    io      = malloc( sizeof( tr_io_t ) );
+    io      = calloc( 1, sizeof( tr_io_t ) );
     io->tor = tor;
 
     io->pieceSlot = malloc( inf->pieceCount * sizeof( int ) );
@@ -107,19 +111,14 @@ tr_io_t * tr_ioInit( tr_torrent_t * tor )
 {
     tr_io_t * io;
 
-    io      = malloc( sizeof( tr_io_t ) );
+    io      = calloc( 1, sizeof( tr_io_t ) );
     io->tor = tor;
 
     if( checkFiles( io ) )
     {
         free( io );
-        return NULL;
+        io = NULL;
     }
-
-    io->writeCount = 0;
-    io->readCount = 0;
-    io->reorderCount = 0;
-    io->hitCount = 0;
 
     return io;
 }
@@ -169,9 +168,12 @@ int tr_ioWrite( tr_io_t * io, int index, int begin, int length,
 
     if (reorder)
 	{
-		int reorderRuns;
+        int reorderRuns;
+
 		tr_dbg( "reorder pieces");
+
 		reorderRuns = reorderPieces( io );
+
 		if (io->slotsUsed == slotsUsedOld && reorderRuns > 0)
 			tr_err( "reorder runs should have been 0 but was: %d", reorderRuns );
 
@@ -236,7 +238,11 @@ int tr_ioHash( tr_io_t * io, int index )
 void tr_ioSync( tr_io_t * io )
 {
     closeFiles( io );
-    fastResumeSave( io );
+
+    if( !io->checkFilesAborted )
+    {
+        fastResumeSave( io );
+    }
 }
 
 /***********************************************************************
@@ -268,6 +274,7 @@ static int checkFiles( tr_io_t * io )
 
     io->pieceSlot = malloc( inf->pieceCount * sizeof( int ) );
     io->slotPiece = malloc( inf->pieceCount * sizeof( int ) );
+    io->checkFilesAborted = 0;
 
     if( !fastResumeLoad( io ) )
     {
@@ -309,6 +316,12 @@ static int checkFiles( tr_io_t * io )
     {
         int size, j;
 
+        if( tor->status & TR_STATUS_STOPPING )
+        {
+            io->checkFilesAborted = 1;
+            break;
+        }
+
         if( readSlot( io, i, buf, &size ) )
         {
             break;
@@ -323,7 +336,7 @@ static int checkFiles( tr_io_t * io )
             {
 				if ( io->pieceSlot[j] > 0 && j == i)
 				{
-					// only remove double piece when we found one sitting in the right slot
+					/* Only remove double piece when we found one sitting in the right slot */
 
 					tr_inf( "found piece %d (slot: %d) already on slot %d",j,i,io->pieceSlot[j] );
 					io->slotPiece[io->pieceSlot[j]] = -1;
@@ -331,7 +344,7 @@ static int checkFiles( tr_io_t * io )
 					io->pieceSlot[j] = i;
 					io->slotPiece[i] = j;
 				}
-				else	// we found no double
+				else /* We found no double */
 				{
 					io->pieceSlot[j] = i;
 					io->slotPiece[i] = j;
@@ -649,7 +662,7 @@ static int nextFreeSlotToAppend(tr_io_t * io)
 	tr_torrent_t * tor = io->tor;
 	tr_info_t    * inf = &tor->info;
 
-	while( io->pieceSlot[io->slotsUsed] >= 0 && io->slotsUsed < ( (inf->pieceCount)- 1 ) )
+	while( io->slotsUsed < ( (inf->pieceCount) - 1 ) && io->pieceSlot[io->slotsUsed] >= 0 )
 	{
 		tr_inf( "slotUsed (%d) has piece in %d !", io->slotsUsed, io->pieceSlot[io->slotsUsed] );
 		(io->slotsUsed)++;
@@ -687,7 +700,7 @@ static void findSlotForPiece( tr_io_t * io, int piece )
 		{
 			freeSlot = -1;
 
-			if( PREFERSIZE )
+			if( PREFERSIZE || io->slotsUsed >= ( inf->pieceCount - 1 ) )
 			{
 				for( i = 0; i < io->slotsUsed; i++ )
 				{

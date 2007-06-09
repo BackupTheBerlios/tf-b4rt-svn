@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: platform.c 1753 2007-04-18 19:32:53Z joshe $
+ * $Id: platform.c 1998 2007-06-06 00:30:13Z livings124 $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -224,16 +224,23 @@ void tr_threadCreate( tr_thread_t * t, void (*func)(void *), void * arg,
 #endif
 }
 
+const tr_thread_t THREAD_EMPTY = { NULL, NULL, NULL, 0 };
+
 void tr_threadJoin( tr_thread_t * t )
 {
+    if (t->func != NULL)
+    {
 #ifdef SYS_BEOS
-    long exit;
-    wait_for_thread( t->thread, &exit );
+        long exit;
+        wait_for_thread( t->thread, &exit );
 #else
-    pthread_join( t->thread, NULL );
+        pthread_join( t->thread, NULL );
 #endif
-    tr_dbg( "Thread '%s' joined", t->name );
-    free( t->name );
+        tr_dbg( "Thread '%s' joined", t->name );
+        free( t->name );
+        t->name = NULL;
+        t->func = NULL;
+    }
 }
 
 void tr_lockInit( tr_lock_t * l )

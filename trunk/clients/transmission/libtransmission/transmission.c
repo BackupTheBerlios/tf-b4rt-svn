@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.c 1869 2007-05-16 02:03:18Z livings124 $
+ * $Id: transmission.c 1998 2007-06-06 00:30:13Z livings124 $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -175,6 +175,7 @@ void tr_close( tr_handle_t * h )
     
     tr_sharedClose( h->shared );
     tr_fdClose();
+    free( h->tag );
     free( h );
 
     tr_netResolveThreadClose();

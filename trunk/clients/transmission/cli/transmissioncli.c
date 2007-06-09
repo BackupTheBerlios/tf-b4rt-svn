@@ -278,6 +278,33 @@ int main(int argc, char ** argv) {
 			// break
 			break;
 
+		/* --- CHECK_WAIT --- */
+		} else if (s->status & TR_STATUS_CHECK_WAIT) {
+
+			// write stat-file
+			tf_stat_fp = fopen(tf_stat_file, "w+");
+			if (tf_stat_fp != NULL) {
+				fprintf(tf_stat_fp,
+					"%d\n%.1f\n%s\n0 kB/s\n0 kB/s\n%s\n0\n0\n0.0\n%d\n0\n%" PRIu64 "\n%" PRIu64,
+					1,                                /* State             */
+					100.0 * s->progress,              /* checking progress */
+					"Waiting to check existing data", /* State text        */
+					                                  /* download speed    */
+					                                  /* upload speed      */
+					tf_owner,                         /* owner             */
+					                                  /* seeds             */
+					                                  /* peers             */
+					                                  /* sharing           */
+					tf_seedLimit,                     /* seedlimit         */
+					                                  /* uploaded bytes    */
+					s->downloaded,                    /* downloaded bytes  */
+					info->totalSize);                 /* global size       */
+				fclose(tf_stat_fp);
+			} else {
+				tf_print(sprintf(tf_message,
+					"error opening stat-file for write : %s\n", tf_stat_file));
+			}
+
 		/* --- CHECK --- */
 		} else if (s->status & TR_STATUS_CHECK) {
 

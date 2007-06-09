@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: platform.h 1401 2007-01-19 01:39:33Z titer $
+ * $Id: platform.h 1998 2007-06-06 00:30:13Z livings124 $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -47,6 +47,12 @@ tr_thread_t;
 char * tr_getCacheDirectory();
 char * tr_getTorrentsDirectory();
 
+/**
+ * When instantiating a thread with a deferred call to tr_threadCreate(),
+ * initializing it to THREAD_EMPTY makes calls tr_threadJoin() safe.
+ */ 
+const tr_thread_t THREAD_EMPTY;
+
 void tr_threadCreate ( tr_thread_t *, void (*func)(void *),
                        void * arg, char * name );
 void tr_threadJoin   ( tr_thread_t * );
@@ -76,6 +82,7 @@ void tr_condWait( tr_cond_t *, tr_lock_t * );
 void tr_condSignal( tr_cond_t * );
 void tr_condClose( tr_cond_t * );
 
+struct in_addr; /* forward declaration to calm gcc down */
 int
 tr_getDefaultRoute( struct in_addr * addr );
 

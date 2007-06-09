@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.h 1946 2007-05-25 19:14:42Z livings124 $
+ * $Id: transmission.h 1998 2007-06-06 00:30:13Z livings124 $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -270,7 +270,7 @@ tr_info_t * tr_torrentInfo( tr_torrent_t * );
 int tr_torrentScrape( tr_torrent_t *, int * s, int * l, int * d );
 
 void   tr_torrentSetFolder( tr_torrent_t *, const char * );
-char * tr_torrentGetFolder( tr_torrent_t * );
+const char * tr_torrentGetFolder( tr_torrent_t * );
 
 int tr_torrentDuplicateDownload( tr_torrent_t * tor );
 
@@ -423,15 +423,16 @@ struct tr_info_s
  **********************************************************************/
 struct tr_stat_s
 {
-#define TR_STATUS_CHECK    0x001 /* Checking files */
-#define TR_STATUS_DOWNLOAD 0x002 /* Downloading */
-#define TR_STATUS_SEED     0x004 /* Seeding */
-#define TR_STATUS_STOPPING 0x008 /* Sending 'stopped' to the tracker */
-#define TR_STATUS_STOPPED  0x010 /* Sent 'stopped' but thread still
+#define TR_STATUS_CHECK_WAIT 0x001 /* Waiting in queue to check files */
+#define TR_STATUS_CHECK      0x002 /* Checking files */
+#define TR_STATUS_DOWNLOAD   0x004 /* Downloading */
+#define TR_STATUS_SEED       0x008 /* Seeding */
+#define TR_STATUS_STOPPING   0x010 /* Sending 'stopped' to the tracker */
+#define TR_STATUS_STOPPED    0x020 /* Sent 'stopped' but thread still
                                     running (for internal use only) */
-#define TR_STATUS_PAUSE    0x020 /* Paused */
+#define TR_STATUS_PAUSE    0x040 /* Paused */
 
-#define TR_STATUS_ACTIVE   (TR_STATUS_CHECK|TR_STATUS_DOWNLOAD|TR_STATUS_SEED)
+#define TR_STATUS_ACTIVE   (TR_STATUS_CHECK_WAIT|TR_STATUS_CHECK|TR_STATUS_DOWNLOAD|TR_STATUS_SEED)
 #define TR_STATUS_INACTIVE (TR_STATUS_STOPPING|TR_STATUS_STOPPED|TR_STATUS_PAUSE)
     int                 status;
 

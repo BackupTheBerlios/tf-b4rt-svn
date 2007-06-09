@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peerext.h 1727 2007-04-16 21:21:00Z joshe $
+ * $Id: peerext.h 1998 2007-06-06 00:30:13Z livings124 $
  *
  * Copyright (c) 2006-2007 Transmission authors and contributors
  *
@@ -323,5 +323,6 @@ parseUTPex( tr_torrent_t * tor, tr_peer_t * peer, uint8_t * buf, int len )
         peer_dbg( "GET  extended-pex, no peers" );
     }
 
+    tr_bencFree( &val );
     return TR_OK;
 }

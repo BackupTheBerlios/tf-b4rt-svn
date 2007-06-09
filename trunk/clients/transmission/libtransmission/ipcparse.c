@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: ipcparse.c 1958 2007-05-27 16:30:04Z joshe $
+ * $Id: ipcparse.c 1969 2007-05-28 15:23:28Z livings124 $
  *
  * Copyright (c) 2007 Joshua Elsasser
  *
@@ -30,8 +30,8 @@
 
 #include "transmission.h"
 
-#include "bsdtree.h"
 #include "ipcparse.h"
+#include "bsdtree.h"
 
 /* begin copy-paste from daemon/misc.h */
 
@@ -841,7 +841,11 @@ ipc_addstat( benc_val_t * list, int tor, tr_info_t * inf,
                                 ( TR_STATUS_INACTIVE & st->status ? 0 : 1 ) );
                 break;
             case IPC_ST_STATE:
-                if( TR_STATUS_CHECK & st->status )
+                if( TR_STATUS_CHECK_WAIT & st->status )
+                {
+                    tr_bencInitStr( item, "waiting to checking", -1, 1 );
+                }
+                else if( TR_STATUS_CHECK & st->status )
                 {
                     tr_bencInitStr( item, "checking", -1, 1 );
                 }
