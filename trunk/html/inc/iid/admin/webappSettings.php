@@ -107,8 +107,9 @@ $theme_list = array();
 $arThemes = GetThemes();
 for ($inx = 0; $inx < sizeof($arThemes); $inx++) {
 	array_push($theme_list, array(
-		'arThemes' => $arThemes[$inx],
-		'selected' => ($cfg["default_theme"] == $arThemes[$inx]) ? "selected" : ""
+		'arThemes' => preg_replace('/_beta$/',' (beta)',$arThemes[$inx]),
+		'arThemes2' => $arThemes[$inx],
+		'selected' => ($cfg["default_theme"] == $arThemes[$inx]) ? "selected=\"selected\"" : ""
 		)
 	);
 }
@@ -119,9 +120,9 @@ $arThemes = GetThemesStandard();
 for ($inx = 0; $inx < sizeof($arThemes); $inx++) {
 	$arThemes2[$inx] = "tf_standard_themes/".$arThemes[$inx];
 	array_push($tfstandard_theme_list, array(
-		'arThemes' => $arThemes[$inx],
+		'arThemes'  => $arThemes[$inx],
 		'arThemes2' => $arThemes2[$inx],
-		'selected' => ($cfg["default_theme"] == $arThemes2[$inx]) ? "selected" : ""
+		'selected'  => ($cfg["default_theme"] == $arThemes2[$inx]) ? "selected=\"selected\"" : ""
 		)
 	);
 }

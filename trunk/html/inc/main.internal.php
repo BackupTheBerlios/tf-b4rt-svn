@@ -155,6 +155,10 @@ if (!(cacheIsSet($currentUser))) {
 	}
 	if (!is_dir("themes/".$cfg["theme"]))
 		$cfg["theme"] = $cfg["default_theme"];
+	if (!is_dir("themes/".$cfg["theme"]))
+		$cfg["theme"] = "default";
+	if (!is_dir("themes/".$cfg["theme"]))
+		die("Fatal Error: No suitable theme could not be found and included.<br />Please check your Files.");
 
 	// Check for valid language file
 	if (!ereg('^[^./][^/]*$', $cfg["language_file"])) {

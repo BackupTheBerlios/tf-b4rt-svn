@@ -363,12 +363,10 @@ switch ($op) {
 		$arThemes = GetThemes();
 		$theme_list = array();
 		for($inx = 0; $inx < sizeof($arThemes); $inx++) {
-			$selected = "";
-			if ($cfg["theme"] == $arThemes[$inx])
-				$selected = "selected";
 			array_push($theme_list, array(
-				'arThemes' => $arThemes[$inx],
-				'selected' => $selected
+				'arThemes' => preg_replace('/_beta$/',' (beta)',$arThemes[$inx]),
+				'arThemes2' => $arThemes[$inx],
+				'selected' => ($cfg["theme"] == $arThemes[$inx]) ? "selected=\"selected\"" : ""
 				)
 			);
 		}
@@ -377,14 +375,11 @@ switch ($op) {
 		$arThemes = GetThemesStandard();
 		$tfstandard_theme_list = array();
 		for($inx = 0; $inx < sizeof($arThemes); $inx++) {
-			$selected = "";
 			$arThemes2[$inx] = "tf_standard_themes/".$arThemes[$inx];
-			if ($cfg["theme"] == $arThemes2[$inx])
-				$selected = "selected";
 			array_push($tfstandard_theme_list, array(
-				'arThemes' => $arThemes[$inx],
+				'arThemes'  => $arThemes[$inx],
 				'arThemes2' => $arThemes2[$inx],
-				'selected' => $selected
+				'selected'  => ($cfg["theme"] == $arThemes2[$inx]) ? "selected=\"selected\"" : ""
 				)
 			);
 		}
@@ -393,12 +388,9 @@ switch ($op) {
 		$arLanguage = GetLanguages();
 		$language_list = array();
 		for($inx = 0; $inx < sizeof($arLanguage); $inx++) {
-			$selected = "";
-			if ($cfg["language_file"] == $arLanguage[$inx])
-				$selected = "selected";
 			array_push($language_list, array(
 				'arLanguage' => $arLanguage[$inx],
-				'selected' => $selected,
+				'selected' => ($cfg["language_file"] == $arLanguage[$inx])? "selected=\"selected\"" : "",
 				'language_file' => GetLanguageFromFile($arLanguage[$inx])
 				)
 			);
