@@ -104,17 +104,19 @@ AuditAction($cfg["constants"]["hit"], $_SERVER['PHP_SELF']);
 // Check for valid theme
 if( isset($cfg["theme"]) )
 {
-	if (!ereg('^[^./][^/]*$', $cfg["theme"]) && strpos($cfg["theme"], "tf_standard_themes")) 
+	if (!ereg('^[^./][^/]*$', $cfg["theme"]) && strpos($cfg["theme"], "tf_standard_themes"))
 	{
 		AuditAction($cfg["constants"]["error"], "THEME VARIABLE CHANGE ATTEMPT: ".$cfg["theme"]." from ".$cfg["user"]);
 		$cfg["theme"] = $cfg["default_theme"];
 	}
-	if (!is_dir("themes/".$cfg["theme"]))
+	if (!is_dir("themes/".$cfg["theme"])) {
 		$cfg["theme"] = $cfg["default_theme"];
-	if (!is_dir("themes/".$cfg["theme"]))
-		$cfg["theme"] = "default";
-	if (!is_dir("themes/".$cfg["theme"]))
-		die("Fatal Error: No suitable theme could not be found and included.<br />Please check your Files.");
+		if (!is_dir("themes/".$cfg["theme"])) {
+			$cfg["theme"] = "default";
+			if (!is_dir("themes/".$cfg["theme"]))
+				die("Fatal Error: No suitable theme could not be found and included.<br />Please check your Files.");
+		}
+	}
 }
 
 // cache is not set
@@ -176,18 +178,20 @@ if (!(cacheIsSet($currentUser))) {
 	// activated ?
 	if ($cfg["enable_personal_settings"] == 1)
 		loadUserSettingsToConfig($cfg["uid"]);
-	
-	if (!ereg('^[^./][^/]*$', $cfg["theme"]) && strpos($cfg["theme"], "tf_standard_themes")) 
+
+	if (!ereg('^[^./][^/]*$', $cfg["theme"]) && strpos($cfg["theme"], "tf_standard_themes"))
 	{
 		AuditAction($cfg["constants"]["error"], "THEME VARIABLE CHANGE ATTEMPT: ".$cfg["theme"]." from ".$cfg["user"]);
 		$cfg["theme"] = $cfg["default_theme"];
 	}
-	if (!is_dir("themes/".$cfg["theme"]))
+	if (!is_dir("themes/".$cfg["theme"])) {
 		$cfg["theme"] = $cfg["default_theme"];
-	if (!is_dir("themes/".$cfg["theme"]))
-		$cfg["theme"] = "default";
-	if (!is_dir("themes/".$cfg["theme"]))
-		die("Fatal Error: No suitable theme could not be found and included.<br />Please check your Files.");
+		if (!is_dir("themes/".$cfg["theme"])) {
+			$cfg["theme"] = "default";
+			if (!is_dir("themes/".$cfg["theme"]))
+				die("Fatal Error: No suitable theme could not be found and included.<br />Please check your Files.");
+		}
+	}
 	// theme
 	require_once("themes/".$cfg["theme"]."/index.php");
 
