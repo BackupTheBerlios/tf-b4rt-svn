@@ -101,8 +101,6 @@ if (isAuthenticated() == 1) {
 // log the hit
 AuditAction($cfg["constants"]["hit"], $_SERVER['PHP_SELF']);
 
-// Check for valid theme
-$cfg["theme"] = CheckandSetUserTheme();
 // cache is not set
 if (!(cacheIsSet($currentUser))) {
 
@@ -201,7 +199,12 @@ if (!(cacheIsSet($currentUser))) {
 		Xfer::init();
 	}
 }
-
+else
+{
+	// Check for valid theme
+	if(isset($cfg["theme"]))
+		$cfg["theme"] = CheckandSetUserTheme();
+}
 // free space in MB var
 $cfg["free_space"] = @disk_free_space($cfg["path"]) / 1048576;
 
