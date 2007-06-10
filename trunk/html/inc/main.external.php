@@ -48,14 +48,7 @@ require_once('inc/main.core.php');
 loadLanguageFile($cfg["default_language"]);
 
 // Check for valid theme
-if (!ereg('^[^./][^/]*$', $cfg["default_theme"]) && strpos($cfg["default_theme"], "tf_standard_themes")) {
-	AuditAction($cfg["constants"]["error"], "THEME VARIABLE CHANGE ATTEMPT: ".$cfg["default_theme"]." from ".$cfg["user"]);
-	$cfg["default_theme"] = "default";
-}
-if (!is_dir("themes/".$cfg["default_theme"]))
-	$cfg["default_theme"] = "default";
-if (!is_dir("themes/".$cfg["default_theme"]))
-	die("Fatal Error: No suitable theme could not be found and included.<br />Please check your Files.");
+$cfg["default_theme"] = CheckandSetDefaultTheme();
 
 // default-theme
 require("themes/".$cfg["default_theme"]."/index.php");

@@ -47,6 +47,11 @@ if (!function_exists("posix_kill"))
 require_once("inc/functions/functions.core.tfb.php");
 
 /*
+ * theme
+ */
+require_once("inc/functions/functions.core.theme.php");
+
+/*
  * tmpl
  */
 require_once("inc/functions/functions.core.tmpl.php");
@@ -243,11 +248,7 @@ function error($msg, $link = "", $linklabel = "", $msgs = array()) {
 	if ((empty($argv[0])) &&
 		(!("tfbf" == @substr($cfg['user_agent'], 0, 4)))) { // web
 		// theme
-		$theme = "default";
-		if (isset($cfg["theme"]))
-			$theme = $cfg["theme"];
-		else if (isset($cfg["default_theme"]))
-			$theme = $cfg["default_theme"];
+		$theme = CheckandSetUserTheme();
 		// template
 		require_once("themes/".$theme."/index.php");
 		require_once("inc/lib/vlib/vlibTemplate.php");
