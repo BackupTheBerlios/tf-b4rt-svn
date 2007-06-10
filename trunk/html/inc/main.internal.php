@@ -101,6 +101,19 @@ if (isAuthenticated() == 1) {
 // log the hit
 AuditAction($cfg["constants"]["hit"], $_SERVER['PHP_SELF']);
 
+// Check for valid theme
+if (!ereg('^[^./][^/]*$', $cfg["theme"]) && strpos($cfg["theme"], "tf_standard_themes")) 
+{
+	AuditAction($cfg["constants"]["error"], "THEME VARIABLE CHANGE ATTEMPT: ".$cfg["theme"]." from ".$cfg["user"]);
+	$cfg["theme"] = $cfg["default_theme"];
+}
+if (!is_dir("themes/".$cfg["theme"]))
+	$cfg["theme"] = $cfg["default_theme"];
+if (!is_dir("themes/".$cfg["theme"]))
+	$cfg["theme"] = "default";
+if (!is_dir("themes/".$cfg["theme"]))
+	die("Fatal Error: No suitable theme could not be found and included.<br />Please check your Files.");
+
 // cache is not set
 if (!(cacheIsSet($currentUser))) {
 
@@ -147,18 +160,6 @@ if (!(cacheIsSet($currentUser))) {
 	$recordset = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	list ($cfg["hide_offline"], $cfg["theme"], $cfg["language_file"]) = $recordset->FetchRow();
-
-	// Check for valid theme
-	if (!ereg('^[^./][^/]*$', $cfg["theme"]) && strpos($cfg["theme"], "tf_standard_themes")) {
-		AuditAction($cfg["constants"]["error"], "THEME VARIABLE CHANGE ATTEMPT: ".$cfg["theme"]." from ".$cfg["user"]);
-		$cfg["theme"] = $cfg["default_theme"];
-	}
-	if (!is_dir("themes/".$cfg["theme"]))
-		$cfg["theme"] = $cfg["default_theme"];
-	if (!is_dir("themes/".$cfg["theme"]))
-		$cfg["theme"] = "default";
-	if (!is_dir("themes/".$cfg["theme"]))
-		die("Fatal Error: No suitable theme could not be found and included.<br />Please check your Files.");
 
 	// Check for valid language file
 	if (!ereg('^[^./][^/]*$', $cfg["language_file"])) {
