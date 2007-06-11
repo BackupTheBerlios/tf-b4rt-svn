@@ -34,7 +34,7 @@
 		<div id="uploadLast"></div>
 		<div id="uploadFirst">
 			<span class="upload">
-				Xfer Settings
+				Xfer (Data Transfer) Statistics General Settings
 			</span>
 		</div>
 	</div>
@@ -47,18 +47,18 @@
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<select name="enable_xfer" id="enable_xfer">
-							<option value="1">true</option>
+							<option value="1">True</option>
 							<option value="0"
 							<tmpl_if name="enable_xfer" value="0">
 								 selected
 							</tmpl_if>
-							>false</option>
+							>False</option>
 						</select>
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Enable/Disable xfer.
+						Enable/disable xfer.
 					</td>
 				</tr>
 				<tr>
@@ -67,18 +67,18 @@
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<select name="xfer_realtime" id="xfer_realtime">
-							<option value="1">true</option>
+							<option value="1">True</option>
 							<option value="0"
 							<tmpl_if name="xfer_realtime" value="0">
 								 selected
 							</tmpl_if>
-							>false</option>
+							>False</option>
 						</select>
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Enable/Disable xfer-realtime-stats updated on every index-reload.
+						Enable/disable xfer-realtime-stats updated on every index-reload.
 					</td>
 				</tr>
 				<tr>
@@ -87,20 +87,43 @@
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<select name="enable_public_xfer" id="enable_public_xfer">
-							<option value="1">true</option>
+							<option value="1">True</option>
 							<option value="0"
 							<tmpl_if name="enable_public_xfer" value="0">
 								 selected
 							</tmpl_if>
-							>false</option>
+							>False</option>
 						</select>
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Enable/Disable public xfer.
+						Enable/disable public xfer.
 					</td>
 				</tr>
+			</table>
+		</div>
+	<div id="uploadBottom"></div>
+	<div id="uploadBottomEnd"></div>
+	<div id="upload">
+		<div id="uploadLast"></div>
+		<div id="uploadFirst">
+			<span class="upload">
+				Xfer (Data Transfer) Limit Settings
+			</span>
+		</div>
+	</div>
+		<div class="uploadClass">
+			<div align="left">
+				<strong>Overview:</strong><br/>
+				Data transfer (xfer) limits can be configured in this section for daily, weekly and monthly consumption of bandwidth. Xfer limits have the effect of adding an xfer limit bar to the torrentflux-b4rt frontend to indicate how much bandwidth data can still be transferred for each period. <br/><br/>
+				The totals apply globally - ie for all users.<br/><br/>
+				The limits are specified in megabytes - 1024 =~ 1Gb, 1048576 =~ 1Tb.<br/><br/>
+				<strong>Note:</strong><br/>
+				<strong>Limits are not enforced automatically!</strong><br/><br/>
+				To enforce xfer limits, the fluxcli.php script must be run via a scheduled job (ie cron) in 'xfer' mode - ie 'fluxcli.php xfer [period]', where [period] is one of day/week/month.  This will check if the associated xfer limit has already been met for the period and if true, stop all currently running transfers.
+			</div>
+			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
 						<label for="xfer_total">xfer - total</label>

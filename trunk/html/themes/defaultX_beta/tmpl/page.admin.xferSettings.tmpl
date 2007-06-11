@@ -19,7 +19,7 @@
 	<table width="100%" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
 		<tr>
 			<td bgcolor="<tmpl_var name="table_header_bg">" background="themes/default/images/bar.gif">
-				<img src="themes/default/images/properties.png" border=0>&nbsp;&nbsp;<font class="title">Xfer Settings</font>
+				<img src="themes/default/images/properties.png" border=0>&nbsp;&nbsp;<font class="title">Xfer (Data Transfer) Settings</font>
 			</td>
 		</tr>
 		<tr>
@@ -27,96 +27,111 @@
 				<div align="center">
 					<form name="theForm" action="admin.php?op=updateXferSettings" method="post" onsubmit="return validateSettings('xfer')">
 						<table cellpadding="5" cellspacing="0" border="0" width="100%">
+							<tr><td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">"><strong>Xfer (Data Transfer) Statistics General Settings</strong></td></tr>
 							<tr>
 								<td align="left" width="350" valign="top">
-									<label for="enable_xfer"><strong>Enable xfer</strong></label><br/>
-									Enable/Disable xfer :
+									<label for="enable_xfer"><strong>Enable xfer:</strong></label><br/>
+									Enable/disable xfer.
 								</td>
 								<td valign="top">
 									<select name="enable_xfer" id="enable_xfer">
-										<option value="1">true</option>
+										<option value="1">True</option>
 										<option value="0"
 										<tmpl_if name="enable_xfer" value="0">
 											 selected
 										</tmpl_if>
-										>false</option>
+										>False</option>
 									</select>
 								</td>
 							</tr>
 							<tr>
 								<td align="left" width="350" valign="top">
-									<label for="xfer_realtime"><strong>Enable xfer realtime</strong></label><br/>
-									Enable/Disable xfer-realtime-stats updated on every index-reload :
+									<label for="xfer_realtime"><strong>Enable xfer realtime:</strong></label><br/>
+									Enable/disable xfer-realtime-stats updated on every index-reload.
 								</td>
 								<td valign="top">
 									<select name="xfer_realtime" id="xfer_realtime">
-										<option value="1">true</option>
+										<option value="1">True</option>
 										<option value="0"
 										<tmpl_if name="xfer_realtime" value="0">
 											 selected
 										</tmpl_if>
-										>false</option>
+										>False</option>
 									</select>
 								</td>
 							</tr>
 							<tr>
 								<td align="left" width="350" valign="top">
-									<label for="enable_public_xfer"><strong>Enable public xfer</strong></label><br/>
-									Enable/Disable public xfer :
+									<label for="enable_public_xfer"><strong>Enable public xfer:</strong></label><br/>
+									Enable/disable public xfer.
 								</td>
 								<td valign="top">
 									<select name="enable_public_xfer" id="enable_public_xfer">
-										<option value="1">true</option>
+										<option value="1">True</option>
 										<option value="0"
 										<tmpl_if name="enable_public_xfer" value="0">
 											 selected
 										</tmpl_if>
-										>false</option>
+										>False</option>
 									</select>
+								</td>
+							</tr>
+							<tr><td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">"><strong>Xfer (Data Transfer) Limit Settings</strong></td></tr>
+							<tr>
+								<td colspan="2">
+								<div style="width:600px">
+									<strong>Overview:</strong><br/>
+									Data transfer (xfer) limits can be configured in this section for daily, weekly and monthly consumption of bandwidth. Xfer limits have the effect of adding an xfer limit bar to the torrentflux-b4rt frontend to indicate how much bandwidth data can still be transferred for each period. <br/><br/>
+									The totals apply globally - ie for all users.<br/><br/>
+									The limits are specified in megabytes - 1024 =~ 1Gb, 1048576 =~ 1Tb.<br/><br/>
+									<strong>Note:</strong><br/>
+									<strong>Limits are not enforced automatically!</strong><br/><br/>
+									To enforce xfer limits, the fluxcli.php script must be run via a scheduled job (ie cron) in 'xfer' mode - ie 'fluxcli.php xfer [period]', where [period] is one of day/week/month.  This will check if the associated xfer limit has already been met for the period and if true, stop all currently running transfers.
+								</div>
 								</td>
 							</tr>
 							<tr>
 								<td align="left" width="350" valign="top">
-									<label for="xfer_total"><strong>xfer - total</strong></label><br/>
-									Specify xfer_total. (default is "0"; 1TB is "1048576"):
+									<label for="xfer_total"><strong>xfer - total:</strong></label><br/>
+									Specify xfer_total. (default is "0"; 1TB is "1048576").
 								</td>
-								<td valign="bottom">
+								<td valign="top">
 									<input name="xfer_total" id="xfer_total" type="Text" maxlength="20" value="<tmpl_var name="xfer_total">" size="20">
 								</td>
 							</tr>
 							<tr>
 								<td align="left" width="350" valign="top">
-									<label for="xfer_month"><strong>xfer - month</strong></label><br/>
-									Specify xfer_month. (default is "0"; 1GB is "1024"):
+									<label for="xfer_month"><strong>xfer - month:</strong></label><br/>
+									Specify xfer_month. (default is "0"; 1GB is "1024").
 								</td>
-								<td valign="bottom">
+								<td valign="top">
 									<input name="xfer_month" "xfer_month" type="Text" maxlength="20" value="<tmpl_var name="xfer_month">" size="20">
 								</td>
 							</tr>
 							<tr>
 								<td align="left" width="350" valign="top">
-									<label for="xfer_week"><strong>xfer - week</strong></label><br/>
-									Specify xfer_week. (default is "0"):
+									<label for="xfer_week"><strong>xfer - week:</strong></label><br/>
+									Specify xfer_week. (default is "0").
 								</td>
-								<td valign="bottom">
+								<td valign="top">
 									<input name="xfer_week" id="xfer_week" type="Text" maxlength="20" value="<tmpl_var name="xfer_week">" size="20">
 								</td>
 							</tr>
 							<tr>
 								<td align="left" width="350" valign="top">
-									<label for="xfer_day"><strong>xfer - day</strong></label><br/>
-									Specify xfer_day. (default is "0"):
+									<label for="xfer_day"><strong>xfer - day:</strong></label><br/>
+									Specify xfer_day. (default is "0").
 								</td>
-								<td valign="bottom">
+								<td valign="top">
 									<input name="xfer_day" id="xfer_day" type="Text" maxlength="20" value="<tmpl_var name="xfer_day">" size="20">
 								</td>
 							</tr>
 							<tr>
 								<td align="left" width="350" valign="top">
-									<label for="week_start"><strong>xfer - week start</strong></label><br/>
-									Specify week_start. (default is "Monday"):
+									<label for="week_start"><strong>xfer - week start:</strong></label><br/>
+									Specify week_start. (default is "Monday").
 								</td>
-								<td valign="bottom">
+								<td valign="top">
 									<select name="week_start" id="week_start">
 										<option value="Monday"
 										<tmpl_if name="week_start" value="Monday">
@@ -158,10 +173,10 @@
 							</tr>
 							<tr>
 								<td align="left" width="350" valign="top">
-									<label for="month_start"><strong>xfer - month start</strong></label><br/>
-									Specify month_start. (default is "1"):
+									<label for="month_start"><strong>xfer - month start:</strong></label><br/>
+									Specify month_start. (default is "1").
 								</td>
-								<td valign="bottom">
+								<td valign="top">
 									<select name="month_start" id="month_start">
 										<tmpl_loop name="month_list">
 											<option value="<tmpl_var name="i">"
