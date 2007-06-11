@@ -43,7 +43,7 @@
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
-						<label for="enable_xfer">Enable xfer</label>
+						<label for="enable_xfer">Enable Xfer Statistics</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<select name="enable_xfer" id="enable_xfer">
@@ -58,12 +58,12 @@
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Enable/disable xfer.
+						Enable/disable logging of data transfer stats - when disabled no transfer data statistics will be recorded.
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						<label for="xfer_realtime">Enable xfer realtime</label>
+						<label for="xfer_realtime">Realtime Xfer Statistics</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<select name="xfer_realtime" id="xfer_realtime">
@@ -78,12 +78,12 @@
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Enable/disable xfer-realtime-stats updated on every index-reload.
+						Enable/disable update of xfer stats in realtime - when enabled, data transfer statistics will be updated on every index page reload.
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						<label for="enable_public_xfer">Enable public xfer</label>
+						<label for="enable_public_xfer">Public Xfer Statistics</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<select name="enable_public_xfer" id="enable_public_xfer">
@@ -98,7 +98,7 @@
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Enable/disable public xfer.
+						Enable/disable display of public xfer stats - when enabled, data transfer statistics will be visible for all users.
 					</td>
 				</tr>
 			</table>
@@ -116,17 +116,20 @@
 		<div class="uploadClass">
 			<div align="left">
 				<strong>Overview:</strong><br/>
-				Data transfer (xfer) limits can be configured in this section for daily, weekly and monthly consumption of bandwidth. Xfer limits have the effect of adding an xfer limit bar to the torrentflux-b4rt frontend to indicate how much bandwidth data can still be transferred for each period. <br/><br/>
-				The totals apply globally - ie for all users.<br/><br/>
-				The limits are specified in megabytes - 1024 =~ 1Gb, 1048576 =~ 1Tb.<br/><br/>
-				<strong>Note:</strong><br/>
-				<strong>Limits are not enforced automatically!</strong><br/><br/>
-				To enforce xfer limits, the fluxcli.php script must be run via a scheduled job (ie cron) in 'xfer' mode - ie 'fluxcli.php xfer [period]', where [period] is one of day/week/month.  This will check if the associated xfer limit has already been met for the period and if true, stop all currently running transfers.
+				Data transfer (xfer) limits can be configured in this section for daily, weekly and monthly consumption of bandwidth. Xfer limits have the effect of adding an xfer limit bar to the torrentflux-b4rt frontend to indicate how much bandwidth data can still be transferred for each period until the respective data transfer limit is reached. <br/><br/>
+				<strong>Notes:</strong>
+				<ul>
+					<li>The totals apply globally - ie for all users.</li>
+					<li>The limits are specified in megabytes - 1024 =~ 1Gb, 1048576 =~ 1Tb.</li>
+					<li><strong>Limits are not enforced automatically!</strong><br/>
+					To enforce xfer limits, the fluxcli.php script must be run via a scheduled job (ie cron) in 'xfer' mode - ie 'fluxcli.php xfer [period]', where [period] is one of day/week/month.  This will check if the associated xfer limit has already been met for the period and if true, stop all currently running transfers.
+					</li>
+				</ul>
 			</div>
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
-						<label for="xfer_total">xfer - total</label>
+						<label for="xfer_total">Xfer Limit - Total</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="xfer_total" id="xfer_total" type="Text" maxlength="20" value="<tmpl_var name="xfer_total">" size="20">
@@ -134,12 +137,12 @@
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Specify xfer_total. (default is "0"; 1TB is "1048576").
+						Specify total xfer limit in megabytes - the data transfer limit for all periods<br/>(guide: 1Gb = 1024, 1Tb = 1048576).
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						<label for="xfer_month">xfer - month</label>
+						<label for="xfer_month">Xfer Limit - Month</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="xfer_month" id="xfer_month" type="Text" maxlength="20" value="<tmpl_var name="xfer_month">" size="20">
@@ -147,12 +150,12 @@
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Specify xfer_month. (default is "0"; 1GB is "1024").
+						Specify monthly xfer limit in megabytes - the monthly data transfer limit<br/>(guide: 1Gb = 1024, 1Tb = 1048576).
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						<label for="xfer_week">xfer - week</label>
+						<label for="xfer_week">Xfer Limit - Week</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="xfer_week" id="xfer_week" type="Text" maxlength="20" value="<tmpl_var name="xfer_week">" size="20">
@@ -160,12 +163,12 @@
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Specify xfer_week. (default is "0").
+						Specify weekly xfer limit in megabytes - the weekly data transfer limit<br/>(guide: 1Gb = 1024, 1Tb = 1048576).
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						<label for="xfer_day">xfer - day</label>
+						<label for="xfer_day">Xfer Limit - Day</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<input name="xfer_day" id="xfer_day" type="Text" maxlength="20" value="<tmpl_var name="xfer_day">" size="20">
@@ -173,12 +176,12 @@
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Specify xfer_day. (default is "0").
+						Specify daily xfer limit in megabytes - the daily data transfer limit<br/>(guide: 1Gb = 1024, 1Tb = 1048576).
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						<label for="week_start">xfer - week start</label>
+						<label for="week_start">Xfer Stats - Week Start</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<select name="week_start" id="week_start">
@@ -222,12 +225,12 @@
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Specify week_start. (default is "Monday").
+						Specify the first day of the week for stats tracking purposes - the day of the week that transfer statistics will be counted from.
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						<label for="month_start">xfer - month start</label>
+						<label for="month_start">Xfer Stats - Month Start</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
 						<select name="month_start" id="month_start">
@@ -243,7 +246,7 @@
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Specify month_start. (default is "1").
+						Specify the first day of the month for stats tracking purposes - the day of the month that transfer statistics will be counted from.
 					</td>
 				</tr>
 				<tr>
