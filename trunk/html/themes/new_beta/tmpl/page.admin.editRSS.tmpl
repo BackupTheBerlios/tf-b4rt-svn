@@ -1,6 +1,23 @@
 <tmpl_include name="inc.head.tmpl">
 <tmpl_include name="inc.titleBar.tmpl">
 <div id="content">
+	<div id="upload">
+		<div id="uploadLast"></div>
+		<div id="uploadFirst">
+			<span class="upload">
+				Overview
+			</span>
+		</div>
+	</div>
+	<div class="uploadClass">
+		<div align="left">
+			Configure the RSS feeds you want to be included in the 'RSS Torrents' page for torrentflux-b4rt users to browse through.<br/><br/>
+			<strong>Note:</strong><br/>
+			RSS feed URLs added here must contain 'direct download' torrent links otherwise users will not be able to download the torrent files directly into torrentflux-b4rt.
+		</div>
+	</div>
+	<div id="uploadBottom"></div>
+	<div id="uploadBottomEnd"></div>
 	<form action="admin.php?op=addRSS" method="post">
 		<div id="upload">
 			<div id="uploadLast"></div>
