@@ -78,6 +78,22 @@
 						<img src="themes/default/images/properties.png" border=0>&nbsp;&nbsp;<font class="title"><tmpl_if name="pageop" value="addJob">Add<tmpl_else>Edit</tmpl_if> Job</font>
 					</td>
 				</tr>
+				<tr>
+					<td colspan="<tmpl_if name="with_profiles">3<tmpl_else>2</tmpl_if>">
+						<div style="width:600px">
+						<strong>Overview:</strong><br/>
+						<tmpl_if name="with_profiles">
+						Specify the watch directory you want to watch for new torrents, the user you want the torrent to be owned by in torrentflux-b4rt and the transfer profile to use for the torrent.  Click 'Add Job' to add the watch job.<br/><br/>
+
+						When fluxd finds a new torrent in the watch directory it will automatically inject the torrent into torrentflux-b4rt using the transfer profile you specify from the 'Transfer Profile' dropdown list and set the owner of the transfer to the user you chose.
+						<tmpl_else>
+						Specify the watch directory you want to watch for new torrents and the user you want the torrent to be owned by in torrentflux-b4rt.  Click 'Add Job' to add the watch job.<br/><br/>
+
+						When fluxd finds a new torrent in the watch directory it will automatically inject the torrent into torrentflux-b4rt and set the owner of the transfer to the user you chose.
+						</tmpl_if>
+						</div>
+					</td>
+				</tr>
 				<tmpl_if name="watch_job_loaded">
 					<tr bgcolor="#A2BED4">
 						<td align="center"><label for="watchdir">Watchdir</label></td>

@@ -92,6 +92,18 @@
 			</div>
 		</div>
 		<div class="uploadClass">
+			<div align="left">
+			<strong>Overview:</strong><br/>
+			<tmpl_if name="with_profiles">
+			Specify the watch directory you want to watch for new torrents, the user you want the torrent to be owned by in torrentflux-b4rt and the transfer profile to use for the torrent.  Click 'Add Job' to add the watch job.<br/><br/>
+
+			When fluxd finds a new torrent in the watch directory it will automatically inject the torrent into torrentflux-b4rt using the transfer profile you specify from the 'Transfer Profile' dropdown list and set the owner of the transfer to the user you chose.
+			<tmpl_else>
+			Specify the watch directory you want to watch for new torrents and the user you want the torrent to be owned by in torrentflux-b4rt.  Click 'Add Job' to add the watch job.<br/><br/>
+
+			When fluxd finds a new torrent in the watch directory it will automatically inject the torrent into torrentflux-b4rt and set the owner of the transfer to the user you chose.
+			</tmpl_if>
+			</div>
 			<tmpl_if name="watch_job_loaded">
 				<form name="theForm" action="admin.php?op=fluxdWatchSettings" method="post" onsubmit="return validateSettings('fluxd_Watch_job')">
 					<table id="statusInfos">
