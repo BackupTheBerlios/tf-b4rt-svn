@@ -24,7 +24,9 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 /*
-	v 1.04 - Oct 16, 06 - fix paging
+	v 1.06 - Feb 16, 07 - Update parsing.
+    v 1.05 - Oct 18, 06 - Seeds and Peers were off.
+    v 1.04 - Oct 16, 06 - fix paging
     v 1.03 - Aug 23, 06 - Added Top 100
     v 1.02 - Jun 29, 06 - fix to paging..
     v 1.01 - Apr 11, 06 - bug in parsing paging.
@@ -41,7 +43,7 @@ class SearchEngine extends SearchEngineBase
         $this->engineName = "PirateBay";
 
         $this->author = "kboy";
-        $this->version = "1.04-tfb";
+        $this->version = "1.06-tfb";
         $this->updateURL = "http://www.torrentflux.com/forum/index.php/topic,1125.0.html";
 
         $this->Initialize($cfg);
@@ -55,7 +57,7 @@ class SearchEngine extends SearchEngineBase
         $this->mainCatalog["300"] = "Applications";
         $this->mainCatalog["400"] = "Games";
         $this->mainCatalog["500"] = "Porn";
-        $this->mainCatalog["600"] = "E-books";
+        $this->mainCatalog["600"] = "Other";
     }
 
     //----------------------------------------------------------------
@@ -265,114 +267,151 @@ class SearchEngine extends SearchEngineBase
 
         // We got a response so display it.
         // Chop the front end off.
-        $thing = str_replace("Recent Torrents","searchResult",$thing);
 
-        while (is_integer(strpos($thing,"searchResult")))
-        {
-            $thing = substr($thing,strpos($thing,"searchResult"));
-            $thing = substr($thing,strpos($thing,"</thead>"));
-            $thing = substr($thing,strpos($thing,"<tr>"));
+		if (is_integer(strpos($thing,"Your search did not match any torrents")))
+		{
+			$this->msg = "Your search did not match any torrents";
 
-            $tmpList = substr($thing,0,strpos($thing,"<script"));
+		} else {
 
-            // ok so now we have the listing.
-            $tmpListArr = split("</tr>",$tmpList);
+			while (is_integer(strpos($thing,"searchResult")))
+			{
+				$thing = substr($thing,strpos($thing,"searchResult"));
+				$thing = substr($thing,strpos($thing,"</thead>"));
+				$thing = substr($thing,strpos($thing,"<tr>"));
 
-            $bg = $this->cfg["bgLight"];
+				$tmpList = substr($thing,0,strpos($thing,"</table>"));
 
-            foreach($tmpListArr as $key =>$value)
-            {
-                $buildLine = true;
-                if (strpos($value,"static.thepiratebay.org"))
-                {
+				// ok so now we have the listing.
+				$tmpListArr = split("</tr>",$tmpList);
 
-                    $ts = new pBay($value);
+				$bg = $this->cfg["bgLight"];
 
-                    // Determine if we should build this output
-                    if (is_int(array_search($ts->CatName,$this->catFilter)))
-                    {
-                        $buildLine = false;
-                    }
+				foreach($tmpListArr as $key =>$value)
+				{
+					$buildLine = true;
+					if (strpos($value,"static.thepiratebay.org"))
+					{
 
-                    if ($this->hideSeedless == "yes")
-                    {
-                        if($ts->Seeds == "N/A" || $ts->Seeds == "0")
-                        {
-                            $buildLine = false;
-                        }
-                    }
+						$ts = new pBay($value);
 
-                    if (!empty($ts->torrentFile) && $buildLine) {
+						// Determine if we should build this output
+						if (is_int(array_search($ts->CatName,$this->catFilter)))
+						{
+							$buildLine = false;
+						}
 
-                        $output .= trim($ts->BuildOutput($bg, $this->searchURL()));
+						if ($this->hideSeedless == "yes")
+						{
+							if($ts->Seeds == "N/A" || $ts->Seeds == "0")
+							{
+								$buildLine = false;
+							}
+						}
 
-                        // ok switch colors.
-                        if ($bg == $this->cfg["bgLight"])
-                        {
-                            $bg = $this->cfg["bgDark"];
-                        }
-                        else
-                        {
-                            $bg = $this->cfg["bgLight"];
-                        }
-                    }
+						if (!empty($ts->torrentFile) && $buildLine) {
 
-                }
-            }
-        }
+							$output .= trim($ts->BuildOutput($bg, $this->searchURL()));
 
-        $output .= "</table>";
+							// ok switch colors.
+							if ($bg == $this->cfg["bgLight"])
+							{
+								$bg = $this->cfg["bgDark"];
+							}
+							else
+							{
+								$bg = $this->cfg["bgLight"];
+							}
+						}
 
-        // is there paging at the bottom?
-        if (strpos($thing, "&page=") != false)
-        {
-            // Yes, then lets grab it and display it!  ;)
-            $thing = substr($thing,strpos($thing,"<tr><td colspan")+strlen("<tr><td colspan"));
-            $thing = substr($thing,strpos($thing,">")+1);
-            $pages = substr($thing,0,strpos($thing,"</td>"));
-            if (strpos($pages,"prev") > 0)
-            {
-                $tmpStr = substr($pages,0,strpos($pages,"<img"));
+					} elseif (strpos($value,"torrents.thepiratebay.org")) {
+						$ts = new pBay($value);
 
-                $pages = substr($pages,strpos($pages,"<img"));
-                $pages = substr($pages,strpos($pages,">")+1);
-                $pages = $tmpStr."Prev".$pages;
+						// Determine if we should build this output
+						if (is_int(array_search($ts->CatName,$this->catFilter)))
+						{
+							$buildLine = false;
+						}
 
-                if (strpos($pages,"next") > 0)
-                {
-                    $pages = substr($pages,0,strpos($pages,"<img"))."Next</a>";
-                }
-            }
-            elseif (strpos($pages,"next") > 0)
-            {
-                $pages = substr($pages,0,strpos($pages,"<img"))."Next</a>";
-            }
+						if ($this->hideSeedless == "yes")
+						{
+							if($ts->Seeds == "N/A" || $ts->Seeds == "0")
+							{
+								$buildLine = false;
+							}
+						}
 
-            if(strpos($this->curRequest,"LATEST"))
-            {
-                $pages = str_replace("?",$this->searchURL()."&LATEST=1&",$pages);
-                $pages = str_replace("/recent.php","",$pages);
-            }
-            else
-            {
-                $pages = str_replace("?",$this->searchURL()."&",$pages);
-				$pages = str_replace("/search.php",'',$pages);
-            }
+						if (!empty($ts->torrentFile) && $buildLine) {
 
-            $pages = str_replace("page=","pg=",$pages);
-            $pages = str_replace("d=","cat=",$pages);
-            $pages = str_replace("iicat=","iid=",$pages);
-            $pages = str_replace("c=","subGenre=",$pages);
-            $pages = str_replace("q=","searchterm=", $pages);
-            $pages = str_replace("orderby=","",$pages);
+							$output .= trim($ts->BuildOutput($bg, $this->searchURL()));
 
-            $pages = str_replace("&&","&",$pages);
+							// ok switch colors.
+							if ($bg == $this->cfg["bgLight"])
+							{
+								$bg = $this->cfg["bgDark"];
+							}
+							else
+							{
+								$bg = $this->cfg["bgLight"];
+							}
+						}
+					}
 
-            $pages = str_replace("/brwsearch.php","",$pages);
+				}
+			}
 
-            $output .= "<div align=center>".$pages."</div>";
-        }
+			$output .= "</table>";
 
+			// is there paging at the bottom?
+			if (strpos($thing, "&page=") != false)
+			{
+				// Yes, then lets grab it and display it!  ;)
+				$thing = substr($thing,strpos($thing,"<tr><td colspan")+strlen("<tr><td colspan"));
+				$thing = substr($thing,strpos($thing,">")+1);
+				$pages = substr($thing,0,strpos($thing,"</td>"));
+				if (strpos($pages,"prev") > 0)
+				{
+					$tmpStr = substr($pages,0,strpos($pages,"<img"));
+
+					$pages = substr($pages,strpos($pages,"<img"));
+					$pages = substr($pages,strpos($pages,">")+1);
+					$pages = $tmpStr."Prev".$pages;
+
+					if (strpos($pages,"next") > 0)
+					{
+						$pages = substr($pages,0,strpos($pages,"<img"))."Next</a>";
+					}
+				}
+				elseif (strpos($pages,"next") > 0)
+				{
+					$pages = substr($pages,0,strpos($pages,"<img"))."Next</a>";
+				}
+
+				if(strpos($this->curRequest,"LATEST"))
+				{
+					$pages = str_replace("?",$this->searchURL()."&LATEST=1&",$pages);
+					$pages = str_replace("/recent.php","",$pages);
+				}
+				else
+				{
+					$pages = str_replace("?",$this->searchURL()."&",$pages);
+					$pages = str_replace("/search.php",'',$pages);
+				}
+
+				$pages = str_replace("page=","pg=",$pages);
+				$pages = str_replace("d=","cat=",$pages);
+				$pages = str_replace("c=","subGenre=",$pages);
+				$pages = str_replace("q=","searchterm=", $pages);
+				$pages = str_replace("orderby=","",$pages);
+
+				$pages = str_replace("&&","&",$pages);
+
+				$pages = str_replace("/brwsearch.php","",$pages);
+
+				$output .= "<div align=center>".$pages."</div>";
+			}
+
+	    }
         return $output;
     }
 }
@@ -439,8 +478,8 @@ class pBay
 
                 $this->torrentSize = $this->cleanLine($tmpListArr["4"]);  // Size of File
 
-                $this->Seeds = $this->cleanLine($tmpListArr["6"]);  // Seeds
-                $this->Peers = $this->cleanLine($tmpListArr["7"]);  // Peers
+                $this->Seeds = $this->cleanLine($tmpListArr["5"]);  // Seeds
+                $this->Peers = $this->cleanLine($tmpListArr["6"]);  // Peers
 
 
                 if ($this->Peers == '')
