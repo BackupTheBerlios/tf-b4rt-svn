@@ -26,6 +26,7 @@ import ConfigParser
 from threading import Lock
 # fluxd-imports
 from fluxd.defaultConfig import defaultConfig
+from fluxd.activator.Activator import Activator
 from fluxd.decorators.synchronized import synchronized
 ################################################################################
 
@@ -66,6 +67,23 @@ class Config(object):
             return Config.__ConfigParser.get(section, option)
         except Exception, e:
             raise Exception, "Failed to get Config: %s.%s (%s)" % (section, option, e)
+
+    """ -------------------------------------------------------------------- """
+    """ getExt                                                               """
+    """ -------------------------------------------------------------------- """
+    def getExt(self, section, option):
+        cfg = ''
+        try:
+            cfg = Config.__ConfigParser.get(section, option)
+        except Exception, e:
+            raise Exception, "Failed to get Config: %s.%s (%s)" % (section, option, e)
+        if cfg.startswith('DB:'):
+            dbcfg = cfg.split(':').pop().strip()
+            try:
+                cfg = Activator().getInstance('DatabaseManager').getSetting(dbcfg)
+            except Exception, e:
+                raise Exception, "Failed to get Database-Config: %s.%s -> %s (%s)" % (section, option, cfg, e)
+        return cfg
 
     """ -------------------------------------------------------------------- """
     """ set                                                                  """

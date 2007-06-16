@@ -69,20 +69,18 @@ if __name__ == "__main__":
 		printUsage()
 		sys.exit(0)
 
-	# process args, init config and get daemon-method
+	# init config, process args and get daemon-method
 	daemonMethod = None
 	try:
+		# initialize config and process args
+		Config().initialize(sys.argv)
 		try:
-			# initialize config and process args
-			Config().initialize(sys.argv)
 			# get daemon-method
 			daemonMethod = getattr(Daemon(), sys.argv[1])
 			# print daemon-method
 			print "fluxd-%s..." % (sys.argv[1])
 		except AttributeError:
 			raise Exception, "Error: invalid op: %s" % args[1]
-		except Exception, e:
-			raise e
 	except Exception, e:
 		print e
 		printUsage()

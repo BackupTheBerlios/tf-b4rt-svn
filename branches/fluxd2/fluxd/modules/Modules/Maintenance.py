@@ -50,10 +50,12 @@ class Maintenance(BasicModule):
         BasicModule.__init__(self, name, *p, **k)
 
         # interval
-        self.interval = int(Config().get(name, 'interval').strip())
+        self.interval = int(Config().getExt(name, 'interval').strip())
 
         # restart
-        self.restart = Config().get(name, 'restart').strip().lower()
+        self.restart = 'false'
+        if Config().getExt(name, 'restart').strip() == '1':
+            self.restart = 'true'
 
         # invocation-count
         self.maintenanceRuns = 0
@@ -104,8 +106,9 @@ class Maintenance(BasicModule):
     """ -------------------------------------------------------------------- """
     def onStart(self):
 
-        # DEBUG
-        self.logger.debug('onStart')
+        # config
+        self.logger.info('interval: %d' % self.interval)
+        self.logger.info('restart: %s' % self.restart)
 
     """ -------------------------------------------------------------------- """
     """ main                                                                 """

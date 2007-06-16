@@ -93,8 +93,8 @@ def defaultConfig():
 	configParser.set('Maintenance', 'enabled', 'True')
 	configParser.set('Maintenance', 'module', 'fluxd.modules.Modules.Maintenance')
 	configParser.set('Maintenance', 'class', 'Maintenance')
-	configParser.set('Maintenance', 'interval', '60')
-	configParser.set('Maintenance', 'restart', 'False')
+	configParser.set('Maintenance', 'interval', 'DB:fluxd_Maintenance_interval')
+	configParser.set('Maintenance', 'restart', 'DB:fluxd_Maintenance_trestart')
 
 	# return
 	return configParser
