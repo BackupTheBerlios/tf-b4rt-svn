@@ -53,8 +53,6 @@ $cfg["default_theme"] = CheckandSetDefaultTheme();
 // default-theme
 require("themes/".$cfg["default_theme"]."/index.php");
 
-
-
 // set admin-var
 $cfg['isAdmin'] = false;
 

@@ -179,10 +179,15 @@ if (@is_file('inc/config/config.db.php')) {
 
 	// error in cli-mode, send redir in webapp
     if (empty($argv[0])) {
-    	// redir to login ... (which may redir to upgrade.php / setup.php)
-		@ob_end_clean();
-		@header("location: login.php");
-		exit();
+    	if (!isset($_SESSION['check']['dbconf'])) {
+    		$_SESSION['check']['dbconf'] = 1;
+	    	// redir to login ... (which may redir to upgrade.php / setup.php)
+			@ob_end_clean();
+			@header("location: login.php");
+			exit();
+    	} else {
+    		@error("database-settings-file config.db.php is missing");
+    	}
     } else {
 		@error("database-settings-file config.db.php is missing");
     }
