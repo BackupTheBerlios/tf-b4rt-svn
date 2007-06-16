@@ -119,7 +119,7 @@ function tmplSetIidVars() {
 	$_iid = tfb_getRequestVar('iid');
 	$tmpl->setvar('iid', $_iid);
 	$tmpl->setvar('mainMenu', (isset($cfg['mainMenu'][$_iid])) ? $cfg['mainMenu'][$_iid] : "home");
-	$tmpl->setvar( 'fluxlink_display', $cfg['ui_displayfluxlink'] );
+	$tmpl->setvar('fluxlink_display', $cfg['ui_displayfluxlink']);
 	$fluxlink = getTorrentFluxLink();
 	$tmpl->setvar( 'fluxlink_url', $fluxlink['address'] );
 	$tmpl->setvar( 'fluxlink_name', $fluxlink['name'] );
