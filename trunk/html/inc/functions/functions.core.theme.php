@@ -28,29 +28,26 @@
 function CheckandSetUserTheme()
 {
 	global $cfg;
-	
-	if( isset($cfg["theme"]) && is_dir("themes/".$cfg["theme"]))
-	{
-		$theme = $cfg["theme"];
+
+	// check personal theme
+	if (isset($cfg["theme"])) {
+		if (@is_dir("themes/".$cfg["theme"]) === true)
+			return $cfg["theme"];
+		else
+			echo 'Your choosen theme does not exist any more. Please got to your Profile Settings and change your theme.<br />';
 	}
-	elseif( isset($cfg["default_theme"]) && is_dir("themes/".$cfg["default_theme"]))
-	{
-		$theme = $cfg["default_theme"];
-		$msg = "Your choosen theme does not exist any more. Please got to your Profile Settings and change your theme.";
+
+	// no personal theme or check failed, check default-theme
+	if (isset($cfg["default_theme"])) {
+		// either no theme set or we are in login
+		if (@is_dir("themes/".$cfg["default_theme"]) === true)
+			return $cfg["default_theme"];
+		else
+			echo 'The default theme (-> Login-Theme) does not exist any more. Contact the System Administrator.<br />';
 	}
-	elseif ( is_dir("themes/default") )
-	{
-		$theme = "default";
-		$msg = "Your choosen theme does not exist any more. Please got to your Profile Settings and change your theme.<br>
-				The default theme does not exist any more. System Administrator has to change default theme.";
-	}
-	else
-		die("Fatal Error: No suitable theme could be found and included.<br />Please check your Files.");
-	
-	// This complettely breaks theme validation, but i haven't found a quick solution to get 
-	// an error message displayed on all sites. I think we first need to change the theme-engine to be more flexible. -danez
-	if( isset($msg) ) echo $msg; 	
-	return $theme;
+
+	// failure, use default
+	return 'default';
 }
 
 /**
@@ -61,7 +58,7 @@ function CheckandSetUserTheme()
 function CheckandSetDefaultTheme()
 {
 	global $cfg;
-	
+
 	if( isset($cfg["default_theme"]) && is_dir("themes/".$cfg["default_theme"]))
 	{
 		$theme = $cfg["default_theme"];
@@ -73,10 +70,10 @@ function CheckandSetDefaultTheme()
 	}
 	else
 		die("Fatal Error: No suitable theme could be found and included.<br />Please check your Files.");
-	
-	// This complettely breaks theme validation, but i haven't found a quick solution to get 
+
+	// This complettely breaks theme validation, but i haven't found a quick solution to get
 	// an error message displayed on all sites. I think we first need to change the theme-engine to be more flexible. -danez
-	if( isset($msg) ) echo $msg; 	
+	if( isset($msg) ) echo $msg;
 	return $theme;
 }
 
