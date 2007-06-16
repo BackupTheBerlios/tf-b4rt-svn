@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peer.c 1953 2007-05-25 21:44:26Z livings124 $
+ * $Id: peer.c 2004 2007-06-09 15:36:46Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -735,7 +735,7 @@ void tr_peerBlame( tr_peer_t * peer, int piece, int success )
     tr_bitfieldRem( peer->blamefield, piece );
 }
 
-int tr_peerGetConnectable( tr_torrent_t * tor, uint8_t ** _buf )
+int tr_peerGetConnectable( const tr_torrent_t * tor, uint8_t ** _buf )
 {
     int count = 0;
     uint8_t * buf;

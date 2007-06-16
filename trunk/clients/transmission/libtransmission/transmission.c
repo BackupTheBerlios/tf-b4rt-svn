@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.c 1998 2007-06-06 00:30:13Z livings124 $
+ * $Id: transmission.c 2004 2007-06-09 15:36:46Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -38,7 +38,7 @@ tr_handle_t * tr_init( const char * tag )
     tr_msgInit();
     tr_netResolveThreadInit();
 
-    h = calloc( sizeof( tr_handle_t ), 1 );
+    h = calloc( 1, sizeof( tr_handle_t ) );
     if( NULL == h )
     {
         return NULL;
@@ -180,4 +180,3 @@ void tr_close( tr_handle_t * h )
 
     tr_netResolveThreadClose();
 }
-

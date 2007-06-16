@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: platform.c 1998 2007-06-06 00:30:13Z livings124 $
+ * $Id: platform.c 2034 2007-06-10 22:26:59Z joshe $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -35,7 +35,8 @@
 
 #include <pwd.h>
 
-static char * tr_getHomeDirectory()
+const char *
+tr_getHomeDirectory( void )
 {
     static char     homeDirectory[MAX_PATH_LENGTH];
     static int      init = 0;
@@ -65,6 +66,16 @@ static char * tr_getHomeDirectory()
 
     return homeDirectory;
 }
+
+#else
+
+const char *
+tr_getHomeDirectory( void )
+{
+    /* XXX */
+    return "";
+}
+
 #endif /* !SYS_BEOS && !__AMIGAOS4__ */
 
 static void

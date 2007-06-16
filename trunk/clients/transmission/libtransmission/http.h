@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: http.h 1293 2006-12-27 05:16:12Z joshe $
+ * $Id: http.h 2040 2007-06-10 23:12:43Z joshe $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -65,6 +65,8 @@ tr_http_t   * tr_httpClientUrl( int, const char *, ... )
 /* only add headers or body before first pulse */
 void          tr_httpAddHeader( tr_http_t *, const char *, const char * );
 void          tr_httpAddBody( tr_http_t *, const char *, ... ) PRINTF( 2, 3 );
+void          tr_httpGetHeaders( tr_http_t *, const char **, int * );
+void          tr_httpGetBody( tr_http_t *, const char **, int * );
 tr_tristate_t tr_httpPulse( tr_http_t *, const char **, int * );
 char        * tr_httpWhatsMyAddress( tr_http_t * );
 void          tr_httpClose( tr_http_t * );

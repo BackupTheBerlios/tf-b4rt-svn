@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: inout.c 1995 2007-05-31 23:40:56Z livings124 $
+ * $Id: inout.c 2076 2007-06-14 11:41:09Z titer $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -168,10 +168,9 @@ int tr_ioWrite( tr_io_t * io, int index, int begin, int length,
 
     if (reorder)
 	{
-        int reorderRuns;
+		int reorderRuns;
 
 		tr_dbg( "reorder pieces");
-
 		reorderRuns = reorderPieces( io );
 
 		if (io->slotsUsed == slotsUsedOld && reorderRuns > 0)
@@ -506,7 +505,7 @@ cleanup:
 /***********************************************************************
  * readSlot
  ***********************************************************************
- *
+ * 
  **********************************************************************/
 static int readOrWriteSlot( tr_io_t * io, int slot, uint8_t * buf,
                             int * size, int write )
@@ -515,7 +514,7 @@ static int readOrWriteSlot( tr_io_t * io, int slot, uint8_t * buf,
     tr_info_t    * inf = &tor->info;
 
     uint64_t offset = (uint64_t) slot * (uint64_t) inf->pieceSize;
-
+    
     *size = 0;
     if( slot == inf->pieceCount - 1 )
     {
@@ -636,7 +635,7 @@ static int reorderPieces( tr_io_t * io )
             }
 
             /* Move/Invert piece i into slot i */
-
+			
 			if( io->slotPiece[i] >= 0 )
 			{
 				tr_err( "reorder: invert slot %d and %d (piece %d)", io->pieceSlot[i], i, io->slotPiece[i] );
@@ -648,7 +647,7 @@ static int reorderPieces( tr_io_t * io )
 				moveSlot( io, io->pieceSlot[i], i );
 				if (i == io->slotsUsed) (io->slotsUsed)++;
 			}
-
+			
             didInvert = 1;
         }
 		didInvertReturn += didInvert;
@@ -711,7 +710,7 @@ static void findSlotForPiece( tr_io_t * io, int piece )
 					}
 				}
 			}
-
+			
 			if( freeSlot == -1 )
 				freeSlot = nextFreeSlotToAppend(io);
 
@@ -743,7 +742,7 @@ static void findSlotForPiece( tr_io_t * io, int piece )
 			}
 		}
     }
-
+	
 	freeSlot = nextFreeSlotToAppend(io);
 
 	/* No empty slot, extend the file */

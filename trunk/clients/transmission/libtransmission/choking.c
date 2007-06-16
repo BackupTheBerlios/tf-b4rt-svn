@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: choking.c 1421 2007-01-21 07:27:57Z titer $
+ * $Id: choking.c 2004 2007-06-09 15:36:46Z charles $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -56,7 +56,7 @@ tr_choking_t * tr_chokingInit( tr_handle_t * h )
 {
     tr_choking_t * c;
 
-    c        = calloc( sizeof( tr_choking_t ), 1 );
+    c        = calloc( 1, sizeof( tr_choking_t ) );
     c->h     = h;
     c->slots = 4242;
     tr_lockInit( &c->lock );

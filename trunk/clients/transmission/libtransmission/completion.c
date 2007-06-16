@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: completion.c 1534 2007-03-05 23:03:38Z joshe $
+ * $Id: completion.c 2004 2007-06-09 15:36:46Z charles $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -162,7 +162,7 @@ void tr_cpDownloaderRem( tr_completion_t * cp, int block )
     }
 }
 
-int tr_cpBlockIsComplete( tr_completion_t * cp, int block )
+int tr_cpBlockIsComplete( const tr_completion_t * cp, int block )
 {
     return tr_bitfieldHas( cp->blockBitfield, block );
 }
@@ -257,9 +257,9 @@ float tr_cpPercentBlocksInPiece( tr_completion_t * cp, int piece )
     return (float)complete / (float)blockCount;
 }
 
-int tr_cpMissingBlockInPiece( tr_completion_t * cp, int piece )
+int tr_cpMissingBlockInPiece( const tr_completion_t * cp, int piece )
 {
-    tr_torrent_t * tor = cp->tor;
+    const tr_torrent_t * tor = cp->tor;
     int start, count, end, i;
 
     start = tr_pieceStartBlock( piece );

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: bencode.h 1998 2007-06-06 00:30:13Z livings124 $
+ * $Id: bencode.h 2076 2007-06-14 11:41:09Z titer $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -25,7 +25,7 @@
 #ifndef TR_BENCODE_H
 #define TR_BENCODE_H 1
 
-#include <stdint.h> /* for int64_t */
+#include <inttypes.h> /* for int64_t */
 #include <string.h> /* for memset */
 
 typedef struct benc_val_s

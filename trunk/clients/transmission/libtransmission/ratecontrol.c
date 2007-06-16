@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: ratecontrol.c 1869 2007-05-16 02:03:18Z livings124 $
+ * $Id: ratecontrol.c 2004 2007-06-09 15:36:46Z charles $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -75,7 +75,7 @@ tr_ratecontrol_t * tr_rcInit()
 {
     tr_ratecontrol_t * r;
 
-    r        = calloc( sizeof( tr_ratecontrol_t ), 1 );
+    r        = calloc( 1, sizeof( tr_ratecontrol_t ) );
     r->limit = -1;
     tr_lockInit( &r->lock );
 

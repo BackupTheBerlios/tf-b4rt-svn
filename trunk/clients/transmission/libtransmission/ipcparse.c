@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: ipcparse.c 1969 2007-05-28 15:23:28Z livings124 $
+ * $Id: ipcparse.c 2038 2007-06-10 22:56:18Z joshe $
  *
  * Copyright (c) 2007 Joshua Elsasser
  *
@@ -138,6 +138,7 @@ static struct msg gl_msgs[] =
     { "addfile-detailed",    2, IPC_MSG_ADDONEFILE,   RB_ENTRY_INITIALIZER() },
     { "automap",             2, IPC_MSG_AUTOMAP,      RB_ENTRY_INITIALIZER() },
     { "autostart",           2, IPC_MSG_AUTOSTART,    RB_ENTRY_INITIALIZER() },
+    { "bad-format",          2, IPC_MSG_BAD,          RB_ENTRY_INITIALIZER() },
     { "directory",           2, IPC_MSG_DIR,          RB_ENTRY_INITIALIZER() },
     { "downlimit",           2, IPC_MSG_DOWNLIMIT,    RB_ENTRY_INITIALIZER() },
     { "failed",              2, IPC_MSG_FAIL,         RB_ENTRY_INITIALIZER() },
@@ -1122,6 +1123,18 @@ ipc_msgid( struct ipc_info * info, const char * name )
     }
 
     return msg->id;
+}
+
+int
+ipc_ishandled( struct ipc_info * info, enum ipc_msg id )
+{
+    struct msgfunc key;
+
+    assert( MSGVALID( id ) );
+
+    bzero( &key, sizeof key );
+    key.id = id;
+    return ( NULL != RB_FIND( functree, &info->funcs->msgs, &key ) );
 }
 
 int

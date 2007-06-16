@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: ipcparse.h 1931 2007-05-24 07:11:59Z joshe $
+ * $Id: ipcparse.h 2076 2007-06-14 11:41:09Z titer $
  *
  * Copyright (c) 2007 Joshua Elsasser
  *
@@ -25,7 +25,7 @@
 #ifndef TR_DAEMON_IPC_H
 #define TR_DAEMON_IPC_H
 
-#include <stdint.h>
+#include <inttypes.h>
 
 /* yay for typedefs, we can't forward declare benc_val_t or tr_info_t
    like with structs */
@@ -41,6 +41,7 @@ enum ipc_msg
     IPC_MSG_ADDONEFILE,
     IPC_MSG_AUTOMAP,
     IPC_MSG_AUTOSTART,
+    IPC_MSG_BAD,
     IPC_MSG_DIR,
     IPC_MSG_DOWNLIMIT,
     IPC_MSG_FAIL,
@@ -163,6 +164,7 @@ ssize_t      ipc_parse    ( struct ipc_info *, uint8_t *, ssize_t, void * );
 /* misc info functions, these will always succeed */
 int          ipc_havemsg  ( struct ipc_info *, enum ipc_msg );
 enum ipc_msg ipc_msgid    ( struct ipc_info *, const char * );
+int          ipc_ishandled( struct ipc_info *, enum ipc_msg );
 int          ipc_havetags ( struct ipc_info * );
 int          ipc_infotypes( enum ipc_msg, benc_val_t * );
 const char * ipc_infoname ( enum ipc_msg, int );

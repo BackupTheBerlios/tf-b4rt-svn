@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: tracker.c 1826 2007-05-04 17:44:31Z livings124 $
+ * $Id: tracker.c 2004 2007-06-09 15:36:46Z charles $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -629,7 +629,7 @@ static void readAnswer( tr_tracker_t * tc, const char * data, int len,
         
         tr_httpParse( data, len, hdr );
         
-        address = calloc( sizeof( char ), hdr->len+1 );
+        address = calloc( hdr->len+1, sizeof( char ) );
         snprintf( address, hdr->len+1, "%s", hdr->data );
         
         tc->shouldChangeAnnounce = TC_CHANGE_REDIRECT;
@@ -871,7 +871,7 @@ static void readScrapeAnswer( tr_tracker_t * tc, const char * data, int len )
 
         tr_httpParse( data, len, hdr );
         
-        address = calloc( sizeof( char ), hdr->len+1 );
+        address = calloc( hdr->len+1, sizeof( char ) );
         snprintf( address, hdr->len+1, "%s", hdr->data );
         
         /* Needs a new scrape */

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: upnp.c 1762 2007-04-20 01:27:58Z joshe $
+ * $Id: upnp.c 2040 2007-06-10 23:12:43Z joshe $
  *
  * Copyright (c) 2006-2007 Transmission authors and contributors
  *
@@ -23,6 +23,9 @@
  *****************************************************************************/
 
 #include "transmission.h"
+
+/* uncomment this to log requests and responses to ~/transmission-upnp.log */
+/* #define VERBOSE_LOG */
 
 #define SSDP_ADDR               "239.255.255.250"
 #define SSDP_PORT               1900
@@ -154,6 +157,10 @@ static const char *
 actionLookup( tr_upnp_action_t * action, const char * key, int len,
               char dir, int getname );
 
+#ifdef VERBOSE_LOG
+static FILE * vlog = NULL;
+#endif 
+
 tr_upnp_t *
 tr_upnpInit()
 {
@@ -167,6 +174,19 @@ tr_upnpInit()
 
     upnp->infd     = -1;
     upnp->outfd    = -1;
+
+#ifdef VERBOSE_LOG
+    if( NULL == vlog )
+    {
+        char path[MAX_PATH_LENGTH];
+        time_t stupid_api;
+        snprintf( path, sizeof path, "%s/transmission-upnp.log",
+                  tr_getHomeDirectory());
+        vlog = fopen( path, "a" );
+        stupid_api = time( NULL );
+        fprintf( vlog, "opened log at %s\n\n", ctime( &stupid_api ) );
+    }
+#endif 
 
     return upnp;
 }
@@ -257,6 +277,14 @@ tr_upnpClose( tr_upnp_t * upnp )
     }
 
     free( upnp );
+
+#ifdef VERBOSE_LOG
+    if( NULL != vlog )
+    {
+        fflush( vlog );
+    }
+#endif 
+
 }
 
 void
@@ -345,6 +373,12 @@ sendSSDP( int fd )
     sin.sin_family      = AF_INET;
     sin.sin_addr.s_addr = inet_addr( SSDP_ADDR );
     sin.sin_port        = htons( SSDP_PORT );
+
+#ifdef VERBOSE_LOG
+    fprintf( vlog, "send ssdp message, %i bytes:\n", len );
+    fwrite( buf, 1, len, vlog );
+    fputs( "\n\n", vlog );
+#endif 
 
     if( 0 > sendto( fd, buf, len, 0,
                     (struct sockaddr*) &sin, sizeof( sin ) ) )
@@ -461,6 +495,11 @@ recvSSDP( int fd, char * buf, int * len )
     }
     else
     {
+#ifdef VERBOSE_LOG
+        fprintf( vlog, "receive ssdp message, %i bytes:\n", *len );
+        fwrite( buf, 1, *len, vlog );
+        fputs( "\n\n", vlog );
+#endif 
         return TR_NET_OK;
     }
 }
@@ -825,6 +864,10 @@ devicePulseGetHttp( tr_upnp_device_t * dev )
     tr_http_t  * ret;
     char         numstr[6];
     const char * type;
+#ifdef VERBOSE_LOG
+    const char * body;
+    int          len;
+#endif
 
     ret = NULL;
     switch( dev->state ) 
@@ -886,6 +929,19 @@ devicePulseGetHttp( tr_upnp_device_t * dev )
             break;
     }
 
+#ifdef VERBOSE_LOG
+    if( NULL != ret )
+    {
+        tr_httpGetHeaders( ret, &body, &len );
+        fprintf( vlog, "send http message, %i bytes (headers):\n", len );
+        fwrite( body, 1, len, vlog );
+        tr_httpGetBody( ret, &body, &len );
+        fprintf( vlog, "\n\nsend http message, %i bytes (body):\n", len );
+        fwrite( body, 1, len, vlog );
+        fputs( "\n\n", vlog );
+    }
+#endif
+
     return ret;
 }
 
@@ -922,6 +978,11 @@ devicePulseHttp( tr_upnp_device_t * dev,
     switch( tr_httpPulse( dev->http, &headers, &hlen ) )
     {
         case TR_NET_OK:
+#ifdef VERBOSE_LOG
+    fprintf( vlog, "receive http message, %i bytes:\n", hlen );
+    fwrite( headers, 1, hlen, vlog );
+    fputs( "\n\n", vlog );
+#endif
             code = tr_httpResponseCode( headers, hlen );
             if( SOAP_METHOD_NOT_ALLOWED == code && !dev->soapretry )
             {
@@ -1251,7 +1312,7 @@ soapRequest( int retry, const char * host, int port, const char * path,
 "    xmlns:s=\"" SOAP_ENVELOPE "\""
 "    s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">"
 "  <s:Body>"
-"    <u:%s xmlns:u=\%s\">", action->name, type );
+"    <u:%s xmlns:u=\"%s\">", action->name, type );
 
         va_start( ap, action );
         do

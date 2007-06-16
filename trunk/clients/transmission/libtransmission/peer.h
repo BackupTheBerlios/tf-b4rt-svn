@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peer.h 1650 2007-04-03 18:22:58Z joshe $
+ * $Id: peer.h 2004 2007-06-09 15:36:46Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -57,6 +57,6 @@ void        tr_peerSetOptimistic ( tr_peer_t *, int );
 int         tr_peerIsOptimistic  ( tr_peer_t * );
 void        tr_peerBlame         ( tr_peer_t *, int piece, int success );
 struct in_addr * tr_peerAddress  ( tr_peer_t * );
-int         tr_peerGetConnectable( tr_torrent_t *, uint8_t ** );
+int         tr_peerGetConnectable( const tr_torrent_t *, uint8_t ** );
 
 #endif

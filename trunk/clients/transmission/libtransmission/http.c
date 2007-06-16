@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: http.c 1773 2007-04-22 15:05:14Z livings124 $
+ * $Id: http.c 2040 2007-06-10 23:12:43Z joshe $
  *
  * Copyright (c) 2006-2007 Transmission authors and contributors
  *
@@ -528,6 +528,20 @@ tr_httpAddBody( tr_http_t * http , const char * fmt , ... )
     {
         assert( HTTP_STATE_ERROR == http->state );
     }
+}
+
+void
+tr_httpGetHeaders( tr_http_t * http, const char ** buf, int * len )
+{
+    *buf = http->header.buf;
+    *len = http->header.used;
+}
+
+void
+tr_httpGetBody( tr_http_t * http, const char ** buf, int * len )
+{
+    *buf = http->body.buf;
+    *len = http->body.used;
 }
 
 tr_tristate_t
