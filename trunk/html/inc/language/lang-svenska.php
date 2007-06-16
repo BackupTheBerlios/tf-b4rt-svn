@@ -49,8 +49,8 @@ define("_FILESIZE","Filstorlek");
 define("_STATUS","Status");
 define("_ADMIN","Admin");
 define("_BADFILE","fel på filen");
-define("_DATETIMEFORMAT","y/m/d G:i"); //Date Time mask '02/26/04 15:53'
-define("_DATEFORMAT","y/m/d"); //Date mask '02/26/04'
+define("_DATETIMEFORMAT","Y/m/d - H:i:s");
+define("_DATEFORMAT","Y/m/d");
 define("_ESTIMATEDTIME","Beräknad tid");
 define("_DOWNLOADSPEED","Nedladdning");
 define("_UPLOADSPEED","Uppladdning");

@@ -51,8 +51,8 @@ define("_FILESIZE","Dosya Boyutu");
 define("_STATUS","Durum");
 define("_ADMIN","Admin");
 define("_BADFILE","hatali dosya");
-define("_DATETIMEFORMAT","m/d/y g:i a"); //Date Time mask '02/26/04 03:53 pm'
-define("_DATEFORMAT","m/d/y"); //Date mask '02/26/04'
+define("_DATETIMEFORMAT","Y/m/d - H:i:s");
+define("_DATEFORMAT","Y/m/d");
 define("_ESTIMATEDTIME","Tahmini Süre");
 define("_DOWNLOADSPEED","Yükleme Hizi");
 define("_UPLOADSPEED","Gönderme Hizi");

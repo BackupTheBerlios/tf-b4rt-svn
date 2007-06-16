@@ -52,8 +52,8 @@ define("_FILESIZE","Rozmiar Pliku");
 define("_STATUS","Status");
 define("_ADMIN","Admin");
 define("_BADFILE","uszkodzony plik");
-define("_DATETIMEFORMAT","d/m/y G:i"); //Date Time mask '02/26/04 03:53 pm'
-define("_DATEFORMAT","d/m/y"); //Date mask '02/26/04'
+define("_DATETIMEFORMAT","Y/m/d - H:i:s");
+define("_DATEFORMAT","Y/m/d");
 define("_ESTIMATEDTIME","Szacowany Czas");
 define("_DOWNLOADSPEED","Prêdko¶æ ¶ci±gania");
 define("_UPLOADSPEED","Prêdko¶æ przesy³ania");

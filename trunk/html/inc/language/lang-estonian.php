@@ -51,8 +51,8 @@ define("_TRANSFERFILE","Nimi");
 define("_STATUS","Olek");
 define("_ADMIN","Adminn");
 define("_BADFILE","vigane fail");
-define("_DATETIMEFORMAT","m/d/y g:i a"); //Date Time mask '02/26/04 03:53 pm'
-define("_DATEFORMAT","m/d/y"); //Date mask '02/26/04'
+define("_DATETIMEFORMAT","Y/m/d - H:i:s");
+define("_DATEFORMAT","Y/m/d");
 define("_ESTIMATEDTIME","J‰relej‰‰nud aega");
 define("_DOWNLOADSPEED","Tirimise kiirus");
 define("_UPLOADSPEED","‹leslaadimise kiirus");

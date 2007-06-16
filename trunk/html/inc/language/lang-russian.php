@@ -49,8 +49,8 @@ define("_FILESIZE","Размер файла");
 define("_STATUS","Статус");
 define("_ADMIN","Администратор");
 define("_BADFILE","плохой файл");
-define("_DATETIMEFORMAT","m/d/y g:i a"); //Формат времени и даты '02/26/04 03:53 pm'
-define("_DATEFORMAT","m/d/y"); //Формат даты '02/26/04'
+define("_DATETIMEFORMAT","Y/m/d - H:i:s");
+define("_DATEFORMAT","Y/m/d");
 define("_ESTIMATEDTIME","Осталось");
 define("_DOWNLOADSPEED","Скорость загрузки");
 define("_UPLOADSPEED","Скорость раздачи");

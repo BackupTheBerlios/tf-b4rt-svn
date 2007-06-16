@@ -49,8 +49,8 @@ define("_FILESIZE","Dimensioni file");
 define("_STATUS","Status");
 define("_ADMIN","Admin");
 define("_BADFILE","file corrotto");
-define("_DATETIMEFORMAT","d/m/y g:i a"); //Date Time mask '02/26/04 03:53 pm'
-define("_DATEFORMAT","d/m/y"); //Date mask '02/26/04'
+define("_DATETIMEFORMAT","Y/m/d - H:i:s");
+define("_DATEFORMAT","Y/m/d");
 define("_ESTIMATEDTIME","Tempo stimato");
 define("_DOWNLOADSPEED","Velocità download");
 define("_UPLOADSPEED","Velocità upload");

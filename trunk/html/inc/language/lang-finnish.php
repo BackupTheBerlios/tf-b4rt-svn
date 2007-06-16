@@ -49,8 +49,8 @@ define("_FILESIZE","Tiedoston koko");
 define("_STATUS","Tila");
 define("_ADMIN","Admin");
 define("_BADFILE","viallinen tiedosto");
-define("_DATETIMEFORMAT","d/m/y -  h:i"); //Date Time mask '02/26/04 03:53 pm'
-define("_DATEFORMAT","d/m/y"); //Date mask '02/26/04'
+define("_DATETIMEFORMAT","Y/m/d - H:i:s");
+define("_DATEFORMAT","Y/m/d");
 define("_ESTIMATEDTIME","Arvioitu aika");
 define("_DOWNLOADSPEED","Imurointi nopeus");
 define("_UPLOADSPEED","Lähetys nopeus");

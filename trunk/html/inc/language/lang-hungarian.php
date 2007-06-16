@@ -52,8 +52,8 @@ define("_FILESIZE","Fájl Méret");
 define("_STATUS","Állapot");
 define("_ADMIN","Mûvelet");
 define("_BADFILE","hibás fájl");
-define("_DATETIMEFORMAT","y/m/d g:i"); //Date Time mask '02/26/04 03:53 pm'
-define("_DATEFORMAT","y/m/d"); //Date mask '02/26/04'
+define("_DATETIMEFORMAT","Y/m/d - H:i:s");
+define("_DATEFORMAT","Y/m/d");
 define("_ESTIMATEDTIME","Becsült Idõ");
 define("_DOWNLOADSPEED","Letöltési Sebesség");
 define("_UPLOADSPEED","Feltöltési Sebesség");

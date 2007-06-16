@@ -52,8 +52,8 @@ define("_FILESIZE","Bestandsgrootte");
 define("_STATUS","Status");
 define("_ADMIN","Beheer");
 define("_BADFILE","kapot bestand");
-define("_DATETIMEFORMAT","d/m/Y G:i"); //Date Time mask '15/04/2004 21:10'
-define("_DATEFORMAT","d/m/Y"); //Date mask '15/04/2004'
+define("_DATETIMEFORMAT","Y/m/d - H:i:s");
+define("_DATEFORMAT","Y/m/d");
 define("_ESTIMATEDTIME","Geschatte tijdsduur");
 define("_DOWNLOADSPEED","Download-snelheid");
 define("_UPLOADSPEED","Upload-snelheid");

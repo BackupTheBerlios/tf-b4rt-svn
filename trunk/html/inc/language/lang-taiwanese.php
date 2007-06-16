@@ -57,8 +57,8 @@ define("_FILESIZE","檔案大小");
 define("_STATUS","狀態");
 define("_ADMIN","管理");
 define("_BADFILE","損壞檔案");
-define("_DATETIMEFORMAT","Y/m/d g:i a"); //Date Time mask '2004/02/26 03:53 pm'
-define("_DATEFORMAT","Y/m/d"); //Date mask '2004/02/26'
+define("_DATETIMEFORMAT","Y/m/d - H:i:s");
+define("_DATEFORMAT","Y/m/d");
 define("_ESTIMATEDTIME","估計時間");
 define("_DOWNLOADSPEED","下載速度");
 define("_UPLOADSPEED","上傳速度");

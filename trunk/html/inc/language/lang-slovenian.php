@@ -52,8 +52,8 @@ define("_FILESIZE","Velikost");
 define("_STATUS","Stanje");
 define("_ADMIN","Admin");
 define("_BADFILE","pokvarjena datoteka");
-define("_DATETIMEFORMAT","d/m/Y H:i"); //Date Time mask '26/02/04 03:53 pm'
-define("_DATEFORMAT","d/m/y"); //Date mask '26/02/04'
+define("_DATETIMEFORMAT","Y/m/d - H:i:s");
+define("_DATEFORMAT","Y/m/d");
 define("_ESTIMATEDTIME","Predvideni Ä?as");
 define("_DOWNLOADSPEED","Hitrost prenosa k sebi");
 define("_UPLOADSPEED","Hitrost prenosa v svet");
