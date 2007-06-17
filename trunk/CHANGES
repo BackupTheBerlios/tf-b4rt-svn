@@ -68,6 +68,9 @@ $Id$
 
 - spelling and typos in various strings
 
+- fixed: undefined variable when updating search-engine-settings and nothing
+  is selected in form (3113)
+
 - fixed: endless-redirect-loop when db-config-file, setup- and upgrade-scripts
   are missing (3110)
 
