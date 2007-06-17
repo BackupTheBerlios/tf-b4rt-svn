@@ -3,6 +3,10 @@ $Id$
 ================================================================================
 
 
+  torrentflux-b4rt 1.0 beta1
+  http://svn.berlios.de/wsvn/tf-b4rt/trunk/?op=log&rev=3116
+
+
 ***** changes *****
 
 - refactoring, code-cleanup and code-tidy in various parts
