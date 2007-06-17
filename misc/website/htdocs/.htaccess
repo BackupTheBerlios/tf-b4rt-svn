@@ -26,7 +26,7 @@ RewriteRule ^faq$ https://tf-b4rt.berlios.de/forum/index.php/board,10.0.html [R]
 RewriteRule ^fixes$ https://tf-b4rt.berlios.de/forum/index.php/board,4.0.html [R]
 
 # downloads / current
-RewriteRule ^(download|downloads|current|tfb|download-torrentflux-b4rt\.html)$ https://developer.berlios.de/project/showfiles.php?group_id=7000&release_id=12507 [R]
+RewriteRule ^(download|downloads|current|tfb|download-torrentflux-b4rt\.html)$ https://developer.berlios.de/project/showfiles.php?group_id=7000&release_id=12959 [R]
 
 # exported text-res
 
