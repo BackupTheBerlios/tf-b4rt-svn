@@ -13,6 +13,9 @@ $Id$
 
 - added a manual (doc/manual.txt, work in progress)
 
+- changed time- and date-format in language-files to the format used in the
+  rest of tfb (3111)
+
 - enlarge sharekill input fields (3 -> 4 chars)
 
 - extended checks to validate the selected theme
@@ -64,6 +67,11 @@ $Id$
 - various minor fixes in various parts
 
 - spelling and typos in various strings
+
+- fixed: endless-redirect-loop when db-config-file, setup- and upgrade-scripts
+  are missing (3110)
+
+- fixed: setup.php and upgrade.php login-checks (3109)
 
 - fixed: when using filepriority the *.prio file was written incorrectly.
   (last folder was left out) (3074)
@@ -186,7 +194,7 @@ $Id$
 
 - Transmission-Transfer-Client:
   * Transmission 0.80-svn (svn2076) / tfCLI svn3084
-  * Transmission-0.72 / tfCLI svn2950
+  * Transmission 0.72 / tfCLI svn2950
 
 - ADOdb V4.95a
 
