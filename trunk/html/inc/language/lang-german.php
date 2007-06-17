@@ -51,7 +51,7 @@ define("_ADMIN","Admin");
 define("_BADFILE","fehlerhafte Datei");
 define("_DATETIMEFORMAT","Y/m/d - H:i:s");
 define("_DATEFORMAT","Y/m/d");
-define("_ESTIMATEDTIME","Voraussichtliche Ankunftszeit");
+define("_ESTIMATEDTIME","Restzeit");
 define("_DOWNLOADSPEED","Download Speed");
 define("_UPLOADSPEED","Upload Speed");
 define("_SHARING","Geteilt");
