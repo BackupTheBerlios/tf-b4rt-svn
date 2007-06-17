@@ -370,7 +370,7 @@ function admin_updateAzureusSettings() {
 			sleep(2);
 			$message = 'Settings changed.';
 			// log
-			AuditAction($cfg["constants"]["admin"], " Updating azureus Settings");
+			AuditAction($cfg["constants"]["admin"], "Updating azureus Settings");
 		}
 	} else {
 		$message = 'fluazu/azureus not running.';
@@ -387,12 +387,15 @@ function admin_updateAzureusSettings() {
  */
 function admin_updateSearchSettings() {
 	global $cfg;
+	$settings = array();
 	foreach ($_POST as $key => $value) {
 		if ($key != "searchEngine")
 			$settings[$key] = $value;
 	}
-	saveSettings('tf_settings', $settings);
-	AuditAction($cfg["constants"]["admin"], " Updating Search Settings");
+	if (count($settings) > 0) {
+		saveSettings('tf_settings', $settings);
+		AuditAction($cfg["constants"]["admin"], "Updating Search Settings");
+	}
 	$searchEngine = tfb_getRequestVar('searchEngine');
 	if (empty($searchEngine))
 		$searchEngine = $cfg["searchEngine"];
