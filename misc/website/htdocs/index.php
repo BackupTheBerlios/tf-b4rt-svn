@@ -468,10 +468,10 @@ function printPageAbout() {
 			<li>Allow the frontend to be redesigned more easily.  <a href="features.html#templating" title="Torrentflux-b4rt uses vlib templating engine to allow easier redesign of frontend">Torrentflux-b4rt now uses a templating engine to allow developers to redesign the look and feel of the torrentflux-b4rt frontend more easily.</a></li>
 		</ul>
 		<p>
-			Somewhat confusingly, this latest version of torrentflux-b4rt is named 'torrentflux-b4rt_1.0-alphaX' (to indicate this is the first release of the newly rewritten b4rt codebase and 'X' represents the minor versioning), whereas the older torrentflux-b4rt is named 'torrentflux_2.1-b4rt-vX (to indicate this is the b4rt codebase based on the original torrentflux 2.1, where 'X' represents the minor versioning.  Very confusing!
+			Somewhat confusingly, this latest incarnation of torrentflux-b4rt is named 'torrentflux-b4rt_1.0' (to indicate this is the first release of the newly rewritten b4rt codebase, whereas the older torrentflux-b4rt is named 'torrentflux_2.1-b4rt' (to indicate this is the b4rt codebase based on the original torrentflux 2.1).  Very confusing!
 		</p>
 		<p>
-			<strong>1.0-alpha is the currently stable release of torrentflux-b4rt!</strong>  Whilst this may not seem obvious given the 'alpha' tag, you can rest assured that the currently available tarball is tested enough for it to be stable to use without breaking anything.
+			Current work on torrentflux-b4rt is aimed at a 'final' or so-called 'production' release for the project - making the codebase as stable as possible, ironing out as many bugs as possible, making the user interface as easy to use as possible and getting a set of documentation together that will complement the project and make using torrentflux-b4rt as easy as possible.  Work is also under way to make the HTML in the frontend <a href="http://validator.w3.org/" title="W3C HTML Validation">XHTML compliant</a> which will make the interface easier to use, less cluttered and compatible on as many browsers and platforms as possible.
 		</p>
 	</div>
 
