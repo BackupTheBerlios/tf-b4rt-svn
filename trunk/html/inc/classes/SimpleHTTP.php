@@ -130,6 +130,10 @@ class SimpleHTTP
 	// The redirect URL specified in the location header for a 30x status code:
 	var $redirectUrl = "";
 
+	// Can PHP do TLS?
+	var $canTLS = null;
+
+
 	// =========================================================================
 	// public static methods
 	// =========================================================================
@@ -311,12 +315,21 @@ class SimpleHTTP
 		$domain = parse_url($this->url);
 
 		if (
-			empty($domain) ||   // Check URL is a well-formed HTTP URL.
-			empty($domain['scheme']) || $domain['scheme'] != 'http' ||
+			empty($domain) ||   // Check URL is a well-formed HTTP/HTTPS URL.
+			empty($domain['scheme']) || ($domain['scheme'] != 'http' && $domain['scheme'] != 'https') ||
 			empty($domain['host'])
 		) {
 			$this->state = SIMPLEHTTP_STATE_ERROR;
-			$msg = "Error fetching " . $this->url .".  This is not a valid HTTP URL.";
+			$msg = "Error fetching " . $this->url .".  This is not a valid HTTP/HTTPS URL.";
+			array_push($this->messages, $msg);
+			AuditAction($cfg["constants"]["error"], $msg);
+			return($data="");
+		}
+
+		$secure = $domain['scheme'] == 'https';
+		if ($secure && !$this->_canTLS()) {
+			$this->state = SIMPLEHTTP_STATE_ERROR;
+			$msg = "Error fetching " . $this->url .".  PHP does not have module OpenSSL, which is needed for HTTPS.";
 			array_push($this->messages, $msg);
 			AuditAction($cfg["constants"]["error"], $msg);
 			return($data="");
@@ -339,10 +352,13 @@ class SimpleHTTP
 		if ($db->ErrorNo() != 0) dbError($sql);
 
 		if (!array_key_exists("port", $domain))
-			$domain["port"] = 80;
+			$domain["port"] = $secure ? 443 : 80;
 
 		// Fetch the data using fsockopen():
-		$this->socket = @fsockopen($domain["host"], $domain["port"], $this->errno , $this->errstr, $this->timeout); //connect to server
+		$this->socket = @fsockopen(	// connect to server, let PHP handle TLS layer for an HTTPS connection
+			($secure ? 'tls://' : '') . $domain["host"], $domain["port"],
+			$this->errno, $this->errstr, $this->timeout
+		);
 
 		if (!empty($this->socket)) {
 			// Write the outgoing HTTP request using cookie info
@@ -876,6 +892,18 @@ class SimpleHTTP
 		return (isset($matches[1]))
 			? $matches[1]
 			: 0;
+	}
+
+	/**
+	 * Check whether PHP can do TLS.
+	 *
+	 * @return bool
+	 */
+	function _canTLS() {
+		// Just check whether openssl extension is available.
+		if (!isset($this->canTLS))
+			$this->canTLS = extension_loaded('openssl');
+		return $this->canTLS;
 	}
 
 	/**
