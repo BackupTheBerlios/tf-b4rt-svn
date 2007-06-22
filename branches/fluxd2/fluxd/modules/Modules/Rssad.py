@@ -34,9 +34,18 @@ __version__ = (0, 0, 1)
 __version_str__ = '%s.%s' % (__version__[0], ''.join([str(part) for part in __version__[1:]]))
 
 """ ------------------------------------------------------------------------ """
-""" Maintenance                                                              """
+""" Rssad                                                                    """
 """ ------------------------------------------------------------------------ """
-class Maintenance(BasicModule):
+class Rssad(BasicModule):
+
+    # delim jobs
+    DELIM_JOBS = '|'
+    
+    # delim jobentry
+    DELIM_JOBENTRY = '#'
+    
+    # data-dir
+    DIR_DATA = 'rssad'
 
     # lock
     InstanceLock = Lock()
@@ -49,13 +58,15 @@ class Maintenance(BasicModule):
         # base
         BasicModule.__init__(self, name, *p, **k)
 
+        # data-dir
+        self.dataDir = '%s%s/' % (Config().get('dir', 'pathFluxd').strip(), Rssad.DIR_DATA)
+
         # interval
         self.interval = int(Config().getExt(name, 'interval').strip())
 
-        # restart
-        self.restart = 'false'
-        if Config().getExt(name, 'restart').strip() == '1':
-            self.restart = 'true'
+        # jobs
+        self.jobs = []
+        self.initializeJobs(Config().getExt(name, 'jobs').strip())
 
         # invocation-count
         self.runCount = 0
@@ -66,8 +77,9 @@ class Maintenance(BasicModule):
     def status(self):
         data = {}
         data['version'] = __version_str__
+        data['dataDir'] = self.dataDir
         data['interval'] = str(self.interval)
-        data['restart'] = self.restart
+        data['jobs'] = self.jobs.__str__()
         data['runCount'] = str(self.runCount)
         return data
 
@@ -107,8 +119,9 @@ class Maintenance(BasicModule):
     def onStart(self):
 
         # config
+        self.logger.info('dataDir: %s' % self.dataDir)
         self.logger.info('interval: %d' % self.interval)
-        self.logger.info('restart: %s' % self.restart)
+        self.logger.info('jobs: %s' % self.jobs.__str__())
 
     """ -------------------------------------------------------------------- """
     """ main                                                                 """
@@ -147,6 +160,32 @@ class Maintenance(BasicModule):
         self.logger.debug('onStop')
 
     """ -------------------------------------------------------------------- """
+    """ initializeJobs                                                       """
+    """ -------------------------------------------------------------------- """
+    def initializeJobs(self, jobs):
+
+        # parse job-def and init array
+        self.jobs = []
+        # job1|job2|job3
+        jobsAry = jobs.split(Rssad.DELIM_JOBS)
+        for job in jobsAry:
+            # savedir#url#filtername
+            jobAry = job.strip().split(Rssad.DELIM_JOBENTRY)
+            if len(jobAry) == 3:
+                filtername = jobAry.pop().strip()
+                url = jobAry.pop().strip()
+                savedir = jobAry.pop().strip()
+                self.jobs.append(
+                                 {
+                                  'filtername': filtername,
+                                  'url': url,
+                                  'savedir': savedir
+                                  }
+                                 )
+            else:
+                self.logger.error('Wrong Job-Format: %s' % job)
+
+    """ -------------------------------------------------------------------- """
     """ invoke                                                               """
     """ -------------------------------------------------------------------- """
     def invoke(self):
@@ -155,20 +194,34 @@ class Maintenance(BasicModule):
         self.runCount += 1
 
         try:
-            
+
             # get Fluxcli instance
             fluxcli = Activator().getInstance('Fluxcli')
             
-            # invoke
-            # TODO: not used as current fluxcli.php deletes our socket
-            #result = fluxcli.invoke(['maintenance', self.restart], True).strip()
-            result = fluxcli.invoke(['-v'], True).strip()
+            # process jobs
+            for job in self.jobs:
             
-            # log
-            self.logger.debug('maintenance-run-result:\n%s' % result)
-            
+                # build arg-array
+                args = []
+                args.append('rss')
+                args.append(job['savedir'])
+                args.append('%s%s.dat' % (self.dataDir, job['filtername']))
+                args.append('%s%s.hist' % (self.dataDir, job['filtername']))
+                args.append(job['url'])
+                
+                # execute job
+                try:
+                    # log run
+                    self.logger.debug('running rssad-job: %s' % job.__str__())
+                    # invoke fluxcli
+                    result = fluxcli.invoke(args, True).strip()
+                    # log result
+                    self.logger.debug('rssad-run-result:\n%s' % result)
+                except Exception, e:
+                    self.logger.error("Error when calling rssad (%s)" % (e))
+
             # return
             return True
-        
+
         except Exception, e:
-            self.logger.error("Error when calling maintenance (%s)" % (e))
+            self.logger.error("Error when processing rssad-jobs (%s)" % (e))
