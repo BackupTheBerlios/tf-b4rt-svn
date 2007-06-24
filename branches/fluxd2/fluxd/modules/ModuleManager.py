@@ -203,10 +203,11 @@ class ModuleManager(IActivator):
     def runningModules(self):
         retVal = []
         try:
-            for name in ModuleManager.Modules.iterkeys():
-                retVal.append(name)
-        except Exception, e:
-            self.logger.error("Exception in runningModules (%s)" % (e))
+            try:
+                for name in ModuleManager.Modules.iterkeys():
+                    retVal.append(name)
+            except Exception, e:
+                self.logger.error("Exception in runningModules (%s)" % (e))
         finally:
             return retVal
 

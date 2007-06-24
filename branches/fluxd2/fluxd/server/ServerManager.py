@@ -203,10 +203,11 @@ class ServerManager(IActivator):
     def runningServers(self):
         retVal = []
         try:
-            for name in ServerManager.Servers.iterkeys():
-                retVal.append(name)
-        except Exception, e:
-            self.logger.error("Exception in runningServers (%s)" % (e))
+            try:
+                for name in ServerManager.Servers.iterkeys():
+                    retVal.append(name)
+            except Exception, e:
+                self.logger.error("Exception in runningServers (%s)" % (e))
         finally:
             return retVal
 

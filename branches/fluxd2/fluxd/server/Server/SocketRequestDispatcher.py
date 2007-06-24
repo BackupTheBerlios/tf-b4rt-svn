@@ -232,36 +232,38 @@ class SocketRequestDispatcher(object):
 
         try:
 
-            # data to send back
-            data = ''
-
-            # check if error
-            if result.exception is None:
-
-                # debug-log
-                self.logger.debug("handle result: %s (%s)" % (result.data, self.__name))
-
-                # set data
-                data = result.data
-
-            else:
-                # error to data
-                data = "error occured: %s (%s) (%s)" % (result.data, self.__name, result.exception)
-
-                # log error
-                self.logger.error(data)
-
-            # send data
             try:
-                # debug-log
-                self.logger.debug("sending data to client: %s (%s)" % (data, self.__name))
-                # send
-                self.sendall(data)
-            except Exception, e:
-                self.logger.error("failed to send data to client (%s) (%s)" % (self.__name, e))
 
-        except Exception, e:
-            self.logger.error('error when handling result' % e)
+                # data to send back
+                data = ''
+
+                # check if error
+                if result.exception is None:
+
+                    # debug-log
+                    self.logger.debug("handle result: %s (%s)" % (result.data, self.__name))
+
+                    # set data
+                    data = result.data
+
+                else:
+                    # error to data
+                    data = "error occured: %s (%s) (%s)" % (result.data, self.__name, result.exception)
+
+                    # log error
+                    self.logger.error(data)
+
+                # send data
+                try:
+                    # debug-log
+                    self.logger.debug("sending data to client: %s (%s)" % (data, self.__name))
+                    # send
+                    self.sendall(data)
+                except Exception, e:
+                    self.logger.error("failed to send data to client (%s) (%s)" % (self.__name, e))
+
+            except Exception, e:
+                self.logger.error('error when handling result' % e)
 
         finally:
 
