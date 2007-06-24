@@ -604,7 +604,7 @@ static void tf_torrentStop(tr_handle_t * h, tr_info_t * info) {
 	// write stat-file
 	tf_stat_fp = fopen(tf_stat_file, "w+");
 	if (tf_stat_fp != NULL) {
-		if (s->status & TR_STATUS_SEED) {
+		if (s->progress == 1) {
 			sprintf(tf_eta, "Download Succeeded!");
 			progress = 100;
 		} else {
