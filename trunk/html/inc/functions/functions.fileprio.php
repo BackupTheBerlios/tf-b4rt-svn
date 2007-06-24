@@ -82,7 +82,7 @@ function getFilePrioForm($transfer, $withForm = false) {
 	$retVal .= "<tr><td>Directory Name:</td><td>".$btmeta['info']['name']."</td></tr>";
 	$retVal .= "<tr><td>Announce URL:</td><td>".$btmeta['announce']."</td></tr>";
 	if (array_key_exists('comment',$btmeta))
-		$retVal .= "<tr><td valign=\"top\">Comment:</td><td>".$btmeta['comment']."</td></tr>";
+		$retVal .= "<tr><td valign=\"top\">Comment:</td><td>".tfb_htmlencode($btmeta['comment'])."</td></tr>";
 	$retVal .= "<tr><td>Created:</td><td>".date("F j, Y, g:i a",$btmeta['creation date'])."</td></tr>";
 	$retVal .= "<tr><td>Torrent Size:</td><td>".$torrent_size." (".@formatBytesTokBMBGBTB($torrent_size).")</td></tr>";
 	$retVal .= "<tr><td>Chunk size:</td><td>".$btmeta['info']['piece length']." (".@formatBytesTokBMBGBTB($btmeta['info']['piece length']).")</td></tr>";
