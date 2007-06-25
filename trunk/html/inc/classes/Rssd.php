@@ -304,7 +304,7 @@ class Rssd
 				if (!isset($this->_data["items"][$i]["title"]) || empty($this->_data["items"][$i]["title"]))
 					continue;
 				// local vars
-				$link = $this->_data["items"][$i]["link"];
+				$link = html_entity_decode($this->_data["items"][$i]["link"]);
 				$title = $this->_data["items"][$i]["title"];
 				// check if we have a match
 				if (preg_match('/'.$filter.'/i', $title)) {
