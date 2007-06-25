@@ -194,32 +194,10 @@ Torrentflux-b4rt Reference Manual
                 Overview
                 Configuration
 
-            Web application frontend operational options (webapp)
-                Setting the authentication type to use
-                    Form-Auth
-                    Form-Auth + Cookie
-                    Form-Auth + Image-Validation
-                    Basic-Auth
-                    Basic-Passthru
+            Web application frontend options (webapp)
 
-                Setting the basic authentication realm to use for passthru authentication
-                Setting the default page title
-                Allowing users to change their personal settings
-                Enabling display of a link to the torrentflux-b4rt home page
-                Setting the style of the drivespace bar
-                Setting the default transfer statistics window type
-                Setting the transfer statistics window update interval
-                Enabling name resolution for host addresses in the transfer statistics window
-                Setting the server monitor update interval
-                Enabling link dereferrer functionality
-                Setting the default theme
-                Setting the default language
-                Setting the number of days of log entries to keep
-                Setting the interval before a user is listed as being offline
-                Setting the RSS cache update interval
-                Enabling template caching
-                Setting the debug level for logging and feedback
-                Enabling the display of SQL error feedback
+                Overview
+                Configuration
 
             Web application frontend display options (index)
                 Enabling default page refresh
@@ -1753,7 +1731,7 @@ Introduction
                 Files and directories can be moved out of the master
                 transfer directory by clicking on the 'Move File/Folder'
                 icon.  A window will open asking you to specify the
-                destination directory in a drop down list or textbox.
+                destination directory in a drop down list or text box.
 
                 Note:
                 -----
@@ -3637,32 +3615,380 @@ Introduction
                         you can change the depth to which the 'save path
                         chooser' drills down by changing this option.
 
-            Web application frontend operational options (webapp)
-                Setting the authentication type to use
-                    Form-Auth
-                    Form-Auth + Cookie
-                    Form-Auth + Image-Validation
-                    Basic-Auth
-                    Basic-Passthru
+            Web application frontend options (webapp)
 
-                Setting the basic authentication realm to use for passthru authentication
-                Setting the default page title
-                Allowing users to change their personal settings
-                Enabling display of a link to the torrentflux-b4rt home page
-                Setting the style of the drivespace bar
-                Setting the default transfer statistics window type
-                Setting the transfer statistics window update interval
-                Enabling name resolution for host addresses in the transfer statistics window
-                Setting the server monitor update interval
-                Enabling link dereferrer functionality
-                Setting the default theme
-                Setting the default language
-                Setting the number of days of log entries to keep
-                Setting the interval before a user is listed as being offline
-                Setting the RSS cache update interval
-                Enabling template caching
-                Setting the debug level for logging and feedback
-                Enabling the display of SQL error feedback
+                Overview
+
+                    The 'WebApp Settings' (webapp) tab on the admin
+                    pages allows you to configure settings related to
+                    the torrentflux-b4rt frontend.
+
+                Configuration
+
+                    The configuration options for the webapps tab are as
+                    follows:
+
+                    o   Select Authentication Type
+                        Select which authentication method
+                        torrentflux-b4rt uses for user login.
+
+                        This option allows you to decide how users will
+                        authenticate to login to the torrentflux-b4rt
+                        frontend.  There are five different options to
+                        choose from:
+
+                        *   Form Auth
+                            Standard form based authentication.
+
+                            This is the default authentication method.
+                            Users will have to complete and submit a login
+                            form with their username and password at the
+                            start of each new browser session to be able
+                            to login to the frontend.
+
+                        *   Form Auth + Cookie
+                            Standard form based authentication using an
+                            'autologin' cookie (expires after 30 days).
+
+                            This method is similar to the default 'Form
+                            Auth', except that the user will have the
+                            option to check a checkbox to allow them to
+                            stay logged in across browser sessions -
+                            'Remember Me' functionality.
+
+                            This method uses a client side cookie to store
+                            the autologin information.  Information is
+                            stored using a hashing algorithm so that
+                            details are not directly readable in plain
+                            text.
+
+                        *   Form Auth + Image
+                            Standard form based authentication using image
+                            based captcha validation (user must enter the
+                            characters displayed in a dynamically created
+                            image to validate).
+
+                            This option enables the use of Captchas as an
+                            added form of protection against automated
+                            brute force attacks.  Using captchas, the user
+                            is required to type in the characters
+                            displayed in a dynamically generated image
+                            before being allowed to login.  This is
+                            required the first time the user browses to
+                            the torrentflux-b4rt frontend in any given
+                            browser session.
+
+                        *   Basic Auth
+                            Use HTTP Basic Authentication scheme
+                            (browser will handle user/password input).
+
+                            This option uses the standard HTTP basic
+                            authentication method to log users in.
+
+                            The torrentflux-b4rt login page sends a
+                            'HTTP/1.0 401 Unauthorized' HTTP header to
+                            the browser/user agent which should prompt
+                            the browser to display a username/password
+                            dialogue box for the user to enter their
+                            credentials in.  When this dialogue box is
+                            submitted, the credentials are then
+                            compared to the credentials stored in the
+                            torrentflux-b4rt database.  If the
+                            credentials match, the user is logged in.
+
+                        *   Basic Auth + Passthrough
+                            Pass the credentials of a user authenticated
+                            externally via basic auth to the webapp.
+
+                            This method can be used when authentication
+                            is to be performed against another user
+                            database other than the default
+                            torrentflux-b4rt db - for example using the
+                            apache webserver's built in authentication
+                            modules or some third party authentication
+                            module.
+
+                            Using this method, the webserver is
+                            responsible for performing the
+                            authentication initially.  If the
+                            credentials are accepted by the webserver,
+                            they are then passed on to the
+                            torrentflux-b4rt login mechanism where the
+                            credentials are again checked, this time
+                            against the torrentflux-b4rt database.
+                            If this check is successful, the user is
+                            logged in.
+
+                            Note:
+                            -----
+                            To logout from torrentflux-b4rt whilst using
+                            the 'Basic Auth + Passthrough' method, the
+                            user must end the current browser session -
+                            ie terminate all instances of the current
+                            web browser session.
+
+                            This has the effect of logging the user out
+                            - when the user starts a new browser session
+                            and browses to the torrentflux-b4rt
+                            frontend, they will be required to login
+                            again.
+
+                            TODO_LINK: Link to some basic auth guide,
+                            apache site or apache week?
+
+
+                        o   Basic Authentication Realm
+                            Specify the realm name to use if Basic
+                            Authentication method is used.
+
+                            This option sets which realm to use when
+                            using basic authentication methods. A realm
+                            defines a particular area of a website that
+                            the basic authentication scheme protects or
+                            applies to.
+
+                            The realm name configured here will be
+                            displayed in the basic auth dialogue box
+                            displayed when a user logs in.
+
+                        o   Default Page Title
+                            Specify the default page title.
+
+                            This is the default page title displayed in
+                            the HTML title tags for the torrentflux-b4rt
+                            index page.  Web browsers will typically
+                            display the text contained in the HTML title
+                            tags for a web page in the title bar of the
+                            browser window.
+
+                        o   Enable Personal Settings
+                            Allow users to change their personal
+                            settings.
+
+                            This option allows users to modify their
+                            personal settings via the 'Profile' page.
+
+                            TODO_LINK: user ops, Changing what to display in the
+                            frontend
+
+
+                        o   Display Torrentflux-B4rt Site Link
+                            When enabled, will display a small link to
+                            the Torrentflux-b4rt website at the bottom
+                            of all pages.
+
+                        o   Drivespace Bar Style
+                            Select the styling of the drivespace bar in
+                            the frontend.
+
+                            There are two different styles of drivespace
+                            to choose from - tf and xfer.
+
+                            The 'tf' style bar displays a drivespace bar
+                            on the index page where the length of the
+                            bar indicates how much disk space has been
+                            used on the hard disk mount point where the
+                            .transfers folder is located.  The amount of
+                            free space in MB/Gb and as a percentage of
+                            the total is also displayed in text next to
+                            the drivespace bar.
+
+                            The 'xfer' style bar displays a drivespace
+                            bar where the length of the bar indicates
+                            how much disk space is left available
+                            (instead of how much is actually used in the
+                            case of the 'tf' style bar).
+
+                        o   Transfer Statistics Update Method
+                            Choose the method used to update the
+                            transfer statistics window.
+
+                            The 'Stats' page for a transfer - displayed
+                            by clicking on the transfer in the transfer
+                            list and then clicking the 'Stats' tab - is
+                            automatically updated to display stats in
+                            near real time.
+
+                            The method used to update the stats can be
+                            set using this option.  There are two
+                            options - AJAX or HTML Meta Refresh.
+
+                            AJAX is the default and uses less bandwidth
+                            to perform updates since only the relevant
+                            data in the stats page is
+                            requested/transferred.  Alternatively, the
+                            HTML Meta Refresh method will
+                            request/transfer the complete stats webpage
+                            from the webserver using a little more
+                            bandwidth than the AJAX method.
+
+                        o   Transfer Statistics Update Interval
+                            Specify the interval in seconds between
+                            updates in the transfer statistics window.
+
+                        o   Resolve Hostnames In Transfer Window Hosts Tab
+                            Whether to resolve transfer peer hostnames
+                            to IP addresses in the Hosts tab of the
+                            transfer window - selecting Hostnames will
+                            add load to the server.
+
+                            By default, torrentflux-b4rt does not
+                            resolve IP addresses (ie 1.2.3.4) into fully
+                            qualified domain names (ie example.com).
+                            This option enables the resolution of IP
+                            addresses to domain names.
+
+                            Note:
+                            -----
+                            This option increases the load on the
+                            server, both in terms of CPU processing and
+                            network resources and should be used with
+                            caution especially on servers with a large
+                            number of transfers running at the same
+                            time.
+
+                        o   Server Monitor Update Interval
+                            Specify the interval in seconds between
+                            updates in the Server Monitor window.
+
+                            The server monitor displays statistics
+                            relating to the webserver running
+                            torrentflux-b4rt.  This option defines how
+                            often the server monitor window is updated.
+
+                            For more information on the server monitor,
+                            see:
+
+                            TODO_LINK: user ops, Opening the server monitor
+
+                        o   Hide Referer When Following Links
+                            When enabled, referer information will not
+                            be forwarded to websites visited by clicking
+                            on links within torrentflux-b4rt.
+
+                            This option is enabled by default and stops
+                            the browser sending the URL of the page from
+                            which the user came from - the 'referer'
+                            URL.
+
+                        o   Default Theme
+                            Select the default theme.
+
+                            Note: This theme will also be used for the login
+                            screen when a form based authentication method
+                            is used.
+
+                            Note:
+                            -----
+                            This option will set the default theme for
+                            all new users.  Current user's theme
+                            settings will not be modified.
+
+                        o   Default Language
+                            Select the default language.
+
+                            Note:
+                            -----
+                            This option will set the default language
+                            for all new users.  Current user's language
+                            settings will not be modified.
+
+                        o   Days To Keep Logged Audit Actions
+                            Number of days that audit actions will be
+                            held in the database.
+
+                            By default, audit actions are stored in the
+                            database for 30 days.  After this time the
+                            entries are pruned from the database.
+
+                            For more information on viewing Audit
+                            Actions, see:
+
+                            TODO_LINK: 
+                            user ops, Viewing activity history
+                            admin ops, Activity / Audit / Event viewer
+                            (activity)
+
+                        o   Minutes To Keep User Online Status
+                            Number of minutes after ending a browser
+                            session that user status changes to offline.
+
+                            Torrentflux-b4rt displays a list of all
+                            users currently 'online' at any one time in
+                            the 'users' panel in the frontend.  This
+                            option sets how long in minutes after a user
+                            ends a browser session to mark the user as
+                            being 'offline'.
+
+                            The default is 3 minutes.
+
+                        o   Minutes To Cache RSS Feeds
+                            Number of minutes to cache RSS XML feeds on
+                            the server.
+
+                            Torrentflux-b4rt caches RSS feeds for users
+                            to browse via the 'RSS Torrents' link on the
+                            index page to save on network traffic and
+                            processing.
+
+                            This option allows you to configure how long
+                            to wait before requesting new copies of the
+                            RSS feeds to 'refresh' the cache.
+
+                            The default is to cache RSS feeds for 20
+                            minutes.
+
+                            Warning:
+                            --------
+                            Setting the cache to a very low value so the
+                            RSS feeds are refreshed more often can lead
+                            to a ban on your IP address if the server
+                            where the RSS feed is requested from sees
+                            you as 'hammering'.
+
+                            You should consult the tracker website's
+                            rules before setting the cache timeout to a
+                            very low value.
+
+                        o   Enable Template Cache
+                            Enable caching of HTML template files.
+
+                            Torrentflux-b4rt can cache the HTML template
+                            files displayed for users by setting this
+                            option.  This can significantly improve the
+                            speed at which pages are displayed in the
+                            browser.
+
+                            Template caching is disabled by default.
+
+                            Note:
+                            -----
+                            This option should be used with caution - if
+                            'stale' pages or other glitches are observed
+                            when using template caching, the cache can
+                            be flushed:
+
+                            TODO_LINK:user ops, Flushing the template cache
+
+                        o   Debug Level
+                            Set the debug level - higher values increase
+                            the debugging output in the logs.
+
+                            The verbosity of logging messages emitted
+                            by torrentflux-b4rt can be increased by
+                            setting this value higher - 0 is lowest, 2
+                            is highest.  This option is especially
+                            useful when troubleshooting the operation of
+                            torrentflux-b4rt and should be set to the
+                            highest value before requesting support.
+
+                            The default debugging level is '0'.
+
+                        o   Show SQL Debug Statements
+                            SQL Errors will always be displayed but when
+                            this feature is enabled the SQL Statement
+                            that caused the error will be displayed as
+                            well.
 
             Web application frontend display options (index)
                 Enabling default page refresh
