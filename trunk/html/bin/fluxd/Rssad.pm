@@ -161,7 +161,7 @@ sub initialize {
 	# job1|job2|job3
 	my (@jobsAry) = split(/\|/, $jobs);
 	foreach my $jobEntry (@jobsAry) {
-		# username#url#filtername
+		# savedir#url#filtername
 		chomp $jobEntry;
 		my (@jobAry) = split(/#/,$jobEntry);
 		my $savedir = shift @jobAry;
