@@ -88,13 +88,26 @@ a:hover.titlebarbutton
 	font-size:100%;
 }
 
+.subtableheading
+{
+	background-color:#98accd;
+	color:#FFFFFF;
+	font-weight:bold;
+	text-align:center;
+}
+.subtableheading td
+{
+	padding:3px 0px;
+}
+
 .table
 {
 	border:2px solid #a0b9d8;
 	width:100%;
 }
 
-.tableheading_alt
+.tableheading_alt,
+.subtableheading_alt
 {
 	color:#FFFFFF;
 	font-weight:bold;
