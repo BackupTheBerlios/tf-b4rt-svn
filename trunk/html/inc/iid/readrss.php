@@ -99,6 +99,9 @@ foreach ($arURL as $rid => $url) {
 					// as the feed's display title in the table.
 					$rs["items"][$i]["title"] = substr($rs["items"][$i]["title"], 0, 64)."...";
 				}
+				// decode html entities like &amp; -> & , and then uri_encode them them & -> %26
+				// This is needed to get Urls with more than one GET Parameter working
+				$rs["items"][$i]["link"] = rawurlencode(html_entity_decode($rs["items"][$i]["link"]));
 			}
 			$stat = 1;
 		} else {
