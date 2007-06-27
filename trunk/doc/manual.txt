@@ -199,41 +199,9 @@ Torrentflux-b4rt Reference Manual
                 Overview
                 Configuration
 
-            Web application frontend display options (index)
-                Enabling default page refresh
-                Setting page refresh interval
-                Enabling AJAX by default
-                Enabling update of page title in AJAX mode
-                Enabling update of online users in AJAX mode
-                Enabling update of transfer list in AJAX mode
-                Enabling silent AJAX updates
-                Setting the AJAX update interval
-                Setting the default width of the index page
-                Enabling the display of a multi-upload page link
-                Setting the number of rows to use in the multi-upload page
-                Enabling torrent searches
-                Setting the default torrent search engine
-                Enabling the display of link list
-                Enabling the display of online users
-                Enabling the display of 'good looking' server statistics
-                Setting what to display in the 'good looking' server statistics
-                Enabling display of bandwidth bars
-                Setting the default style of the bandwidth bars
-                Setting the upload/download line speed for the bandwidth bars
-                Enabling 'big bold drivespace' warning
-                Allowing only admins to see other user's transfers
-                Enabling download of transfer files from the transfer list
-                Enabling display of seeding torrents
-                Enabling display of estimated time until sharekill ratio is met
-                Allowing users to sort the transfer list by column type
-                Setting the default sort order of the transfer list
-                Setting the default transfer list columns to display
-                Setting the default transfer window view
-                Enabling multi operations (start/stop/delete more than one transfer at a time)
-                Enabling bulk operations (start/stop/resume all transfers at the same time)
-                Enabling the display of server statistics on the index page
-                Enabling the display of total network connections on the index page
-                Enabling the display of server load on the index page
+            Web application index page display options (index)
+                Overview
+                Configuration
 
             Directory / File Management options (dir)
                 Allowing users to browse all folders
@@ -775,54 +743,54 @@ Introduction
                     allows you to view the following information about
                     your transfer:
 
-                        o	Estimated Time - time until transfer
+                        o   Estimated Time - time until transfer
                             download is complete.
 
-                        o	Percent Done - percentage of data already
+                        o   Percent Done - percentage of data already
                             downloaded.
 
-                        o	User - the torrentflux-b4rt owner of this
+                        o   User - the torrentflux-b4rt owner of this
                             transfer
 
-                        o	Download Speed - current download speed,
+                        o   Download Speed - current download speed,
                             updates every 5 seconds by default.
 
-                        o	Upload Speed - current upload speed,
+                        o   Upload Speed - current upload speed,
                             updates every 5 seconds by default.
 
-                        o	Down - total downloaded during the current
+                        o   Down - total downloaded during the current
                             session.
 
-                        o	Up - total uploaded during the current
+                        o   Up - total uploaded during the current
                             session.
 
-                        o	Down-Total - total downloaded during all
+                        o   Down-Total - total downloaded during all
                             sessions for this transfer; the cumulative
                             download total.
 
-                        o	Up-Total - total uploaded during all
+                        o   Up-Total - total uploaded during all
                             sessions for this transfer; the cumulative
                             upload total.
 
-                        o	Seeds - current number of seeds available
+                        o   Seeds - current number of seeds available
                             for this transfer, updates every 5 seconds
                             by default.
 
-                        o	Peers - current number of peers available
+                        o   Peers - current number of peers available
                             for this transfer, updates every 5 seconds
                             by default.
 
-                        o	Port - current local port being used for this
+                        o   Port - current local port being used for this
                             transfer
 
-                        o	Connections - current number of active
+                        o   Connections - current number of active
                             connections for this transfer.
 
-                        o	Sharing - current share ratio for this
+                        o   Sharing - current share ratio for this
                             transfer, 100% equals same amount uploaded
                             as downloaded.
 
-                        o	Seed Until - the share ratio at which
+                        o   Seed Until - the share ratio at which
                             seeding should stop.  Otherwise known as
                             'sharekill' ratio - ie 'stop sharing when
                             this ratio is reached'
@@ -965,23 +933,23 @@ Introduction
                 right of the torrentflux-b4rt frontend and include the
                 following statistics:
 
-                o	Download Speed- total download speed for all
+                o   Download Speed- total download speed for all
                     running transfers
 
-                o	Upload Speed - total upload speed for all running
+                o   Upload Speed - total upload speed for all running
                     transfers
 
-                o	Total Speed - total upload + download speed for all
+                o   Total Speed - total upload + download speed for all
                     running transfers
 
-                o	Connections - total network connections for all
+                o   Connections - total network connections for all
                     running transfers
 
-                o	Drive Space - total hard disk drive space currently
+                o   Drive Space - total hard disk drive space currently
                     in use for the filesystem where torrentflux-b4rt
                     downloads transfers to
 
-                o	Server Load - current server load averages of the
+                o   Server Load - current server load averages of the
                     server.  A sustained load average of over 2 in each
                     of the three readings can be indicative of excessive
                     server load depending on the server role.
@@ -1069,14 +1037,14 @@ Introduction
                 The following information is displayed in the server
                 monitor:
 
-                    o	Download Speed
-                    o	Upload Speed
-                    o	Total Speed
-                    o	Connections
-                    o	Drive Space
-                    o	Server Load
-                    o	Transfers running
-                    o	Transfers queued
+                    o   Download Speed
+                    o   Upload Speed
+                    o   Total Speed
+                    o   Connections
+                    o   Drive Space
+                    o   Server Load
+                    o   Transfers running
+                    o   Transfers queued
 
                 The server monitor is updated every 5 seconds by default
                 - update interval can be changed in the (TODO_link:
@@ -1352,12 +1320,12 @@ Introduction
                             Available stats to display in good looking
                             stats panel:
 
-                            *	Download Speed
-                            *	Upload Speed
-                            *	Total Speed
-                            *	Connections
-                            *	Drive Space
-                            *	Server Load
+                            *   Download Speed
+                            *   Upload Speed
+                            *   Total Speed
+                            *   Connections
+                            *   Drive Space
+                            *   Server Load
 
                     o   Display Bandwidth Bars
                         -   Display bandwidth usage bars
@@ -1391,18 +1359,18 @@ Introduction
                             Information columns available for display in
                             transfer list:
 
-                            *	Owner
-                            *	Size
-                            *	Total Down
-                            *	Total Up
-                            *	Status
-                            *	Progress
-                            *	Down-Speed
-                            *	Up-Speed
-                            *	Seeds
-                            *	Peers
-                            *	Estimated Time
-                            *	Client
+                            *   Owner
+                            *   Size
+                            *   Total Down
+                            *   Total Up
+                            *   Status
+                            *   Progress
+                            *   Down-Speed
+                            *   Up-Speed
+                            *   Seeds
+                            *   Peers
+                            *   Estimated Time
+                            *   Client
 
                     o   Default Page In Transfer Settings Window
                         -   Select the default page to display in the
@@ -1478,14 +1446,14 @@ Introduction
 
                     FireFox
 
-                        *	Tools => Options
+                        *   Tools => Options
 
-                        *	Cookies => View Cookies
+                        *   Cookies => View Cookies
 
-                        *	Locate the site you want to get cookie
+                        *   Locate the site you want to get cookie
                             information from.
 
-                        *	Copy the cookie values for the variables
+                        *   Copy the cookie values for the variables
                             that the site uses.
 
                             Common cookie variables used in torrent sites
@@ -1495,11 +1463,11 @@ Introduction
 
                     Internet Explorer
 
-                        *	Tools => Internet Options
-                        *	General => Settings => View Files
-                        *	Locate cookie file for site (eg: Cookie:user@www.host.com/)
-                        *	Open the file in a text editor
-                        *	Grab the values below UID and PASS
+                        *   Tools => Internet Options
+                        *   General => Settings => View Files
+                        *   Locate cookie file for site (eg: Cookie:user@www.host.com/)
+                        *   Open the file in a text editor
+                        *   Grab the values below UID and PASS
 
                             The file will look something like this:
 
@@ -1651,16 +1619,16 @@ Introduction
                 A number of different operations can be performed on
                 files within the directory manager, including:
 
-                o	Deleting files and directories
-                o	Renaming files and directories
-                o	Moving files and directories out of the transfer
+                o   Deleting files and directories
+                o   Renaming files and directories
+                o   Moving files and directories out of the transfer
                     directory
-                o	Making torrents
-                o	Downloading files and directories
-                o	Downloading files and directories as tar or
+                o   Making torrents
+                o   Downloading files and directories
+                o   Downloading files and directories as tar or
                     zip archives
-                o	Streaming media files using VLC
-                o	Viewing NFO files
+                o   Streaming media files using VLC
+                o   Viewing NFO files
                 o   Extracting archive files (zip/rar files)
                 o   Checking the integrity of files using .sfv files
 
@@ -1754,29 +1722,29 @@ Introduction
                 o   Client - the client you want to use to create the
                     torrent file.
 
-                o	Torrent name - the filename you wish to give the
+                o   Torrent name - the filename you wish to give the
                     torrent file
 
-                o	Announcement URL - the URL of the tracker which will
+                o   Announcement URL - the URL of the tracker which will
                     be hosting the torrent file.  Check your tracker's
                     website for info on what to use for this option.
 
-                o	Announce List - a list of alternative trackers to
+                o   Announce List - a list of alternative trackers to
                     use for this torrent.  This option allows you to
                     provide redundancy in the event that one tracker is
                     unavailable.
 
-                o	Piece size - the size of chunks you wish your
+                o   Piece size - the size of chunks you wish your
                     torrent to be distributed in.
 
-                o	Comments - any comments about the content of the
+                o   Comments - any comments about the content of the
                     torrent.
 
-                o	Private Torrent - whether or not this torrent is
+                o   Private Torrent - whether or not this torrent is
                     private.  If private, the DHT / trackerless option
                     will be disabled.
 
-                o	DHT Support - whether to support Distributed Hash
+                o   DHT Support - whether to support Distributed Hash
                     Tables for so-called 'trackerless' support.  Using
                     this option will allow clients with DHT support to
                     seek out peers using DHT instead of depending only
@@ -1926,21 +1894,21 @@ Introduction
                 The superadmin pages allow you detailed control over the
                 following tasks and areas:
 
-                o	Transfers - bulk start/stop/resume transfers
+                o   Transfers - bulk start/stop/resume transfers
 
-                o	Processes - view detailed process info; force stop
+                o   Processes - view detailed process info; force stop
                     transfer processes
 
-                o	Maintenance - clean up and maintenance
+                o   Maintenance - clean up and maintenance
 
-                o	Backup - create backups; download saved backups
+                o   Backup - create backups; download saved backups
 
-                o	Log - view logs
+                o   Log - view logs
 
-                o	Misc - test for PHP and Perl requirements; view list
+                o   Misc - test for PHP and Perl requirements; view list
                     of installed files
 
-                o	About - version checking, updates, news,
+                o   About - version checking, updates, news,
                     changelog; check installed file integrity
 
                 Be careful when using the superadmin features as many of
@@ -1957,13 +1925,13 @@ Introduction
                 The transfer bulk-ops available in the superadmin pages
                 are:
 
-                o	Stop All Transfers - this option will stop all
+                o   Stop All Transfers - this option will stop all
                     currently running transfers
 
-                o	Start All Transfers - this option will start all
+                o   Start All Transfers - this option will start all
                     transfers that are currently not running
 
-                o	Resume All Transfers - this option will start *only*
+                o   Resume All Transfers - this option will start *only*
                     those transfers that have already been previously
                     started
 
@@ -2014,7 +1982,7 @@ Introduction
 
                     The available options are:
 
-                    o	Standard Maintenance Run
+                    o   Standard Maintenance Run
 
                         This option is the same as available on the
                         index page of the frontend and is automatically
@@ -2034,7 +2002,7 @@ Introduction
                           there is in line with the transfer files in
                           the filesystem.
 
-                    o	Extended Maintenance Run
+                    o   Extended Maintenance Run
 
                         This option is exactly the same as the standard
                         maintenance run, except that any transfers that
@@ -2302,7 +2270,7 @@ Introduction
                     view the log files for various components of
                     torrentflux-b4rt:
 
-                    o	fluxd - STDOUT logfiles for the torrentflux-b4rt
+                    o   fluxd - STDOUT logfiles for the torrentflux-b4rt
                         fluxd daemon.
 
                         The fluxd logfile contains day to day logging
@@ -2310,20 +2278,20 @@ Introduction
                         look when attempting to troubleshoot fluxd
                         problems, together with the fluxd error log.
 
-                    o	fluxd-error - STDERR logfiles for the
+                    o   fluxd-error - STDERR logfiles for the
                         torrentflux-b4rt fluxd daemon.
 
                         The fluxd error logfile contains any errors
                         encountered in the day to day running of fluxd.
                         Essential viewing when troubleshooting fluxd.
 
-                    o	fluazu - logfiles for the fluazu interface to
+                    o   fluazu - logfiles for the fluazu interface to
                         Azureus.
 
-                    o	BitTorrent Mainline - centralised logfile for
+                    o   BitTorrent Mainline - centralised logfile for
                         the BitTorrent Mainline client.
 
-                    o	Transfers - logfiles for transfers in the
+                    o   Transfers - logfiles for transfers in the
                         current transfer list.
 
                         Clicking the 'transfers' logfile link will take
@@ -2460,45 +2428,45 @@ Introduction
 
                 o   Torrentflux-b4rt Stats:
 
-                    *	Transfers - current number of transfers in the
+                    *   Transfers - current number of transfers in the
                         transfer lists for all users
 
-                    *	Users - number of users registered to use
+                    *   Users - number of users registered to use
                         torrentflux-b4rt
 
-                    *	Hits - number of accesses of torrentflux-b4rt
+                    *   Hits - number of accesses of torrentflux-b4rt
                         pages
 
-                    *	Logs - number of log entries in the database
+                    *   Logs - number of log entries in the database
 
-                    *	Links - number of links in the link manager
+                    *   Links - number of links in the link manager
                         database
 
-                    *	RSS - number of RSS torrent feeds available in
+                    *   RSS - number of RSS torrent feeds available in
                         the frontend
 
-                    *	Messages - number of private messages stored in
+                    *   Messages - number of private messages stored in
                         the database
 
-                    *	Cookies - number of cookies stored in the
+                    *   Cookies - number of cookies stored in the
                         database for all users
 
-                    *	Transfer Profiles - number of transfer profiles
+                    *   Transfer Profiles - number of transfer profiles
                         stored for all users
 
-                    *	Search-Engines - number of search engines
+                    *   Search-Engines - number of search engines
                         available for use
 
-                    *	Themes - number of frontend themes available for
+                    *   Themes - number of frontend themes available for
                         use
 
-                    *	Languages - number of languages supported
+                    *   Languages - number of languages supported
 
-                    *	Docroot Disk Usage - current disk space usage
+                    *   Docroot Disk Usage - current disk space usage
                         for the torrentflux-b4rt installation on the
                         webserver
 
-                    *	Version - current active version of this
+                    *   Version - current active version of this
                         torrentflux-b4rt installation
 
                     The following superadmin pages can also be opened from
@@ -2506,12 +2474,12 @@ Introduction
                     superadmin:
 
                     *   Transfer Bulk Ops
-                    *	Processes
-                    *	Maintenance
-                    *	Backup
-                    *	Log
-                    *	Misc
-                    *	About
+                    *   Processes
+                    *   Maintenance
+                    *   Backup
+                    *   Log
+                    *   Misc
+                    *   About
 
                     See the manual section on TODO_LINK: Superadmin
                     Operations for more info on these items.
@@ -2519,48 +2487,48 @@ Introduction
 
                 o   Database Details
 
-                    *	Type - the type of database currently being used
+                    *   Type - the type of database currently being used
 
-                    *	Host - the fully qualified domain name of the
+                    *   Host - the fully qualified domain name of the
                         database host
 
-                    *	Name - the name of the database being used with
+                    *   Name - the name of the database being used with
                         this installation
 
-                    *	Username - the username used to access the database
+                    *   Username - the username used to access the database
 
-                    *	Persistent Connection - whether or not
+                    *   Persistent Connection - whether or not
                         persistent connections are used to connect to
                         the database
 
                 o   Other Stats
 
-                    *	OS - the type of operating system this
+                    *   OS - the type of operating system this
                         installation is installed on
 
-                    *	PHP-Version - the version of PHP used by the web
+                    *   PHP-Version - the version of PHP used by the web
                         component on this webserver
 
-                    *	sessions - whether or not session support is built
+                    *   sessions - whether or not session support is built
                         into PHP (required)
 
-                    *	pcre - whether or not Perl Compatible Regular
+                    *   pcre - whether or not Perl Compatible Regular
                         Expression support is built into PHP (required)
 
-                    *	sockets - whether or not socket support is built
+                    *   sockets - whether or not socket support is built
                         into PHP (required for fluxd)
 
-                    *	safe_mode - whether PHP is running in safe mode
+                    *   safe_mode - whether PHP is running in safe mode
                         or not (must be off)
 
-                    *	allow_url_fopen - whether PHP allows the fopen
+                    *   allow_url_fopen - whether PHP allows the fopen
                         function to operate with remote URLs (must be
                         on)
 
-                    *	register_globals - whether variables are
+                    *   register_globals - whether variables are
                         registered globally in PHP (must be off)
 
-                    *	imagetypes - the image types supported by GD; GD
+                    *   imagetypes - the image types supported by GD; GD
                         support must be built into PHP and at least one
                         of GIF, JPEG or PNG image types must be
                         supported for image-display (pies, captcha).
@@ -2570,8 +2538,8 @@ Introduction
                     a superadmin:
 
                     *   Check PHP-Web
-                    *	Check PHP-CLI
-                    *	Check Perl
+                    *   Check PHP-CLI
+                    *   Check Perl
 
                     See the manual section on TODO_LINK: 'Superadmin
                     Operations  - Checking software requirements' for
@@ -2608,7 +2576,7 @@ Introduction
                             path instead.  See TODO_LINK: Admin/Server
                             section on 'Home Directories'
 
-                        *	Transfer control files
+                        *   Transfer control files
 
                             Files used internally by torrentflux-b4rt to
                             control the download of individual transfers
@@ -2661,28 +2629,28 @@ Introduction
                                 very short since the file is deleted as
                                 soon as the command is executed.
 
-                        *	Client cache files
+                        *   Client cache files
 
                             Cache files used by BitTorrent Mainline,
                             Transmission and BitTornado are stored in
                             the .bittorrent, .BitTornado and
                             .transmission folders under <path>.
 
-                        *	Fluxd control files
+                        *   Fluxd control files
 
                             Files used for the control of fluxd are
                             contained in the <path>/.fluxd directory.
                             Files include:
 
-                            o	fluxd-error.log - any error output from
+                            o   fluxd-error.log - any error output from
                                 fluxd
 
-                            o	fluxd.log - standard output from fluxd
+                            o   fluxd.log - standard output from fluxd
 
-                            o	fluxd.pid - process id of currently
+                            o   fluxd.pid - process id of currently
                                 running fluxd service
 
-                            o	fluxd.sock - socket file used to
+                            o   fluxd.sock - socket file used to
                                 communicate with fluxd
 
                             Additional directories may be created under
@@ -2690,18 +2658,18 @@ Introduction
                             modules, particularly the Qmgr and Rssad
                             modules.
 
-                        *	Fluazu control files
+                        *   Fluazu control files
 
                             Files used for the control of the fluazu
                             component of torrentflux-b4rt.
 
-                        *	Torrentflux-b4rt template cache files
+                        *   Torrentflux-b4rt template cache files
 
                             If template caching is used to display the
                             frontend HTML, template cache files are
                             stored in the <path>/.templateCache folder.
 
-                        *	RSS cache files
+                        *   RSS cache files
 
                             If RSS feeds are added via the RSS admin
                             page, a cache of the feeds is stored in
@@ -2789,7 +2757,7 @@ Introduction
                     The following binary paths are configured on the
                     server admin page:
 
-                    o	transmissioncli
+                    o   transmissioncli
 
                         Transmission is a torrent client which can be
                         used as an alternative to bittorrent or
@@ -2811,17 +2779,17 @@ Introduction
                         the system on which you are running it before it
                         can be used.
 
-                    o	wget
+                    o   wget
 
                         Wget transfers can be controlled using
                         torrentflux-b4rt.
 
-                    o	uudeview
+                    o   uudeview
 
                         uudeview is required for the operation of the
                         nzbperl component of torrentflux-b4rt.
 
-                    o	php
+                    o   php
 
                         This is the commandline (cli) PHP binary, not to be
                         confused with the PHP web installation!  You
@@ -2837,7 +2805,7 @@ Introduction
                         binary).  See your package management package
                         database for info.
 
-                    o	python
+                    o   python
 
                         Python is used by the BitTorrent and BitTornado
                         torrent clients and is requisite for the most basic
@@ -2850,7 +2818,7 @@ Introduction
                         torrentflux-b4rt distribution root directory for
                         more info.
 
-                    o	perl
+                    o   perl
 
                         Perl is used by various features in
                         torrentflux-b4rt.  There are various perl
@@ -2859,29 +2827,29 @@ Introduction
                         torrentflux-b4rt distribution root directory for
                         more info.
 
-                    o	grep
+                    o   grep
 
                         Basic userland binary that is included in most
                         modern Unix type OS's.
 
-                    o	awk
+                    o   awk
 
                         Basic userland binary that is included in most
                         modern Unix type OS's.
 
-                    o	du
+                    o   du
 
                         Basic userland binary that is included in most
                         modern Unix type OS's.
 
-                    o	unzip
+                    o   unzip
 
                         Unzip is used in the directory manager frontend
                         in torrentflux-b4rt for extracting zip archives
                         on the server.  Unzip can be found in most
                         package management systems on Unix type systems.
 
-                    o	cksfv
+                    o   cksfv
 
                         cksfv is used in the directory manager frontend
                         in torrentflux-b4rt for checking the integrity
@@ -2889,14 +2857,14 @@ Introduction
                         file.  Cksfv can be found in most package
                         management systems on Unix type systems.
 
-                    o	vlc
+                    o   vlc
 
                         VLC can be used to stream avi content directly
                         from the torrentflux-b4rt server where the
                         content is located.  VLC can be found in most
                         package management systems on Unix type systems.
 
-                    o	unrar
+                    o   unrar
 
                         Unrar is used in the directory manager frontend
                         in torrentflux-b4rt for extracting zip archives
@@ -3275,50 +3243,50 @@ Introduction
                         The Azureus settings that can be changed via the
                         'Edit Fluazu Setting' page are as follows:
 
-                        o	Max Active Torrents
+                        o   Max Active Torrents
 
                             Maximum torrents to run at the same time.
 
-                        o	Max Active Torrents When Only Seeding
+                        o   Max Active Torrents When Only Seeding
 
                             Maximum torrents to run at the same time
                             when there are only seeding torrents running
                             - ie when not leeching anything.
 
-                        o	Max Connections Global
+                        o   Max Connections Global
 
                             Maximum number of connections for all
                             torrents running.
 
-                        o	Max Connections Per Torrent
+                        o   Max Connections Per Torrent
 
                             Maximum number of connections for each
                             individual torrent.
 
-                        o	Max Download Speed KBs
+                        o   Max Download Speed KBs
 
                             Maximum download speed for all torrents.
 
-                        o	Max Downloads
+                        o   Max Downloads
 
                             Maximum number of downloads to run
                             consecutively.
 
-                        o	Max Upload Speed KBs
+                        o   Max Upload Speed KBs
 
                             Maximum upload speed for all torrents.
 
-                        o	Max Upload Speed When Only Seeding KBs
+                        o   Max Upload Speed When Only Seeding KBs
 
                             Maximum upload speed to allow when only
                             seeding - ie when not leeching
 
-                        o	Max Uploads
+                        o   Max Uploads
 
                             Maximum number of uploads to run
                             consecutively
 
-                        o	Max Uploads Seeding
+                        o   Max Uploads Seeding
 
                             Maximum number of uploads to allow when
                             seeding.
@@ -3737,294 +3705,620 @@ Introduction
                             apache site or apache week?
 
 
-                        o   Basic Authentication Realm
-                            Specify the realm name to use if Basic
-                            Authentication method is used.
+                    o   Basic Authentication Realm
+                        Specify the realm name to use if Basic
+                        Authentication method is used.
 
-                            This option sets which realm to use when
-                            using basic authentication methods. A realm
-                            defines a particular area of a website that
-                            the basic authentication scheme protects or
-                            applies to.
+                        This option sets which realm to use when using
+                        basic authentication methods. A realm defines a
+                        particular area of a website that the basic
+                        authentication scheme protects or applies to.
 
-                            The realm name configured here will be
-                            displayed in the basic auth dialogue box
-                            displayed when a user logs in.
+                        The realm name configured here will be displayed
+                        in the basic auth dialogue box displayed when a
+                        user logs in.
 
-                        o   Default Page Title
-                            Specify the default page title.
+                    o   Default Page Title
+                        Specify the default page title.
 
-                            This is the default page title displayed in
-                            the HTML title tags for the torrentflux-b4rt
-                            index page.  Web browsers will typically
-                            display the text contained in the HTML title
-                            tags for a web page in the title bar of the
-                            browser window.
+                        This is the default page title displayed in the
+                        HTML title tags for the torrentflux-b4rt index
+                        page.  Web browsers will typically display the
+                        text contained in the HTML title tags for a web
+                        page in the title bar of the browser window.
 
-                        o   Enable Personal Settings
-                            Allow users to change their personal
-                            settings.
+                    o   Enable Personal Settings
+                        Allow users to change their personal settings.
 
-                            This option allows users to modify their
-                            personal settings via the 'Profile' page.
+                        This option allows users to modify their
+                        personal settings via the 'Profile' page.
 
-                            TODO_LINK: user ops, Changing what to display in the
-                            frontend
+                        TODO_LINK: user ops, Changing what to display in
+                        the frontend
 
 
-                        o   Display Torrentflux-B4rt Site Link
-                            When enabled, will display a small link to
-                            the Torrentflux-b4rt website at the bottom
-                            of all pages.
+                    o   Display Torrentflux-B4rt Site Link
+                        When enabled, will display a small link to the
+                        Torrentflux-b4rt website at the bottom of all
+                        pages.
 
-                        o   Drivespace Bar Style
-                            Select the styling of the drivespace bar in
-                            the frontend.
+                    o   Drivespace Bar Style
+                        Select the styling of the drivespace bar in the
+                        frontend.
 
-                            There are two different styles of drivespace
-                            to choose from - tf and xfer.
+                        There are two different styles of drivespace to
+                        choose from - tf and xfer.
 
-                            The 'tf' style bar displays a drivespace bar
-                            on the index page where the length of the
-                            bar indicates how much disk space has been
-                            used on the hard disk mount point where the
-                            .transfers folder is located.  The amount of
-                            free space in MB/Gb and as a percentage of
-                            the total is also displayed in text next to
-                            the drivespace bar.
+                        The 'tf' style bar displays a drivespace bar on
+                        the index page where the length of the bar
+                        indicates how much disk space has been used on
+                        the hard disk mount point where the .transfers
+                        folder is located.  The amount of free space in
+                        MB/Gb and as a percentage of the total is also
+                        displayed in text next to the drivespace bar.
 
-                            The 'xfer' style bar displays a drivespace
-                            bar where the length of the bar indicates
-                            how much disk space is left available
-                            (instead of how much is actually used in the
-                            case of the 'tf' style bar).
+                        The 'xfer' style bar displays a drivespace bar
+                        where the length of the bar indicates how much
+                        disk space is left available (instead of how
+                        much is actually used in the case of the 'tf'
+                        style bar).
 
-                        o   Transfer Statistics Update Method
-                            Choose the method used to update the
-                            transfer statistics window.
+                    o   Transfer Statistics Update Method
+                        Choose the method used to update the transfer
+                        statistics window.
 
-                            The 'Stats' page for a transfer - displayed
-                            by clicking on the transfer in the transfer
-                            list and then clicking the 'Stats' tab - is
-                            automatically updated to display stats in
-                            near real time.
+                        The 'Stats' page for a transfer - displayed by
+                        clicking on the transfer in the transfer list
+                        and then clicking the 'Stats' tab - is
+                        automatically updated to display stats in near
+                        real time.
 
-                            The method used to update the stats can be
-                            set using this option.  There are two
-                            options - AJAX or HTML Meta Refresh.
+                        The method used to update the stats can be set
+                        using this option.  There are two options - AJAX
+                        or HTML Meta Refresh.
 
-                            AJAX is the default and uses less bandwidth
-                            to perform updates since only the relevant
-                            data in the stats page is
-                            requested/transferred.  Alternatively, the
-                            HTML Meta Refresh method will
-                            request/transfer the complete stats webpage
-                            from the webserver using a little more
-                            bandwidth than the AJAX method.
+                        AJAX is the default update method.
 
-                        o   Transfer Statistics Update Interval
-                            Specify the interval in seconds between
-                            updates in the transfer statistics window.
+                        Tip:
+                        ----
+                        AJAX updates uses less bandwidth since only the
+                        relevant data in the stats page is transferred.
 
-                        o   Resolve Hostnames In Transfer Window Hosts Tab
-                            Whether to resolve transfer peer hostnames
-                            to IP addresses in the Hosts tab of the
-                            transfer window - selecting Hostnames will
-                            add load to the server.
+                        Alternatively, the HTML Meta Refresh update
+                        method will transfer the complete stats webpage
+                        from the webserver using a little more bandwidth
+                        than AJAX.
 
-                            By default, torrentflux-b4rt does not
-                            resolve IP addresses (ie 1.2.3.4) into fully
-                            qualified domain names (ie example.com).
-                            This option enables the resolution of IP
-                            addresses to domain names.
+                    o   Transfer Statistics Update Interval
+                        Specify the interval in seconds between updates
+                        in the transfer statistics window.
 
-                            Note:
-                            -----
-                            This option increases the load on the
-                            server, both in terms of CPU processing and
-                            network resources and should be used with
-                            caution especially on servers with a large
-                            number of transfers running at the same
-                            time.
+                    o   Resolve Hostnames In Transfer Window Hosts Tab
+                        Whether to resolve transfer peer hostnames to IP
+                        addresses in the Hosts tab of the transfer
+                        window - selecting Hostnames will add load to
+                        the server.
 
-                        o   Server Monitor Update Interval
-                            Specify the interval in seconds between
-                            updates in the Server Monitor window.
+                        By default, torrentflux-b4rt does not resolve IP
+                        addresses (ie 1.2.3.4) into fully qualified
+                        domain names (ie example.com).  This option
+                        enables the resolution of IP addresses to domain
+                        names.
 
-                            The server monitor displays statistics
-                            relating to the webserver running
-                            torrentflux-b4rt.  This option defines how
-                            often the server monitor window is updated.
+                        Note:
+                        -----
+                        This option increases the load on the server,
+                        both in terms of CPU processing and network
+                        resources and should be used with caution
+                        especially on servers with a large number of
+                        transfers running at the same time.
 
-                            For more information on the server monitor,
-                            see:
+                    o   Server Monitor Update Interval
+                        Specify the interval in seconds between updates
+                        in the Server Monitor window.
 
-                            TODO_LINK: user ops, Opening the server monitor
+                        The server monitor displays statistics relating
+                        to the webserver running torrentflux-b4rt.  This
+                        option defines how often the server monitor
+                        window is updated.
 
-                        o   Hide Referer When Following Links
-                            When enabled, referer information will not
-                            be forwarded to websites visited by clicking
-                            on links within torrentflux-b4rt.
+                        For more information on the server monitor, see:
 
-                            This option is enabled by default and stops
-                            the browser sending the URL of the page from
-                            which the user came from - the 'referer'
-                            URL.
+                        TODO_LINK: user ops, Opening the server monitor
 
-                        o   Default Theme
-                            Select the default theme.
+                    o   Hide Referer When Following Links
+                        When enabled, referer information will not be
+                        forwarded to websites visited by clicking on
+                        links within torrentflux-b4rt.
 
-                            Note: This theme will also be used for the login
-                            screen when a form based authentication method
-                            is used.
+                        This option is enabled by default and stops the
+                        browser sending the URL of the page from which
+                        the user came from - the 'referer' URL.
 
-                            Note:
-                            -----
-                            This option will set the default theme for
-                            all new users.  Current user's theme
-                            settings will not be modified.
+                    o   Default Theme
+                        Select the default theme.
 
-                        o   Default Language
-                            Select the default language.
+                        Note: This theme will also be used for the login
+                        screen when a form based authentication method
+                        is used.
 
-                            Note:
-                            -----
-                            This option will set the default language
-                            for all new users.  Current user's language
-                            settings will not be modified.
+                        Note:
+                        -----
+                        This option will set the default theme for all
+                        new users.  Current user's theme settings will
+                        not be modified.
 
-                        o   Days To Keep Logged Audit Actions
-                            Number of days that audit actions will be
-                            held in the database.
+                    o   Default Language
+                        Select the default language.
 
-                            By default, audit actions are stored in the
-                            database for 30 days.  After this time the
-                            entries are pruned from the database.
+                        Note:
+                        -----
+                        This option will set the default language for
+                        all new users.  Current user's language settings
+                        will not be modified.
 
-                            For more information on viewing Audit
-                            Actions, see:
+                    o   Days To Keep Logged Audit Actions
+                        Number of days that audit actions will be held
+                        in the database.
 
-                            TODO_LINK: 
-                            user ops, Viewing activity history
-                            admin ops, Activity / Audit / Event viewer
-                            (activity)
+                        By default, audit actions are stored in the
+                        database for 30 days.  After this time the
+                        entries are pruned from the database.
 
-                        o   Minutes To Keep User Online Status
-                            Number of minutes after ending a browser
-                            session that user status changes to offline.
+                        For more information on viewing Audit Actions,
+                        see:
 
-                            Torrentflux-b4rt displays a list of all
-                            users currently 'online' at any one time in
-                            the 'users' panel in the frontend.  This
-                            option sets how long in minutes after a user
-                            ends a browser session to mark the user as
-                            being 'offline'.
+                        TODO_LINK: user ops, Viewing activity history
+                        admin ops, Activity / Audit / Event viewer
+                        (activity)
 
-                            The default is 3 minutes.
+                    o   Minutes To Keep User Online Status
+                        Number of minutes after ending a browser session
+                        that user status changes to offline.
 
-                        o   Minutes To Cache RSS Feeds
-                            Number of minutes to cache RSS XML feeds on
-                            the server.
+                        Torrentflux-b4rt displays a list of all users
+                        currently 'online' at any one time in the
+                        'users' panel in the frontend.  This option sets
+                        how long in minutes after a user ends a browser
+                        session to mark the user as being 'offline'.
 
-                            Torrentflux-b4rt caches RSS feeds for users
-                            to browse via the 'RSS Torrents' link on the
-                            index page to save on network traffic and
-                            processing.
+                        The default is 3 minutes.
 
-                            This option allows you to configure how long
-                            to wait before requesting new copies of the
-                            RSS feeds to 'refresh' the cache.
+                    o   Minutes To Cache RSS Feeds
+                        Number of minutes to cache RSS XML feeds on the
+                        server.
 
-                            The default is to cache RSS feeds for 20
-                            minutes.
+                        Torrentflux-b4rt caches RSS feeds for users to
+                        browse via the 'RSS Torrents' link on the index
+                        page to save on network traffic and processing.
 
-                            Warning:
-                            --------
-                            Setting the cache to a very low value so the
-                            RSS feeds are refreshed more often can lead
-                            to a ban on your IP address if the server
-                            where the RSS feed is requested from sees
-                            you as 'hammering'.
+                        This option allows you to configure how long to
+                        wait before requesting new copies of the RSS
+                        feeds to 'refresh' the cache.
 
-                            You should consult the tracker website's
-                            rules before setting the cache timeout to a
-                            very low value.
+                        The default is to cache RSS feeds for 20
+                        minutes.
 
-                        o   Enable Template Cache
-                            Enable caching of HTML template files.
+                        Warning:
+                        --------
+                        Setting the cache to a very low value so the RSS
+                        feeds are refreshed more often can lead to a ban
+                        on your IP address if the server where the RSS
+                        feed is requested from sees you as 'hammering'.
 
-                            Torrentflux-b4rt can cache the HTML template
-                            files displayed for users by setting this
-                            option.  This can significantly improve the
-                            speed at which pages are displayed in the
-                            browser.
+                        You should consult the tracker website's rules
+                        before setting the cache timeout to a very low
+                        value.
 
-                            Template caching is disabled by default.
+                    o   Enable Template Cache
+                        Enable caching of HTML template files.
 
-                            Note:
-                            -----
-                            This option should be used with caution - if
-                            'stale' pages or other glitches are observed
-                            when using template caching, the cache can
-                            be flushed:
+                        Torrentflux-b4rt can cache the HTML template
+                        files displayed for users by setting this
+                        option.  This can significantly improve the
+                        speed at which pages are displayed in the
+                        browser.
 
-                            TODO_LINK:user ops, Flushing the template cache
+                        Template caching is disabled by default.
 
-                        o   Debug Level
-                            Set the debug level - higher values increase
-                            the debugging output in the logs.
+                        Note:
+                        -----
+                        This option should be used with caution - if
+                        'stale' pages or other glitches are observed
+                        when using template caching, the cache can be
+                        flushed:
 
-                            The verbosity of logging messages emitted
-                            by torrentflux-b4rt can be increased by
-                            setting this value higher - 0 is lowest, 2
-                            is highest.  This option is especially
-                            useful when troubleshooting the operation of
-                            torrentflux-b4rt and should be set to the
-                            highest value before requesting support.
+                        TODO_LINK:user ops, Flushing the template cache
 
-                            The default debugging level is '0'.
+                    o   Debug Level
+                        Set the debug level - higher values increase the
+                        debugging output in the logs.
 
-                        o   Show SQL Debug Statements
-                            SQL Errors will always be displayed but when
-                            this feature is enabled the SQL Statement
-                            that caused the error will be displayed as
-                            well.
+                        The verbosity of logging messages emitted by
+                        torrentflux-b4rt can be increased by setting
+                        this value higher - 0 is lowest, 2 is highest.
+                        This option is especially useful when
+                        troubleshooting the operation of
+                        torrentflux-b4rt and should be set to the
+                        highest value before requesting support.
 
-            Web application frontend display options (index)
-                Enabling default page refresh
-                Setting page refresh interval
-                Enabling AJAX by default
-                Enabling update of page title in AJAX mode
-                Enabling update of online users in AJAX mode
-                Enabling update of transfer list in AJAX mode
-                Enabling silent AJAX updates
-                Setting the AJAX update interval
-                Setting the default width of the index page
-                Enabling the display of a multi-upload page link
-                Setting the number of rows to use in the multi-upload page
-                Enabling torrent searches
-                Setting the default torrent search engine
-                Enabling the display of link list
-                Enabling the display of online users
-                Enabling the display of 'good looking' server statistics
-                Setting what to display in the 'good looking' server statistics
-                Enabling display of bandwidth bars
-                Setting the default style of the bandwidth bars
-                Setting the upload/download line speed for the bandwidth bars
-                Enabling 'big bold drivespace' warning
-                Allowing only admins to see other user's transfers
-                Enabling download of transfer files from the transfer list
-                Enabling display of seeding torrents
-                Enabling display of estimated time until sharekill ratio is met
-                Allowing users to sort the transfer list by column type
-                Setting the default sort order of the transfer list
-                Setting the default transfer list columns to display
-                Setting the default transfer window view
-                Enabling multi operations (start/stop/delete more than one transfer at a time)
-                Enabling bulk operations (start/stop/resume all transfers at the same time)
-                Enabling the display of server statistics on the index page
-                Enabling the display of total network connections on the index page
-                Enabling the display of server load on the index page
+                        The default debugging level is '0'.
+
+                    o   Show SQL Debug Statements
+                        SQL Errors will always be displayed but when
+                        this feature is enabled the SQL Statement that
+                        caused the error will be displayed as well.
+
+            Web application index page display options (index)
+
+                Overview
+
+                    The 'Index Settings' (index) tab on the admin
+                    pages allows you to configure settings related to
+                    the display of the torrentflux-b4rt index page in
+                    the frontend.
+
+                Configuration
+
+                    o   Page Refresh
+                        Enable/disable page updates using HTML meta
+                        refresh.
+
+                        The index page will be refreshed using an HTML
+                        meta refresh tag when this option is enabled.
+
+                        Tip:
+                        ----
+                        AJAX updates uses less bandwidth since only the
+                        relevant data in the stats page is transferred.
+
+                        Alternatively, the HTML Meta Refresh update
+                        method will transfer the complete stats webpage
+                        from the webserver using a little more bandwidth
+                        than AJAX.
+
+                    o   Page Refresh Interval
+                        Interval in seconds between page refreshes.
+
+                    o   AJAX Update
+                        Enable/disable page updates using AJAX.
+
+                    o   Page Title AJAX Update
+                        Enable/disable update of page titles using AJAX.
+
+                        Tip:
+                        ----
+                        This option is useful because torrentflux-b4rt
+                        displays various statistics in the page title,
+                        which in turn are displayed in the task bar on
+                        Windows.  This makes it easy to see at a glance
+                        how transfers and the server is performing.
+
+                    o   Users AJAX Update
+                        Enable/disable update of user list using AJAX.
+
+                        The user list displays which torrentflux-b4rt
+                        users are currently online.  This option updates
+                        the user list dynamically using AJAX.
+
+                    o   Transfer List AJAX Update
+                        Enable/disable update of transfer list using
+                        AJAX.
+
+                        The transfer list can be updated using AJAX
+                        with this option.
+
+                    o   Silent AJAX Update
+                        Do not display any processing request messages
+                        when AJAX updates are in progress. Countdown to
+                        update timer will also not be displayed.
+
+                        Usually torrentflux-b4rt will display a
+                        'Processing...' messages when an update is in
+                        effect to indicate to the user that they should
+                        not click on anything since the system is busy.
+                        This option will disable the processing
+                        messages.
+
+                    o   AJAX Update Interval
+                        Interval in seconds between AJAX updates.
+
+                    o   Width
+                        Width of the index page in pixels.
+
+                        Note:
+                        -----
+                        If a large number of transfer list columns are
+                        selected for display, the width of the transfer
+                        list may exceed the default page width selected
+                        here.  As a result, the index page width may be
+                        larger than the width selected here if you have
+                        a large number of transfer list columns on
+                        display.
+
+                    o   Multi Uploads
+                        Enable/disable display of links for uploading of
+                        multiple files at once.
+
+                        This option will display links underneath the
+                        transfer file upload form to allow users to
+                        upload multiple files at a time.
+
+                    o   Multi Upload Page Rows
+                        Number of rows of file upload fields to display
+                        on the multi uploads page.
+
+                    o   Torrent Search
+                        Enable/disable torrent searches from the home
+                        page via third party torrent sites.
+
+                    o   Default Torrent Search Engine
+                        Default search engine to use for torrent
+                        searches.
+
+                    o   Display Links List
+                        Enable/disable display of admin configured list
+                        of links on the index page.
+
+                        The link list is configured on the 'links' admin
+                        page - see here for more info:
+
+                        TODO_LINK:
+                        Admin ops, Website link list management (links)
+
+                    o   Display Users List
+                        Enable/disable display of torrentflux-b4rt users
+                        and their online status.
+
+                        When enabled, a list of all torrentflux-b4rt
+                        users is displayed showing their current online
+                        status.
+
+                        The period of time after which users are
+                        considered 'offline' is configured on the
+                        'webapp' admin page, see here for more info:
+
+                        TODO_LINK:
+                        admin ops, webapp section, Minutes To Keep User
+                        Online Status
+
+                    o   Good Looking Statistics
+                        Enable/disable display of good looking
+                        statistics - up/download speeds, connections,
+                        drivespace and server load statistics.
+
+                        This option enables the display of various
+                        statistics on the index page.
+
+                    o   Good Looking Statistics Display Settings
+                        Select the items to display in the "Good Looking
+                        Statistics" panel.
+
+                        *	Download Speed - total download speed being
+                            used by torrentflux-b4rt.
+
+                        *	Upload Speed - total upload speed being
+                            used by torrentflux-b4rt.
+
+                        *	Total Speed - total speed (up and down)
+                            being used by torrentflux-b4rt.
+
+                        *	Connections - total number of transfers
+                            running.
+
+                        *	Drive Space - total drive space remaining on
+                            the mount point where the transfers folder
+                            is located.
+
+                        *	Server Load - the load averages for the
+                            server.  Uses results from 'loadavg' on
+                            linux or 'uptime' on BSD.
+
+                    o   Bandwidth Bars
+                        Enable/disable display of current bandwidth
+                        usage bars.
+
+                        When enabled, bars will be displayed to indicate
+                        the current upload and download bandwidth being
+                        utilised.  The longer the bar, the more
+                        bandwidth in use.
+
+                    o   Bandwidth Bars Style
+                        Select the style of bandwidth bar to use.
+
+                        There are two bar styles to choose from - tf and
+                        xfer.  The tf style has a constant color,
+                        whereas the xfer style turns redder the higher
+                        the bandwidth utilization is.
+
+                    o   Upstream Bandwidth
+                        Maximum available upstream bandwidth in kilobits
+                        per second (kbit/s) through your ISP - 1 Megabit
+                        per second (1Mbit/s) is roughly equal to
+                        1000kbit/s.
+
+                        This figure is used to determine the percentage
+                        utilization of bandwidth in the bandwidth bars.
+                        You should enter the maximum available upstream
+                        bandwidth for the network connection of the
+                        server - usually this will be the max bandwidth
+                        you get from your ISP.
+
+                        Tip:
+                        ----
+                        A rough guide to bandwidth figures:
+
+                        1000 = roughly 1Mbit/s
+                        512 = 512kbit/s
+
+                    o   Downstream Bandwidth
+                        Maximum available downstream bandwidth in
+                        kilobits per second (kbit/s) through your ISP -
+                        1 Megabit per second (1Mbit/s) is roughly equal
+                        to 1000kbit/s.
+
+                        This figure is used to determine the percentage
+                        utilization of bandwidth in the bandwidth bars.
+                        You should enter the maximum available downstream
+                        bandwidth for the network connection of the
+                        server - usually this will be the max bandwidth
+                        you get from your ISP.
+
+                    o   Big Bold Drivespace Warning
+                        Enable/disable display of "Big Bold Drivespace"
+                        warning when disk space gets below 2% of total.
+
+                    o   Only Admin Can See Other User's Transfers
+                        Enable/disable visibility of other user's
+                        transfers in regular user's transfer lists -
+                        when enabled, only admins will be able to see
+                        other user's transfers in their transfer list.
+
+                    o   Transfer File Download
+                        Enable/disable links in the transfer list to
+                        allow users to download transfer files from the
+                        server.
+
+                        This option will add a link to the left of each
+                        transfer in the transfer list so that the
+                        transfer file (ie .torrent file) can be
+                        downloaded.  When the link is clicked, the
+                        transfer file will be sent to the user as an
+                        attachment - ie the browser will prompt the user
+                        to save the file locally (or open it in an
+                        associated application if MIME types are
+                        configured correctly).
+
+                    o   Display Seeding Torrents
+                        Enable/disable display of torrents in the
+                        seeding state - if enabled, when a torrent has
+                        finished leeching and moves on to seed, the
+                        torrent will be hidden from the transfer list.
+                        Hidden torrents can be viewed in the transfer
+                        list by clicking the 'Show Seeding Torrents'
+                        link under the transfer list.
+
+                    o   Display Estimated Time To Seed
+                        Enable/disable display of estimated time until a
+                        transfer is completed in the transfer list.
+
+                    o   Transfer List Can Be Sorted
+                        Enable/disable sorting of the transfer list -
+                        when enabled, users will be able to change the
+                        order in which the transfer list is displayed
+                        based on date added, file name, size, totals
+                        up/down, transfer status, etc.
+
+                        Tip:
+                        ----
+                        To change the sort order of the transfer list,
+                        click on the column headers at the top of the
+                        transfer list.  Each click on the column header
+                        will toggle sorting in ascending/descending
+                        order for that column type.
+
+                        For example, clicking on the 'Transfer File'
+                        column header will sort the transfer list by
+                        transfer file name alphabetically ascending
+                        (A-Z); clicking again on the 'Transfer File'
+                        column header will sort the transfer list by
+                        transfer file name alphabetically descending
+                        (Z-A).
+
+                    o   Default Sort Order
+                        Select the default property by which the items
+                        in the transfer list should be sorted by.
+
+                        This is the column by which all transfers in the
+                        transfer list will be sorted by - for example,
+                        to have the transfer list automatically sorted
+                        by transfer file name alphabetically, select
+                        'Name - Ascending'.
+
+                    o   Transfer List Display Settings
+                        Select the types of columns to display for each
+                        transfer in the transfer list.
+
+                        *	Owner
+                        *	Size
+                        *	Total Down
+                        *	Total Up
+                        *	Status
+                        *	Progress
+                        *	Down-Speed
+                        *	Up-Speed
+                        *	Seeds
+                        *	Peers
+                        *	Estimated Time
+                        *	Client
+
+                        This option allows you to see a whole host of
+                        information directly in the transfer list
+                        without having to click on a transfer to pop up
+                        the transfer window.
+
+                        Note:
+                        -----
+                        The more transfer columns you display in the
+                        transfer list, the wider the index page will
+                        grow.  Take this into account especially when
+                        using a screen with lower resolutions.
+
+                    o   Default Transfer Window
+                        Select the default page to display in the
+                        transfer window - the window which is displayed
+                        when a transfer in the transfer list is clicked
+                        on.
+
+                        This option allows you to choose which tab of
+                        the popup transfer window will be displayed
+                        when you click on a transfer in the transfer
+                        list.
+
+                    o   Multi Operations
+                        Enable/disable display of the dropdown list of
+                        operations to perform on multiple transfer list
+                        items - when enabled, a list of operations
+                        (start/stop/delete/wipe/reset) will be available
+                        in a drop down list for users to perform on more
+                        than one transfer at a time.
+
+                        This option allows you to specify whether you
+                        want users to be able to use the multi ops
+                        feature.  Multi ops allow users to select a
+                        number of transfers from the transfer list and
+                        then apply an action to all of those selected
+                        transfers only - start, stop, delete, etc.
+
+                    o   Bulk Operations
+                        Enable/disable display of bulk operation links -
+                        when enabled, links will be displayed on the
+                        index page to allow users to control
+                        (start/stop/resume) all transfer in the transfer
+                        list at once.
+
+                        This option allows you to specify whether the
+                        bulk ops links will be displayed on the index
+                        page.
+
+                        Bulk ops allow users to perform an action on
+                        every single transfer in the transfer list at
+                        once - for example to restart all torrents in
+                        one go.
+
+                    o   Display Server Statistics
+                        Enable/disable display of various server
+                        statistics (transfer/queue/server stats) at the
+                        bottom of the index page.
+
+                    o   Display Network Connections
+                        Enable/disable display of total network
+                        connections on the index page.
+
+                    o   Display Server Load
+                        Enable/disable display of 1/5/15 minute average
+                        server load on the index page.
+
 
             Directory / File Management options (dir)
                 Allowing users to browse all folders
