@@ -59,6 +59,11 @@ hr
 }
 
 /* TitleBar */
+.titleleft img,
+.titleright img
+{
+	vertical-align:bottom;
+}
 .titleleft
 {
 	font-weight: bold; 
@@ -94,6 +99,7 @@ a:hover.titlebarbutton
 	color:#FFFFFF;
 	font-weight:bold;
 	text-align:center;
+	font-size:80%;
 }
 .subtableheading td
 {
@@ -106,8 +112,15 @@ a:hover.titlebarbutton
 	width:100%;
 }
 
-.tableheading_alt,
-.subtableheading_alt
+.table thead td
+{
+	padding-left:2px;
+	padding-right:2px;
+	padding-bottom:2px;
+	padding-top:0px;
+}
+
+.tableheading_alt
 {
 	color:#FFFFFF;
 	font-weight:bold;

@@ -4,7 +4,7 @@
 		<td class="titleleft"><tmpl_var name="titleBar_title"></td>
 		<tmpl_if name="titleBar_showButtons">
 			<td class="titleright">
-				<a href="index.php?iid=index" class="titlebarbutton">Home</a>
+				<a href="index.php?iid=index" class="titlebarbutton">Transfer</a>
 				<a href="index.php?iid=dir" class="titlebarbutton">Directory</a>
 				<a href="index.php?iid=history" class="titlebarbutton">History</a>
 				<a href="index.php?iid=profile" class="titlebarbutton">Profile</a>
@@ -12,7 +12,7 @@
 				<tmpl_if name="isAdmin">
 					<a href="admin.php" class="titlebarbutton">Admin</a>
 				</tmpl_if>
-				<a href="index.php?iid=logout" class="titlebarbutton"><img src="themes/default/images/logout.gif" title="Logout" alt="Logout" /></a>
+				<a href="index.php?iid=logout" class="titlebarbutton"><img src="themes/<tmpl_var name="theme">/images/logout.gif" title="Logout" alt="Logout" /></a>
 			</td>
 		</tmpl_if>
 	</tr>
