@@ -204,23 +204,8 @@ Torrentflux-b4rt Reference Manual
                 Configuration
 
             Directory / File Management options (dir)
-                Allowing users to browse all folders
-                Allowing users to write to all folders
-                Allowing users to use the chmod functionality
-                Enabling 'long' style directory listings
-                Allowing users to use the make torrent functionality
-                Setting the default make torrent application
-                Allowing users to download directly from the directory browser
-                Setting the compression type to use when downloading complete directories
-                Allowing users to view .nfo file viewer functionality
-                Allowing users to use unrar to extract archives on the server
-                Allowing users to use the sfv checking functionality
-                Enabling VLC streaming functionality
-                Setting the default port for VLC streaming
-                Allowing users to rename files
-                Allowing users to move files out of the transfer folder
-                Setting a list of allowed folders to move transferred files into
-                Setting a list of restricted directories not to list in the directory listing
+                Overview
+                Configuration
 
             Statistics options (stats)
                 Allowing users to view superadmin level statistics
@@ -3960,6 +3945,9 @@ Introduction
 
                 Configuration
 
+                    The configuration options for the index tab are as
+                    follows:
+
                     o   Page Refresh
                         Enable/disable page updates using HTML meta
                         refresh.
@@ -4319,25 +4307,337 @@ Introduction
                         Enable/disable display of 1/5/15 minute average
                         server load on the index page.
 
-
             Directory / File Management options (dir)
-                Allowing users to browse all folders
-                Allowing users to write to all folders
-                Allowing users to use the chmod functionality
-                Enabling 'long' style directory listings
-                Allowing users to use the make torrent functionality
-                Setting the default make torrent application
-                Allowing users to download directly from the directory browser
-                Setting the compression type to use when downloading complete directories
-                Allowing users to view .nfo file viewer functionality
-                Allowing users to use unrar to extract archives on the server
-                Allowing users to use the sfv checking functionality
-                Enabling VLC streaming functionality
-                Setting the default port for VLC streaming
-                Allowing users to rename files
-                Allowing users to move files out of the transfer folder
-                Setting a list of allowed folders to move transferred files into
-                Setting a list of restricted directories not to list in the directory listing
+
+                Overview
+
+                    The 'Dir Settings' (dir) tab on the admin pages
+                    allows you to configure settings related to the
+                    torrentflux-b4rt file and directory manager -
+                    referred to as 'dir manager' from now on.
+
+                    See also:
+
+                    TODO_LINK: user ops, dir manager section
+
+                Configuration
+
+                    The configuration options for the dir tab are as
+                    follows:
+
+                    o   Public Read
+                        Enable/disable public read permission for all
+                        files/folders in torrentflux-b4rt - when
+                        enabled, all files and folders within
+                        torrentflux-b4rt will be readable by all
+                        torrentflux-b4rt users.
+
+                        This option makes all files transferred using
+                        torrentflux-b4rt visible to all torrentflux-b4rt
+                        users - admin and normal users alike.
+
+                        Note:
+                        -----
+                        This does *not* make the files automatically
+                        visible to all Unix users on the webserver where
+                        torrentflux-b4rt is installed.
+
+                        Tip:
+                        ----
+                        To make downloaded files accessible to Unix
+                        users other than the webserver user - for
+                        example so a 'regular' Unix user can download
+                        the transferred files via FTP:
+
+                        1.  When the transfer is complete, use the
+                            'chmod' torrentflux-b4rt functionality to
+                            change the mode of the transferred files to
+                            '777' - ie readable by everyone .
+
+                        2.  In the LINK_TODO:[admin.dir.move dir tab of
+                            the admin pages], add the target directory
+                            owned by the Unix user who will be
+                            downloading files via FTP as a valid move
+                            path.  This will allow files to be moved
+                            from torrentflux-b4rt into the target
+                            directory.
+
+                        3.  Move the files out of the torrentflux-b4rt
+                            transfer directory into the target directory
+                            owned by the Unix user who will be
+                            downloading the files via FTP.  Ensure the
+                            webserver user has permissions to write
+                            files to the target directory.
+
+                            The files should now be available for the
+                            Unix user to download via FTP.
+
+                            Note:
+                            -----
+                            Any problems encountered whilst using this
+                            method will almost always come down to Unix
+                            file permissions - make sure the webserver
+                            can write to the Unix user's target
+                            directory and in turn make sure the file
+                            permissions of the moved files are
+                            sufficient for the Unix user to access them
+                            once they're moved.
+
+                    o   Public Write
+                        Enable/disable public write permission for all
+                        files/folders in torrentflux-b4rt - when
+                        enabled, all files and folders within
+                        torrentflux-b4rt will be writable by all
+                        torrentflux-b4rt users.
+
+                        By default, files and folders in
+                        torrentflux-b4rt are only writable by the
+                        torrentflux-b4rt user that created them.  This
+                        option overrides this so that any
+                        torrentflux-b4rt user can write to any other
+                        torrentflux-b4rt user's files/folders.
+
+                        Note:
+                        -----
+                        This feature only applies to torrentflux-b4rt
+                        users - Unix users on the system will not be
+                        automatically given write permissions to
+                        torrentflux-b4rt files by enabling the 'Public
+                        Write' option in torrentflux-b4rt.
+
+                        Warning:
+                        --------
+                        Enabling the 'Public Write' option is a security
+                        risk to other torrentflux-b4rt users - only
+                        enable it on a server where all torrentflux-b4rt
+                        users are 'trusted'.  Of course the definition of
+                        'trusted' will vary from one system to another.
+
+                    o   Chmod
+                        Enable/disable the use of the chmod
+                        functionality for regular torrentflux-b4rt users
+                        - when enabled, users will be able to change the
+                        permissions on files and folders in
+                        torrentflux-b4rt to read/write/execute for
+                        everyone (777).
+
+                        This option will enable users to click a link in
+                        the dir manager to set the file permissions on
+                        the associated file to '777' -
+                        read/write/executable for *all Unix users*.
+
+                        Warning:
+                        --------
+                        Enabling the 'Chmod' option is a system wide
+                        security risk - any Unix user on the server
+                        hosting torrentflux-b4rt will have read, write
+                        and execute permissions on files and directories
+                        chmod'ed.  Sensitive files should not be
+                        chmod'ed 777 and if you do not trust your users
+                        to use the chmod functionality correctly you
+                        should not enable it.
+
+                    o   Full Directory Listings
+                        Enable/disable complete directory listings -
+                        when enabled, full directory listings will be
+                        used including size and last modified time
+                        similar to Unix 'ls -al' output.
+
+                    o   Make Torrent
+                        Enable/disable make torrent functionality for
+                        users - when enabled, users will be allowed to
+                        create torrent files from the contents in the
+                        directory manager.
+
+                        When enabled, an 'make torrent' icon will be
+                        available next to files in the dir manager so
+                        users will be able to create torrents from files
+                        and directories in the dir manager.
+
+                    o   Default Make Torrent Client
+                        Choose the default client to use to create
+                        torrent files with.
+
+                        The options available are: BitTornado (tornado)
+                        or BitTorrent Mainline (mainline).
+
+                    o   File Downloads
+                        Enable/disable file downloading from the
+                        directory manager - when enabled, users will be
+                        able to download files directly from the
+                        torrentflux-b4rt file manager.
+
+                        When enabled, a download icon will be displayed
+                        next to files and directories in the dir
+                        manager to allow users to download the files as
+                        a zip or tar archive - depending on the setting
+                        for 'Download Archive Type'.
+
+                    o   Download Archive Type
+                        Choose the type of archive to use when
+                        performing file downloads - files downloaded
+                        will be archived using this archive type prior
+                        to sending.
+
+                        The available archive types are: zip or tar
+
+                        Note:
+                        -----
+                        Ensure your operating system supports the
+                        archive type you select here.
+
+                        Compression is *not* used on downloaded archives.
+
+                    o   Text/NFO Viewer
+                        Enable/disable access to the built in NFO viewer
+                        - when enabled, users will be able to view
+                        nfo/txt/log file types directly within
+                        torrentflux-b4rt.
+
+                        When this option is enabled, files ending in
+                        .nfo, .txt or .log will have a 'View NFO' icon
+                        next to them in the dir manager to allow users
+                        to view the (presumably text) contents directly
+                        in torrentflux-b4rt.
+
+                    o   Unrar
+                        Enable/disable access to unrar functionality -
+                        when enabled, users will be able to use unrar to
+                        unpack rar archives directly within
+                        torrentflux-b4rt.
+
+                        When enabled, an 'unrar' icon will be displayed
+                        next to rar archives in the dir manager to allow
+                        users to decompress the archives directly from
+                        torrentflux-b4rt.
+
+                        Warning:
+                        --------
+                        Using the unrar functionality can add excessive
+                        load on the server hosting torrentflux-b4rt.
+                        The feature should *not* be enabled on servers
+                        where resource usage is a problem or can become
+                        a problem quickly.
+
+                    o   SFV File Checking
+                        Enable/disable access to sfv file checking
+                        functionality - when enabled, if an sfv file is
+                        present users will be able to verify the
+                        integrity of the files covered by the sfv file
+                        directly within torrentflux-b4rt.
+
+                        When enabled, a 'Check SFV' icon will be
+                        displayed next to any SFV files in the dir
+                        manager.  Users will be able to click the link
+                        to verify the integrity of the files to which
+                        the sfv file is associated with.
+
+                        Info:
+                        -----
+                        Simple File Verification (sfv) is a system
+                        whereby a cyclic redundancy check is performed
+                        on each file within a set of files and/or
+                        directories.  The checksum for each file/dir is
+                        then added to the 'sfv' file.
+
+                        The sfv file is then transferred along with the
+                        files it is associated with so that when
+                        transfer is complete, the integrity of the files
+                        can be verified by running an sfv checker
+                        against them.  In this way any corruption to
+                        the files that have occurred during transfer can
+                        be detected and any bad files retransmitted.
+
+                    o   VLC Streaming
+                        Enable/disable access to VLC file streaming
+                        functionality - when enabled, users will be able
+                        to stream media directly from the webserver
+                        using VLC.
+
+                    o   VLC Port
+                        Specify the port to use for VLC streaming.
+
+                    o   File And Folder Renaming
+                        Enable/disable access for users to rename files
+                        and folders.
+
+                        When enabled, an 'Rename' icon is displayed next
+                        to all files and directories in the dir manager
+                        to allow users to rename files.
+
+                        Note:
+                        -----
+                        This option allows users to rename files *only
+                        within the torrentflux-b4rt dir manager*.  To
+                        move files away from the torrentflux-b4rt dir
+                        manager directory structure, enable the 'File And
+                        Folder Moving' option below.
+
+                    o   File And Folder Moving
+                        Enable/disable access for users to move files
+                        and folders out of the torrentflux-b4rt
+                        directory hierarchy - when enabled, users will
+                        be allowed to move files and folders out of the
+                        torrentflux-b4rt directory hierarchy into a
+                        choice of folders elsewhere on the server.
+
+                        When enabled, an 'Move' icon is displayed next
+                        to all files and directories in the dir manager
+                        to allow users to move files out of the
+                        torrentflux-b4rt directory hierarchy elsewhere
+                        on the host server.
+
+                        This option is ideal for allowing access to
+                        files and folders for normal Unix users on the
+                        server hosting torrentflux-b4rt who don't have
+                        permission to access the torrentflux-b4rt
+                        directory hierarchy.
+
+                        Once transfers are complete, files can be moved
+                        away from the torrentflux-b4rt directory where
+                        they can then be accessed via FTP, Samba or any
+                        other suitable remote access protocol.
+
+                    o   Valid File And Folder Moving Paths
+                        Specify the paths to which users are allowed to
+                        move files and folders outside of the
+                        torrentflux-b4rt directory hierarchy.
+
+                        List all of the folders *outside of the
+                        torrentflux-b4rt directory structure* that you
+                        want torrentflux-b4rt users to be allowed to
+                        move files and folders to.
+
+                        This option is redundant without enabling the
+                        'File And Folder Moving' functionality above.
+
+                        Note:
+                        -----
+                        Paths must be absolute - ie
+                        '/path/to/somefolder' instead of just
+                        'somefolder'.
+
+                        Any newly created directories will not be
+                        deleted after removing a transfer from the
+                        transfer list.
+
+                        Ensure that the target directories have
+                        sufficient permissions for the webserver user to
+                        create files there.
+
+                    o   Restricted Files And Folders
+                        Specify a list of patterns which, when found in
+                        a file or folder name, will not be allowed
+                        access to by users.
+
+                        This option is useful if you have any files that
+                        you don't want users to be able to see within
+                        the dir manager.
+
+                        Note:
+                        -----
+                        Access to dot files/folders - files/folders
+                        starting with a dot - are always restricted.
 
             Statistics options (stats)
                 Allowing users to view superadmin level statistics
