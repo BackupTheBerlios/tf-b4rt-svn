@@ -208,15 +208,8 @@ Torrentflux-b4rt Reference Manual
                 Configuration
 
             Statistics options (stats)
-                Allowing users to view superadmin level statistics
-                Display usage when stats.php is called without arguments
-                Setting the default deflate level for stats transfers
-                Setting the default delimiter character
-                Enabling the display of headings in the stats listings
-                Setting the default type of statistics to display
-                Setting the default file format of statistics
-                Enabling compression when sending statistics
-                Sending statistics as an attachment
+                Overview
+                Configuration
 
             Fluxd control and configuration (fluxd)
                 Controlling fluxd (start/stop/restart)
@@ -245,7 +238,7 @@ Torrentflux-b4rt Reference Manual
                 Filtering items listed in the activity panel
 
 
-        Advanced operations
+        Appendices
 
             Guide to Fluxd Modules and Configuration
                 Qmgr - transfer queue management
@@ -258,6 +251,11 @@ Torrentflux-b4rt Reference Manual
             Using fluxcli.php on the command-line
                 Running fluxcli.php from a cron job to auto fetch RSS feed items
 
+            Obtaining statistics using stats.php
+                Overview
+                Specifying the type of output to display
+                Specifying the format of the stats.php output
+                Configuring stats.php
 
 
 
@@ -4640,15 +4638,8 @@ Introduction
                         starting with a dot - are always restricted.
 
             Statistics options (stats)
-                Allowing users to view superadmin level statistics
-                Display usage when stats.php is called without arguments
-                Setting the default deflate level for stats transfers
-                Setting the default delimiter character
-                Enabling the display of headings in the stats listings
-                Setting the default type of statistics to display
-                Setting the default file format of statistics
-                Enabling compression when sending statistics
-                Sending statistics as an attachment
+                Overview
+                Configuration
 
             Fluxd control and configuration (fluxd)
                 Controlling fluxd (start/stop/restart)
@@ -4676,8 +4667,7 @@ Introduction
             Activity / Audit / Event viewer (activity)
                 Filtering items listed in the activity panel
 
-
-        Advanced operations
+        Appendices
 
             Guide to Fluxd Modules and Configuration
                 Qmgr - transfer queue management
@@ -4691,3 +4681,228 @@ Introduction
                 Running fluxcli.php from a cron job to auto fetch RSS feed items
 
             Obtaining statistics using stats.php
+
+                Overview
+
+                    Torrentflux-b4rt can output a variety of detailed
+                    statistical information using TODO_LINK:[ link to
+                    stats.php script, but only for the distribution html
+                    manual NOT for the tfb main website version of
+                    manual - is this possible with quickbook? 'the
+                    stats.php script'].
+
+                    The stats can be displayed in various formats
+                    suitable for different usage purposes - plain text
+                    for viewing/usage on the commandline or in a web
+                    browser, RSS for reading in an RSS feed reader for
+                    regular updates on the torrentflux-b4rt installation
+                    or even customized XML formats for
+                    specialised/custom use.
+
+                    To view detailed usage instructions, call the
+                    stats.php script with the single argument 'usage':
+
+                    http://example.com/stats.php?usage
+
+                Specifying the type of output to display
+
+                    The type of output displayed by the stats.php script
+                    is determined by the 't' argument used in the query
+                    string of the request URL.
+
+                    For example, to display statistics relating to the
+                    server you would browse to the following page:
+
+                    http://example.com/torrentflux-b4rt/stats.php?t=server
+
+                    The valid options for the 't' argument are:
+
+                    o   all
+                        Displays all types of statistics listed below -
+                        server, xfer, users, transfers.
+
+                        http://example.com/stats.php?t=all
+
+                    o   server
+                        Displays current statistics about the
+                        torrentflux-b4rt server, including:
+
+                        *   speedDown
+                            The total download bandwidth being utilised.
+
+                        *   speedUp
+                            The total upload bandwidth being utilised.
+
+                        *   speedTotal
+                            The total bandwidth being utilised
+                            (upload and download combined).
+
+                        *   cons
+                            The total number of network connections.
+
+                        *   freeSpace
+                            The available disk space left in MB/Gb.
+
+                        *   loadavg
+                            The server load average.
+
+                        *   running
+                            The number of transfers current in the
+                            'running' state.
+
+                        *   queued
+                            The number of transfers current in the
+                            'queued' state.
+
+                        *   speedDownPercent
+                            Download speed as a percentage of maximum
+                            available download bandwidth.
+
+                        *   speedUpPercent
+                            Upload speed as a percentage of maximum
+                            available upload bandwidth.
+
+                        *   driveSpacePercent
+                            Available drive space remaining as a
+                            percentage of total drive space.
+
+                        http://example.com/stats.php?t=server
+
+                    o   xfer
+                        Displays data transfer statistics, including:
+
+                        *   xferGlobalTotal
+                            The global transfer total (all users).
+
+                        *   xferGlobalMonth
+                            The current month's global transfer total.
+
+                        *   xferGlobalWeek
+                            The current week's global transfer total.
+
+                        *   xferGlobalDay
+                            The current day's global transfer total.
+
+                        *   xferUserTotal
+                            The current user's transfer total.
+
+                        *   xferUserMonth
+                            The current user's transfer total for the
+                            current month.
+
+                        *   xferUserWeek
+                            The current user's transfer total for the
+                            current week.
+
+                        *   xferUserDay
+                            The current user's transfer total for the
+                            current day.
+
+                        http://example.com/stats.php?t=xfer
+
+                    o   users
+                        Displays the current online status for each
+                        torrentflux-b4rt user.
+
+                        http://example.com/stats.php?t=users
+
+                    o   transfers
+                        Displays statistics for all transfers currently
+                        being handled by torrentflux-b4rt.
+
+                        The statistics displayed for each transfer include:
+
+                        *   running
+                            Whether the transfer is running or not.
+
+                        *   speedDown
+                            The current download speed of the transfer.
+
+                        *   speedUp
+                            The current upload speed of the transfer.
+
+                        *   percentDone
+                            The percentage of the transfer currently
+                            completed.
+
+                        *   sharing
+                            The share ratio for the current transfer as
+                            a percentage.
+
+                        *   eta
+                            The estimated time until the transfer is
+                            complete.
+
+                        *   seeds
+                            The number of seeds currently connected.
+
+                        *   peers
+                            The number of peers currently connected.
+
+                        *   downCurrent
+                            The current download bandwidth being
+                            utilised for the transfer.
+
+                        *   upCurrent
+                            The current upload bandwidth being utilised
+                            for the transfer.
+
+                        The following statistics are also displayed for
+                        the 'transfers' argument:
+
+                        *   downTotal
+                            The current total download bandwidth being
+                            utilised.
+
+                        *   upTotal
+                            The current total upload bandwidth being
+                            utilised.
+
+                        *   cons
+                            The current total number of network
+                            connections.
+
+                        http://example.com/stats.php?t=transfers
+
+                    o   transfer
+                        Displays statistics for a single transfer
+                        specified using the 'i' argument.
+
+                        http://example.com/stats.php?t=transfer&i=foobar.torrent
+
+                Specifying the format of the stats.php output
+
+                    The type of format to use when displaying output
+                    from the stats.php script is determined by the 'f'
+                    argument used in the query string of the request
+                    URL.
+
+                    For example, to display statistics relating to the
+                    server in RSS format, you would browse to the
+                    following page:
+
+                    http://example.com/torrentflux-b4rt/stats.php?t=server&f=rss
+
+                    The valid options for the 'f' argument are:
+
+                    o   xml
+                        Displays output in XML format.
+
+                    o   rss
+                        Displays output in RSS 0.91 format.
+
+                        Suitable for receiving regular updates in an RSS
+                        feed reader.
+
+                    o   txt
+                        Displays output in plain text format.
+                        
+                        Suitable for parsing with custom command line
+                        scripts.
+
+                Configuring stats.php
+
+                    A number of options can be configured to control the
+                    way the stats.php script operates.  Refer to the
+                    [TODO_LINK:admin.stats 'Admin Ops, configuring
+                    stats.php section of the manual.]
