@@ -166,7 +166,7 @@ class Stats
 		if (isset($params["usage"])) {
 			$this->_type = "usage";
 		} else {
-			if (($cfg['stats_show_usage'] == 1) && (count($params) == 0))
+			if (($cfg['stats_show_usage'] == 1) && (count($_GET) == 0))
 				$this->_type = "usage";
 		}
 
