@@ -24,8 +24,8 @@ Torrentflux-b4rt Reference Manual
             Downloading metadata files
 
             Searching for torrent files
-                Working in the search results page
                 Performing a search
+                Working in the search results page
 
             RSS feed torrents
 
@@ -121,7 +121,7 @@ Torrentflux-b4rt Reference Manual
             Moving files and directories out of the transfer directory
             Making torrents
             Downloading files and directories
-            Streaming movie files using VLC
+            Streaming media files using VLC
             Viewing NFO files
             Extracting archive files (zip/rar files)
             Checking the integrity of files using .sfv files
@@ -159,6 +159,7 @@ Torrentflux-b4rt Reference Manual
 
             Miscellaneous actions
                 Viewing a list of installed files and their checksums
+                Listing and verifying checksums of installed files
                 Checking software requirements
 
             Checking for updates, news and version info for your
@@ -166,7 +167,6 @@ Torrentflux-b4rt Reference Manual
                 Checking your version against the latest version available
                 Viewing news about releases
                 Viewing the changelog for your release
-                Listing and verifying checksums of installed files
 
         Configuration
             General statistics and information listed on the admin page
@@ -2453,7 +2453,7 @@ Introduction
                         torrentflux-b4rt installation
 
                     The following superadmin pages can also be opened from
-                    the tf-b4rt stats column if logged in as a
+                    the torrentflux-b4rt stats column if logged in as a
                     superadmin:
 
                     *   Transfer Bulk Ops
