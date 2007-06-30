@@ -24,8 +24,8 @@ Torrentflux-b4rt Reference Manual
             Downloading metadata files
 
             Searching for torrent files
-                Performing a search
                 Working in the search results page
+                Performing a search
 
             RSS feed torrents
 
@@ -121,7 +121,7 @@ Torrentflux-b4rt Reference Manual
             Moving files and directories out of the transfer directory
             Making torrents
             Downloading files and directories
-            Streaming media files using VLC
+            Streaming movie files using VLC
             Viewing NFO files
             Extracting archive files (zip/rar files)
             Checking the integrity of files using .sfv files
@@ -159,7 +159,6 @@ Torrentflux-b4rt Reference Manual
 
             Miscellaneous actions
                 Viewing a list of installed files and their checksums
-                Listing and verifying checksums of installed files
                 Checking software requirements
 
             Checking for updates, news and version info for your
@@ -167,6 +166,7 @@ Torrentflux-b4rt Reference Manual
                 Checking your version against the latest version available
                 Viewing news about releases
                 Viewing the changelog for your release
+                Listing and verifying checksums of installed files
 
         Configuration
             General statistics and information listed on the admin page
@@ -2453,7 +2453,7 @@ Introduction
                         torrentflux-b4rt installation
 
                     The following superadmin pages can also be opened from
-                    the torrentflux-b4rt stats column if logged in as a
+                    the tf-b4rt stats column if logged in as a
                     superadmin:
 
                     *   Transfer Bulk Ops
@@ -4896,9 +4896,100 @@ Introduction
 
                     o   txt
                         Displays output in plain text format.
-                        
+
                         Suitable for parsing with custom command line
                         scripts.
+
+				Sending column headers in text mode stats.php output
+
+					The 'h' argument to the stats.php specifies that
+					header columns should be sent out with the output
+					from the stats.php script (only in text format).
+
+					For example, the plain text output generated with
+					the request URL:
+
+                    http://example.com/torrentflux-b4rt/stats.php?t=server&f=txt
+
+					might look like this:
+
+					0.00;0.00;0.00;1;12.37 GB; 1.25, 1.03, 0.56;1;0;0;0;87
+
+					which is just the raw server statistics.
+
+					Instead if we add on the argument 'h=1' to indicate
+					we want column headers displayed as well - so the
+					request URL looks like this:
+
+                    http://example.com/torrentflux-b4rt/stats.php?t=server&f=txt&h=1
+
+					then the output displayed will look like this:
+
+					Speed Down;Speed Up;Speed Total;Connections;Free Space;Load;Running;Queued;Speed Down (Percent);Speed Up (Percent);Drive Space (Percent)
+					0.00;0.00;0.00;1;12.37 GB; 1.25, 1.03, 0.56;1;0;0;0;87
+
+					This makes it easier to tell what each field/value
+					of the output represents.
+
+					Tip:
+					----
+
+					The field separator - ';' in the example above - can
+					be changed on [TODO_LINK:admin.stats 'the Admin Ops,
+					Configuring stats.php page'].
+
+					The stats.php script can also be configured to send
+					out header columns by default - again on
+					[TODO_LINK:admin.stats 'the Admin Ops, Configuring
+					stats.php page'].
+
+				Sending stats.php output as HTTP file attachments
+
+					The 'a' argument to the stats.php request URL allows
+					you to specify that you want the output to be sent
+					as an HTTP attachment.  This has the effect in most
+					web browsers of prompting the user for a location to
+					download the file to or open the file up in an
+					associated application if MIME types are configured
+					correctly.
+
+					To have output sent as an attachment, use 'a=1' as
+					an argument to the stats.php request URL - for
+					example:
+
+                    http://example.com/torrentflux-b4rt/stats.php?t=server&a=1
+
+					This request URL would send out the server
+					statistics as an HTTP attachment, prompting the user
+					to save the file to disk or open it in an external
+					application.
+
+				Sending compressed stats.php output
+
+					The 'c' argument to the stats.php request URL allows
+					you to specify that the output from stats.php should
+					be compressed when sending.  Most modern web
+					browsers automatically 'deflate' the compressed
+					content on receipt so it's human readable.
+
+					Compression saves bandwidth at the cost of adding
+					some small additional CPU resource cost on the
+					server.
+
+					To have output compressed when sending, use 'c=1' as
+					an argument to the stats.php request URL - for
+					example:
+
+                    http://example.com/torrentflux-b4rt/stats.php?t=server&c=1
+
+					This request URL would compress the server
+					statistics output before sending it out.
+
+					Tip:
+					----
+					The level of compression to use can be configured on
+					the [TODO_LINK:admin.stats 'the Admin Ops,
+					Configuring stats.php page'].
 
                 Configuring stats.php
 
