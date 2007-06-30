@@ -80,7 +80,7 @@ def defaultConfig():
 
 	# modules
 	configParser.add_section('modules')
-	configParser.set('modules', 'Modules', 'Dummy, Maintenance, Rssad')
+	configParser.set('modules', 'Modules', 'Dummy, Maintenance, Rssad, Watch')
 
 	# Dummy
 	configParser.add_section('Dummy')
@@ -103,6 +103,14 @@ def defaultConfig():
 	configParser.set('Rssad', 'class', 'Rssad')
 	configParser.set('Rssad', 'interval', 'DB:fluxd_Rssad_interval')
 	configParser.set('Rssad', 'jobs', 'DB:fluxd_Rssad_jobs')
+
+	# Watch
+	configParser.add_section('Watch')
+	configParser.set('Watch', 'enabled', 'True')
+	configParser.set('Watch', 'module', 'fluxd.modules.Modules.Watch')
+	configParser.set('Watch', 'class', 'Watch')
+	configParser.set('Watch', 'interval', 'DB:fluxd_Watch_interval')
+	configParser.set('Watch', 'jobs', 'DB:fluxd_Watch_jobs')
 
 	# return
 	return configParser
