@@ -1,0 +1,78 @@
+[/
+################################################################################
+# $Id$
+# $Date$
+# $Revision$
+################################################################################
+#                                                                              #
+# LICENSE                                                                      #
+#                                                                              #
+# This program is free software; you can redistribute it and/or                #
+# modify it under the terms of the GNU General Public License (GPL)            #
+# as published by the Free Software Foundation; either version 2               #
+# of the License, or (at your option) any later version.                       #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                 #
+# GNU General Public License for more details.                                 #
+#                                                                              #
+# To read the license please visit http://www.gnu.org/copyleft/gpl.html        #
+#                                                                              #
+#                                                                              #
+################################################################################
+# Torrentflux-b4rt doc.
+################################################################################
+]
+
+
+[section:troubleshooting Troubleshooting]
+
+[section:flush Flushing the template cache]
+
+Occasionally problems may occur with the templating
+system which make pages display incorrectly.  A first
+attempt at fixing this kind of problem is to flush the
+template cache.
+
+If you are unable to click on the icon, try browsing to
+the following URL:
+
+http://example.com/superadmin.php?m=35
+
+replacing 'example.com' with the URL of your
+__proj__ installation.
+
+Alternatively delete the files direct which are located
+inside your main-path-directory:
+
+/path/to/maindir/.templateCache
+
+[endsect]
+
+[section:maintenance Running a maintenance operation]
+
+Occasionally problems occur whereby the integrity of the
+files that are used to keep track of transfers can
+become corrupted.  This problem can lead to a situation
+where __proj__ reports that a transfer is
+running when it isn't - or similar problems to this.
+
+A first attempt at solving this kind of problem is to
+perform a maintenance run from the front end which will
+check the status of the transfer's control files and fix
+any problems if possible.
+
+To make a maintenance run, click on the /Maintenance/
+icon located at the bottom of the transfer list near to
+the bulk operations links.  The icon is a red and white
+life ring symbol.
+
+For more thorough maintenance tasks see the section on
+superadmin maintenance tasks
+
+TODO_LINK: Performing maintenance tasks
+
+[endsect]
+
+[endsect]

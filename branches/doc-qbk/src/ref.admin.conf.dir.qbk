@@ -1,0 +1,365 @@
+[/
+################################################################################
+# $Id$
+# $Date$
+# $Revision$
+################################################################################
+#                                                                              #
+# LICENSE                                                                      #
+#                                                                              #
+# This program is free software; you can redistribute it and/or                #
+# modify it under the terms of the GNU General Public License (GPL)            #
+# as published by the Free Software Foundation; either version 2               #
+# of the License, or (at your option) any later version.                       #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                 #
+# GNU General Public License for more details.                                 #
+#                                                                              #
+# To read the license please visit http://www.gnu.org/copyleft/gpl.html        #
+#                                                                              #
+#                                                                              #
+################################################################################
+# Torrentflux-b4rt doc.
+################################################################################
+]
+
+
+[section:dir Directory / File Management options (dir)]
+
+[section:overview Overview]
+
+The 'Dir Settings' (dir) tab on the admin pages
+allows you to configure settings related to the
+__proj__ file and directory manager -
+referred to as 'dir manager' from now on.
+
+See also:
+
+TODO_LINK: user ops, dir manager section
+
+[endsect]
+
+[section:conf Configuration]
+
+The configuration options for the dir tab are as
+follows:
+
+* Public Read
+  Enable/disable public read permission for all
+  files/folders in __proj__ - when
+  enabled, all files and folders within
+  __proj__ will be readable by all
+  __proj__ users.
+
+  This option makes all files transferred using
+  __proj__ visible to all __proj__
+  users - admin and normal users alike.
+
+  Note:
+  -----
+  This does *not* make the files automatically
+  visible to all Unix users on the webserver where
+  __proj__ is installed.
+
+  Tip:
+  ----
+  To make downloaded files accessible to Unix
+  users other than the webserver user - for
+  example so a 'regular' Unix user can download
+  the transferred files via FTP:
+
+  # When the transfer is complete, use the
+    'chmod' __proj__ functionality to
+    change the mode of the transferred files to
+    '777' - ie readable by everyone .
+
+  # In the LINK_TODO:[admin.dir.move dir tab of
+    the admin pages], add the target directory
+    owned by the Unix user who will be
+    downloading files via FTP as a valid move
+    path.  This will allow files to be moved
+    from __proj__ into the target
+    directory.
+
+  # Move the files out of the __proj__
+    transfer directory into the target directory
+    owned by the Unix user who will be
+    downloading the files via FTP.  Ensure the
+    webserver user has permissions to write
+    files to the target directory.
+
+    The files should now be available for the
+    Unix user to download via FTP.
+
+    Note:
+    -----
+    Any problems encountered whilst using this
+    method will almost always come down to Unix
+    file permissions - make sure the webserver
+    can write to the Unix user's target
+    directory and in turn make sure the file
+    permissions of the moved files are
+    sufficient for the Unix user to access them
+    once they're moved.
+
+* Public Write
+  Enable/disable public write permission for all
+  files/folders in __proj__ - when
+  enabled, all files and folders within
+  __proj__ will be writable by all
+  __proj__ users.
+
+  By default, files and folders in
+  __proj__ are only writable by the
+  __proj__ user that created them.  This
+  option overrides this so that any
+  __proj__ user can write to any other
+  __proj__ user's files/folders.
+
+  Note:
+  -----
+  This feature only applies to __proj__
+  users - Unix users on the system will not be
+  automatically given write permissions to
+  __proj__ files by enabling the 'Public
+  Write' option in __proj__.
+
+  Warning:
+  --------
+  Enabling the 'Public Write' option is a security
+  risk to other __proj__ users - only
+  enable it on a server where all __proj__
+  users are 'trusted'.  Of course the definition of
+  'trusted' will vary from one system to another.
+
+* Chmod
+  Enable/disable the use of the chmod
+  functionality for regular __proj__ users
+  * when enabled, users will be able to change the
+  permissions on files and folders in
+  __proj__ to read/write/execute for
+  everyone (777).
+
+  This option will enable users to click a link in
+  the dir manager to set the file permissions on
+  the associated file to '777' -
+  read/write/executable for *all Unix users*.
+
+  Warning:
+  --------
+  Enabling the 'Chmod' option is a system wide
+  security risk - any Unix user on the server
+  hosting __proj__ will have read, write
+  and execute permissions on files and directories
+  chmod'ed.  Sensitive files should not be
+  chmod'ed 777 and if you do not trust your users
+  to use the chmod functionality correctly you
+  should not enable it.
+
+* Full Directory Listings
+  Enable/disable complete directory listings -
+  when enabled, full directory listings will be
+  used including size and last modified time
+  similar to Unix 'ls -al' output.
+
+* Make Torrent
+  Enable/disable make torrent functionality for
+  users - when enabled, users will be allowed to
+  create torrent files from the contents in the
+  directory manager.
+
+  When enabled, an 'make torrent' icon will be
+  available next to files in the dir manager so
+  users will be able to create torrents from files
+  and directories in the dir manager.
+
+* Default Make Torrent Client
+  Choose the default client to use to create
+  torrent files with.
+
+  The options available are: BitTornado (tornado)
+  or BitTorrent Mainline (mainline).
+
+* File Downloads
+  Enable/disable file downloading from the
+  directory manager - when enabled, users will be
+  able to download files directly from the
+  __proj__ file manager.
+
+  When enabled, a download icon will be displayed
+  next to files and directories in the dir
+  manager to allow users to download the files as
+  a zip or tar archive - depending on the setting
+  for 'Download Archive Type'.
+
+* Download Archive Type
+  Choose the type of archive to use when
+  performing file downloads - files downloaded
+  will be archived using this archive type prior
+  to sending.
+
+  The available archive types are: zip or tar
+
+  Note:
+  -----
+  Ensure your operating system supports the
+  archive type you select here.
+
+  Compression is *not* used on downloaded archives.
+
+* Text/NFO Viewer
+  Enable/disable access to the built in NFO viewer
+  * when enabled, users will be able to view
+  nfo/txt/log file types directly within
+  __proj__.
+
+  When this option is enabled, files ending in
+  .nfo, .txt or .log will have a 'View NFO' icon
+  next to them in the dir manager to allow users
+  to view the (presumably text) contents directly
+  in __proj__.
+
+* Unrar
+  Enable/disable access to unrar functionality -
+  when enabled, users will be able to use unrar to
+  unpack rar archives directly within
+  __proj__.
+
+  When enabled, an 'unrar' icon will be displayed
+  next to rar archives in the dir manager to allow
+  users to decompress the archives directly from
+  __proj__.
+
+  Warning:
+  --------
+  Using the unrar functionality can add excessive
+  load on the server hosting __proj__.
+  The feature should *not* be enabled on servers
+  where resource usage is a problem or can become
+  a problem quickly.
+
+* SFV File Checking
+  Enable/disable access to sfv file checking
+  functionality - when enabled, if an sfv file is
+  present users will be able to verify the
+  integrity of the files covered by the sfv file
+  directly within __proj__.
+
+  When enabled, a 'Check SFV' icon will be
+  displayed next to any SFV files in the dir
+  manager.  Users will be able to click the link
+  to verify the integrity of the files to which
+  the sfv file is associated with.
+
+  Info:
+  -----
+  Simple File Verification (sfv) is a system
+  whereby a cyclic redundancy check is performed
+  on each file within a set of files and/or
+  directories.  The checksum for each file/dir is
+  then added to the 'sfv' file.
+
+  The sfv file is then transferred along with the
+  files it is associated with so that when
+  transfer is complete, the integrity of the files
+  can be verified by running an sfv checker
+  against them.  In this way any corruption to
+  the files that have occurred during transfer can
+  be detected and any bad files retransmitted.
+
+* VLC Streaming
+  Enable/disable access to VLC file streaming
+  functionality - when enabled, users will be able
+  to stream media directly from the webserver
+  using VLC.
+
+* VLC Port
+  Specify the port to use for VLC streaming.
+
+* File And Folder Renaming
+  Enable/disable access for users to rename files
+  and folders.
+
+  When enabled, an 'Rename' icon is displayed next
+  to all files and directories in the dir manager
+  to allow users to rename files.
+
+  Note:
+  -----
+  This option allows users to rename files *only
+  within the __proj__ dir manager*.  To
+  move files away from the __proj__ dir
+  manager directory structure, enable the 'File And
+  Folder Moving' option below.
+
+* File And Folder Moving
+  Enable/disable access for users to move files
+  and folders out of the __proj__
+  directory hierarchy - when enabled, users will
+  be allowed to move files and folders out of the
+  __proj__ directory hierarchy into a
+  choice of folders elsewhere on the server.
+
+  When enabled, an 'Move' icon is displayed next
+  to all files and directories in the dir manager
+  to allow users to move files out of the
+  __proj__ directory hierarchy elsewhere
+  on the host server.
+
+  This option is ideal for allowing access to
+  files and folders for normal Unix users on the
+  server hosting __proj__ who don't have
+  permission to access the __proj__
+  directory hierarchy.
+
+  Once transfers are complete, files can be moved
+  away from the __proj__ directory where
+  they can then be accessed via FTP, Samba or any
+  other suitable remote access protocol.
+
+* Valid File And Folder Moving Paths
+  Specify the paths to which users are allowed to
+  move files and folders outside of the
+  __proj__ directory hierarchy.
+
+  List all of the folders *outside of the
+  __proj__ directory structure* that you
+  want __proj__ users to be allowed to
+  move files and folders to.
+
+  This option is redundant without enabling the
+  'File And Folder Moving' functionality above.
+
+  Note:
+  -----
+  Paths must be absolute - ie
+  '/path/to/somefolder' instead of just
+  'somefolder'.
+
+  Any newly created directories will not be
+  deleted after removing a transfer from the
+  transfer list.
+
+  Ensure that the target directories have
+  sufficient permissions for the webserver user to
+  create files there.
+
+* Restricted Files And Folders
+  Specify a list of patterns which, when found in
+  a file or folder name, will not be allowed
+  access to by users.
+
+  This option is useful if you have any files that
+  you don't want users to be able to see within
+  the dir manager.
+
+  Note:
+  -----
+  Access to dot files/folders - files/folders
+  starting with a dot - are always restricted.
+
+[endsect]
+
+[endsect]

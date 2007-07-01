@@ -1,0 +1,56 @@
+This contains the source files and the generation system for torrentflux-b4rt's
+HTML reference manual.
+
+The source files, located in 'src/', are in QuickBook format:
+	http://www.boost.org/doc/html/quickbook.html
+
+When built, the HTML documentation is generated in 'html/'.
+
+
+Requirements:
+-------------
+
+This system requires the following tools:
+- 'xsltproc',
+- probably the GNU version of 'make' (not tested with any other one),
+- 'grep',
+- 'wget',
+- 'tar' supporting the '-j' option (bzip2),
+- 'unzip'.
+
+
+Howto:
+------
+
+To build the HTML documentation, all you need is to run 'make' in the root
+directory containing this README file.
+
+The 'make' system will perform the required steps in this list:
+- download Boost, which includes the QuickBook tool and associated files,
+- build Boost's build tool, named bjam,
+    => at which point the build will voluntarily exit with an error, and you'll
+       have to run it a second time (because of a GNU make limitation/bug).
+       Don't worry, once bjam has been built, that doesn't happen again.
+- download DocBook's XML DTDs and stylesheets,
+- build the QuickBook tool,
+    => this step can easily take several minutes, due to the amount of C++
+       templates involved in compiling QuickBook.
+    => also, this step outputs a few C++ warnings which can be ignored (they
+       just look scary becase of all the templates involved).
+- and finally generate the HTML documentation from its QuickBook sources.
+
+Note that all these downloads and builds are performed inside this root
+directory (i.e. nothing is downloaded/installed anywhere else).
+
+    Details:
+    --------
+
+    'make' can be invoked with the following targets:
+    - 'make boost':    force (re-)download of Boost,
+    - 'make bjam':     force (re-)build of bjam tool,
+    - 'make docbook':  force (re-)download of DocBook files,
+    - 'make tools':    force (re-)build of QuickBook tool,
+    - 'make doc':      build doc (default target),
+    - 'make clean':    remove generated HTML documentation,
+    - 'make cleaner':  'make clean' + remove QuickBook tool,
+    - 'make cleanest': 'make cleaner' + remove Boost and DocBook.

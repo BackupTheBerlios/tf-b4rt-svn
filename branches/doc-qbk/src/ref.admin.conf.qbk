@@ -1,0 +1,47 @@
+[/
+################################################################################
+# $Id$
+# $Date$
+# $Revision$
+################################################################################
+#                                                                              #
+# LICENSE                                                                      #
+#                                                                              #
+# This program is free software; you can redistribute it and/or                #
+# modify it under the terms of the GNU General Public License (GPL)            #
+# as published by the Free Software Foundation; either version 2               #
+# of the License, or (at your option) any later version.                       #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                 #
+# GNU General Public License for more details.                                 #
+#                                                                              #
+# To read the license please visit http://www.gnu.org/copyleft/gpl.html        #
+#                                                                              #
+#                                                                              #
+################################################################################
+# Torrentflux-b4rt doc.
+################################################################################
+]
+
+
+[section:conf Configuration]
+
+[include:ref ref.admin.conf.general.qbk]
+[include:ref ref.admin.conf.server.qbk]
+[include:ref ref.admin.conf.transfer.qbk]
+[include:ref ref.admin.conf.control.qbk]
+[include:ref ref.admin.conf.webapp.qbk]
+[include:ref ref.admin.conf.index.qbk]
+[include:ref ref.admin.conf.dir.qbk]
+[include:ref ref.admin.conf.stats.qbk]
+[include:ref ref.admin.conf.fluxd.qbk]
+[include:ref ref.admin.conf.xfer.qbk]
+[include:ref ref.admin.conf.search.qbk]
+[include:ref ref.admin.conf.links.qbk]
+[include:ref ref.admin.conf.rss.qbk]
+[include:ref ref.admin.conf.users.qbk]
+[include:ref ref.admin.conf.activity.qbk]
+
+[endsect]

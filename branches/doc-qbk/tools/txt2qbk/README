@@ -1,0 +1,32 @@
+This is a raw Perl script, which does the gruntwork of converting a
+text-file documentation (svn-trunk/doc/manual.txt) to QuickBook format.
+(Raw meaning undocumented, badly written, ...)
+
+It takes no args, reads from <manual.txt> and <tmpl.index.qbk>, and
+generates <auto.qbk>.
+
+
+Note that a slight change to input manual is needed. The separation between
+TOC and contents:
+	/**********************************************************************
+	Introduction
+	**********************************************************************/
+
+must be changed to:
+	***********************************************************************
+	Introduction
+
+(i.e. remove the star line below text, and no '/' at start).
+
+Note that the script checks that sections order is consistent between TOC
+and contents. If it is not, script dies with message "unterminated doc"
+("waiting for" gives the section name which was found in TOC, but not
+at the same place in contents).
+
+
+The output QuickBook file contains:
+- the hierarchical structure of the doc (qbk [section]/[endsect] pairs),
+- for each section, its text contents with ordered and unordered lists
+    transformed into their qbk equivalents.
+The script also replaces all occurrences of "torrentflux-b4rt" by a
+__proj__ qbk macro.

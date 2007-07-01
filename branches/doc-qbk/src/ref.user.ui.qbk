@@ -1,0 +1,183 @@
+[/
+################################################################################
+# $Id$
+# $Date$
+# $Revision$
+################################################################################
+#                                                                              #
+# LICENSE                                                                      #
+#                                                                              #
+# This program is free software; you can redistribute it and/or                #
+# modify it under the terms of the GNU General Public License (GPL)            #
+# as published by the Free Software Foundation; either version 2               #
+# of the License, or (at your option) any later version.                       #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                 #
+# GNU General Public License for more details.                                 #
+#                                                                              #
+# To read the license please visit http://www.gnu.org/copyleft/gpl.html        #
+#                                                                              #
+#                                                                              #
+################################################################################
+# Torrentflux-b4rt doc.
+################################################################################
+]
+
+
+[section:ui Changing the frontend look and feel]
+
+[section:sort Reordering the transfer list]
+
+The transfer items in the transfer list are reordered by
+clicking on the various transfer list column headers at
+the top of the transfer list.
+
+For example, to change the display of transfer list
+items so the oldest items are displayed towards the top
+of the list, click on the first transfer list column header
+(above the transfer status lights) marked with a /#/.
+
+The transfer list reordering options are as follows -
+clicking the mentioned column header will toggle the
+sorting:
+
+* Order by date transfer added to __proj__
+  * click column header labelled /#/
+* Order by transfer file name alphabetically
+  * click column header labelled /Transfer File/
+* Order by transfer owner
+  * click column header labelled /User/
+* Order by transfer size
+  * click column header labelled /Size/
+* Order by total downloaded
+  * click column header labelled /T. Down/
+* Order by total uploaded
+  * click column header labelled /T. Up/
+* Order by transfer status
+  * click column header labelled /Status/
+* Order by percentage completed
+  * click column header labelled /Progress/
+* Order by download bandwidth
+  * click column header labelled /Down/
+* Order by upload bandwidth
+  * click column header labelled /Up/
+* Order by number of seeders
+  * click column header labelled /Seeders/
+* Order by number of peers
+  * click column header labelled /Peers/
+* Order by estimated time left till completion
+  * click column header labelled /Estimated Time/
+* Order by type of transfer client
+  * click column header labelled /C/
+
+The transfer client types are denoted as follows:
+
+* *B* - tornado,
+* *T* - transmission,
+* *M* - mainline,
+* *A* - azureus,
+* *W* - wget,
+* *N* - nzbperl.
+
+[note
+  The 'Enable sortable' feature must be enabled in
+  the 'index' section of the admin pages to allow
+  reordering of transfers. TODO_LINK
+]
+
+The columns available in your transfer list may differ
+depending on how the administrator has configured the
+display of transfer lists.  See the section on TODO_LINK
+'Setting the default transfer list columns to display'.
+
+The transfer list columns can also be configured on a
+per user basis by modifying the user profile settings if
+the administrator has allowed profile management.
+See the section on TODO_LINK 'Changing what to display
+in the frontend'.
+Also see the administration section on TODO_LINK
+'Allowing users to use transfer profiles' for info on
+enabling or disabling individual user profile
+management.
+
+[endsect]
+
+[section:ajax Turning AJAX updates on and off]
+
+The transfer list can be updated automatically using
+AJAX (Asynchronous Javascript and XML).  To turn on AJAX
+updates, click on the link /Turn ON AJAX-Update/ under
+the transfer list.
+
+The update text will change to:
+
+[blurb /Next AJAX-Update in xx seconds/]
+
+where xx is the countdown in seconds until the next
+AJAX update (default 5 seconds).  The timer will count down
+until it reaches zero, at which point the transfer list
+will be refreshed.
+
+To turn off AJAX updates, click on the link /Next
+AJAX-Update in xx seconds/ again.
+
+The AJAX update interval can be configured either globally
+by the administrator ('index' section of the admin
+pages) or individually on a per-user basis in the user's
+profile. TODO_LINK
+
+[endsect]
+
+[section:refresh Turning page refresh on and off]
+
+The main __proj__ index page containing the
+transfer list can be updated automatically using the
+HTML meta refresh method.  To turn on page refresh,
+click on the link /Turn ON Page Refresh/ under the
+transfer list.
+
+The refresh text will change to:
+
+[blurb /Next Page Refresh in xx Seconds/]
+
+where xx is the countdown in seconds until the next
+refresh (default 60 seconds).  The timer will count down
+until it reaches zero, at which point the page will be
+refreshed.
+
+To turn off automatic page refreshes, click on the link
+/Next Page Refresh in xx Seconds/ again.
+
+The refresh interval can be configured either globally
+by the administrator (/index/ section of the admin
+pages) or individually on a per-user basis in the user's
+profile. TODO_LINK
+
+[note
+  Using the page refresh method, the whole page is
+  reloaded - not just the transfer list.  This option is
+  now largely deprecated in favour of the AJAX update
+  method, which only updates the transfer list instead of
+  the whole page and so uses up less bandwidth.
+]
+
+[endsect]
+
+[section:hide_seeding Showing/hiding seeding torrents]
+
+Clicking on the /Hide Seeding Torrents/ link under the
+transfer list will hide all currently seeding torrents.
+
+This is useful when you have a lot of transfers in the
+transfer list that are in the 'Seeding' state that you
+don't want to keep an eye on continually.
+
+This feature can be configured either globally in the
+'index' section of the admin pages or on a per user
+basis in the user's profile. TODO_LINK
+
+[endsect]
+
+[endsect]

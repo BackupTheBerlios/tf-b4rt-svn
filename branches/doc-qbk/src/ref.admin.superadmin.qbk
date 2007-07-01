@@ -1,0 +1,615 @@
+[/
+################################################################################
+# $Id$
+# $Date$
+# $Revision$
+################################################################################
+#                                                                              #
+# LICENSE                                                                      #
+#                                                                              #
+# This program is free software; you can redistribute it and/or                #
+# modify it under the terms of the GNU General Public License (GPL)            #
+# as published by the Free Software Foundation; either version 2               #
+# of the License, or (at your option) any later version.                       #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                 #
+# GNU General Public License for more details.                                 #
+#                                                                              #
+# To read the license please visit http://www.gnu.org/copyleft/gpl.html        #
+#                                                                              #
+#                                                                              #
+################################################################################
+# Torrentflux-b4rt doc.
+################################################################################
+]
+
+
+[section:superadmin Superadmin]
+
+[section:overview Overview]
+
+The superadmin pages are accessible only by the
+superadmin account holder - the administration account
+that is created the first time that __proj__ is
+created.
+
+The superadmin pages are accessed by clicking on the
+/Superadmin/ link on the administration pages - a new
+window will open with the superadmin pages in it.
+
+The superadmin pages allow you detailed control over the
+following tasks and areas:
+
+* Transfers - bulk start/stop/resume transfers
+
+* Processes - view detailed process info; force stop
+  transfer processes
+
+* Maintenance - clean up and maintenance
+
+* Backup - create backups; download saved backups
+
+* Log - view logs
+
+* Misc - test for PHP and Perl requirements; view list
+  of installed files
+
+* About - version checking, updates, news,
+  changelog; check installed file integrity
+
+Be careful when using the superadmin features as many of
+them apply to all __proj__ users and not just
+individual users.
+
+[endsect]
+
+[section:transfers Controlling bulk transfer operations]
+
+The superadmin transfer bulk-ops page allows you to
+operate on multiple transfers at one time.  The actions
+are identical to the bulk-ops feature available in the
+frontend.
+
+The transfer bulk-ops available in the superadmin pages
+are:
+
+* Stop All Transfers - this option will stop all
+  currently running transfers
+
+* Start All Transfers - this option will start all
+  transfers that are currently not running
+
+* Resume All Transfers - this option will start *only*
+  those transfers that have already been previously
+  started
+
+See also:
+
+TODO_LINK: User operations - Controlling multiple
+transfers using the bulk-ops feature
+
+[endsect]
+
+[section:processes Working with processes]
+
+[section:view Viewing detailed process listings]
+
+To view a detailed list of currently running
+processes, click on the /All/ link on the
+/Processes/ tab in the superadmin pages.
+
+A detailed list of all currently running processes
+associated with __proj__ will be displayed.
+
+The output is divided into sections, one for each
+client associated with __proj__.
+
+[endsect]
+
+[section:kill Force stopping processes]
+
+Problematic transfers can be forced to stop by using
+the /Transfers/ link on the /Processes/ tab in the
+superadmin pages.
+
+The /Transfers/ page displays a list of all
+currently running transfers, listing the user the
+transfer belongs to and the transfer file name.
+
+The transfers in this list can be force stopped by
+clicking on the red icon in the right hand column next
+to the transfer.
+
+This force stop method sends a SIGKILL signal to the
+process associated with the transfer if it is
+refusing to shutdown graceful in time.
+
+[endsect]
+
+[endsect]
+
+[section:maintenance Performing maintenance tasks]
+
+[section:main Basic transfer maintenance]
+
+The /Main/ page of the /Maintenance/ tab in the
+superadmin pages allows you to run maintenance tasks
+on your __proj__ installation.
+
+The available options are:
+
+[heading:standard Standard Maintenance Run]
+
+This option is the same as available on the
+index page of the frontend and is automatically
+called on every login.
+
+The standard maintenance run performs the
+following actions:
+
+* Checks for stale fluxd PID and socket files
+  and removes them if found.
+
+* Check for any transfers that are marked as
+  running but actually aren't running and update
+  their status to show them as not running.
+
+* Update the database so the information stored
+  there is in line with the transfer files in
+  the filesystem.
+
+[heading:extended Extended Maintenance Run]
+
+This option is exactly the same as the standard
+maintenance run, except that any transfers that
+are marked as running but aren't actually
+running are restarted.
+
+[endsect]
+
+[section:kill Killing processes]
+
+The /Kill/ link on the /Maintenance/ tab of the
+superadmin pages allows you to kill all processes
+for a given type - PHP, Python, Perl,
+Transmission, Wget, VLC.
+
+This option will send a KILL signal to all processes
+matching the type you choose.
+
+NOTE:
+-----
+Be VERY careful when using this option and only use
+it as a last resort or if you really know what you
+are doing.
+
+The kill signal sent will kill ALL processes of the
+type you specify - for example if you choose to kill
+all PHP processes, every PHP process running on the
+server as the webserver user will be killed, not
+just those related to __proj__!
+
+If you choose to use this option to kill processes,
+it is advisable to check what processes are running
+first by issuing the following command as root:
+
+ps aux | grep php
+
+for example in the case of 'php'.  This will give
+you an idea of what PHP processes are currently
+running and you can be sure then that you are only
+going to kill the processes you need to.
+
+[endsect]
+
+[section:clean Cleaning transfer file leftovers and client resources]
+
+The /Clean/ linked page on the /Maintenance/ tab of
+the superadmin pages allows you to clean leftover
+transfer pid files, client cache files and
+__proj__'s template cache files.
+
+The actions available are:
+
+* PID File Clean
+
+  Deletes stale PID files from transfers.
+  Any transfers that are currently not running
+  should not have a PID file associated with it.
+  These stale PID files are deleted using this
+  option.
+
+* BitTornado Clean
+
+  Deletes the BitTornado cache.
+  BitTornado uses a cache whilst transferring
+  data.
+  This option deletes the BitTornado cache.
+
+* Transmission Clean
+
+  Deletes the Transmission cache.
+  Transmission uses a cache whilst transferring
+  data.
+  This option deletes the Transmission cache.
+
+* BitTorrent Mainline Clean
+
+  Deletes the BitTorrent Mainline cache.
+  BitTorrent Mainline uses a cache whilst
+  transferring data.  This option deletes the
+  BitTorrent Mainline cache.
+
+* Template Cache Clean
+
+  Deletes the __Proj__ template cache.
+  __Proj__ can be configured to use a
+  template cache to speed up display of pages.
+  This option deletes the template cache.
+
+  See also:
+  TODO_LINK webapp admin config - Enabling
+  template caching
+
+[endsect]
+
+[section:repair Repairing problematic installations]
+
+The /Repair/ linked page on the /Maintenance/ tab of
+the superadmin pages allows you to perform a
+thorough repair of the __proj__
+installation.
+
+This option is the same as the basic 'maintenance'
+run - TODO_LINK: superadmin maint etc except that
+this option resets the stat files of any transfers
+and deletes all transfer pids as if they had just
+been newly injected.  No transfers are restarted
+using this repair option.
+
+Generally this option should only be taken as a last
+resort if transfers refuse to start at all.
+
+[endsect]
+
+[section:reset Resetting transfer totals, transfer stats and personal settings]
+
+The /Reset/ linked page on the /Maintenance/ tab of
+the superadmin pages allows you to reset the
+transfer totals, transfer statistics and personal
+settings.
+
+The options available are:
+
+* Reset Transfer Totals
+
+  Resets the transfer totals - total
+  uploaded/downloaded - for each transfer in the
+  transfer list.
+  Do not use this option if you are trying to keep
+  track of your ratio on trackers using the
+  transfer totals in the frontend!
+
+* Reset Xfer Stats
+
+  Resets the transfer statistics.
+  All transfer statistics on record are reset
+  using this option - how much has been downloaded
+  per user over the last day/month/year etc.
+
+* Reset Personal Settings
+
+  Resets the personal settings of all users.
+  All user's personal settings are reset to the
+  default values.  Be careful using this option as
+  all user's profiles are affected.
+
+[endsect]
+
+[section:lock Locking access to the frontend]
+
+The /Lock/ linked page on the /Maintenance/ tab of
+the superadmin pages allows you to lock all access
+to the __proj__ frontend for non-admin
+users.
+
+When attempting to browse the frontend, users will
+only see a message informing them the frontend is
+locked.
+
+[endsect]
+
+[endsect]
+
+[section:backup Backups]
+
+[section:create Creating a backup]
+
+The /Create Backup/ linked page on the /Backup/ tab
+of the superadmin pages allows you to create a
+backup of all files associated with
+__Proj__.
+
+There are two options for where to store the backed
+up data - decide which is most appropriate for you:
+
+* Backup on Server - this option will store the
+  backup archive on the server inside a folder
+  named =.backup= under the main path configured
+  in the 'server' tab on the admin pages.
+
+  Archives stored on the server can later be
+  viewed in __proj__ using the /Backups
+  currently on server/ tab on the /Backup/ page of
+  the superadmin section.
+
+* Backup on Client - this option will send the
+  backup archive to you in your web browser so you
+  can save the backup locally.
+
+Once you have decided where to save the backup to,
+you can then choose what kind of compression to use
+with the archive.
+
+There are three compression options to choose from:
+
+* gzip - this is the default compression setting.
+  The archives will be compressed using gzip,
+  creating smaller archives.  This option is
+  faster than bzip2 but slower than 'none'.
+
+* bzip2 - the archives will be compressed using
+  bzip2, creating the smallest possible archives.
+  This option is the slowest compression option.
+
+* none - uses no compression when archiving.  The
+  archives will be archived using tar only, the
+  resulting archive size will be the same as the
+  space taken up by the files being archived.
+  This is the fastest compression option.
+
+Select the compression option you want from the
+dropdown list and finally click on the /Backup/
+button for the location you chose to save to.
+
+The data that is backed up is as follows:
+
+* Document root directory structure - all files
+  underneath the webserver document root folder
+  where you installed __Proj__.
+
+  These files consist of the __proj__ web
+  application itself.
+
+* The Transfers folder directory structure - all files
+  in the =.transfers= folder located in the path
+  configured in the admin pages 'server' tab.
+
+  The =.transfers= folder contains all control files
+  for the transfers in __proj__ - pid,
+  stat and log files.
+
+* The fluxd folder directory structure - all files
+  in the =.fluxd= folder located in the path
+  configured in the admin pages 'server' tab.
+
+  The =.fluxd= folder contains control files for the
+  fluxd daemon - pid, socket and log files.
+
+* The MRTG folder directory structure - all files
+  in the =.mrtg= folder located in the path
+  configured in the admin pages 'server' tab.
+
+  The =.mrtg= folder contains control files for the
+  MRTG traffic graphing addon component.
+
+* The __Proj__ database - the database
+  used to store information used in the day to day
+  running of __proj__.
+
+An archive is made for each of the options listed
+above and the resulting archives are then archived
+again into a single archive.  In the case of the
+filesystem backups, a backup is only made if the
+relevant directory actually exists - so for example
+if no =.mrtg= folder exists, no mrtg backup will be
+made.
+
+[endsect]
+
+[section:view Viewing a backup of transfer data]
+
+Any backups that are created on the server can be
+viewed by clicking on the /Backups currently on
+server/ link on the /Backup/ tab of the superadmin
+pages.
+
+Any backups created by __proj__ on the
+server are listed on the page, including information
+about what version the backup is from, the date the
+backup was created, what compression was used and
+the size of the archive.
+
+An archive can be downloaded or deleted by clicking
+on the respective icon to the right of the backup
+item in the list.
+
+[endsect]
+
+[endsect]
+
+[section:log Viewing log files]
+
+[section:overview Overview]
+
+The /Log/ tab on the superadmin pages allows you to
+view the log files for various components of
+__proj__:
+
+* fluxd - STDOUT logfiles for the __proj__
+  fluxd daemon.
+
+  The fluxd logfile contains day to day logging
+  information which should be the first place to
+  look when attempting to troubleshoot fluxd
+  problems, together with the fluxd error log.
+
+* fluxd-error - STDERR logfiles for the
+  __proj__ fluxd daemon.
+
+  The fluxd error logfile contains any errors
+  encountered in the day to day running of fluxd.
+  Essential viewing when troubleshooting fluxd.
+
+* fluazu - logfiles for the fluazu interface to
+  Azureus.
+
+* BitTorrent Mainline - centralised logfile for
+  the BitTorrent Mainline client.
+
+* Transfers - logfiles for transfers in the
+  current transfer list.
+
+  Clicking the /transfers/ logfile link will take
+  you to a page containing a list of links to the
+  logfiles of all current transfers in the
+  transfer list.
+
+[endsect]
+
+[endsect]
+
+[section:misc Miscellaneous actions]
+
+[section:list Viewing a list of installed files and their checksums]
+
+The /Lists/ linked page on the /Misc/ tab of the
+superadmin pages allows you to view a list of all
+the __proj__ files installed and their
+checksums.
+
+The file list feature displays a list of each file
+under the current document root for the installation
+and the version of each file if found.
+
+The checksum feature displays a list of each file
+under the current document root for the installation
+and the checksum for each of those files.  The
+checksum for a file is unique and when the file
+contents change in any way, the checksum will also
+change.  Checksums can therefore be used to
+determine if the contents of a file have been
+changed at some point by comparing the current
+checksum to the checksum of the original file.
+
+[endsect]
+
+[section:validate Listing and verifying checksums of installed files]
+
+The /Checksum Validation/ linked page on the /Misc/
+tab of the superadmin pages allows you to check the
+integrity of the files installed in your
+installation of __proj__ against a list
+stored on the __proj__ website.  This allows
+you to verify whether any of your files have changed
+since you installed them, alerting you to any
+differences.
+
+The script will analyse the files you have installed
+and provide a detailed report about all
+unchanged/changed/missing/new files.
+
+[endsect]
+
+[section:check Checking software requirements]
+
+The /Check Requirements/ linked page on the /Misc/
+tab of the superadmin pages allows you to run tests
+to check if your server's software meets the
+requirements for running __Proj__
+successfully.
+
+The tests are as follows:
+
+* Check PHP Web Requirements
+
+  Check your PHP web installation meets the
+  requirements for web based activities in
+  __proj__.
+
+  This test will check that the currently
+  installed PHP web component has all the correct
+  extensions built in to run __proj__
+  correctly.
+
+* Check PHP CLI Binary Requirements
+
+  Check your PHP commandline binary installation
+  meets the requirements for commandline based
+  activities in __proj__.
+
+* Check Perl Requirements
+
+  Check your Perl installation meets the
+  requirements for perl based activities in
+  __proj__.
+
+  This option will check all perl modules required
+  for the correct operation of __proj__
+  are installed.
+
+[endsect]
+
+[endsect]
+
+[section:about Checking for updates, news and version info for your torrentflux-b4rt installation]
+
+[section:version Checking your version against the latest version available]
+
+The /Version/ linked page on the /About/ tab of
+the superadmin pages will display the current
+version of your __proj__ installation along
+with information about the current latest version
+available from the __proj__ downloads pages.
+
+This option allows you to see easily whether a new
+version of __proj__ is available for
+download.
+
+[note
+  When using the SVN version of __proj__,
+  details of the latest version are not displayed
+  since it is presumed you are using the bleeding edge
+  version of the software.
+]
+
+[endsect]
+
+[section:news Viewing news about releases]
+
+The /News/ linked page on the /About/ tab of the
+superadmin pages displays a list of links to the
+news page for each release of __proj__.
+
+The list of news pages is obtained from the
+__proj__ website and so is always up to
+date.
+
+[endsect]
+
+[section:changelog Viewing the changelog for your release]
+
+The /Changelog/ linked page on the /About/ tab of the
+superadmin pages displays a list of links to the
+changelogs for each release of __proj__.
+
+This list of changelogs is obtained from the
+__proj__ website.
+
+[endsect]
+
+[endsect]
+
+[endsect]

@@ -1,0 +1,248 @@
+[/
+################################################################################
+# $Id$
+# $Date$
+# $Revision$
+################################################################################
+#                                                                              #
+# LICENSE                                                                      #
+#                                                                              #
+# This program is free software; you can redistribute it and/or                #
+# modify it under the terms of the GNU General Public License (GPL)            #
+# as published by the Free Software Foundation; either version 2               #
+# of the License, or (at your option) any later version.                       #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                 #
+# GNU General Public License for more details.                                 #
+#                                                                              #
+# To read the license please visit http://www.gnu.org/copyleft/gpl.html        #
+#                                                                              #
+#                                                                              #
+################################################################################
+# Torrentflux-b4rt doc.
+################################################################################
+]
+
+
+[section:stats Server statistics]
+
+[section:status_lights Transfer status lights]
+
+The transfer status light for a transfer is displayed to
+the far left of the transfer list.  The color of the
+transfer status light determines the current status of
+the transfer.
+
+The colors of the transfer status light are as follows:
+
+[heading Black]
+
+Transfer is not running.
+
+[heading Red]
+
+Transfer is running but no seeds are currently
+available for the transfer.  If this status
+persists you should check:
+
+# the transfer log for any errors (see
+  TODO_link:Viewing transfer log files)
+
+# the torrent's tracker is online
+
+# your firewall is configured to allow
+  connections to/from the client
+
+# the torrent actually has any seeds available
+  at all
+
+It is also worth testing that the torrent works
+correctly in another torrent client if the red
+light status continues, although be sure that the
+client you test in does not use Distributed Hash
+Tables (DHT or 'trackerless') because this may
+affect the results of the comparison test.
+
+[heading Yellow]
+
+Transfer is running but there are less than two
+seeds available.  This can indicate that a torrent
+is not well seeded and if this status continues
+you may need to find a better seeded torrent or
+use a DHT/trackerless enabled client.
+
+[heading Green]
+
+Transfer is running with at least two seeds.
+
+[endsect]
+
+[section:good_looking General frontend 'Good looking' statistics]
+
+The 'Good looking' statistics are displayed to the top
+right of the __proj__ frontend and include the
+following statistics:
+
+* *Download Speed* - total download speed for all
+  running transfers.
+
+* *Upload Speed* - total upload speed for all running
+  transfers.
+
+* *Total Speed* - total upload + download speed for all
+  running transfers.
+
+* *Connections* - total network connections for all
+  running transfers.
+
+* *Drive Space* - total hard disk drive space currently
+  in use for the filesystem where __proj__
+  downloads transfers to.
+
+* *Server Load* - current server load averages of the
+  server.  A sustained load average of over 2 in each
+  of the three readings can be indicative of excessive
+  server load depending on the server role.
+
+Clicking on any of the links in the 'Good looking'
+statistics section will open up the
+[link ref.user.stats.page Server statistics] page.
+
+[endsect]
+
+[section:page Viewing detailed server statistics]
+
+[section:overview Overview]
+
+The server statistics page provides detailed
+information on server status, including drivespace,
+logged-in users, process, network and transfer usage.
+
+The server statistics page can be opened using the
+following methods:
+
+* Clicking on any of the links in the 'Good
+  looking statistics' section of the frontend.
+
+* Clicking on the /Server Stats/ link above the
+  drivespace bar towards the middle of the
+  frontend.
+
+[endsect]
+
+[section:default Drivespace and 'who' statistics]
+
+This is the default view for the server statistics
+page labelled /all/ in the drop down list labelled
+/Type/ at the top of the server stats page.
+
+This view provides information about:
+
+* Current drivespace used on the filesystem where
+  __proj__ downloads transfers to.  The
+  output is taken from the Unix command =df=.
+
+* Currently logged in users on the server - ie
+  'real' shell users on the server that
+  __proj__ is installed on.  The output is
+  taken from the Unix command =w= or =who=.
+
+[endsect]
+
+[section:ps Process statistics]
+
+This view can be set by selecting /ps/ from the
+/Type/ dropdown list on the server stats page.
+
+The view displays information about any currently
+running processes for each of the transfer clients
+supported by __proj__.
+
+[endsect]
+
+[section:netstat Network connection statistics]
+
+This view can be set by selecting /netstat/ from the
+/Type/ dropdown list on the server stats page.
+
+The view displays information about any network
+connections currently connected for any of the
+supported __proj__ transfer clients.
+
+[endsect]
+
+[section:xfer Transfer statistics]
+
+This view can be set by selecting /xfer/ from the
+/Type/ dropdown list on the server stats page.
+
+The view displays transfer statistics - ie amount of
+bandwidth used - in a table.  Statistics are given
+for bandwidth used for each user in total, over the
+last month, over the last week and for the current
+day.
+
+A detailed breakdown of 'per user' or 'total'
+transfer statistics can be viewed by clicking on the
+links in the initial transfer stats page.  On this
+detailed page you can view statistics for any single
+day within the last 30 days.
+
+[endsect]
+
+[endsect]
+
+[section:monitor Opening the server monitor]
+
+The server monitor can be opened by clicking on the
+/Server Monitor/ link above the drivespace bar
+towards the middle of the frontend.
+
+The following information is displayed in the server
+monitor:
+
+* Download Speed
+* Upload Speed
+* Total Speed
+* Connections
+* Drive Space
+* Server Load
+* Transfers running
+* Transfers queued
+
+The server monitor is updated every 5 seconds by default.
+Update interval can be changed in the (TODO_link:
+Setting the server monitor update interval) webapps
+admin section.
+
+[endsect]
+
+[section:rss Viewing an RSS feed of the transfer list]
+
+An RSS feed of the transfer list can be displayed by
+clicking on the RSS icon (icon with orange background
+and white arcs).
+
+The RSS feed can be subscribed to in your feed reader,
+allowing another method for monitoring the status of
+your transfers.
+
+[endsect]
+
+[section:history Viewing activity history]
+
+The activity history can be viewed by regular users by
+clicking on the /History/ link in the top right
+navigation menu.
+
+The activity history page displays information about all
+activities performed by the user in the last 30 days.
+
+The history page is a good place to look when
+troubleshooting problematic transfers.
+
+[endsect]
+
+[endsect]

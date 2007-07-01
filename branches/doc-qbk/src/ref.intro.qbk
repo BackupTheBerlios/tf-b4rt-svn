@@ -1,0 +1,55 @@
+[/
+################################################################################
+# $Id$
+# $Date$
+# $Revision$
+################################################################################
+#                                                                              #
+# LICENSE                                                                      #
+#                                                                              #
+# This program is free software; you can redistribute it and/or                #
+# modify it under the terms of the GNU General Public License (GPL)            #
+# as published by the Free Software Foundation; either version 2               #
+# of the License, or (at your option) any later version.                       #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                 #
+# GNU General Public License for more details.                                 #
+#                                                                              #
+# To read the license please visit http://www.gnu.org/copyleft/gpl.html        #
+#                                                                              #
+#                                                                              #
+################################################################################
+# Torrentflux-b4rt doc.
+################################################################################
+]
+
+
+[/section:intro Introduction]
+
+This is the manual for the transfer control client __proj__.
+
+The manual is split into the following sections:
+
+[variablelist
+  [[[link ref.user User operations]]
+   [covers day to day basic use of __proj__.]]
+  [[[link ref.admin Administration operations]]
+   [covers configuration of __proj__ and other
+    operations that require administration rights in
+    __proj__.]]
+  [[[link ref.admin.app Appendices]]
+   [covers advanced concepts such as fluxd operation (fetching
+    rss torrents automatically, watching folders and uploading
+    new torrents automatically), running the fluxcli.php
+    script from the commandline or cron jobs and obtaining
+    statistics using stats.php.]]
+]
+
+For an overview of the capabilities of __proj__ and
+requirements, installation guide, features and author list, please
+see the README, INSTALL and FEATURES files located in the
+distribution root folder.
+
+[/endsect]

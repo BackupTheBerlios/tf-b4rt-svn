@@ -1,0 +1,38 @@
+--- boost.orig/tools/build/v2/user-config.jam	2007-06-30 23:29:37.000000000 +0200
++++ boost/tools/build/v2/user-config.jam	2007-06-30 23:30:42.000000000 +0200
+@@ -15,6 +15,27 @@
+ 
+ import toolset : using ;
+ 
++
++#########################################
++## Customized for torrentflux-b4rt doc ##
++#########################################
++
++import path ;
++
++using xsltproc ;
++
++# This is very ugly (those paths are relative to directory
++# where bjam is invoked, not to boost's dirs).
++using boostbook
++  : [ path.join [ path.pwd ] tools/docbook/xsl/ ]
++  : [ path.join [ path.pwd ] tools/docbook/dtd/ ]
++  ;
++
++using quickbook ;
++
++#########################################
++
++
+ #  GCC configuration
+ 
+ #  Configure gcc (default version)
+@@ -23,6 +44,7 @@ import toolset : using ;
+ #  Configure specific gcc version, giving alternative name to use
+ #  using gcc : 3.2 : g++-3.2 ;
+ 
++
+ #  MSVC configuration
+ 
+ #  Configure msvc (default version, searched in standard location

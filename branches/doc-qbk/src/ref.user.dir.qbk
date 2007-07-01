@@ -1,0 +1,277 @@
+[/
+################################################################################
+# $Id$
+# $Date$
+# $Revision$
+################################################################################
+#                                                                              #
+# LICENSE                                                                      #
+#                                                                              #
+# This program is free software; you can redistribute it and/or                #
+# modify it under the terms of the GNU General Public License (GPL)            #
+# as published by the Free Software Foundation; either version 2               #
+# of the License, or (at your option) any later version.                       #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                 #
+# GNU General Public License for more details.                                 #
+#                                                                              #
+# To read the license please visit http://www.gnu.org/copyleft/gpl.html        #
+#                                                                              #
+#                                                                              #
+################################################################################
+# Torrentflux-b4rt doc.
+################################################################################
+]
+
+
+[section:dir Directory / file manager]
+
+[section:overview Overview]
+
+The directory manager allows you to work with the files
+and directories within the __proj__ download
+directory.  Regular users are limited to working with
+the files in their own download folder - administrators
+can access any files in any directory within the master
+download folder.
+
+A number of different operations can be performed on
+files within the directory manager, including:
+
+* Deleting files and directories
+* Renaming files and directories
+* Moving files and directories out of the transfer
+  directory
+* Making torrents
+* Downloading files and directories
+* Downloading files and directories as tar or
+  zip archives
+* Streaming media files using VLC
+* Viewing NFO files
+* Extracting archive files (zip/rar files)
+* Checking the integrity of files using .sfv files
+
+Permission to perform these operations can be controlled
+globally by the administrator in the administration
+settings pages. TODO_LINK: Directory / File Management
+options (dir)
+
+[endsect]
+
+[section:opening Opening the directory manager]
+
+The directory manager can be opened with the following
+actions from the __proj__ frontend:
+
+* Clicking the /Directory/ link in the navigation menu
+  at the top right of the screen
+
+* Clicking the /Directory List/ link in the middle of
+  the screen
+
+* Clicking on the folder icon to the left of a
+  transfer in the transfer list
+
+Once the directory manager is opened, directories can be
+browsed by clicking on folders.  To go 'up' a directory,
+click on the link /[Back Parent Directory]/.
+
+The available actions that can be performed on a file
+are listed to the right of the directory manager.  These
+actions will differ depending on the type of file.
+
+All files within a directory can be selected at the same
+time by checking the checkbox at the bottom right of
+the directory manager.  Checking the checkbox again will
+deselect all files.
+
+[endsect]
+
+[section:delete Deleting files and directories]
+
+Individual files can be deleted by clicking on the icon
+with a white cross on a red background next to the file.
+
+Multiple files can be deleted at the same time by first
+selecting all the files you wish to delete and then
+clicking on the cross icon at the bottom right of the
+directory manager next to the /select all/ checkbox.
+
+You will be prompted for confirmation to delete the
+file(s) after clicking the cross icon.
+
+[endsect]
+
+[section:rename Renaming files and directories]
+
+Files and directories can be renamed by clicking on the
+['Rename File/Folder] icon to the right of the file.  A
+window will open asking you to specify the name you wish
+to rename the file/folder to.  Complete this form and
+click /Ok/ to rename the file/folder.
+
+[note
+  Using this option, files and folder can only be renamed
+  within the bounds of the master download directory.  To
+  move files and folders *out* of the download directory,
+  the ['Move File/Folder] action must be used (see
+  [link ref.user.dir.move Moving files and directories
+  out of the transfer directory]
+]
+
+[endsect]
+
+[section:move Moving files and directories out of the transfer directory]
+
+Files and directories can be moved out of the master
+transfer directory by clicking on the ['Move File/Folder]
+icon.  A window will open asking you to specify the
+destination directory in a drop down list or text box.
+
+[note
+  The destination folders for move actions must be
+  configured by the administrator.  Any destination folders
+  configured by the admin will be listed in the /Move/
+  window dropdown box.
+
+  For more info on setting a list of directories to move
+  files/folders into, see: TODO_LINK: Setting a list of
+  allowed folders to move transferred files into
+]
+
+[endsect]
+
+[section:maketorrent Making torrents]
+
+A torrent file can be created for a file or directory by
+clicking on the /Make Torrent/ icon.  A window will be
+displayed prompting for the necessary details for the
+torrent:
+
+* Client - the client you want to use to create the
+  torrent file.
+
+* Torrent name - the filename you wish to give the
+  torrent file
+
+* Announcement URL - the URL of the tracker which will
+  be hosting the torrent file.  Check your tracker's
+  website for info on what to use for this option.
+
+* Announce List - a list of alternative trackers to
+  use for this torrent.  This option allows you to
+  provide redundancy in the event that one tracker is
+  unavailable.
+
+* Piece size - the size of chunks you wish your
+  torrent to be distributed in.
+
+* Comments - any comments about the content of the
+  torrent.
+
+* Private Torrent - whether or not this torrent is
+  private.  If private, the DHT / trackerless option
+  will be disabled.
+
+* DHT Support - whether to support Distributed Hash
+  Tables for so-called 'trackerless' support.  Using
+  this option will allow clients with DHT support to
+  seek out peers using DHT instead of depending only
+  on static tracker servers.
+
+Torrent file creation will commence when the /Create/
+button is clicked.  If the /Notify me of completion/
+checkbox is checked, the create torrent window will
+display details of the torrent created once complete.
+
+When the torrent file is created, it will be displayed in
+the __proj__ frontend ready for starting as with
+any other torrent.
+
+[endsect]
+
+[section:download Downloading files and directories]
+
+Files can be downloaded in a web browser by clicking on
+the /Download/ icon to the right of the file in the
+directory manager.
+
+Complete directories can be downloaded as a tar archive
+by clicking on the /Download as tar/ icon to the right
+of the directory in the directory manager.  This action
+will first create a tar archive of the complete
+directory listing and then send this to the web browser
+for download.
+
+[caution
+  Downloading directories as tar archives can take a
+  considerable amount of time if the directory structure
+  is very large.
+]
+
+[endsect]
+
+[section:vlc Streaming media files using VLC]
+
+Audio and Movie files can be streamed in real time from
+the server by clicking on the /Stream Multimedia (vlc)/
+icon to the right of the file.
+
+This action will open a window with a form for you to
+specify the details for the streaming action.
+
+TODO: description of streaming with vlc.
+
+[endsect]
+
+[section:nfo Viewing NFO files]
+
+NFO files refer to a standard information file that
+contains pertinent information for a distribution or
+download, so-called because the file ends in .nfo.
+These nfo files can be viewed by clicking on the 'View
+nfo file' icon to the right of the file listing in the
+directory manager.
+
+The following file extensions are considered to be /nfo/
+files by __proj__: =.nfo=, =.txt=, =.log=.
+
+[endsect]
+
+[section:extract Extracting archive files (zip/rar files)]
+
+__Proj__ supports the extraction of zip and
+rar archive files.  To extract an archive file, click on
+the ['Unzip/Unrar] icon to the right of the file listing.
+
+A window will open prompting you for a password for the
+archive - enter the password here if applicable.  If
+there is no password as far as you know, leave the
+password field empty.
+
+Click /OK/ to extract the archive.
+
+[note
+  The extraction process may take a long time to complete
+  if the archive is very large.  You may close the
+  /Uncompress file/ window once it has started, the
+  uncompression process should continue in the background
+  on the webserver.
+]
+
+[endsect]
+
+[section:sfv Checking the integrity of files using .sfv files]
+
+SFV or 'simple file verification' files are often used
+by file distributors to check on the integrity
+of transferred files.  The sfv signatures on a
+transferred archive can be tested by clicking on the
+/Check sfv/ icon to the left of the directory containing
+the sfv file.
+
+[endsect]
+
+[endsect]

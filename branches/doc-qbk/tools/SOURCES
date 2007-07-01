@@ -1,0 +1,53 @@
+################################################################################
+# $Id$
+# $Date$
+# $Revision$
+################################################################################
+#                                                                              #
+# LICENSE                                                                      #
+#                                                                              #
+# This program is free software; you can redistribute it and/or                #
+# modify it under the terms of the GNU General Public License (GPL)            #
+# as published by the Free Software Foundation; either version 2               #
+# of the License, or (at your option) any later version.                       #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                 #
+# GNU General Public License for more details.                                 #
+#                                                                              #
+# To read the license please visit http://www.gnu.org/copyleft/gpl.html        #
+#                                                                              #
+#                                                                              #
+################################################################################
+
+
+boost:
+------
+
+Downloaded by Makefile from:
+	http://dl.sourceforge.net/sourceforge/boost/boost_1_34_0.tar.bz2
+
+
+
+docbook:
+--------
+
+Downloaded by Makefile from:
+	- dtd: http://www.oasis-open.org/docbook/xml/4.2/docbook-xml-4.2.zip
+	- xsl: http://dl.sourceforge.net/sourceforge/docbook/docbook-xsl-1.72.0.tar.bz2
+
+
+
+delta:
+------
+
+with <cvs-head> = <:pserver:anonymous@boost.cvs.sourceforge.net:/cvsroot/boost> @ 2007/06/25:
+
+- boost/user-config.jam.diff:
+	=> modifies user-config.jam to add xsltproc, boostbook and quickbook.
+
+- boost/tools/quickbook: <cvs-head>/boost/tools/quickbook
+	=> replaces distribution's QuickBook. Have to use cvs::head version of QuickBook and not v1.34.0,
+	   because the latter triggers a gcc-4.1 bug when building with -O3, which Boost.Build passes for
+	   release mode (infinite loop, https://bugs.launchpad.net/ubuntu/+source/gcc-4.1/+bug/82404).

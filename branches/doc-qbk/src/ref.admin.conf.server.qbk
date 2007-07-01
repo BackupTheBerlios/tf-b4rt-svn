@@ -1,0 +1,401 @@
+[/
+################################################################################
+# $Id$
+# $Date$
+# $Revision$
+################################################################################
+#                                                                              #
+# LICENSE                                                                      #
+#                                                                              #
+# This program is free software; you can redistribute it and/or                #
+# modify it under the terms of the GNU General Public License (GPL)            #
+# as published by the Free Software Foundation; either version 2               #
+# of the License, or (at your option) any later version.                       #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                 #
+# GNU General Public License for more details.                                 #
+#                                                                              #
+# To read the license please visit http://www.gnu.org/copyleft/gpl.html        #
+#                                                                              #
+#                                                                              #
+################################################################################
+# Torrentflux-b4rt doc.
+################################################################################
+]
+
+
+[section:server Server options (server)]
+
+[section:data Torrentflux-b4rt path configuration]
+
+The following paths must be configured for
+__proj__ to operate correctly:
+
+* Transfer Parent Path
+  The main __proj__ parent path (<path>).
+
+  This directory is used to store all files used
+  in the day to day operation of __proj__.
+
+  The folder must be writable by the webserver
+  user and ideally owned by the webserver user.
+
+  Files and folders stored/used by the parent path
+  include:
+
+  * Storage for downloaded transfers:
+
+    Content downloaded by __proj__ will
+    be downloaded into <path>/<username> if the
+    use of home directories is enabled.
+
+    If home directories are not enabled,
+    downloaded content will be saved instead
+    into the path specified by the 'Incoming'
+    path instead.  See TODO_LINK: Admin/Server
+    section on 'Home Directories'
+
+  * Transfer control files
+
+    Files used internally by __proj__ to
+    control the download of individual transfers
+    are stored in the <path>/.transfers folder.
+    These files include:
+
+    * .stat files - a stat file is created
+      when a transfer is injected into
+      __proj__.
+
+      The stat file is updated when a transfer
+      is running with information such as how
+      much data has been transferred, what
+      percentage of the transfer has
+      completed, how many seeds/peers the
+      transfer has and other items of
+      information.
+
+      The stat file is then read by the
+      __proj__ internals to display
+      the status of the transfer in the
+      frontend.
+
+    * .pid files - a pid file (process id
+      file) is created when a transfer is
+      started.  The file contains the process
+      id number of the transfer's process.
+
+      The pid file is used as an indication of
+      whether or not a transfer is running and
+      to forcefully stop the transfer in the
+      event that it becomes uncontrollable for
+      some reason.
+
+    * .log files - a log file is created for
+      each transfer when the transfer is
+      started.  The logfile contains
+      information specific to that transfer as
+      it runs over time.
+
+    * .cmd files - a cmd file is created when
+      __proj__ has to send a command
+      to a running transfer.  The transfer's
+      client polls the .transfer folder
+      regularly for new cmd files and if it
+      finds one, it will read the command from
+      the cmd file and act upon it.
+
+      The lifetime of a cmd file should be
+      very short since the file is deleted as
+      soon as the command is executed.
+
+  * Client cache files
+
+    Cache files used by BitTorrent Mainline,
+    Transmission and BitTornado are stored in
+    the .bittorrent, .BitTornado and
+    .transmission folders under <path>.
+
+  * Fluxd control files
+
+    Files used for the control of fluxd are
+    contained in the <path>/.fluxd directory.
+    Files include:
+
+    * fluxd-error.log - any error output from
+      fluxd
+
+    * fluxd.log - standard output from fluxd
+
+    * fluxd.pid - process id of currently
+      running fluxd service
+
+    * fluxd.sock - socket file used to
+      communicate with fluxd
+
+    Additional directories may be created under
+    the .fluxd directory for use by the fluxd
+    modules, particularly the Qmgr and Rssad
+    modules.
+
+  * Fluazu control files
+
+    Files used for the control of the fluazu
+    component of __proj__.
+
+  * __Proj__ template cache files
+
+    If template caching is used to display the
+    frontend HTML, template cache files are
+    stored in the <path>/.templateCache folder.
+
+  * RSS cache files
+
+    If RSS feeds are added via the RSS admin
+    page, a cache of the feeds is stored in
+    <path>/.rsscache.  This speeds up display of
+    RSS feed contents in the frontend and takes
+    the strain off the remote server where the
+    RSS feed is fetched from.
+
+* Document Root Path
+
+  The Document Root path of the installation.
+
+  The folder must be readable by the webserver user.
+
+  This is the directory where you installed
+  __proj__ on the webserver and it should
+  be detected/reported automatically by
+  __proj__.
+
+[endsect]
+
+[section:binaries Binary path configuration]
+
+__Proj__ integrates with many third party
+applications to make performing operations on
+transferred files seamless from the frontend.
+
+For this integration to work, the associated
+applications must of course be installed correctly
+first.  For the best results you should use the
+distribution management system for your particular
+operating system to install the applications - apt,
+rpm, etc on linux, the ports systems on BSD.
+
+Once the applications required are installed, the
+paths to the binaries must be set correctly on the
+server admin page for the integration of that
+application to work correctly.
+
+There are various methods to find the location of
+the binary on the server:
+
+* Use 'which':
+
+  The 'which' command can be executed in a shell
+  to display the full path to an application if it
+  exists:
+
+  shell> which unrar
+  /usr/local/bin/unrar
+
+* Using 'locate':
+
+  The 'locate' utility allows you to search
+  quickly for files on your server containing a
+  string you specify:
+
+  shell> locate unrar
+  /usr/local/bin/unrar
+  /usr/local/share/doc/unrar
+  /usr/local/share/doc/unrar/license.txt
+  -snip-
+
+  Note: you must have a locate database built to
+  be able to use the locate command.  See the
+  manpage for locate on your system - 'man
+  locate'.
+
+* Using your package management system:
+
+  Most package management systems include a
+  utility that can describe what files are
+  installed by a package.
+
+  For example on FreeBSD, the 'pkg_info' utility
+  can be used with the -L switch to describe what
+  files are installed by a package:
+
+  shell> pkg_info -L unrar-3.70.b7,4
+  Information for unrar-3.70.b7,4:
+
+  Files:
+  /usr/local/bin/unrar
+  /usr/local/share/doc/unrar/license.txt
+  /usr/local/share/doc/unrar/readme.txt
+
+The following binary paths are configured on the
+server admin page:
+
+* transmissioncli
+
+  Transmission is a torrent client which can be
+  used as an alternative to bittorrent or
+  bittornado. Release-Tarballs include a cli-
+  version of transmissioncli written to be used
+  with __proj__. This version has only
+  some additions specific to tfb-operation and
+  is using an unmodified "libtransmission".
+  (exact version of libtransmission can be found
+  in the file transmission.revision or in help-
+  page of transmissioncli)
+
+  The modified transmission source can be
+  found in the 'clients/transmission' folder -
+  once extracted, build and install it to your
+  desired location.
+
+  It must be built and installed on
+  the system on which you are running it before it
+  can be used.
+
+* wget
+
+  Wget transfers can be controlled using
+  __proj__.
+
+* uudeview
+
+  uudeview is required for the operation of the
+  nzbperl component of __proj__.
+
+* php
+
+  This is the commandline (cli) PHP binary, not to be
+  confused with the PHP web installation!  You
+  must have a working cli php binary for many
+  features of __proj__ to work correctly.
+
+  Note that the php cgi binary WILL NOT work as a
+  replacement to the php cli binary.
+
+  On most OS's, the package management system will
+  allow you to install a php cli binary as well as
+  a web based php component (mod_php/php cgi
+  binary).  See your package management package
+  database for info.
+
+* python
+
+  Python is used by the BitTorrent and BitTornado
+  torrent clients and is requisite for the most basic
+  operation of __proj__ as a torrent
+  controller.
+
+  There are various additional python related
+  dependencies required for BitTorrent to work
+  fully, see the README file in the
+  __proj__ distribution root directory for
+  more info.
+
+* perl
+
+  Perl is used by various features in
+  __proj__.  There are various perl
+  related dependencies required for these features
+  to work fully, see the README file in the
+  __proj__ distribution root directory for
+  more info.
+
+* grep
+
+  Basic userland binary that is included in most
+  modern Unix type OS's.
+
+* awk
+
+  Basic userland binary that is included in most
+  modern Unix type OS's.
+
+* du
+
+  Basic userland binary that is included in most
+  modern Unix type OS's.
+
+* unzip
+
+  Unzip is used in the directory manager frontend
+  in __proj__ for extracting zip archives
+  on the server.  Unzip can be found in most
+  package management systems on Unix type systems.
+
+* cksfv
+
+  cksfv is used in the directory manager frontend
+  in __proj__ for checking the integrity
+  of transferred content against an included .sfv
+  file.  Cksfv can be found in most package
+  management systems on Unix type systems.
+
+* vlc
+
+  VLC can be used to stream avi content directly
+  from the __proj__ server where the
+  content is located.  VLC can be found in most
+  package management systems on Unix type systems.
+
+* unrar
+
+  Unrar is used in the directory manager frontend
+  in __proj__ for extracting zip archives
+  on the server.  Unrar can be found in most
+  package management systems on Unix type systems.
+
+[endsect]
+
+[section:os Operating system specific configuration]
+
+There are a small number of applications that are
+specific to different operating systems -
+applications that only exist on one type of OS.
+
+The OS specifics, by OS, are as follows:
+
+* Linux:
+
+  * loadavg
+
+    Used to determine server load average for
+    display in __proj__ frontend stats.
+
+  * netstat
+
+    Used to determine network connection stats for
+    display in __proj__ frontend.
+
+    netstat is a native app on Linux and the
+    path should be detected automatically.
+
+* BSD:
+
+  * sockstat
+
+    Used to determine network connection stats for
+    display in __proj__ frontend.
+
+    sockstat is a native app on BSD and the path
+    should be detected automatically.
+
+    The reason for the requirement of sockstat
+    on BSD instead of netstat is that the
+    functionality of BSD's netstat does not work
+    identically to that of Linux's netstat.
+    Sockstat instead returns the information
+    required by __proj__ correctly.
+
+[endsect]
+
+[endsect]

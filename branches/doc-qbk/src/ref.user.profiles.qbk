@@ -1,0 +1,432 @@
+[/
+################################################################################
+# $Id$
+# $Date$
+# $Revision$
+################################################################################
+#                                                                              #
+# LICENSE                                                                      #
+#                                                                              #
+# This program is free software; you can redistribute it and/or                #
+# modify it under the terms of the GNU General Public License (GPL)            #
+# as published by the Free Software Foundation; either version 2               #
+# of the License, or (at your option) any later version.                       #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                 #
+# GNU General Public License for more details.                                 #
+#                                                                              #
+# To read the license please visit http://www.gnu.org/copyleft/gpl.html        #
+#                                                                              #
+#                                                                              #
+################################################################################
+# Torrentflux-b4rt doc.
+################################################################################
+]
+
+
+[section:profiles Profile management]
+
+The user profile page is available by clicking on the
+/Profile/ link in the navigation menu at the top right
+of the frontend.
+
+A number of options and settings can be changed on a per
+user basis, including general user settings (password,
+default theme, language), what is displayed in the
+frontend, what cookies to use for cookie enabled sites
+and the option to create different transfer profiles for
+different transfer situations.
+
+[section:general General]
+
+[section:direct Changing password\/theme\/language]
+
+The following items can be changed directly on the
+'Profile' page:
+
+* User name
+* Password
+* Default Theme
+* Language
+* Whether to hide offline users on the frontend
+
+[endsect]
+
+[section:ui Changing what to display in the frontend]
+
+TODO_LINK: if enabled by admin in ... section,
+A large number of frontend display settings can be
+changed on a per user basis.  These options are
+available under the 'Personal Settings' heading on
+the 'Profile' page.
+
+The frontend display options which can be configured
+are as follows:
+
+TODO: put links to admin help for each of the
+following
+
+[table
+  [[Item] [Effect]]
+
+  [[ /Page Refresh/ ]
+   [Enable\/disable page refresh]]
+
+  [[ /Page Refresh Interval/ ]
+   [Number of seconds between page refreshes]]
+
+  [[ /AJAX Update/ ]
+   [Enable\/disable AJAX updates]]
+
+  [[ /Page title AJAX Update/ ]
+   [Enable\/disable update of page title in AJAX
+    updates]]
+
+  [[ /User list AJAX Update/ ]
+   [Enable\/disable update of the user list in
+    AJAX Updates]]
+
+  [[ /Transfer List AJAX Update/ ]
+   [Enable\/disable update of the transfer list
+    in AJAX updates]]
+
+  [[ /Silent AJAX Update/ ]
+   [Do not display /Update in Progress.../
+    during AJAX updates]]
+
+  [[ /AJAX Update Interval/ ]
+   [Number of seconds between AJAX updates
+    (default: 5)]]
+
+  [[ /Width/ ]
+   [Width in pixels of the index page (default:
+    900)]]
+
+  [[ /Display Links/ ]
+   [Display list of links on the index page]]
+
+  [[ /Display Users/ ]
+   [Display users on the index page]]
+
+  [[ /Enable Good Looking Statistics/ ]
+   [Enable\/disable "Good looking statistics"]]
+
+  [[ /Good Looking Statistics Settings/ ]
+   [Select Fields shown in "Good looking
+    statistics"]]
+
+  [[ /Display Bandwidth Bars/ ]
+   [Display bandwidth usage bars]]
+
+  [[ /Bandwidth Bars Style/ ]
+   [Select style of bandwidth bars]]
+
+  [[ /Big Bold Drivespace Warning/ ]
+   [Enable\/disable drivespace warning when disk
+    space low]]
+
+  [[ /Show Seeding Torrents/ ]
+   [Display seeding torrents on index page]]
+
+  [[ /Estimated Time To Seed/ ]
+   [Display the estimated time until transfers
+    reach seeding cutoff ratio]]
+
+  [[ /Transfer List Sorting/ ]
+   [Enable\/disable reordering of transfer list
+    by clicking on column headings]]
+
+  [[ /Default Transfer List Sort Order/ ]
+   [Select default sort order of transfers in
+    transfer list]]
+
+  [[ /Transfer List Display/ ]
+   [Select the information to display in the
+    transfer list]]
+
+  [[ /Default Page In Transfer Settings Window/ ]
+   [Select the default page to display in the
+    transfer settings window]]
+
+  [[ /Server Stats/ ]
+   [Enable\/disable display of server stats on
+    index page]]
+
+  [[ /Network Connections/ ]
+   [Enable\/disable display of total network
+    connections]]
+
+  [[ /Show Server Load/ ]
+   [Enable\/disable display of server load
+    averages (1\/5\/15 min averages)]]
+
+  [[ /Drivespace Bar Style/ ]
+   [Select style of drivespace bar]]
+
+  [[ /Transfer Stats Window Update Method/ ]
+   [Select method to use to update transfer
+    stats window]]
+
+  [[ /Transfer Stats Window Update Interval/ ]
+   [Number of seconds between transfer stats
+    updates]]
+
+  [[ /Transfer Hosts/ ]
+   [Enable\/disable display of connected hosts in
+    transfer hosts window]]
+
+  [[ /Server Monitor Update Interval/ ]
+   [Number of seconds between server monitor
+    updates for server monitor update]]
+]
+
+Items available for display in "Good looking statistics" panel are:
+
+* Download Speed
+* Upload Speed
+* Total Speed
+* Connections
+* Drive Space
+* Server Load
+
+Information columns available for display in transfer list are:
+
+* Owner
+* Size
+* Total Down
+* Total Up
+* Status
+* Progress
+* Down-Speed
+* Up-Speed
+* Seeds
+* Peers
+* Estimated Time
+* Client
+
+[endsect]
+
+[section:cookie Deleting __proj__ auto-login cookie]
+
+To delete the auto-login cookie used to authenticate
+the current user automatically, click on the link
+/Delete "Auto-Login" Cookie/.
+
+When you restart the browser and browse to the
+__proj__ frontend, you will be prompted to
+reenter your username and password to login.
+
+To find out about admin options for configuring
+authentication in __proj__ see TODO_LINK:
+'Setting the authentication type to use'.
+
+[endsect]
+
+[section:reset Resetting user profile to default]
+
+Clicking the link /Reset Personal Settings/ will
+reset all customised personal settings to the
+defaults.
+
+[endsect]
+
+[endsect]
+
+[section:cookies External cookie management]
+
+[section:overview Overview]
+
+__Proj__ can be configured to use HTTP
+cookies when performing any operation that involves
+a HTTP request with a website that requires cookies.
+
+This is mainly used for downloading torrent files
+from a private tracker that requires you to use
+cookies for authentication.
+
+The following sections describe how to use external
+cookies with __proj__.
+
+[endsect]
+
+[section:obtain How to obtain cookie information]
+
+Common cookie variables used in torrent sites
+are UID and PASS, although these will differ
+from site to site.  See your torrent site FAQ
+or Forum for more info.
+
+[heading FireFox]
+
+* Tools => Options
+
+* Cookies => View Cookies
+
+* Locate the site you want to get cookie
+  information from.
+
+* Copy the values for the cookie variables
+  that the site uses (typically UID and PASS).
+
+[heading Internet Explorer]
+
+* Tools => Internet Options
+
+* General => Settings => View Files
+
+* Locate cookie file for site (eg: Cookie:user@www.host.com\/).
+
+* Open the file in a text editor.
+
+* Grab the values below the cookie variables
+  that the site uses (typically UID and PASS).
+
+The file will look something like this:
+
+[pre
+userZone
+-660
+www.host.com\/
+1600
+2148152320
+29840330
+125611120
+29766905
+*
+uid
+123456 <----------------------------
+www.host.com\/
+1536
+3567643008
+32111902
+4197448416
+29766904
+*
+pass
+0j9i8h7g6f5e4d3c2b1a <--------------
+www.host.com\/
+1536
+3567643008
+32111902
+4197448416
+29766904
+*
+]
+
+[endsect]
+
+[section:add Adding cookies]
+
+Enter the domain of the website you want to use
+cookies for in the text field labelled /Host:/.
+
+Enter the cookie string you want to use in the text
+field labelled /Data:/.
+
+[tip
+  For example, if the cookie variables you want
+  to send are =uid= with a value set to =99= and
+  =pass= with a value set to =foobar=, then the
+  cookie string would look like [^uid=99;pass=foobar;].
+]
+
+Once the Host\/Data fields are completed, click /Add/
+to add the cookie.
+
+The cookie will now be used whenever you perform an
+action that involves an HTTP request with the
+domain.
+
+[endsect]
+
+[section:edit Editing cookies]
+
+Click on the /Edit/ icon next to the cookie you want
+to edit.  On the resulting page, modify the cookie
+as needed and click /Update/ when finished.
+
+[endsect]
+
+[section:delete Deleting cookies]
+
+Click on the /Delete <domain>/ icon next to the
+cookie you want to delete.  This will remove the
+cookie from the current user's profile.
+
+[endsect]
+
+[endsect]
+
+[section:trprofiles Transfer profile management]
+
+[section:overview Overview]
+
+The transfer profile management section is found on
+the user's 'Profile' page.  Click the link /Transfer
+Profiles Management/ to open the transfer profiles
+management window.
+
+A transfer profile is a pre-defined set of transfer
+options which are saved under a transfer profile
+name.  The transfer profile(s) can then be used at
+a later date when you start a new transfer, saving
+you the effort of having to manually go through each
+of the settings for that transfer tweaking them to
+suit the type of transfer you're performing.
+
+[tip
+For example, say you use a private torrent tracker that requires
+you keep at least a ratio of 1.05.  Rather than manually
+go through the settings each time you start a
+torrent for that private tracker, instead you can
+create a transfer profile with the setting
+/Percentage When Seeding should Stop:/ at =105= and
+/Max upload rate:/ at =0= (no restriction on upload
+speed).
+
+Now each time you start a new transfer that uses the
+private tracker, just select the profile from the
+transfer settings window - the sharekill ratio
+will automatically be set to 105 and there will be
+no restriction on how fast you upload to leeching
+peers meaning you should meet your ratio of 1.05
+faster.
+]
+
+[endsect]
+
+[section:add Adding transfer profiles]
+
+To add a transfer profile, complete the form on the
+transfer profiles management page and click the
+/Add/ button.
+
+If you wish the profile to be available to all other
+users, check the /Public Profile/ checkbox.
+
+[endsect]
+
+[section:edit Editing transfer profiles]
+
+To edit a transfer profile, click the /Edit
+<profilename>/ icon next to the profile.  This will
+load the profile's settings and allow you to modify
+them.
+
+When you are happy with the changes, click the
+/Update/ button to save the profile.
+
+[endsect]
+
+[section:delete Deleting transfer profiles]
+
+To delete a transfer profile, click on the red
+button with a cross on it next to the profile.
+
+[endsect]
+
+[endsect]
+
+[endsect]

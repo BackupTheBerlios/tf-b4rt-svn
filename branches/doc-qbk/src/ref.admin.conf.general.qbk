@@ -1,0 +1,156 @@
+[/
+################################################################################
+# $Id$
+# $Date$
+# $Revision$
+################################################################################
+#                                                                              #
+# LICENSE                                                                      #
+#                                                                              #
+# This program is free software; you can redistribute it and/or                #
+# modify it under the terms of the GNU General Public License (GPL)            #
+# as published by the Free Software Foundation; either version 2               #
+# of the License, or (at your option) any later version.                       #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                 #
+# GNU General Public License for more details.                                 #
+#                                                                              #
+# To read the license please visit http://www.gnu.org/copyleft/gpl.html        #
+#                                                                              #
+#                                                                              #
+################################################################################
+# Torrentflux-b4rt doc.
+################################################################################
+]
+
+
+[section:general General statistics and information listed on the admin page]
+
+The default admin page displays statistics about your
+__proj__ installation, information about your
+database and other miscellaneous details about your OS
+and PHP installation.
+
+The information displayed is as follows:
+
+* __Proj__ Stats:
+
+  * Transfers - current number of transfers in the
+    transfer lists for all users
+
+  * Users - number of users registered to use
+    __proj__
+
+  * Hits - number of accesses of __proj__
+    pages
+
+  * Logs - number of log entries in the database
+
+  * Links - number of links in the link manager
+    database
+
+  * RSS - number of RSS torrent feeds available in
+    the frontend
+
+  * Messages - number of private messages stored in
+    the database
+
+  * Cookies - number of cookies stored in the
+    database for all users
+
+  * Transfer Profiles - number of transfer profiles
+    stored for all users
+
+  * Search-Engines - number of search engines
+    available for use
+
+  * Themes - number of frontend themes available for
+    use
+
+  * Languages - number of languages supported
+
+  * Docroot Disk Usage - current disk space usage
+    for the __proj__ installation on the
+    webserver
+
+  * Version - current active version of this
+    __proj__ installation
+
+  The following superadmin pages can also be opened from
+  the __proj__ stats column if logged in as a
+  superadmin:
+
+  * Transfer Bulk Ops
+  * Processes
+  * Maintenance
+  * Backup
+  * Log
+  * Misc
+  * About
+
+  See the manual section on TODO_LINK: Superadmin
+  Operations for more info on these items.
+
+* Database Details
+
+  * Type - the type of database currently being used
+
+  * Host - the fully qualified domain name of the
+    database host
+
+  * Name - the name of the database being used with
+    this installation
+
+  * Username - the username used to access the database
+
+  * Persistent Connection - whether or not
+    persistent connections are used to connect to
+    the database
+
+* Other Stats
+
+  * OS - the type of operating system this
+    installation is installed on
+
+  * PHP-Version - the version of PHP used by the web
+    component on this webserver
+
+  * sessions - whether or not session support is built
+    into PHP (required)
+
+  * pcre - whether or not Perl Compatible Regular
+    Expression support is built into PHP (required)
+
+  * sockets - whether or not socket support is built
+    into PHP (required for fluxd)
+
+  * safe_mode - whether PHP is running in safe mode
+    or not (must be off)
+
+  * allow_url_fopen - whether PHP allows the fopen
+    function to operate with remote URLs (must be
+    on)
+
+  * register_globals - whether variables are
+    registered globally in PHP (must be off)
+
+  * imagetypes - the image types supported by GD; GD
+    support must be built into PHP and at least one
+    of GIF, JPEG or PNG image types must be
+    supported for image-display (pies, captcha).
+
+  The following software requirement checks can also
+  be run from the 'Other Stats' column if logged in as
+  a superadmin:
+
+  * Check PHP-Web
+  * Check PHP-CLI
+  * Check Perl
+
+  See the manual section on TODO_LINK: 'Superadmin
+  Operations  - Checking software requirements' for
+  more info on these items.
+
+[endsect]

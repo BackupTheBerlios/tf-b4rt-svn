@@ -1,0 +1,631 @@
+[/
+################################################################################
+# $Id$
+# $Date$
+# $Revision$
+################################################################################
+#                                                                              #
+# LICENSE                                                                      #
+#                                                                              #
+# This program is free software; you can redistribute it and/or                #
+# modify it under the terms of the GNU General Public License (GPL)            #
+# as published by the Free Software Foundation; either version 2               #
+# of the License, or (at your option) any later version.                       #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                 #
+# GNU General Public License for more details.                                 #
+#                                                                              #
+# To read the license please visit http://www.gnu.org/copyleft/gpl.html        #
+#                                                                              #
+#                                                                              #
+################################################################################
+# Torrentflux-b4rt doc.
+################################################################################
+]
+
+
+[section:transfer Transfer client options (transfer)]
+
+[section:overview Overview]
+
+The transfer admin page allows you to configure
+options for various transfer clients in
+__proj__.  Since there are various clients
+supported in __proj__, the transfer admin
+section is split into subsections for each 'type' of
+client - bittorrent, azureus (a special case of
+bittorrent in __proj__), wget, nzbperl and
+other settings common to all transfers.
+
+In the admin section, a legend or key is used to
+refer to each type of client.  The legend is as
+follows:
+
+B = BitTornado
+T = Transmission
+M = Bittorrent Mainline
+A = Azureus
+
+The client type that a setting applies to on the
+transfer admin page is indicated in brackets, so for
+example if a certain setting applies only to
+BitTorrent Mainline and BitTornado, the setting will
+have the following after it:
+
+(B + M)
+
+where B represents BitTornado and M represents
+Mainline.
+
+Keep this in mind when configuring settings on the
+transfer admin page.
+
+[endsect]
+
+[section:bittorrent BitTorrent specific settings]
+
+The BitTorrent specific settings are as follows:
+
+* Default BitTorrent Client
+  Set the client to use by default to start
+  torrent transfers.
+
+  This option determines which bittorrent client
+  should be used by default when torrents are
+  started.
+
+* Torrent Metainfo Client
+  Set the client to use to decode torrent meta data.
+
+  This option determines which metainfo client is
+  used to display information encoded within a
+  .torrent file.  This information is displayed
+  primarily in 'details' tab of the transfer
+  settings window for a torrent specific transfer.
+
+* Extra Commandline Options (B+T+M)
+
+  This option allows you to specify any additional
+  commandline options for the BitTornado/Mainline
+  or Transmission clients that aren't covered
+  elsewhere in the __proj__ transfer admin
+  settings page.
+
+* Max Upload Rate (B+T+M+A)
+  Set the default value for the max upload rate
+  per transfer (0 for no limit).
+
+  This option allows you to set a global default
+  for the maximum upload rate in kB/sec.
+
+  Note:
+  -----
+  This limit applies only to individual transfers,
+  so if you set a maximum upload rate here of 10
+  and you have 5 torrents running in
+  __proj__, potentially your total maximum
+  upload rate will be 50 kB/sec.
+
+* Max Download Rate (B+T+M+A)
+  Set the default value for the max download rate
+  per transfer (0 for no limit).
+
+  This option allows you to set a global default
+  for the maximum download rate in kB/sec.
+
+  Note:
+  -----
+  As with the upload rate - this limit applies
+  only to individual transfers, so if you set a
+  maximum download rate of 10 and you have 5
+  torrents running in __proj__,
+  potentially your total maximum download rate
+  will be 50 kB/sec.
+
+* Max Upload Connections (B+M)
+  Set the default value for the max number of
+  upload connections per transfer (0 for no
+  limit).
+
+  This option determines how many concurrent
+  upload connections a single torrent process
+  will initiate.
+
+  This option can be useful if you have a large
+  number of torrents running and need to restrict
+  the number of open sockets you use.
+
+* Max Connections (B+M)
+  Set the maximum number of concurrent connections
+  allowed.
+
+  This option determines the total concurrent
+  connections for both upload and download.
+
+  Again, this is useful if you need to restrict
+  the total number of network connections to/from
+  your machine due to resource limitations.
+
+* Port Range (B+T+M)
+  Set the default values for the for port range
+  (min - max).
+
+  Note:
+  -----
+  One port is required per torrent; ensure
+  the port range is large enough for the maximum
+  number of torrents you will be running.
+
+  The port range you set here should be allowed
+  by any firewall you use, either on the server
+  itself or at the network perimeter (ie on your
+  modem router).
+
+  As mentioned, be sure to make the port range
+  large enough for your needs.  One port is
+  required for each transfer that you run, so if
+  you run 10 torrents be sure to set the port
+  range minimum and maximum at least 10 ports
+  apart.
+
+  When choosing Azureus as transfer-client the
+  port-setting has no affect. Azureus uses a
+  single port set in the used Azureus-Server.
+
+* Rerequest Interval (B+M)
+  Set the default value for the rerequest interval
+  to the tracker (default 1800 seconds).
+
+  This setting allows you to control how
+  frequently the torrent client will contact the
+  torrent tracker with updates about how much data
+  has been transferred and other information
+  related to the transfer.
+
+  Be careful when changing this value as it puts
+  extra load onto the remote server running the
+  tracker.
+
+* Default Torrent Completion Activity (B+T+M+A)
+  Select whether or not a torrent should keep
+  seeding when download is complete (please seed
+  your torrents).
+
+  This setting allows you to control what happens
+  when a torrent has finished downloading all the
+  data you requested.  Setting it to 'die when
+  done' will have the torrent stop after it's
+  completed; 'keep seeding' will carry on seeding
+  until you reach the percentage ratio you specify
+  for the torrent to stop (see below).
+
+  Please bear in mind it is generally considered
+  polite to continue seeding until you at least
+  meet a 100% / 1:1 ratio for a torrent - ie when
+  you have uploaded as much as you have
+  downloaded.
+
+* Default Percentage When Seeding Should Stop
+  (B+T+M+A)
+  Set the default share percentage at which
+  torrents will die if 'Keep Seeding' is selected
+  as completion activity above ('0' will seed
+  forever).
+
+  This setting is only applicable when 'Keep
+  Seeding' is specified as the default action to
+  take when a torrent is completed.
+
+  The option determines at what percentage sharing
+  ratio a transfer should stop.  For example if
+  you set this to 200 (percent), then the torrent
+  will continue seeding after it completes until
+  you have uploaded twice as much as you
+  downloaded.
+
+  This option is very useful for private trackers
+  who require that you maintain a certain minimum
+  sharing ratio.  If for example the default
+  minimum share ratio to maintain 'power user' level
+  on a particular tracker is 1.05 you can ensure that
+  this ratio is kept up by using the 'default
+  percentage when seeding should stop' option and set
+  it to 105 (percent).
+
+* Enable Cumulative Sharekill (B+T+M+A)
+  Recalculate the sharekill value passed to
+  clients on restart based on the total amount
+  uploaded - ie including previous sessions
+  transfer totals.
+
+  This option allows you to keep track of your
+  sharing ratio over a number of transfer sessions
+  for a given transfer.
+
+  For example, you start a torrent and it reaches
+  a 50% sharing ratio and then you stop it.
+  Without 'enable cumulative sharekill', if you
+  restart the torrent the ratio will drop back
+  down to 0% again and you will have lost track of
+  how much you have seeded the torrent over the
+  two sessions.
+
+  Instead, if cumulative sharekill is enabled,
+  when restarted the torrent will display 50% - ie
+  the amounts transferred in the last session are
+  remembered.
+
+* Enable File Priority (B)
+  Allow users to select which files from a torrent
+  to download.
+
+  This option allows your users to be able to pick
+  out individual files from a torrent and have
+  only those files download.
+
+  This can be very useful for example when you
+  have a torrent for a complete season of a show
+  but you only want to grab the first 2 episodes.
+  By using file prioritization you can do just
+  that, grab only the individual files you want.
+
+* Superseeder (B)
+  Set superseeder setting on torrent start by
+  default.
+
+  This option determines if the superseeder
+  setting is on by default for all torrents that
+  are started.
+
+  Superseeding is an optimisation concept that
+  allows pieces of a torrent to be uploaded
+  quickly and efficiently using as little
+  bandwidth as possible *when initially seeding a
+  torrent*.
+
+  For general seeding - ie when you are not the
+  initial seeder - superseeding definitely should
+  not be used.
+
+  See:
+
+  http://www.bittornado.com/docs/superseed.txt
+
+  for more info.
+
+* Skip HashCheck (B+M)
+  Skip hash checking by default when starting
+  torrents.
+
+  This option allows you to skip hash checking
+  when torrents are started up.
+
+  Generally a client will run a hash check on
+  downloaded data to verify the integrity of
+  it whenever the torrent is restarted.  However
+  by using this option you can disable this
+  checking.
+
+  This option can be useful when you are seeding
+  many large torrents whose content you are
+  certain has not changed and you need to restart
+  them all for some reason (after a server reboot
+  for example) but don't want to go through the
+  time consuming process of having hash checking
+  performed on each and every torrent.  Disabling
+  hash checking will speed up the restart process
+  here and get the torrents all seeding quickly.
+
+  *However*, generally you should NOT disable hash
+  checking.
+
+[endsect]
+
+[section:fluazu Fluazu specific settings and operation]
+
+[section:overview Overview]
+
+The fluazu settings page is accessed by clicking
+on the 'Edit Fluazu Settings' link on the
+'transfer' admin page.  On the edit fluazu
+settings page you can start and stop fluazu,
+view log, process and version info and configure
+fluazu settings.  Settings can also be changed
+for the fluazu daemon on the fly whilst it is
+running.
+
+[endsect]
+
+[section:control Starting and stopping fluazu]
+
+To start the fluazu daemon, click the 'Start
+Fluazu' button.  The daemon will be started in
+the background on the server and the status of
+the 'Edit Fluazu Settings' page will change to
+'Fluazu Started'.  A number of configuration
+options for Azureus will also be displayed to
+allow you to change these via fluazu.
+
+To stop the fluazu daemon, click the 'Stop
+Fluazu' button.  The daemon will be stopped in
+the background on the server and the status of
+the page will change to 'Fluazu Off'.
+
+[endsect]
+
+[section:confaz Configuring azureus settings via fluazu]
+
+After fluazu has been started, a number of
+azureus options can be changed dynamically from
+the 'Edit Fluazu Settings' page.  Making changes
+to these options will send a command to the
+backend azureus server to make the change.
+
+The Azureus settings that can be changed via the
+'Edit Fluazu Setting' page are as follows:
+
+* Max Active Torrents
+
+  Maximum torrents to run at the same time.
+
+* Max Active Torrents When Only Seeding
+
+  Maximum torrents to run at the same time
+  when there are only seeding torrents running
+  * ie when not leeching anything.
+
+* Max Connections Global
+
+  Maximum number of connections for all
+  torrents running.
+
+* Max Connections Per Torrent
+
+  Maximum number of connections for each
+  individual torrent.
+
+* Max Download Speed KBs
+
+  Maximum download speed for all torrents.
+
+* Max Downloads
+
+  Maximum number of downloads to run
+  consecutively.
+
+* Max Upload Speed KBs
+
+  Maximum upload speed for all torrents.
+
+* Max Upload Speed When Only Seeding KBs
+
+  Maximum upload speed to allow when only
+  seeding - ie when not leeching
+
+* Max Uploads
+
+  Maximum number of uploads to run
+  consecutively
+
+* Max Uploads Seeding
+
+  Maximum number of uploads to allow when
+  seeding.
+
+[endsect]
+
+[section:view Viewing information about fluazu - logs, processes, version]
+
+To view the fluazu log entries, click on the
+'logs' link.  A new page will open with the
+current fluazu logfile in it.
+
+To view the process listing information for the
+fluazu daemon, click on the 'ps' link.  A new
+page will open containing the process listing
+info if available.
+
+To view the version information for the
+currently installed fluazu daemon, click the
+'version' link.  A new page will open containing
+the version details.
+
+[endsect]
+
+[section:conf Configuring fluazu]
+
+The following options are configured on the
+'Edit Fluazu Settings' page:
+
+* Host
+
+  Host of Azureus-server (currently only
+  localhost is supported).
+
+* Port
+
+  Port of Azureus-server (XML/HTTP, default:
+  6884).
+
+* Secure
+
+  Use secure connection to azureus.
+
+* Username
+
+  Username to use when connecting to
+  Azureus-server.
+
+* Password
+
+  Password to use when connecting to
+  Azureus-server.
+
+[endsect]
+
+[endsect]
+
+[section:wget Wget specific settings]
+
+The wget specific settings are as follows:
+
+* Enable Wget
+  Set who can use wget.
+
+  By default __proj__ is set to allow all
+  users to use the wget functionality.  If you
+  wish to restrict access to wget, you can do so
+  here.
+
+* Limit Download Rate
+  Set the default value for the max download rate
+  per transfer (0 for no limit).
+
+* Limit Number of Retries
+  Set the max number of retries to attempt (0 for
+  no limit).
+
+  When accessing a URL resource using wget and the
+  URL is unavailable for some reason, this option
+  specifies how many times wget should continue to
+  retry getting the resource.
+
+* Enable Passive FTP
+  Enable/disable "passive" transfer mode for FTP.
+
+  In passive ftp transfer mode, the transfer
+  client determines the port it uses to
+  communicate with the remote server.  In active
+  mode, the server determines the ports used to
+  communicate.  Changing the transfer mode can
+  help with communication problems because of
+  restrictive firewalls - the subject is beyond
+  the scope of this document.
+
+[endsect]
+
+[section:nzbperl Nzbperl specific settings]
+
+The requirements for using nzbperl can be checked by
+clicking on the 'nzbperl Requirements Check' link.
+The requirements checker script for nzbperl will run
+in a new window and list all the elements required
+to run nzbperl and whether your current server
+installation meets those requirements.
+
+The nzbperl specific settings are as follows:
+
+* Enable Nzbperl
+  Set who can use nzbperl.
+
+  By default access to the nzbperl functionality
+  is disabled. If you wish to change access rights
+  to nzbperl, you can do so here.
+
+* Use Subdirectories
+  Download nzbperl content into separate
+  subdirectories.
+
+  By default nzbperl will download all content
+  into the master nzb directory.  If you wish to
+  have content downloaded into individual
+  subdirectories for each transfer, you can do
+  that here.
+
+* Bad File Action
+  Set the action to perform on finding a bad entry
+  in the nzb.
+
+  By default nzbperl will drop any bad files
+  downloaded and attempt to re-transfer them.
+  This option can be changed here.
+
+* Download Rate
+  Set the default value for the max download rate
+  per transfer (0 for no limit).
+
+* Server
+  Set the NNTP server nzbperl should connect to.
+
+* Username
+  Set the username to use when connecting to your
+  NNTP server.
+
+* Password
+  Set the password to use when connecting to your
+  NNTP server.
+
+* Connections
+  The number of simultaneous connections to the
+  NNTP server nzbperl will create.
+
+  Note:
+  You can only run conn/server_max nzb downloads at once.
+
+* Threads
+  Use threading.
+
+  Note:
+  Enable only if your Perl installation supports threads.
+
+* Extra Commandline Options
+
+  Any extra commandline options you wish to pass
+  to the nzbperl process can be set here.  Refer
+  to the nzbperl documentation for more
+  information on this TODO_LINK:nzbperl website
+
+[endsect]
+
+[section:common Common settings]
+
+The common settings available for configuration are:
+
+* Enable 0000 Umask (B+T+M+W+N)
+  Enable/disable setting umask to 0000 when
+  starting a client.
+
+  Note:
+  Resulting permissions of created files will be
+  777 - readable, writable and executable by
+  everyone.
+
+  Umasking refers to the default file permissions
+  that should be given to a newly created file.
+  This option will set the umask to 0000 which
+  will give all files created by all transfer
+  processes a default permission so the files are
+  readable/writable by everyone.
+
+  See the manpage for 'sh' for more info on umask.
+
+* Use Nice (B+T+M+W+N)
+  Set the nice level to use for transfer
+  processes.
+
+  Note:
+  The highest nice level - 19 - gives processes
+  the lowest possible priority over other
+  processes on the server.
+
+  The nice utility is a feature of Unix type OSs
+  that allows you to adjust the priority of a
+  process.  The higher a process's 'nice' value is
+  the less priority it has with respect to access
+  to OS system resources - memory paging, CPU
+  access, etc.  By setting a high nice value you
+  are being 'nice' to the other processes on a
+  server.
+
+  This option is useful in the case you have a
+  multi-purpose server and you don't want
+  __proj__ created processes to take all
+  the resources up - setting a high nice value
+  here will effectively give other processes on
+  the webserver higher priority.
+
+[endsect]
+
+[endsect]

@@ -1,0 +1,406 @@
+[/
+################################################################################
+# $Id$
+# $Date$
+# $Revision$
+################################################################################
+#                                                                              #
+# LICENSE                                                                      #
+#                                                                              #
+# This program is free software; you can redistribute it and/or                #
+# modify it under the terms of the GNU General Public License (GPL)            #
+# as published by the Free Software Foundation; either version 2               #
+# of the License, or (at your option) any later version.                       #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                 #
+# GNU General Public License for more details.                                 #
+#                                                                              #
+# To read the license please visit http://www.gnu.org/copyleft/gpl.html        #
+#                                                                              #
+#                                                                              #
+################################################################################
+# Torrentflux-b4rt doc.
+################################################################################
+]
+
+
+[section:index Web application index page display options (index)]
+
+[section:overview Overview]
+
+The /Index Settings/ (index) tab on the admin
+pages allows you to configure settings related to
+the display of the __proj__ index page in
+the frontend.
+
+[endsect]
+
+[section:conf Configuration]
+
+The configuration options for the index tab are as
+follows:
+
+* Page Refresh
+  Enable/disable page updates using HTML meta
+  refresh.
+
+  The index page will be refreshed using an HTML
+  meta refresh tag when this option is enabled.
+
+  Tip:
+  ----
+  AJAX updates uses less bandwidth since only the
+  relevant data in the stats page is transferred.
+
+  Alternatively, the HTML Meta Refresh update
+  method will transfer the complete stats webpage
+  from the webserver using a little more bandwidth
+  than AJAX.
+
+* Page Refresh Interval
+  Interval in seconds between page refreshes.
+
+* AJAX Update
+  Enable/disable page updates using AJAX.
+
+* Page Title AJAX Update
+  Enable/disable update of page titles using AJAX.
+
+  Tip:
+  ----
+  This option is useful because __proj__
+  displays various statistics in the page title,
+  which in turn are displayed in the task bar on
+  Windows.  This makes it easy to see at a glance
+  how transfers and the server is performing.
+
+* Users AJAX Update
+  Enable/disable update of user list using AJAX.
+
+  The user list displays which __proj__
+  users are currently online.  This option updates
+  the user list dynamically using AJAX.
+
+* Transfer List AJAX Update
+  Enable/disable update of transfer list using
+  AJAX.
+
+  The transfer list can be updated using AJAX
+  with this option.
+
+* Silent AJAX Update
+  Do not display any processing request messages
+  when AJAX updates are in progress. Countdown to
+  update timer will also not be displayed.
+
+  Usually __proj__ will display a
+  'Processing...' messages when an update is in
+  effect to indicate to the user that they should
+  not click on anything since the system is busy.
+  This option will disable the processing
+  messages.
+
+* AJAX Update Interval
+  Interval in seconds between AJAX updates.
+
+* Width
+  Width of the index page in pixels.
+
+  Note:
+  -----
+  If a large number of transfer list columns are
+  selected for display, the width of the transfer
+  list may exceed the default page width selected
+  here.  As a result, the index page width may be
+  larger than the width selected here if you have
+  a large number of transfer list columns on
+  display.
+
+* Multi Uploads
+  Enable/disable display of links for uploading of
+  multiple files at once.
+
+  This option will display links underneath the
+  transfer file upload form to allow users to
+  upload multiple files at a time.
+
+* Multi Upload Page Rows
+  Number of rows of file upload fields to display
+  on the multi uploads page.
+
+* Torrent Search
+  Enable/disable torrent searches from the home
+  page via third party torrent sites.
+
+* Default Torrent Search Engine
+  Default search engine to use for torrent
+  searches.
+
+* Display Links List
+  Enable/disable display of admin configured list
+  of links on the index page.
+
+  The link list is configured on the 'links' admin
+  page - see here for more info:
+
+  TODO_LINK:
+  Admin ops, Website link list management (links)
+
+* Display Users List
+  Enable/disable display of __proj__ users
+  and their online status.
+
+  When enabled, a list of all __proj__
+  users is displayed showing their current online
+  status.
+
+  The period of time after which users are
+  considered 'offline' is configured on the
+  'webapp' admin page, see here for more info:
+
+  TODO_LINK:
+  admin ops, webapp section, Minutes To Keep User
+  Online Status
+
+* Good Looking Statistics
+  Enable/disable display of good looking
+  statistics - up/download speeds, connections,
+  drivespace and server load statistics.
+
+  This option enables the display of various
+  statistics on the index page.
+
+* Good Looking Statistics Display Settings
+  Select the items to display in the "Good Looking
+  Statistics" panel.
+
+  * Download Speed - total download speed being
+    used by __proj__.
+
+  * Upload Speed - total upload speed being
+    used by __proj__.
+
+  * Total Speed - total speed (up and down)
+    being used by __proj__.
+
+  * Connections - total number of transfers
+    running.
+
+  * Drive Space - total drive space remaining on
+    the mount point where the transfers folder
+    is located.
+
+  * Server Load - the load averages for the
+    server.  Uses results from 'loadavg' on
+    linux or 'uptime' on BSD.
+
+* Bandwidth Bars
+  Enable/disable display of current bandwidth
+  usage bars.
+
+  When enabled, bars will be displayed to indicate
+  the current upload and download bandwidth being
+  utilised.  The longer the bar, the more
+  bandwidth in use.
+
+* Bandwidth Bars Style
+  Select the style of bandwidth bar to use.
+
+  There are two bar styles to choose from - tf and
+  xfer.  The tf style has a constant color,
+  whereas the xfer style turns redder the higher
+  the bandwidth utilization is.
+
+* Upstream Bandwidth
+  Maximum available upstream bandwidth in kilobits
+  per second (kbit/s) through your ISP - 1 Megabit
+  per second (1Mbit/s) is roughly equal to
+  1000kbit/s.
+
+  This figure is used to determine the percentage
+  utilization of bandwidth in the bandwidth bars.
+  You should enter the maximum available upstream
+  bandwidth for the network connection of the
+  server - usually this will be the max bandwidth
+  you get from your ISP.
+
+  Tip:
+  ----
+  A rough guide to bandwidth figures:
+
+  1000 = roughly 1Mbit/s
+  512 = 512kbit/s
+
+* Downstream Bandwidth
+  Maximum available downstream bandwidth in
+  kilobits per second (kbit/s) through your ISP -
+  1 Megabit per second (1Mbit/s) is roughly equal
+  to 1000kbit/s.
+
+  This figure is used to determine the percentage
+  utilization of bandwidth in the bandwidth bars.
+  You should enter the maximum available downstream
+  bandwidth for the network connection of the
+  server - usually this will be the max bandwidth
+  you get from your ISP.
+
+* Big Bold Drivespace Warning
+  Enable/disable display of "Big Bold Drivespace"
+  warning when disk space gets below 2% of total.
+
+* Only Admin Can See Other User's Transfers
+  Enable/disable visibility of other user's
+  transfers in regular user's transfer lists -
+  when enabled, only admins will be able to see
+  other user's transfers in their transfer list.
+
+* Transfer File Download
+  Enable/disable links in the transfer list to
+  allow users to download transfer files from the
+  server.
+
+  This option will add a link to the left of each
+  transfer in the transfer list so that the
+  transfer file (ie .torrent file) can be
+  downloaded.  When the link is clicked, the
+  transfer file will be sent to the user as an
+  attachment - ie the browser will prompt the user
+  to save the file locally (or open it in an
+  associated application if MIME types are
+  configured correctly).
+
+* Display Seeding Torrents
+  Enable/disable display of torrents in the
+  seeding state - if enabled, when a torrent has
+  finished leeching and moves on to seed, the
+  torrent will be hidden from the transfer list.
+  Hidden torrents can be viewed in the transfer
+  list by clicking the 'Show Seeding Torrents'
+  link under the transfer list.
+
+* Display Estimated Time To Seed
+  Enable/disable display of estimated time until a
+  transfer is completed in the transfer list.
+
+* Transfer List Can Be Sorted
+  Enable/disable sorting of the transfer list -
+  when enabled, users will be able to change the
+  order in which the transfer list is displayed
+  based on date added, file name, size, totals
+  up/down, transfer status, etc.
+
+  Tip:
+  ----
+  To change the sort order of the transfer list,
+  click on the column headers at the top of the
+  transfer list.  Each click on the column header
+  will toggle sorting in ascending/descending
+  order for that column type.
+
+  For example, clicking on the 'Transfer File'
+  column header will sort the transfer list by
+  transfer file name alphabetically ascending
+  (A-Z); clicking again on the 'Transfer File'
+  column header will sort the transfer list by
+  transfer file name alphabetically descending
+  (Z-A).
+
+* Default Sort Order
+  Select the default property by which the items
+  in the transfer list should be sorted by.
+
+  This is the column by which all transfers in the
+  transfer list will be sorted by - for example,
+  to have the transfer list automatically sorted
+  by transfer file name alphabetically, select
+  'Name - Ascending'.
+
+* Transfer List Display Settings
+  Select the types of columns to display for each
+  transfer in the transfer list.
+
+  * Owner
+  * Size
+  * Total Down
+  * Total Up
+  * Status
+  * Progress
+  * Down-Speed
+  * Up-Speed
+  * Seeds
+  * Peers
+  * Estimated Time
+  * Client
+
+  This option allows you to see a whole host of
+  information directly in the transfer list
+  without having to click on a transfer to pop up
+  the transfer window.
+
+  Note:
+  -----
+  The more transfer columns you display in the
+  transfer list, the wider the index page will
+  grow.  Take this into account especially when
+  using a screen with lower resolutions.
+
+* Default Transfer Window
+  Select the default page to display in the
+  transfer window - the window which is displayed
+  when a transfer in the transfer list is clicked
+  on.
+
+  This option allows you to choose which tab of
+  the popup transfer window will be displayed
+  when you click on a transfer in the transfer
+  list.
+
+* Multi Operations
+  Enable/disable display of the dropdown list of
+  operations to perform on multiple transfer list
+  items - when enabled, a list of operations
+  (start/stop/delete/wipe/reset) will be available
+  in a drop down list for users to perform on more
+  than one transfer at a time.
+
+  This option allows you to specify whether you
+  want users to be able to use the multi ops
+  feature.  Multi ops allow users to select a
+  number of transfers from the transfer list and
+  then apply an action to all of those selected
+  transfers only - start, stop, delete, etc.
+
+* Bulk Operations
+  Enable/disable display of bulk operation links -
+  when enabled, links will be displayed on the
+  index page to allow users to control
+  (start/stop/resume) all transfer in the transfer
+  list at once.
+
+  This option allows you to specify whether the
+  bulk ops links will be displayed on the index
+  page.
+
+  Bulk ops allow users to perform an action on
+  every single transfer in the transfer list at
+  once - for example to restart all torrents in
+  one go.
+
+* Display Server Statistics
+  Enable/disable display of various server
+  statistics (transfer/queue/server stats) at the
+  bottom of the index page.
+
+* Display Network Connections
+  Enable/disable display of total network
+  connections on the index page.
+
+* Display Server Load
+  Enable/disable display of 1/5/15 minute average
+  server load on the index page.
+
+[endsect]
+
+[endsect]

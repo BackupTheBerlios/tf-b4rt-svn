@@ -1,0 +1,395 @@
+[/
+################################################################################
+# $Id$
+# $Date$
+# $Revision$
+################################################################################
+#                                                                              #
+# LICENSE                                                                      #
+#                                                                              #
+# This program is free software; you can redistribute it and/or                #
+# modify it under the terms of the GNU General Public License (GPL)            #
+# as published by the Free Software Foundation; either version 2               #
+# of the License, or (at your option) any later version.                       #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                 #
+# GNU General Public License for more details.                                 #
+#                                                                              #
+# To read the license please visit http://www.gnu.org/copyleft/gpl.html        #
+#                                                                              #
+#                                                                              #
+################################################################################
+# Torrentflux-b4rt doc.
+################################################################################
+]
+
+
+[section:app Appendices]
+
+[section:fluxd Guide to Fluxd Modules and Configuration]
+
+[section:qmgr Qmgr - transfer queue management]
+
+[endsect]
+
+[section:watch Watch - watch folders for new transfer files and start them automatically]
+
+[endsect]
+
+[section:rssad Rssad - monitor RSS feeds regularly for new transfers matching a pattern]
+
+[endsect]
+
+[section:fluxinet Fluxinet - connect to the fluxd daemon remotely over TCP]
+
+[endsect]
+
+[section:maintenance Maintenance - run regular maintenance checks on transfers, restart any stopped transfers automatically]
+
+[endsect]
+
+[section:trigger Trigger - perform actions upon transfer completion (not currently implemented)]
+
+[endsect]
+
+[endsect]
+
+[section:fluxcli Using fluxcli.php on the command-line]
+
+[section:cron Running fluxcli.php from a cron job to auto fetch RSS feed items]
+
+[endsect]
+
+[endsect]
+
+[section:stats Obtaining statistics using stats.php]
+
+[section:overview Overview]
+
+__Proj__ can output a variety of detailed
+statistical information using TODO_LINK:[ link to
+stats.php script, but only for the distribution html
+manual NOT for the tfb main website version of
+manual - is this possible with quickbook? 'the
+stats.php script'].
+
+The stats can be displayed in various formats
+suitable for different usage purposes - plain text
+for viewing/usage on the commandline or in a web
+browser, RSS for reading in an RSS feed reader for
+regular updates on the __proj__ installation
+or even customized XML formats for
+specialised/custom use.
+
+To view detailed usage instructions, call the
+stats.php script with the single argument 'usage':
+
+http://example.com/stats.php?usage
+
+[endsect]
+
+[section:type Specifying the type of output to display]
+
+The type of output displayed by the stats.php script
+is determined by the 't' argument used in the query
+string of the request URL.
+
+For example, to display statistics relating to the
+server you would browse to the following page:
+
+http://example.com/__proj__/stats.php?t=server
+
+The valid options for the 't' argument are:
+
+* all
+  Displays all types of statistics listed below -
+  server, xfer, users, transfers.
+
+  http://example.com/stats.php?t=all
+
+* server
+  Displays current statistics about the
+  __proj__ server, including:
+
+  * speedDown
+    The total download bandwidth being utilised.
+
+  * speedUp
+    The total upload bandwidth being utilised.
+
+  * speedTotal
+    The total bandwidth being utilised
+    (upload and download combined).
+
+  * cons
+    The total number of network connections.
+
+  * freeSpace
+    The available disk space left in MB/Gb.
+
+  * loadavg
+    The server load average.
+
+  * running
+    The number of transfers current in the
+    'running' state.
+
+  * queued
+    The number of transfers current in the
+    'queued' state.
+
+  * speedDownPercent
+    Download speed as a percentage of maximum
+    available download bandwidth.
+
+  * speedUpPercent
+    Upload speed as a percentage of maximum
+    available upload bandwidth.
+
+  * driveSpacePercent
+    Available drive space remaining as a
+    percentage of total drive space.
+
+  http://example.com/stats.php?t=server
+
+* xfer
+  Displays data transfer statistics, including:
+
+  * xferGlobalTotal
+    The global transfer total (all users).
+
+  * xferGlobalMonth
+    The current month's global transfer total.
+
+  * xferGlobalWeek
+    The current week's global transfer total.
+
+  * xferGlobalDay
+    The current day's global transfer total.
+
+  * xferUserTotal
+    The current user's transfer total.
+
+  * xferUserMonth
+    The current user's transfer total for the
+    current month.
+
+  * xferUserWeek
+    The current user's transfer total for the
+    current week.
+
+  * xferUserDay
+    The current user's transfer total for the
+    current day.
+
+  http://example.com/stats.php?t=xfer
+
+* users
+  Displays the current online status for each
+  __proj__ user.
+
+  http://example.com/stats.php?t=users
+
+* transfers
+  Displays statistics for all transfers currently
+  being handled by __proj__.
+
+  The statistics displayed for each transfer include:
+
+  * running
+    Whether the transfer is running or not.
+
+  * speedDown
+    The current download speed of the transfer.
+
+  * speedUp
+    The current upload speed of the transfer.
+
+  * percentDone
+    The percentage of the transfer currently
+    completed.
+
+  * sharing
+    The share ratio for the current transfer as
+    a percentage.
+
+  * eta
+    The estimated time until the transfer is
+    complete.
+
+  * seeds
+    The number of seeds currently connected.
+
+  * peers
+    The number of peers currently connected.
+
+  * downCurrent
+    The current download bandwidth being
+    utilised for the transfer.
+
+  * upCurrent
+    The current upload bandwidth being utilised
+    for the transfer.
+
+  The following statistics are also displayed for
+  the 'transfers' argument:
+
+  * downTotal
+    The current total download bandwidth being
+    utilised.
+
+  * upTotal
+    The current total upload bandwidth being
+    utilised.
+
+  * cons
+    The current total number of network
+    connections.
+
+  http://example.com/stats.php?t=transfers
+
+* transfer
+  Displays statistics for a single transfer
+  specified using the 'i' argument.
+
+  http://example.com/stats.php?t=transfer&i=foobar.torrent
+
+[endsect]
+
+[section:format Specifying the format of the stats.php output]
+
+The type of format to use when displaying output
+from the stats.php script is determined by the 'f'
+argument used in the query string of the request
+URL.
+
+For example, to display statistics relating to the
+server in RSS format, you would browse to the
+following page:
+
+http://example.com/__proj__/stats.php?t=server&f=rss
+
+The valid options for the 'f' argument are:
+
+* xml
+  Displays output in XML format.
+
+* rss
+  Displays output in RSS 0.91 format.
+
+  Suitable for receiving regular updates in an RSS
+  feed reader.
+
+* txt
+  Displays output in plain text format.
+
+  Suitable for parsing with custom command line
+  scripts.
+
+Sending column headers in text mode stats.php output
+
+The 'h' argument to the stats.php specifies that
+header columns should be sent out with the output
+from the stats.php script (only in text format).
+
+For example, the plain text output generated with
+the request URL:
+
+http://example.com/__proj__/stats.php?t=server&f=txt
+
+might look like this:
+
+0.00;0.00;0.00;1;12.37 GB; 1.25, 1.03, 0.56;1;0;0;0;87
+
+which is just the raw server statistics.
+
+Instead if we add on the argument 'h=1' to indicate
+we want column headers displayed as well - so the
+request URL looks like this:
+
+http://example.com/__proj__/stats.php?t=server&f=txt&h=1
+
+then the output displayed will look like this:
+
+Speed Down;Speed Up;Speed Total;Connections;Free Space;Load;Running;Queued;Speed Down (Percent);Speed Up (Percent);Drive Space (Percent)
+0.00;0.00;0.00;1;12.37 GB; 1.25, 1.03, 0.56;1;0;0;0;87
+
+This makes it easier to tell what each field/value
+of the output represents.
+
+Tip:
+----
+
+The field separator - ';' in the example above - can
+be changed on [TODO_LINK:admin.stats 'the Admin Ops,
+Configuring stats.php page'].
+
+The stats.php script can also be configured to send
+out header columns by default - again on
+[TODO_LINK:admin.stats 'the Admin Ops, Configuring
+stats.php page'].
+
+Sending stats.php output as HTTP file attachments
+
+The 'a' argument to the stats.php request URL allows
+you to specify that you want the output to be sent
+as an HTTP attachment.  This has the effect in most
+web browsers of prompting the user for a location to
+download the file to or open the file up in an
+associated application if MIME types are configured
+correctly.
+
+To have output sent as an attachment, use 'a=1' as
+an argument to the stats.php request URL - for
+example:
+
+http://example.com/__proj__/stats.php?t=server&a=1
+
+This request URL would send out the server
+statistics as an HTTP attachment, prompting the user
+to save the file to disk or open it in an external
+application.
+
+Sending compressed stats.php output
+
+The 'c' argument to the stats.php request URL allows
+you to specify that the output from stats.php should
+be compressed when sending.  Most modern web
+browsers automatically 'deflate' the compressed
+content on receipt so it's human readable.
+
+Compression saves bandwidth at the cost of adding
+some small additional CPU resource cost on the
+server.
+
+To have output compressed when sending, use 'c=1' as
+an argument to the stats.php request URL - for
+example:
+
+http://example.com/__proj__/stats.php?t=server&c=1
+
+This request URL would compress the server
+statistics output before sending it out.
+
+Tip:
+----
+The level of compression to use can be configured on
+the [TODO_LINK:admin.stats 'the Admin Ops,
+Configuring stats.php page'].
+
+[endsect]
+
+[section:conf Configuring stats.php]
+
+A number of options can be configured to control the
+way the stats.php script operates.  Refer to the
+TODO_LINK:admin.stats 'Admin Ops, configuring
+stats.php section of the manual.
+
+[endsect]
+
+[endsect]
+
+[endsect]

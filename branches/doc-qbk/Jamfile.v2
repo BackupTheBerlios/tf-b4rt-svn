@@ -1,0 +1,99 @@
+################################################################################
+# $Id$
+# $Date$
+# $Revision$
+################################################################################
+#                                                                              #
+# LICENSE                                                                      #
+#                                                                              #
+# This program is free software; you can redistribute it and/or                #
+# modify it under the terms of the GNU General Public License (GPL)            #
+# as published by the Free Software Foundation; either version 2               #
+# of the License, or (at your option) any later version.                       #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                 #
+# GNU General Public License for more details.                                 #
+#                                                                              #
+# To read the license please visit http://www.gnu.org/copyleft/gpl.html        #
+#                                                                              #
+#                                                                              #
+################################################################################
+# Jamfile for torrentflux-b4rt doc.
+################################################################################
+
+
+#xml tfb-ref
+#  :
+#    src/ref.index.qbk
+#  ;
+
+#boostbook standalone
+boostbook tfb-ref
+  :
+    #tfb-ref
+    src/ref.index.qbk
+  :
+    # Would need Boost CVS::HEAD or v1.35.0 to do xhtml.
+    #<format>xhtml
+    <format>html
+
+    <xsl:param>nav.layout=Boost
+
+    <xsl:param>boost.root='INVALID'
+    <xsl:param>admon.graphics.path='sys/images/'
+    <xsl:param>navig.graphics.path='sys/images/'
+
+    <xsl:param>html.stylesheet='sys/style/boostbook.css'
+
+    <xsl:param>boost.image.src='images/tf_logo.png'
+    <xsl:param>boost.image.alt='torrentflux-b4rt'
+    <xsl:param>boost.image.w=190
+    <xsl:param>boost.image.h=30
+
+    <xsl:param>chunk.section.depth=3
+    <xsl:param>chunk.first.sections=1
+    <xsl:param>generate.section.toc.level=3
+    <xsl:param>toc.max.depth=3
+    <xsl:param>toc.section.depth=3
+
+#    <xsl:param>use.id.as.filename=0
+  ;
+
+
+#
+# Copy HTML resource files.
+#
+
+import path ;
+
+stage html/images
+  :
+    [ path.glob src/images : *.gif *.jpg *.png ]
+  ;
+
+#stage html/js
+#  :
+#    [ path.glob src/js : *.js ]
+#  ;
+
+#stage html/style
+#  :
+#    [ path.glob src/style : *.css ]
+#  ;
+
+stage html/sys/images
+  :
+    [ path.glob tools/boost/tools/quickbook/doc/html/images : *.gif *.jpg *.png ]
+  ;
+
+#stage html/sys/js
+#  :
+#    [ path.glob tools/boost/tools/quickbook/doc/html/js : *.js ]
+#  ;
+
+stage html/sys/style
+  :
+    [ path.glob tools/boost/tools/quickbook/doc/html : *.css ]
+  ;
