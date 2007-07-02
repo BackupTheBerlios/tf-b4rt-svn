@@ -115,7 +115,7 @@ function flux_scrollLeft() {
 	);
 }
 function flux_scrollTop() {
-	return f_filterResults (
+	return flux_filterResults (
 		window.pageYOffset ? window.pageYOffset : 0,
 		document.documentElement ? document.documentElement.scrollTop : 0,
 		document.body ? document.body.scrollTop : 0
