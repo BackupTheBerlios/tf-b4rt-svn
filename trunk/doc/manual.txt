@@ -207,7 +207,7 @@ Torrentflux-b4rt Reference Manual
                 Overview
                 Configuration
 
-            Statistics options (stats)
+            Configuring stats.php output options (stats)
                 Overview
                 Configuration
 
@@ -4637,9 +4637,202 @@ Introduction
                         Access to dot files/folders - files/folders
                         starting with a dot - are always restricted.
 
-            Statistics options (stats)
+            Configuring stats.php output options (stats)
+
                 Overview
+
+					The stats.php script displays statistics for various
+					aspects of torrentflux-b4rt in a number of different
+					output formats.  For more information on using
+					stats.php, see [TODO_LINK:'appendix, Obtaining
+					statistics using stats.php'].
+
+					The operation of the stats.php script can be
+					configured to your requirements - these
+					configuration options are detailed in this section.
+
                 Configuration
+
+					The configuration options for the 'stats' tab on the
+					admin pages - for configuration of the stats.php
+					script - are as follows:
+
+					o	Publicly Visible Stats
+						Enable/disable publicly visible statistics - if
+						enabled, superadmin level stats (server load,
+						all transfer details, etc) are visible to the
+						public without needing to authenticate.
+
+						This option allows the stats.php script to be
+						requested in a web browser and the output sent
+						without requiring any user authentication -
+						username/password credentials are not required
+						to access stats output.
+
+						Warning:
+						--------
+						With this option enabled, full server statistics
+						will be displayed to anyone who requests them.
+						As a result this should be considered a security
+						risk - only enable this option if you understand
+						and accept that this will reveal server loads,
+						details of transfers, usernames and their online
+						status and so on.  See the [TODO_LINK:'stats.php
+						usage'] for more info of all information
+						revealed.
+
+					o	Show Usage When Called Without Arguments
+						Enable/disable the option to display usage/help
+						when the stats.php script is called without any
+						arguments in the URL.
+
+						This option displays the standard usage/help
+						output when called without any arguments.
+
+						When this option is disabled, the default action
+						to perform when stats.php is called without
+						arguments will be to display *all* statistics -
+						ie as if the stats.php script was called with
+						the argument 't=all'.
+
+					o	Use Compression
+						Enable/disable the use of compression by default
+						when sending statistics - using compression uses
+						less bandwidth but takes up more CPU time on the
+						server
+
+						By default compression is not used to send stats
+						out from stats.php, although compression can be
+						used by manually specifying the argument 'c=1'
+						in the request URL to stats.php.
+
+						This option specifies that stats.php will use
+						compression by default - setting 'c=1' is not
+						required in this case.
+
+						Note:
+						-----
+						The compression level used is specified in the
+						'Compression Level' option below.
+
+						Using compression will add some additional
+						load to the hosting server in terms of CPU
+						resource usage.  In most cases this additional
+						load will be negligible - the benefits of
+						reducing bandwidth consumption by using
+						compression should be weighed up against the
+						cost of additional server load introduced.
+
+					o	Compression Level
+						Specify the level of compression to use when
+						transferring data.
+
+						Level 0 = no compression (data is sent out 'as
+						is'), level 9 = maximum compression (data is
+						compressed as small as possible before sending
+						but takes up some minor extra CPU time to
+						compress).
+
+						This option determines the level of compression
+						to use *when the stats.php script is called with
+						the argument 'c=1' or compression is enabled on
+						the stats admin page*.
+
+						Compression levels run from 0 (lowest) to 9
+						(highest) - ie 0 will use no compression and 9
+						will use the maximum compression possible.
+
+						The compression is applied using PHP's inbuilt
+						'[TODO_LINK:@http://php.net/gzdeflate
+						gzdeflate]' function.
+
+					o	Delimiting Character To Use In TXT Mode
+						Specify the character to use for
+						delimiting/separating fields when the format
+						type is 'txt' - this character will be used to
+						split one item in the output from the next.
+
+						By default the ';' character is used to separate
+						fields in the output, ie:
+
+						0.00;0.00;0.00;1;12.37 GB; 1.25, 1.03, 0.56;1;0;0;0;87
+
+						where ';' marks the end of one field and the
+						start of another.
+
+						The field separator can be changed using this
+						option.
+
+					o	Send Header Fields In TXT Mode
+						Enable/disable sending of header fields at the
+						top of text mode output - when enabled, each of
+						the statistics column headers will be sent out
+						at the top of the output.
+
+						By default when using txt output format mode
+						(f=txt), the output will be sent raw without any
+						column headers to indicate what each field of
+						output relates to, ie:
+
+						0.00;0.00;0.00;1;12.37 GB; 1.25, 1.03, 0.56;1;0;0;0;87
+
+						With this option enabled, stats.php will also
+						send out column headers by default whenever txt
+						format is used, ie:
+
+						Speed Down;Speed Up;Speed Total;Connections;Free Space;Load;Running;Queued;Speed Down (Percent);Speed Up (Percent);Drive Space (Percent)
+						0.00;0.00;0.00;1;12.37 GB; 1.25, 1.03, 0.56;1;0;0;0;87
+
+						This makes it easier to see what values
+						represent what type of statistical information.
+
+						Note:
+						-----
+						Only used in txt mode.
+
+					o	Default Statistic Type To Send
+						Specify the default type of statistic to send
+						out.
+
+						The default statistic type sent out is 'all'.
+						This option allows you to change this to send
+						out a different type of statistic by default.
+
+						The options to choose from are: all, xfer,
+						users, transfers.
+
+						For more info on what is included in the output
+						for each type of statistic, see
+						[TODO_LINK:'the appendix section on using
+						stats.php].
+
+					o	Default Output Format
+						Specify the default output format to use when
+						sending statistics - rss/txt/custom xml.
+
+						By default the format used when sending
+						stats.php info out is xml.  This option allows
+						you to change the default format to use.
+
+						The option to choose from are: rss, txt, xml.
+
+						For more info on each type of output format, see
+						[TODO_LINK:'the appendix section on using
+						stats.php].
+
+					o	Send As Attachment
+						Enable/disable sending of statistics as an HTTP
+						attachment - browser client will prompt to save
+						the attachment as a file.
+
+						By default, stats.php will display output
+						directly in the user agent as long as the agent
+						is configured to do so correctly.  This option
+						allows you to specify that the stats.php output
+						will be sent to the user agent as an HTTP
+						attachment - in most cases the user agent will
+						then prompt the user to download the file and
+						save it locally before viewing it.
 
             Fluxd control and configuration (fluxd)
                 Controlling fluxd (start/stop/restart)
