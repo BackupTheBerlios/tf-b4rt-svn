@@ -71,6 +71,22 @@
 							</tr>
 							<tr>
 								<td align="left" width="350" valign="top">
+									<label for="stats_default_compress"><strong>Use Compression:</strong></label><br/>
+									Enable/disable the use of compression by default when sending statistics - using compression uses less bandwidth but takes up more CPU time on the server.
+								</td>
+								<td valign="top">
+									<select name="stats_default_compress" id="stats_default_compress">
+										<option value="1">True</option>
+										<option value="0"
+										<tmpl_if name="stats_default_compress" value="0">
+											 selected
+										</tmpl_if>
+										>False</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top">
 									<label for="stats_deflate_level"><strong>Compression Level:</strong></label><br/>
 									Specify the level of compression to use when transferring data - level 0 = no compression (data is sent out 'as is'), level 9 = maximum compression (data is compressed as small as possible before sending but takes up some minor extra CPU time to compress).
 								</td>
@@ -149,7 +165,7 @@
 							<tr>
 								<td align="left" width="350" valign="top">
 									<label for="stats_default_format"><strong>Default Output Format:</strong></label><br/>
-									Specify the default output format to use when sending statistics - rss/txt/custom xml.
+									Specify the default output format to use when sending statistics - rss/txt/xml.
 								</td>
 								<td valign="top">
 									<select name="stats_default_format" id="stats_default_format">
@@ -168,22 +184,6 @@
 											 selected
 										</tmpl_if>
 										>txt</option>
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<td align="left" width="350" valign="top">
-									<label for="stats_default_compress"><strong>Use Compression:</strong></label><br/>
-									Enable/disable the use of compression by default when sending statistics - using compression uses less bandwidth but takes up more CPU time on the server
-								</td>
-								<td valign="top">
-									<select name="stats_default_compress" id="stats_default_compress">
-										<option value="1">True</option>
-										<option value="0"
-										<tmpl_if name="stats_default_compress" value="0">
-											 selected
-										</tmpl_if>
-										>False</option>
 									</select>
 								</td>
 							</tr>

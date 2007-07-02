@@ -71,6 +71,26 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
+						<label for="stats_default_compress">Use Compression</label>
+					</td>
+					<td class="settingsSetting" rowspan="2">
+						<select name="stats_default_compress" id="stats_default_compress">
+							<option value="1">True</option>
+							<option value="0"
+							<tmpl_if name="stats_default_compress" value="0">
+								 selected
+							</tmpl_if>
+							>False</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsText">
+						Enable/disable the use of compression by default when sending statistics - using compression uses less bandwidth but takes up more CPU time on the server.
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsTitle">
 						<label for="stats_deflate_level">Compression Level</label>
 					</td>
 					<td class="settingsSetting" rowspan="2">
@@ -188,27 +208,7 @@
 				</tr>
 				<tr>
 					<td class="settingsText">
-						Specify the default output format to use when sending statistics - rss/txt/custom xml.
-					</td>
-				</tr>
-				<tr>
-					<td class="settingsTitle">
-						<label for="stats_default_compress">Use Compression</label>
-					</td>
-					<td class="settingsSetting" rowspan="2">
-						<select name="stats_default_compress" id="stats_default_compress">
-							<option value="1">True</option>
-							<option value="0"
-							<tmpl_if name="stats_default_compress" value="0">
-								 selected
-							</tmpl_if>
-							>False</option>
-						</select>
-					</td>
-				</tr>
-				<tr>
-					<td class="settingsText">
-						Enable/disable the use of compression by default when sending statistics - using compression uses less bandwidth but takes up more CPU time on the server
+						Specify the default output format to use when sending statistics - rss/txt/xml.
 					</td>
 				</tr>
 				<tr>
