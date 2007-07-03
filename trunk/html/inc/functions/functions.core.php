@@ -467,10 +467,14 @@ function convertTime($seconds) {
 	$periods = array (/* 31556926, 2629743, 604800,*/ 86400, 3600, 60, 1);
 	$seconds = floatval($seconds);
 	$values = array();
+	$leading = true;
 	foreach ($periods as $period) {
 		$count = floor($seconds / $period);
-		if ($count == 0)
-			continue;
+		if ($leading) {
+			if ($count == 0)
+				continue;
+			$leading = false;
+		}
 		array_push($values, ($count < 10) ? "0".$count : $count);
 		$seconds = $seconds % $period;
 	}
