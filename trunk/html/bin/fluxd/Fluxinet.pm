@@ -261,7 +261,7 @@ sub main {
 		} else {
 			my $buf = "";
 			my $char = getc($socket);
-			while ($char ne "\n") {
+			while (defined($char) && $char ne "\n") {
 					$buf .= $char;
 					$char = getc($socket);
 			}
