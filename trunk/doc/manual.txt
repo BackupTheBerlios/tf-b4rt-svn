@@ -240,13 +240,12 @@ Torrentflux-b4rt Reference Manual
 
         Appendices
 
-            Guide to Fluxd Modules and Configuration
-                Qmgr - transfer queue management
-                Watch - watch folders for new transfer files and start them automatically
-                Rssad - monitor RSS feeds regularly for new transfers matching a pattern
-                Fluxinet - connect to the fluxd daemon remotely over TCP
-                Maintenance - run regular maintenance checks on transfers, restart any stopped transfers automatically
-                Trigger - perform actions upon transfer completion (not currently implemented)
+			Guide to automatically fetching and uploading RSS torrents to torrentflux-b4rt using fluxd
+				Overview
+				Configuring the Rssad fluxd module to download torrents
+				Configuring the Watch fluxd module to inject torrents into torrentflux-b4rt
+				Starting fluxd
+                Example Rssad filter patterns
 
             Using fluxcli.php on the command-line
                 Running fluxcli.php from a cron job to auto fetch RSS feed items
@@ -4862,13 +4861,432 @@ Introduction
 
         Appendices
 
-            Guide to Fluxd Modules and Configuration
-                Qmgr - transfer queue management
-                Watch - watch folders for new transfer files and start them automatically
-                Rssad - monitor RSS feeds regularly for new transfers matching a pattern
-                Fluxinet - connect to the fluxd daemon remotely over TCP
-                Maintenance - run regular maintenance checks on transfers, restart any stopped transfers automatically
-                Trigger - perform actions upon transfer completion (not currently implemented)
+			Guide to automatically fetching and uploading RSS torrents to torrentflux-b4rt using fluxd
+
+				Overview
+
+					This guide describes the steps required to configure
+					the fluxd daemon to automatically check RSS torrent
+					feeds for torrents matching one or more specified
+                    patterns.  When a matching torrent is found it is
+                    automatically downloaded to a directory.
+
+					In turn, the fluxd daemon is configured to watch
+					this auto download directory for new torrents.  When
+					a new torrent is found in the watch directory, the
+					torrent is automatically injected into
+					torrentflux-b4rt and optionally started
+					automatically.
+
+					The guide will describe the steps required to:
+
+                    TODO_LINK: add links to each of the sections below:
+                    *	Configure the fluxd Rssad module to check RSS
+                        feeds for new torrents matching a filter and
+                        download them to a watch directory.
+
+                    *   Configure the fluxd Watch module to check the
+                        watch directory for new torrents and
+                        automatically inject them into torrentflux-b4rt.
+
+                    *   Configure the fluxd core and finally start
+                        fluxd.
+
+                    Important:
+                    ----------
+                    The RSS feeds *MUST* be 'direct download' feeds -
+                    each item in the RSS feed must contain a direct link
+                    to the torrent file itself and not just a link to a
+                    description page for the torrent.
+
+                    Error messages about 'URL does not appear to contain
+                    a valid torrent file' or similar are often because
+                    the RSS feed is not a direct download feed.
+
+				Configuring the Rssad fluxd module to download torrents
+
+                    Rssad configuration is split into three parts -
+                    filter creation, job creation and finally setting
+                    up the Rssad module to load with fluxd.  These steps
+                    are covered below:
+
+                    *   Filter creation
+                        A filter is a list of patterns that Rssad uses
+                        in a job to find and download new torrents
+                        within RSS feeds.
+
+                        As an example, you may have a filter called 'OS'
+                        which contains a number of patterns to match
+                        your favourite operating systems within RSS
+                        feed(s).  When any of the patterns in the filter
+                        are matched, Rssad will download the torrents
+                        automatically.
+
+                        One filter can be applied to any number of RSS
+                        feeds, making it easy to search for the same
+                        patterns on a number of different trackers.
+
+                        Tip:
+                        ----
+                        Rssad filters are applied using the PHP function
+                        preg_match() and are treated almost the same as
+                        Perl Compatible Regular Expressions (PCRE), so
+                        advanced regular expression metacharacter search
+                        patterns can be used.
+
+                        Note:
+                        -----
+                        Filter patterns are case insensitive, so the
+                        pattern 'foobar' will match 'foobar', 'FOOBAR'
+                        and 'FoOBaR'.
+
+                        TODO_LINK:See the example filter section below
+                        for practical examples.
+
+                        To create a new filter:
+
+                        *   On the 'fluxd' tab of the admin pages, click
+                            the link labelled 'Configure Rssad Filters
+                            And Jobs' in the Rssad section.
+
+                        *   In the 'Name:' textbox on the 'Configure
+                            Rssad Filters and Jobs' page, enter the
+                            name you want to refer to the filter by.
+
+                            The filter name is used to identify one type
+                            of filter from another and should be
+                            easily identifiable for you.  For example,
+                            you might have a filter called 'Films' which
+                            contains all the patterns of upcoming films
+                            you want to keep a watch out for.
+
+                        *   Click 'Add Filter' - you will be taken to
+                            a page where you can add the patterns you
+                            want to search for.
+
+                        *   On the 'Add Filter' screen, enter the first
+                            pattern you want to search for in the 'Add
+                            Filter-Entry' textbox and click 'add' to add
+                            the pattern to the 'Filter-Entries' list.
+
+                            Repeat this step for each pattern you want
+                            this filter to search for.
+
+                        *   When all the patterns have been added to the
+                            filter entries list, click the 'Add Filter'
+                            button to save the filter.
+
+                        The filter will now be added to the list of
+                        filters available for use in Rssad jobs.
+
+                    *   Job creation
+                        With the filter added, you can now move on to
+                        use it in an Rssad job.
+
+                        An Rssad job is composed of three components:
+
+                        *   A filter - comprising of one or more
+                            patterns to search for (see above).
+
+                        *   An RSS feed URL to apply the filter to.
+
+                        *   A directory in which to download any torrent
+                            files to if a match is made for the pattern
+                            against the RSS feed.
+
+                        To create a new Rssad job:
+
+                        *   On the 'fluxd' tab of the admin pages, click
+                            the link labelled 'Configure Rssad Filters
+                            And Jobs' in the Rssad section.
+
+                        *   Click on the 'Add Job' button on the
+                            'Configure Rssad Filters And Jobs' to open
+                            up the Rssad job configuration page.
+
+                        *   On the 'Add Job' screen, enter or select the
+                            following:
+
+                            *   In the 'Savedir' textbox, enter in the
+                                directory you want any found torrents to
+                                be saved to.
+
+                                The directory path should be absolute -
+                                ie '/path/to/savefolder' and not just
+                                'savefolder'.
+
+                            *   Check the 'Check/Create dir' checkbox if
+                                you want the 'Savedir' directory to be
+                                created automatically if it doesn't
+                                already exist.
+
+                            *   In the 'URL' textbox, enter in the URL
+                                of the direct download torrent RSS feed
+                                you want to search in.
+
+                                Important:
+                                ----------
+                                Remember, the RSS feed must be a direct
+                                download feed - ie the links in the feed
+                                are links to the torrent files
+                                themselves and not just to a description
+                                of the torrents.
+
+                                Verify this is the case before
+                                continuing to save headaches later!
+
+                            *   Finally, select the filter you want to
+                                apply to the RSS feed from the 'Filter'
+                                dropdown select field.  This filter will
+                                be used to search for the patterns you
+                                defined in the feed URL.
+
+                        *   Finally, click the 'Add Job' button to add
+                            the job to the list of jobs that Rssad will
+                            run.
+
+                    *   Configuring the Rssad module to load up in Fluxd
+                        Now the Rssad job has been added to Fluxd, all
+                        that remains is to configure Fluxd to load the
+                        Rssad module when it starts up and tell it how
+                        often to run the job.
+
+                        *   On the 'fluxd' admin page in the Rssad
+                            section, set 'Rssad Enabled:' to 'True'.
+
+                            This will make Fluxd load up Rssad when it
+                            starts.
+
+                        *   Change the 'Rssad Polling Interval:' to the
+                            time in seconds you want to wait between
+                            Rssad job runs.
+
+                            Important:
+                            ----------
+                            Be careful when setting this value as some
+                            trackers may ban you if you request their
+                            RSS feeds too frequently.  If in doubt, ask
+                            the administrators of the tracker how often
+                            you can check their feeds for new items.
+
+                        Fluxd is now configured to run the Rssad job.
+
+                        Note:
+                        -----
+                        If fluxd is already running, you may need to
+                        stop and restart it for the changes to take
+                        effect.
+
+                    With the steps above, Fluxd is now ready to search
+                    your feed URL for the filter patterns you specified.
+                    If it finds any matching torrents in the feed, they
+                    will be downloaded and saved to the directory you
+                    set up in the job specification.
+
+                    If you are happy to just manually check the save
+                    directory for new torrents and inject them into
+                    torrentflux-b4rt manually, you can skip the next
+                    section on configuring the Watch module.
+
+                    However, if you want to use the Watch module to keep
+                    an eye on the save directory and automatically
+                    inject any new torrents it finds there - carry on
+                    reading!
+
+				Configuring the Watch fluxd module to inject torrents into torrentflux-b4rt
+
+                    The Watch fluxd module can check a specified
+                    directory at regular intervals and if any new
+                    transfer files are found in that directory it will
+                    automatically inject the transfer into
+                    torrentflux-b4rt and optionally automatically start
+                    it.
+
+                    This is ideal when used in combination with the
+                    Rssad module; Rssad can automatically download any
+                    torrents found in an RSS feed into a directory that
+                    is being watched by the Watch module and in turn the
+                    Watch module can auto inject and optionally start
+                    the torrent for you.
+
+                    Watch configuration is split into two parts - watch
+                    job creation and configuring the Watch module to
+                    load up with fluxd:
+
+                    *   Configure Watch Jobs
+                        To configure a watch job:
+
+                        *   On the 'fluxd' tab of the admin pages, click
+                            the link labelled 'Configure Watch Jobs' in
+                            the 'Watch' module section.
+
+                        *   On the 'Configure Watch Jobs' screen, click
+                            the 'Add Job' button.
+
+                        *   On the 'Add Job' screen, enter or select the
+                            following items:
+
+                            *   Watchdir - this is the directory that
+                                you want the Watch module to keep an eye
+                                on for new transfer files.
+
+                                The directory path should be absolute -
+                                ie '/path/to/savefolder' and not just
+                                'savefolder'.
+
+                            *   Check the 'Check/Create dir' checkbox if
+                                you want the 'Watchdir' directory to be
+                                created automatically if it doesn't
+                                already exist.
+
+                            *   User - select the user you want to be
+                                owner of any transfer files injected by
+                                this job.
+
+                            *   Transfer Profile - select the transfer
+                                profile that will apply to any transfers
+                                injected by this job.
+
+                                TODO_LINK: See the section on transfer
+                                profiles in the user ops section for
+                                more info.
+
+                        *   Finally, click on the 'Add Job' button to
+                            save the job.
+
+
+                    *   Configuring the Watch module to load with Fluxd
+                        Watch is now configured to watch the directory
+                        you specified for new transfer files and
+                        automatically inject them as the user you
+                        specified and with the transfer profile you set.
+
+                        All that remains is to have the Watch module
+                        load up with fluxd below:
+
+                        *   On the 'fluxd' admin page under the 'Watch'
+                            section, set 'Watch Enabled:' to 'True'.
+
+                            This will make Fluxd load up Watch when it
+                            starts.
+
+                        *   Change the 'Watch Polling Interval:' to the
+                            time in seconds you want to wait between
+                            Watch job runs - ie if you set this to '120'
+                            then Fluxd/Watch will check every 2 minutes
+                            for new transfer files and if it finds any,
+                            auto inject them into torrentflux-b4rt.
+
+                        Fluxd is now configured to run the Watch job.
+
+                        Note:
+                        -----
+                        If fluxd is already running, you may need to
+                        stop and restart it for the changes to take
+                        effect.
+
+                    With the steps above, Fluxd is now ready to watch
+                    the directory you specified for new transfer files
+                    and auto inject them.
+
+                    Watch is ideally used in conjunction with Rssad to
+                    search for torrents, download them and drop them
+                    into a directory that the Watch module is watching -
+                    from where Watch can then auto inject the torrent.
+
+                    However Watch can be used on it's own to monitor
+                    directories for new transfer files - for example you
+                    might always download your torrent files into a
+                    certain directory and then have Watch auto inject
+                    them.
+
+				Starting fluxd
+
+                    Finally after the Fluxd modules have been configured
+                    and loaded above, you can now actually start up the
+                    Fluxd daemon.  The daemon will autoload all the
+                    modules you configured and the jobs will run at
+                    their scheduled intervals.
+
+                    To start Fluxd:
+
+                    *   On the 'fluxd' admin page, modify any 'core'
+                        options as required:
+
+                        *   Database Mode - by default this is set to
+                            PHP + fluxcli.php but 'Perl + DBI/DBD' can
+                            be used alternatively.
+
+                            Note:
+                            -----
+                            Running in perl mode is MUCH faster than
+                            PHP.  However, you may need to install
+                            additional perl modules to run in Perl mode
+                            - check the 'check requirements' tab on the
+                            superadmin pages to see if your installation
+                            meets the requirements (TODO_LINK).
+
+                        *   Loglevel - this only needs changing if you
+                            experience problems and need to debug or
+                            troubleshoot fluxd operation.  The default
+                            loglevel is '0' (which doesn't mean 'no
+                            output', just 'normal' level of output!).
+
+                            Higher levels of loglevel increase the
+                            verbosity of fluxd output.
+
+                    *   Finally, click on the 'Start fluxd' button to
+                        start the daemon in the background.
+
+                    The status light should change to green with the
+                    message 'fluxd Running' along with the process id of
+                    the fluxd process.
+
+                Example Rssad filter patterns
+
+                    This section contains a few examples of Rssad
+                    filters - regular expressions - and examples of what
+                    each filter will match.  Notes are provided for each
+                    example.
+
+                    *   Pattern: ^foobar.*'
+
+                        Matches: foobar foOBAr foobarblimp foobar...
+
+                    *   Pattern: foobar.*s07.*
+
+                        Matches: foobarblimpS07E01 foobarblimpS07E99
+                        foobarblimpS07Complete
+
+                        Note:
+                        Useful for matching anything from season
+                        07 of the 'foobar' show.
+
+                    *   Pattern: foobar.*s0\[1-3\].*
+
+                        Matches: foobarS01E01 foobarS02E01 foobarS03E01
+
+                        Note: Useful for matching anything from seasons
+                        01 through 03 of the 'foobar' show.
+
+                    *   Pattern: foobar.*s01e0\[1-9\].*
+
+                        Matches: foobarS01E01 foobarS01E02 foobarS01E09
+
+                        Note:
+                        Useful for matching anything from season 01,
+                        episodes 01 through 09.
+
+                    *   Pattern: (?!toast)foobar.*
+
+                        Does *NOT* match: foobartoast toastfoobar
+                        foobarblimptoast
+
+                        Note:
+                        Useful for matching something that does not
+                        contain a certain string.  The patterns above
+                        will only match if the string does not contain
+                        'toast' in it.
 
             Using fluxcli.php on the command-line
                 Running fluxcli.php from a cron job to auto fetch RSS feed items
