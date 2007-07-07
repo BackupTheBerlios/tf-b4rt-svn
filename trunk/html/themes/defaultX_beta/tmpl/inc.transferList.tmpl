@@ -65,13 +65,12 @@
 	</thead>
 	<tbody>
 		<tmpl_loop name="arUserTorrent">
-			<tr onmouseover="this.className='tablecontent_hover';" 
+			<tr onmouseover="this.className='tablecontent_hover small';" 
 			<tmpl_if name="__EVEN__">
-				onmouseout="this.className='tablecontent';" class="tablecontent"  
+				onmouseout="this.className='tablecontent small';" class="tablecontent small"  
 			<tmpl_else>
-				onmouseout="this.className='tablecontent_alt';" class="tablecontent_alt"  
-			</tmpl_if>
-			style="font-size:80%;">
+				onmouseout="this.className='tablecontent_alt small';" class="tablecontent_alt small"  
+			</tmpl_if>>
 				<td style="white-space:nowrap;overflow:hidden;text-align:center;padding:1px;">
 					<a href="JavaScript:showTransfer('index.php?iid=transferHosts&amp;transfer=<tmpl_var name="url_entry">')">
 						<img src="themes/<tmpl_var name="theme">/images/<tmpl_var name="hd_image">" alt="" title="<tmpl_var name="hd_title"><tmpl_var name="entry">" />

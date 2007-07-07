@@ -9,13 +9,3 @@
 {
 	padding:2px;
 }
-
-a.fluxlink,
-a:link.fluxlink,
-a:active.fluxlink,
-a:visited.fluxlink,
-a:hover.fluxlink
-{
-	font-size:80%;
-	color:#FFFFFF;
-}

@@ -12,12 +12,27 @@ td
 {
 	border-style:none;
 	padding:0px;
+	margin:0px;
+	line-height:auto;
 }
 
+td img
+{
+	vertical-align:bottom;
+}
+
+input,select
+{
+	margin:2px;
+}
 
 img
 {
 	border-style:none;
+}
+img.vmiddle
+{
+	vertical-align:baseline;
 }
 
 form ,
@@ -40,6 +55,16 @@ select,
 textarea
 {
 	font-size:80%;
+}
+
+a.fluxlink,
+a:link.fluxlink,
+a:active.fluxlink,
+a:visited.fluxlink,
+a:hover.fluxlink
+{
+	font-size:80%;
+	color:#FFFFFF;
 }
 
 hr
@@ -117,7 +142,11 @@ a:hover.titlebarbutton
 	padding-left:2px;
 	padding-right:2px;
 	padding-bottom:2px;
-	padding-top:0px;
+	padding-top:1px;
+}
+.table thead td td
+{
+	padding: 0px;
 }
 
 .tableheading_alt

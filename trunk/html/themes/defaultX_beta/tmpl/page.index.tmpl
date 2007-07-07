@@ -25,7 +25,7 @@
 												<tmpl_if name="enable_multiupload">
 													<tr>
 														<td style="text-align:right;">
-															<a href="index.php?iid=multiup" class="small"><img src="themes/<tmpl_var name="theme">/images/arrow.gif" title="<tmpl_var name="_MULTIPLE_UPLOAD">" alt="" />&nbsp;<tmpl_var name="_MULTIPLE_UPLOAD"></a>
+															<a href="index.php?iid=multiup" class="small"><img src="themes/<tmpl_var name="theme">/images/arrow.gif" title="<tmpl_var name="_MULTIPLE_UPLOAD">" alt="" class="vmiddle" />&nbsp;<tmpl_var name="_MULTIPLE_UPLOAD"></a>
 															&nbsp;
 															<select name="aid">
 																<option value="1" selected="selected"><tmpl_var name="_UPLOAD"></option>
@@ -148,9 +148,9 @@
 										<b><tmpl_var name="_LINKS">:</b><br />
 										<tmpl_loop name="linklist">
 											<tmpl_if name="enable_dereferrer">
-												<a href="index.php?iid=dereferrer&amp;u=<tmpl_var escape="url" name="link_url">" target="_blank"><img src="themes/<tmpl_var name="theme">/images/arrow.gif" title="<tmpl_var escape="html" name="link_url">" alt="" style="vertical-align:baseline;" />&nbsp;<tmpl_var escape="html" name="link_sitename"></a><br />
+												<a href="index.php?iid=dereferrer&amp;u=<tmpl_var escape="url" name="link_url">" target="_blank"><img src="themes/<tmpl_var name="theme">/images/arrow.gif" title="<tmpl_var escape="html" name="link_url">" alt="" class="vmiddle" />&nbsp;<tmpl_var escape="html" name="link_sitename"></a><br />
 											<tmpl_else>
-												<a href="<tmpl_var escape="html" name="link_url">" target="_blank"><img src="themes/<tmpl_var name="theme">/images/arrow.gif" width=9 height=9 title="<tmpl_var escape="html" name="link_url">" alt="" style="vertical-align:baseline;" />&nbsp;<tmpl_var escape="html" name="link_sitename"></a><br />
+												<a href="<tmpl_var escape="html" name="link_url">" target="_blank"><img src="themes/<tmpl_var name="theme">/images/arrow.gif" width=9 height=9 title="<tmpl_var escape="html" name="link_url">" alt="" class="vmiddle" />&nbsp;<tmpl_var escape="html" name="link_sitename"></a><br />
 											</tmpl_if>
 										</tmpl_loop>
 									</td>

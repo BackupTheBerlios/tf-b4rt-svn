@@ -18,7 +18,7 @@
 								</td>
 								<tmpl_if name="enable_dirstats" value="1">
 									<td class="buttonLinks">
-										<tmpl_var name="size">B
+										<tmpl_var name="size">
 									</td>
 									<td class="buttonLinks">
 										<tmpl_var name="date">
@@ -56,7 +56,7 @@
 								</td>
 								<tmpl_if name="enable_dirstats" value="1">
 									<td class="buttonLinks">
-										<tmpl_var name="size">B
+										<tmpl_var name="size">
 									</td>
 									<td class="buttonLinks">
 										<tmpl_var name="date">
@@ -69,7 +69,7 @@
 										<a href="javascript:UncompDetails('index.php?iid=uncomp&file=<tmpl_var escape="url" name="urlencode1">&dir=<tmpl_var escape="url" name="urlencode2">&type=zip')"><img src="themes/default/images/zip.png" width="10" height="10" title="Unzip" border="0"></a>
 									</tmpl_if>
 									<tmpl_if name="show_nfo" value="1">
-										<a href="index.php?iid=viewnfo&path=<tmpl_var escape="url" name="urlencode4">"><img src="themes/default/images/view_nfo.gif" width="10" height="10" title="View <tmpl_var name="entry">" border="0"></a>
+										<a href="index.php?iid=viewnfo&path=<tmpl_var escape="url" name="urlencode1">"><img src="themes/default/images/view_nfo.gif" width="10" height="10" title="View <tmpl_var name="entry">" border="0"></a>
 									</tmpl_if>
 									<tmpl_if name="enable_vlc" value="1">
 										<a href="JavaScript:StreamMultimedia('index.php?iid=vlc&dir=<tmpl_var name="urlencode2">&file=<tmpl_var name="urlencode3">')"><img src="themes/default/images/vlc.png" width="10" height="10" title="Stream Multimedia (vlc)" border="0"></a>
@@ -108,7 +108,7 @@
 				</tmpl_if>
 				<tmpl_if name="enable_dirstats" value="1">
 					<tr>
-						<td colspan="4"><span id="newUser"><tmpl_var name="_TDDU"> <tmpl_var name="duTotal">B</span></td>
+						<td colspan="4"><span id="newUser"><tmpl_var name="_TDDU"> <tmpl_var name="duTotal"></span></td>
 					</tr>
 				</tmpl_if>
 			</table>

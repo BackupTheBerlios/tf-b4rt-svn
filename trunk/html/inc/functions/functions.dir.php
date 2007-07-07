@@ -423,4 +423,18 @@ function UrlHTMLSlashesDecode($input){
 	return(stripslashes(html_entity_decode(rawurldecode($input), ENT_QUOTES)));
 }
 
+/**
+*  Get the size in bytes of a directory()
+*
+* @param	string	$path 
+* @return	string	$size bytes
+*/
+function dirsize($path)
+{
+	if(!is_dir($path)) return -1;
+	$size = shell_exec("du -sb ".tfb_shellencode($path));
+	$size = preg_replace("/(.+)\t.*/","$1", $size);
+	return $size;
+}
+
 ?>

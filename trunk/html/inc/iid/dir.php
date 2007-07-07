@@ -201,9 +201,9 @@ $dirName = $cfg["path"].$dir;
 if (!(@is_dir($dirName))) {
 	// our dir is no dir but a file. use parent-directory.
 	if (preg_match("/^(.+)\/.+$/", $dir, $matches) == 1)
-		@header("Location: index.php?iid=dir&dir=".UrlHTMLSlashesEncode($matches[1]));
+		header("Location: index.php?iid=dir&dir=".UrlHTMLSlashesEncode($matches[1]));
 	else
-		@header("Location: index.php?iid=dir");
+		header("Location: index.php?iid=dir");
 	exit();
 }
 if (($dir != "") && (isValidEntry($dir) !== true)) {
@@ -217,18 +217,12 @@ tmplInitializeInstance($cfg["theme"], "page.dir.tmpl");
 // dirstats
 if ($cfg['enable_dirstats'] == 1) {
 	$tmpl->setvar('enable_dirstats', 1);
-	switch ($cfg["_OS"]) {
-		case 1: //Linux
-			$duArg = "-D";
-			break;
-		case 2: //BSD
-			$duArg = "-L";
-			break;
-	}
-	$du = @shell_exec($cfg['bin_du']." -ch ".tfb_shellencode($duArg)." ".tfb_shellencode($dirName)." | ".$cfg['bin_grep']." \"total\"");
-	$tmpl->setvar('duTotal', @substr($du, 0, -7));
+	$du = dirsize($dirName);
+	$tmpl->setvar('duTotal', formatBytesTokBMBGBTB($du));
 	$tmpl->setvar('_TDDU', $cfg['_TDDU']);
-} else {
+} 
+else 
+{
 	$tmpl->setvar('enable_dirstats', 0);
 }
 
@@ -258,86 +252,112 @@ foreach ($entrys as $entry) {
 		$aclWrite = (hasPermission($entry, $cfg["user"], 'w')) ? 1 : 0;
 	else /* sub-dir */
 		$aclWrite = (hasPermission($dir, $cfg["user"], 'w')) ? 1 : 0;
-	if (@is_dir($dirName.$entry)) { // dir
-		// dirstats
-		if ($cfg['enable_dirstats'] == 1) {
-			$dudir = @shell_exec($cfg['bin_du']." -sk -h ".tfb_shellencode($duArg)." ".tfb_shellencode($dirName.$entry));
-			$size = @explode("\t", $dudir);
-			$size = @array_shift($size);
-			$arStat = @lstat($dirName.$entry);
-			$timeStamp = @filemtime($dirName.$entry);
-			$date = @date("m-d-Y h:i a", $timeStamp);
-		} else {
+		
+	// symbolic links
+	if(!is_link($dirName.$entry))
+	{
+		$islink = 0;
+	}
+	else
+	{
+		if(!($slink = readlink($dirName.$entry)))
+			$slink = "";
+		$islink = 1;
+	}
+	// dirstats
+	if ($cfg['enable_dirstats'] == 1) 
+	{
+		if($islink == 0) // it's not a symbolic link
+		{
+			$size = (is_dir($dirName.$entry))? formatBytesTokBMBGBTB(dirsize($dirName.$entry)):formatBytesTokBMBGBTB(filesize($dirName.$entry));
+			$timeStamp = filemtime($dirName.$entry);
+			$date = date("m-d-Y h:i a", $timeStamp);
+		}
+		else // it's a symbolic link
+		{
 			$size = 0;
 			$date = "";
 		}
+	} 
+	else 
+	{
+		$size = 0;
+		$date = "";
+	}	
+	if (is_dir($dirName.$entry)) // dir
+	{ 
 		// sfv
-		if (($cfg['enable_sfvcheck'] == 1) && (false !== ($sfv = findSFV($dirName.$entry)))) {
+		if (($cfg['enable_sfvcheck'] == 1) && (false !== ($sfv = findSFV($dirName.$entry)))) 
+		{
 			$show_sfv = 1;
 			$sfvdir = $sfv['dir'];
 			$sfvsfv = $sfv['sfv'];
-		} else {
+		} 
+		else 
+		{
 			$show_sfv = 0;
 			$sfvdir = "";
 			$sfvsfv = "";
 		}
-		// add entry to dir-array
-		array_push($list, array(
-			'is_dir' => 1,
-			'aclWrite' => $aclWrite,
-			'entry' => $entry,
-			'urlencode1' => UrlHTMLSlashesEncode($dir.$entry),
-			'urlencode2' => UrlHTMLSlashesEncode($dir),
-			'urlencode3' => UrlHTMLSlashesEncode($entry),
-			'addslashes1' => addslashes($entry),
-			'size' => $size,
-			'date' => $date,
-			'show_sfv' => $show_sfv,
-			'sfvdir' => UrlHTMLSlashesEncode($sfvdir),
-			'sfvsfv' => UrlHTMLSlashesEncode($sfvsfv)
-			)
-		);
-	} else if (!@is_dir($dirName.$entry)) { // file
+		$isdir = 1;
+		$show_nfo = 0;
+		$show_rar = 0;
+	} 
+	else if (!@is_dir($dirName.$entry)) // file
+	{ 
 		// image
 		$image = "themes/".$cfg['theme']."/images/time.gif";
 		$imageOption = "themes/".$cfg['theme']."/images/files/".getExtension($entry).".png";
 		if (file_exists("./".$imageOption))
 			$image = $imageOption;
-		// dirstats
-		if ($cfg['enable_dirstats'] == 1) {
-			$arStat = @lstat($dirName.$entry);
-			$arStat[7] = ($arStat[7] == 0) ? @file_size($dirName.$entry) : $arStat[7];
-			$timeStamp = "";
-			if (array_key_exists(10,$arStat))
-				$timeStamp = @filemtime($dirName.$entry);
-			$size = @number_format(($arStat[7]) / 1024);
-			$date = @date("m-d-Y h:i a", $timeStamp);
-		} else {
-			$size = 0;
-			$date = "";
-		}
 		// nfo
 		$show_nfo = ($cfg["enable_view_nfo"] == 1) ? isNfo($entry) : 0;
 		// rar
 		$show_rar = (($cfg["enable_rar"] == 1) && ($aclWrite == 1)) ? isRar($entry) : 0;
 		// add entry to file-array
-		array_push($list, array(
-			'is_dir' => 0,
-			'aclWrite' => $aclWrite,
-			'entry' => $entry,
-			'urlencode1' => UrlHTMLSlashesEncode($dir.$entry),
-			'urlencode2' => UrlHTMLSlashesEncode($dir),
-			'urlencode3' => UrlHTMLSlashesEncode($entry),
-			'urlencode4' => UrlHTMLSlashesEncode($dir.$entry),
-			'addslashes1' => addslashes($entry),
-			'image' => $image,
-			'size' => $size,
-			'date' => $date,
-			'show_nfo' => $show_nfo,
-			'show_rar' => $show_rar
-			)
-		);
+		$isdir = 0;
+		$show_sfv = 0;
+		$sfvdir = "";
+		$sfvsfv = "";
 	}
+	// get Permission and format it userfriendly
+	if(($fperm = fileperms($dirName.$entry)) !== FALSE)
+	{
+		$permission_oct = substr(decoct($fperm),-3);
+		$permission = (is_dir($dirName.$entry))? "d":"-";
+		for($i=0;$i<=2;$i++)
+		{
+			$permission_bin = decbin($permission_oct[$i]);
+			$permission .= ($permission_bin[0] == 1)? "r":"-";
+			$permission .= ($permission_bin[1] == 1)? "w":"-";
+			$permission .= ($permission_bin[2] == 1)? "x":"-";
+		}
+		$permission .= " (0".$permission_oct.")";
+	}
+
+	
+	// add entry to dir-array
+	array_push($list, array(
+		'is_dir'      => $isdir,
+		'is_link'     => $islink,
+		'aclWrite'    => $aclWrite,
+		'permission'  => $permission,
+		'entry'       => $entry,
+		'real_entry'  => $slink,
+		'urlencode1'  => UrlHTMLSlashesEncode($dir.$entry),
+		'urlencode2'  => UrlHTMLSlashesEncode($dir),
+		'urlencode3'  => UrlHTMLSlashesEncode($entry),
+		'addslashes1' => addslashes($entry),
+		'size'        => $size,
+		'date'        => $date,
+		'image'       => $image,
+		'show_sfv'    => $show_sfv,
+		'sfvdir'      => UrlHTMLSlashesEncode($sfvdir),
+		'sfvsfv'      => UrlHTMLSlashesEncode($sfvsfv),
+		'show_nfo'    => $show_nfo,
+		'show_rar'    => $show_rar
+		)
+	);
 }
 
 // set template-loop
@@ -347,11 +367,21 @@ $tmpl->setloop('list', $list);
 
 // dir
 $tmpl->setvar('dir', $dir);
-// parent url
-if (preg_match("/^(.+)\/.+$/", $dir, $matches) == 1)
-	$tmpl->setvar('parentURL', "index.php?iid=dir&dir=" . UrlHTMLSlashesEncode($matches[1]));
+if($dirName != "/")
+	$tmpl->setvar('parentdir', preg_replace("/.*\/(.+?)\//",'$1',$dirName));
 else
-	$tmpl->setvar('parentURL', "index.php?iid=dir");
+	$tmpl->setvar('parentdir', "/ (root)");
+// parent url
+if($dir != "")
+{
+	if (preg_match("/^(.+)\/.+$/", $dir, $matches) == 1)
+		$tmpl->setvar('parentURL', "index.php?iid=dir&dir=" . UrlHTMLSlashesEncode($matches[1]));
+	else
+		$tmpl->setvar('parentURL', "index.php?iid=dir");
+	$tmpl->setvar('showparentURL', TRUE);
+}
+else
+	$tmpl->setvar('showparentURL', FALSE);
 // chmod, parent-dir cannot be chmodded
 if ($dir == "")
 	$tmpl->setvar('show_chmod', 0);
