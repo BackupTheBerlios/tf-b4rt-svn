@@ -488,6 +488,7 @@ function convertTime($seconds) {
  * @return string
  */
 function formatBytesTokBMBGBTB($inBytes) {
+	if(!is_numeric($inBytes)) return "";
 	if ($inBytes > 1099511627776)
 		return round($inBytes / 1099511627776, 2) . " TB";
 	elseif ($inBytes > 1073741824)

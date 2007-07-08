@@ -215,13 +215,13 @@ foreach ($arList as $transfer) {
 	// =================================================================== owner
 
 	// ==================================================================== size
-	$format_af_size = ($settings[1] != 0) ? formatBytesTokBMBGBTB($sf->size) : "&nbsp;";
+	$format_af_size = ($settings[1] != 0) ? formatBytesTokBMBGBTB($sf->size) : "";
 
 	// =============================================================== downtotal
-	$format_downtotal = ($settings[2] != 0) ? formatBytesTokBMBGBTB($transferTotals["downtotal"]) : "&nbsp;";
+	$format_downtotal = ($settings[2] != 0) ? formatBytesTokBMBGBTB($transferTotals["downtotal"]) : "";
 
 	// ================================================================= uptotal
-	$format_uptotal = ($settings[3] != 0) ? formatBytesTokBMBGBTB($transferTotals["uptotal"]) : "&nbsp;";
+	$format_uptotal = ($settings[3] != 0) ? formatBytesTokBMBGBTB($transferTotals["uptotal"]) : "";
 
 	// ================================================================== status
 
