@@ -433,7 +433,7 @@ function dirsize($path)
 {
 	if(!is_dir($path)) return -1;
 	$size = shell_exec("du -sb ".tfb_shellencode($path));
-	$size = preg_replace("/(.+)\t.*/","$1", $size);
+	$size = (float) preg_replace("/(.+)[\t\s]*.*/","$1", $size);
 	return $size;
 }
 
