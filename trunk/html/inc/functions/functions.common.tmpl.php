@@ -37,7 +37,6 @@ function tmplSetIndexPageFormVars() {
 	$tmpl->setvar('index_show_seeding', $cfg["index_show_seeding"]);
 	$tmpl->setvar('enable_multiupload', $cfg["enable_multiupload"]);
 	$tmpl->setvar('hack_multiupload_rows', $cfg["hack_multiupload_rows"]);
-	$tmpl->setvar('ui_dim_main_w', $cfg["ui_dim_main_w"]);
 	$tmpl->setvar('ui_displaylinks', $cfg["ui_displaylinks"]);
 	$tmpl->setvar('ui_displayusers', $cfg["ui_displayusers"]);
 	$tmpl->setvar('ui_displaybandwidthbars', $cfg["ui_displaybandwidthbars"]);

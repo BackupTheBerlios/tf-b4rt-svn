@@ -721,7 +721,6 @@ $tmpl->setvar('enable_dereferrer', $cfg["enable_dereferrer"]);
 $tmpl->setvar('enable_sorttable', $cfg["enable_sorttable"]);
 $tmpl->setvar('enable_bulkops', $cfg["enable_bulkops"]);
 $tmpl->setvar('ui_displaylinks', $cfg["ui_displaylinks"]);
-$tmpl->setvar('ui_dim_main_w', $cfg["ui_dim_main_w"]);
 $tmpl->setvar('drivespace', $cfg['driveSpace']);
 $tmpl->setvar('freeSpaceFormatted', $cfg['freeSpaceFormatted']);
 $tmpl->setvar('file_types_label', $cfg['file_types_label']);

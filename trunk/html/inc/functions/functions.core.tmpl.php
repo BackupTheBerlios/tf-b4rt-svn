@@ -123,6 +123,8 @@ function tmplSetIidVars() {
 	$fluxlink = getTorrentFluxLink();
 	$tmpl->setvar( 'fluxlink_url', $fluxlink['address'] );
 	$tmpl->setvar( 'fluxlink_name', $fluxlink['name'] );
+	// The width should be used on all sites
+	$tmpl->setvar('ui_dim_main_w', $cfg["ui_dim_main_w"]);
 }
 
 /**
