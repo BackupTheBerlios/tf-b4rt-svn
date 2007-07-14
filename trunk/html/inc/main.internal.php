@@ -122,19 +122,19 @@ if (!(cacheIsSet($currentUser))) {
 		// safe_mode
 		if (!isset($_SESSION['check']['safe_mode'])) {
 			$_SESSION['check']['safe_mode'] = 1;
-			if (@ini_get('safe_mode'))
+			if (@ini_get('safe_mode') == '1' || strtolower(@ini_get('safe_mode')) == 'on')
 				@error("safe_mode enabled", "index.php?iid=index", "", array("tf-b4rt will not run with this setting", "PHP-setting : safe_mode"));
 		}
 		// allow_url_fopen
 		if (!isset($_SESSION['check']['allow_url_fopen'])) {
 			$_SESSION['check']['allow_url_fopen'] = 1;
-			if (!@ini_get('allow_url_fopen'))
+			if (@ini_get('allow_url_fopen') == '0' || strtolower(@ini_get('allow_url_fopen')) == 'off')
 				@error("allow_url_fopen disabled", "index.php?iid=index", "", array("tf-b4rt will not run flawless with this setting", "PHP-setting : allow_url_fopen"));
 		}
 		// register_globals
 		if (!isset($_SESSION['check']['register_globals'])) {
 			$_SESSION['check']['register_globals'] = 1;
-			if (@ini_get('register_globals'))
+			if (@ini_get('register_globals') == '1' || strtolower(@ini_get('register_globals')) == 'on')
 				@error("register_globals enabled", "index.php?iid=index", "", array("tf-b4rt may not run flawless with this setting", "PHP-setting : register_globals"));
 		}
 	}
