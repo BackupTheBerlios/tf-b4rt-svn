@@ -215,16 +215,28 @@ foreach ($arList as $transfer) {
 	// =================================================================== owner
 
 	// ==================================================================== size
-	$format_af_size = ($settings[1] != 0) ? formatBytesTokBMBGBTB($sf->size) : "";
-
+	$format_af_size = "";
+	if($settings[1] != 0)
+	{
+		$format_af_size = formatBytesTokBMBGBTB($sf->size);
+		if($format_af_size == "") $format_af_size = "&nbsp;";
+	}
 	// =============================================================== downtotal
-	$format_downtotal = ($settings[2] != 0) ? formatBytesTokBMBGBTB($transferTotals["downtotal"]) : "";
-
+	$format_downtotal = "";
+	if($settings[2] != 0)
+	{
+		$format_downtotal = formatBytesTokBMBGBTB($transferTotals["downtotal"]);
+		if($format_downtotal == "") $format_downtotal = "&nbsp;";
+	}
 	// ================================================================= uptotal
-	$format_uptotal = ($settings[3] != 0) ? formatBytesTokBMBGBTB($transferTotals["uptotal"]) : "";
-
+	$format_uptotal = "";
+	if($settings[3] != 0)
+	{
+		$format_uptotal = formatBytesTokBMBGBTB($transferTotals["uptotal"]);
+		if($format_uptotal == "") $format_uptotal = "&nbsp;";
+	}
 	// ================================================================== status
-
+	
 	// ================================================================ progress
 	if ($settings[5] != 0) {
 		if (($percentDone >= 100) && (trim($sf->up_speed) != "")) {
