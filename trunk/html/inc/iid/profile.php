@@ -318,7 +318,7 @@ switch ($op) {
 		$tmpl->setvar('showIndex', 1);
 		$hideChecked = "";
 		if ($cfg["hide_offline"] == 1)
-			$hideChecked = "checked";
+			$hideChecked = "checked=\"checked\"";
 		$total_activity = GetActivityCount();
 		$sql= "SELECT user_id, hits, last_visit, time_created, user_level FROM tf_users WHERE user_id=".$db->qstr($cfg["user"]);
 		list ($user_id, $hits, $last_visit, $time_created, $user_level) = $db->GetRow($sql);

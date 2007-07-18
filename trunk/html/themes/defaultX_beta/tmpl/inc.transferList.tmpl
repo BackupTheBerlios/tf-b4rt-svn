@@ -60,7 +60,7 @@
 			<tmpl_if name="settings_11">
 				<td style="white-space:nowrap;overflow:hidden;text-align:center;padding:2px;">C</td>
 			</tmpl_if>
-			<td style="white-space:nowrap;overflow:hidden;text-align:center;padding:2px;"><tmpl_var name="_ADMIN"></td>
+			<td style="white-space:nowrap;overflow:hidden;text-align:center;padding:2px;"<tmpl_if name="enable_multiops"> colspan="2"</tmpl_if>><tmpl_var name="_ADMIN"></td>		
 		</tr>
 	</thead>
 	<tbody>
@@ -71,7 +71,7 @@
 			<tmpl_else>
 				onmouseout="this.className='tablecontent_alt small';" class="tablecontent_alt small"  
 			</tmpl_if>>
-				<td style="white-space:nowrap;overflow:hidden;text-align:center;padding:1px;">
+				<td style="text-align:center;padding:1px;">
 					<a href="JavaScript:showTransfer('index.php?iid=transferHosts&amp;transfer=<tmpl_var name="url_entry">')">
 						<img src="themes/<tmpl_var name="theme">/images/<tmpl_var name="hd_image">" alt="" title="<tmpl_var name="hd_title"><tmpl_var name="entry">" />
 					</a>
@@ -103,15 +103,14 @@
 				<tmpl_if name="settings_5">
 					<td style="white-space:nowrap;overflow:hidden;text-align:center;padding:1px;"><center>
 						<tmpl_if name="graph_width" value="-1">
-							<div style="position:relative;padding:0px;margin:0px;width:100px;font-size:90%;margin-bottom:10px;">
-									<div style="position:absolute;top:0px;left:0px;height:10px;text-align:center;width:100px;background-color:<tmpl_var name="progress_color">;background-image:url(themes/<tmpl_var name="theme">/images/progressbar_yellow.gif);">
-										<div style="padding:0px;margin:0px;"><tmpl_var name="percentage"></div>
-									</div>
-									<div class="clear"></div>
+							<div style="position:relative;padding:0px;margin:0px;width:100px;font-size:90%;margin-bottom:10px;" class="clearfix">
+								<div style="position:absolute;top:0px;left:0px;height:10px;text-align:center;width:100px;background-color:<tmpl_var name="progress_color">;background-image:url(themes/<tmpl_var name="theme">/images/progressbar_yellow.gif);">
+									<div style="padding:0px;margin:0px;"><tmpl_var name="percentage"></div>
 								</div>
+							</div>
 						<tmpl_else>
 							<tmpl_if name="transferRunning" op="<" value="2">
-								<div style="position:relative;padding:0px;margin:0px;width:100px;font-size:90%;margin-bottom:10px;">
+								<div style="position:relative;padding:0px;margin:0px;width:100px;font-size:90%;margin-bottom:10px;" class="clearfix">
 									<div style="position:absolute;top:0px;left:0px;height:10px;text-align:right;width:<tmpl_var name="graph_width">px;background-color:<tmpl_var name="progress_color">;background-image:url(themes/<tmpl_var name="theme">/images/progressbar_green.gif);">
 									<tmpl_if name="graph_width" op=">=" value="50">
 										<div style="padding:0px;margin:0px 2px 0px 0px;"><tmpl_var name="percentage"></div>
@@ -122,7 +121,6 @@
 										<div style="padding:0px;margin:0px 0px 0px 2px;"><tmpl_var name="percentage"></div>
 									</tmpl_if>
 									</div>
-									<div class="clear"></div>
 								</div>
 							<tmpl_else>
 								&nbsp;
@@ -180,7 +178,7 @@
 				<tmpl_if name="settings_11">
 					<td style="white-space:nowrap;overflow:hidden;text-align:center;padding:1px;"><tmpl_var name="client"></a></td>
 				</tmpl_if>
-				<td style="white-space:nowrap;overflow:hidden;text-align:center;padding:1px;">
+				<td style="text-align:center;padding:1px;">
 					<div align="center">
 						<tmpl_if name="is_owner">
 							<a onclick="showTransfer('index.php?iid=transferSettings&amp;transfer=<tmpl_var name="url_entry">')" style="cursor:pointer;">
@@ -192,9 +190,6 @@
 									<img src="themes/<tmpl_var name="theme">/images/bulkstop.gif" title="<tmpl_var name="_STOPTRANSFER">" alt="" />
 								</a>
 								<img src="themes/<tmpl_var name="theme">/images/delete_off.gif" alt="" />
-								<tmpl_if name="enable_multiops">
-									<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">" onclick="ajax_updateState = 0;" />
-								</tmpl_if>
 							<tmpl_else>
 								<tmpl_if name="transferowner" value="n/a">
 									<img src="themes/<tmpl_var name="theme">/images/blank.gif" style="width:16px;height:16px;" alt="" />
@@ -246,18 +241,23 @@
 								<tmpl_else>
 									<img src="themes/<tmpl_var name="theme">/images/delete_off.gif" title="<tmpl_var name="_STOPPING">" alt="" />
 								</tmpl_if>
-								<tmpl_if name="enable_multiops">
-									<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">" onclick="ajax_updateState = 0;" />
-								</tmpl_if>
 							</tmpl_if>
 						<tmpl_else>
 							<img src="themes/<tmpl_var name="theme">/images/locked.gif" alt="" title="<tmpl_var name="_NOTOWNER">" />
 							<img src="themes/<tmpl_var name="theme">/images/locked.gif" alt="" title="<tmpl_var name="_NOTOWNER">" />
 							<img src="themes/<tmpl_var name="theme">/images/locked.gif" alt="" title="<tmpl_var name="_NOTOWNER">" />
-							<input type="checkbox" disabled="disabled" />
 						</tmpl_if>
 					</div>
 				</td>
+				<tmpl_if name="enable_multiops">
+					<td>
+						<tmpl_if name="is_owner">
+							<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">" onclick="ajax_updateState = 0;" />
+						<tmpl_else>
+							<input type="checkbox" disabled="disabled" />
+						</tmpl_if>
+					</td>
+				</tmpl_if>
 			</tr>
 		</tmpl_loop>
 	</tmpl_if>
@@ -363,17 +363,14 @@
 				<tmpl_if name="settings_5">
 					<td style="white-space:nowrap;overflow:hidden;text-align:center;padding:1px;"><center>
 						<tmpl_if name="graph_width" value="-1">
-							<div style="position:relative;padding:0px;margin:0px;width:100px;font-size:90%;margin-bottom:10px;">
-									<div style="position:absolute;top:0px;left:0px;height:10px;text-align:center;width:100px;background-color:<tmpl_var name="progress_color">;background-image:url(themes/<tmpl_var name="theme">/images/progressbar_yellow.gif);">
-										<div style="padding:0px;margin:0px;"><tmpl_var name="percentage"></div>
-									</div>
-									<div class="clear"></div>
+							<div style="position:relative;padding:0px;margin:0px;width:100px;font-size:90%;margin-bottom:10px;" class="clearfix">
+								<div style="position:absolute;top:0px;left:0px;height:10px;text-align:center;width:100px;background-color:<tmpl_var name="progress_color">;background-image:url(themes/<tmpl_var name="theme">/images/progressbar_yellow.gif);">
+									<div style="padding:0px;margin:0px;"><tmpl_var name="percentage"></div>
 								</div>
-						
-							<!--<a href="JavaScript:showTransfer('index.php?iid=<tmpl_var name="twd">&amp;transfer=<tmpl_var name="url_entry">')"><tmpl_var name="percentage"></a>-->
+							</div>
 						<tmpl_else>
 							<tmpl_if name="transferRunning" op="<" value="2">
-								<div style="position:relative;padding:0px;margin:0px;width:100px;font-size:90%;margin-bottom:10px;">
+								<div style="position:relative;padding:0px;margin:0px;width:100px;font-size:90%;margin-bottom:10px;" class="clearfix">
 									<div style="position:absolute;top:0px;left:0px;height:10px;text-align:right;width:<tmpl_var name="graph_width">px;background-color:<tmpl_var name="progress_color">;background-image:url(themes/<tmpl_var name="theme">/images/progressbar_green.gif);">
 									<tmpl_if name="graph_width" op=">=" value="50">
 										<div style="padding:0px;margin:0px 2px 0px 0px;"><tmpl_var name="percentage"></div>
@@ -384,7 +381,6 @@
 										<div style="padding:0px;margin:0px 0px 0px 2px;"><tmpl_var name="percentage"></div>
 									</tmpl_if>
 									</div>
-									<div class="clear"></div>
 								</div>
 							<tmpl_else>
 								&nbsp;
@@ -454,9 +450,6 @@
 									<img src="themes/<tmpl_var name="theme">/images/bulkstop.gif" title="<tmpl_var name="_STOPTRANSFER">" alt="" />
 								</a>
 								<img src="themes/<tmpl_var name="theme">/images/delete_off.gif" alt="" />
-								<tmpl_if name="enable_multiops">
-									<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">" onclick="ajax_updateState = 0;" />
-								</tmpl_if>
 							<tmpl_else>
 								<tmpl_if name="transferowner" value="n/a">
 									<img src="themes/<tmpl_var name="theme">/images/blank.gif" style="width:16px;height:16px;" alt="" />
@@ -508,18 +501,23 @@
 								<tmpl_else>
 									<img src="themes/<tmpl_var name="theme">/images/delete_off.gif" title="<tmpl_var name="_STOPPING">" alt="" />
 								</tmpl_if>
-								<tmpl_if name="enable_multiops">
-									<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">" onclick="ajax_updateState = 0;" />
-								</tmpl_if>
 							</tmpl_if>
 						<tmpl_else>
 							<img src="themes/<tmpl_var name="theme">/images/locked.gif" alt="" title="<tmpl_var name="_NOTOWNER">" />
 							<img src="themes/<tmpl_var name="theme">/images/locked.gif" alt="" title="<tmpl_var name="_NOTOWNER">" />
 							<img src="themes/<tmpl_var name="theme">/images/locked.gif" alt="" title="<tmpl_var name="_NOTOWNER">" />
-							<input type="checkbox" disabled="disabled" />
 						</tmpl_if>
 					</div>
 				</td>
+				<tmpl_if name="enable_multiops">
+					<td>
+						<tmpl_if name="is_owner">
+							<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">" onclick="ajax_updateState = 0;" />
+						<tmpl_else>
+							<input type="checkbox" disabled="disabled" />
+						</tmpl_if>
+					</td>
+				</tmpl_if>
 			</tr>
 		</tmpl_loop>
 	</tmpl_if>

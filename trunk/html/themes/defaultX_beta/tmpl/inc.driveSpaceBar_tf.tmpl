@@ -1,18 +1,17 @@
 <table style="width:100%;" cellspacing="0">
 <tbody>
 	<tr>
-		<td style="padding:3px;white-space:nowrap;width:1%;">
+		<td style="padding:2px 3px;">
 			<div class="small" style="text-align:left;"><tmpl_var name="_STORAGE">:</div>
 		</td>
-		<td style="width:98%;">
-			<div style="width:99%;height:12px;border-left:1px solid #000000;border-right:1px solid #000000;">
-				<div id="barDriveSpace1" style="padding:0px;height:12px;width:<tmpl_var name="drivespacebar_space">%;float:left;"><img src="themes/<tmpl_var name="theme">/images/proglass.gif" style="height:12px;width:100%;" alt="" /></div>
-				<div id="barDriveSpace2" style="padding:0px;height:12px;width:<tmpl_var name="drivespacebar_space2">%;float:left;"><img src="themes/<tmpl_var name="theme">/images/noglass.gif" style="height:12px;width:100%;" alt="" /></div>
-				<div class="clear"></div>
+		<td>
+			<div style="width:99%;height:12px;border-left:1px solid #000000;border-right:1px solid #000000;padding:0px;" class="clearfix">
+				<img id="barDriveSpace1" src="themes/<tmpl_var name="theme">/images/proglass.gif" style="height:12px;width:<tmpl_var name="drivespacebar_space">%;float:left;" alt="" />
+				<img id="barDriveSpace2" src="themes/<tmpl_var name="theme">/images/noglass.gif" style="height:12px;width:<tmpl_var name="drivespacebar_space2">%;float:left;" alt="" />
 			</div>
 		</td>
-		<td style="width:1%;padding:3px;white-space:nowrap;">
-			<div class="small" style="text-align:left;white-space:nowrap;">
+		<td style="padding:2px 3px;">
+			<div class="small" style="text-align:left;">
 				<span id="barDriveSpacePercent"><tmpl_var name="drivespacebar_space2"></span>% (<span id="barFreeSpace"><tmpl_var name="drivespacebar_freeSpace"></span>) Free
 			</div>
 		</td>

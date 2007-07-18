@@ -23,7 +23,7 @@ td img
 
 input,select
 {
-	margin:2px;
+	margin:0px 2px 0px 0px;
 }
 
 img
@@ -75,13 +75,25 @@ hr
 .small{
 	font-size:80%;
 }
-.clear{
-	height:0px;
-    font-size:0px;
-    line-height:0px;
-    clear:both;
-    overflow:hidden;
+
+.clearfix:after 
+{
+    content: "."; 
+    display: block; 
+    height: 0px; 
+    clear: both; 
+    visibility: hidden;
 }
+
+.clearfix 
+{
+	display: inline-block;
+}
+
+/* Hides from IE-mac and IE7 \*/
+* html .clearfix {height: 1%;}
+.clearfix {display: block;}
+/* End hide from IE-mac and IE7 */
 
 /* TitleBar */
 .titleleft img,
@@ -126,7 +138,8 @@ a:hover.titlebarbutton
 	text-align:center;
 	font-size:80%;
 }
-.subtableheading td
+.subtableheading thead td,
+.subtableheading thead th
 {
 	padding:3px 0px;
 }
