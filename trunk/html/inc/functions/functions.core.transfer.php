@@ -418,6 +418,7 @@ function getTransferArray($sortOrder = '') {
 				case '.log':
 				case '.pid':
 				case '.cmd':
+				case 'prio':
 					break;
 				default:
 					if (tfb_isValidTransfer($transfer))
