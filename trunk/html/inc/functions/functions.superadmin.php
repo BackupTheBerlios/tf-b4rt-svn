@@ -2141,8 +2141,8 @@ function backupSend($filename, $delete = false) {
 	if (strstr($_SERVER['HTTP_USER_AGENT'], "MSIE"))
 		$filename = preg_replace('/\./', '%2e', $filename, substr_count($filename, '.') - 1);
 	// send data
-	@header("Cache-Control: ");
-	@header("Pragma: ");
+	@header("Cache-Control: no-cache");
+	@header("Pragma: no-cache");
 	@header("Content-Type: application/octet-stream");
 	@header("Content-Length: " .(string)(filesize($backupFile)) );
 	@header('Content-Disposition: attachment; filename="'.$filename.'"');

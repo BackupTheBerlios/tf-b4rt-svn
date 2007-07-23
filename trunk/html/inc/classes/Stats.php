@@ -267,8 +267,8 @@ class Stats
 	function _sendContent($contentType, $fileName, $sendCompressed, $sendAsAttachment) {
 		global $cfg;
 	    // send content
-	    @header("Cache-Control: ");
-	    @header("Pragma: ");
+	    @header("Cache-Control: no-cache");
+	    @header("Pragma: no-cache");
 	    if ($sendCompressed != 0) {
 	    	$contentCompressed = gzdeflate($this->_content, $cfg['stats_deflate_level']);
 			@header("Content-Type: application/octet-stream");

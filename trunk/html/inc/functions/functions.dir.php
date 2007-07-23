@@ -241,6 +241,7 @@ function downloadArchive($down) {
 			$headerName = (strstr($_SERVER['HTTP_USER_AGENT'], "MSIE"))
 				? preg_replace('/\./', '%2e', $sendname, substr_count($sendname, '.') - 1)
 				: $sendname;
+			@header("Cache-Control: no-cache");
 			@header("Pragma: no-cache");
 			@header("Content-Description: File Transfer");
 			@header("Content-Type: application/force-download");

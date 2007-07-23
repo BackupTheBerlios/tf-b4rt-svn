@@ -468,8 +468,8 @@ if ($isAjaxUpdate) {
 		$content .= $tmpl->grab();
 	}
 	// send and out
-    @header("Cache-Control: ");
-    @header("Pragma: ");
+    @header("Cache-Control: no-cache");
+    @header("Pragma: no-cache");
 	@header("Content-Type: text/plain");
 	echo $content;
 	exit();
