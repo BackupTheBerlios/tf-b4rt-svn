@@ -60,7 +60,7 @@
 			<tmpl_if name="settings_11">
 				<td style="white-space:nowrap;overflow:hidden;text-align:center;padding:2px;">C</td>
 			</tmpl_if>
-			<td style="white-space:nowrap;overflow:hidden;text-align:center;padding:2px;"<tmpl_if name="enable_multiops"> colspan="2"</tmpl_if>><tmpl_var name="_ADMIN"></td>		
+			<td <tmpl_if name="enable_multiops">colspan="2" </tmpl_if>style="white-space:nowrap;overflow:hidden;text-align:center;padding:2px;"><tmpl_var name="_ADMIN"></td>		
 		</tr>
 	</thead>
 	<tbody>
@@ -321,7 +321,7 @@
 			<tmpl_if name="settings_11">
 				<td style="white-space:nowrap;overflow:hidden;text-align:center;padding:2px;">C</td>
 			</tmpl_if>
-			<td style="white-space:nowrap;overflow:hidden;text-align:center;padding:2px;"><tmpl_var name="_ADMIN"></td>
+			<td <tmpl_if name="enable_multiops">colspan="2" </tmpl_if>style="white-space:nowrap;overflow:hidden;text-align:center;padding:2px;"><tmpl_var name="_ADMIN"></td>
 		</tr>
 		<tmpl_loop name="arListTorrent">
 			<tr onmouseover="this.className='tablecontent_hover';" 
