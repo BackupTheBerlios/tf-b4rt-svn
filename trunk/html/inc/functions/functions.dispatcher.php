@@ -579,11 +579,6 @@ function dispatcher_processDownload($url, $type = 'torrent') {
 	switch ($type) {
 		default:
 		case 'torrent':
-			// is enabled ?
-			if ($cfg["enable_metafile_download"] != 1) {
-				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use metafile download");
-				@error("metafile download is disabled", "", "");
-			}
 			// process download
 			_dispatcher_processDownload($url, 'torrent', '.torrent');
 			break;
