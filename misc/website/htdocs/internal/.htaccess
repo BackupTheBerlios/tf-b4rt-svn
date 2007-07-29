@@ -1,5 +1,6 @@
 AuthName "Members Only"
 AuthType Basic
+AuthBasicProvider dbm
 AuthDBMUserFile /opt/csw/apache/conf/passwd/passwd_authdb
 AuthDBMGroupFile /opt/csw/apache/conf/passwd/passwd_authdb
 require group tf-b4rt
