@@ -262,6 +262,7 @@
 		</tmpl_loop>
 	</tmpl_if>
 	<tmpl_if name="are_transfer">
+		<thead>
 		<tr class="tableheading_alt">
 			<td style="white-space:nowrap;overflow:hidden;text-align:center;padding:2px;">
 				<tmpl_if name="sortOrder" value="da">
@@ -323,6 +324,8 @@
 			</tmpl_if>
 			<td <tmpl_if name="enable_multiops">colspan="2" </tmpl_if>style="white-space:nowrap;overflow:hidden;text-align:center;padding:2px;"><tmpl_var name="_ADMIN"></td>
 		</tr>
+		</thead>
+		<tbody>
 		<tmpl_loop name="arListTorrent">
 			<tr onmouseover="this.className='tablecontent_hover';" 
 			<tmpl_if name="__EVEN__">
@@ -400,7 +403,7 @@
 				<tmpl_if name="settings_7">
 					<td style="white-space:nowrap;overflow:hidden;text-align:center;padding:1px;">
 						<tmpl_if name="transferRunning" value="1">
-							<a shref="JavaScript:showTransfer('index.php?iid=<tmpl_var name="twd">&amp;transfer=<tmpl_var name="url_entry">')"><tmpl_var name="up_speed"></a>
+							<a href="JavaScript:showTransfer('index.php?iid=<tmpl_var name="twd">&amp;transfer=<tmpl_var name="url_entry">')"><tmpl_var name="up_speed"></a>
 						<tmpl_else>
 							&nbsp;
 						</tmpl_if>
