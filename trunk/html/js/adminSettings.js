@@ -102,11 +102,11 @@ function validateSettings(section) {
 			}
 			break;
 		case 'server':
-			bwd = document.theForm.path_incoming.value;
+			bwd = document.theForm.path_incoming.value.Trim();
 			//if (bwd.indexOf('/') == 0) {
 			//	msg = msg + "* Incoming-PATH cannot be a absolute path. Incoming is a sub-dir of PATH.\n";
-			if (bwd.indexOf('/') != -1) {
-				msg = msg + "* Incoming-dir can only be a subdir of PATH and not contain Slashes. (specify relative Path, no subdirs).\n";
+			if (bwd.indexOf('/') == 0 || bwd.indexOf('../') != -1) {
+				msg = msg + "* Incoming-dir can only be a subdir of PATH. (specify relative Path).\n";
 				document.theForm.path_incoming.focus();
 			}
 			break;

@@ -137,3 +137,7 @@ function center_div(name,w,h){
 		div.style.left = (( flux_clientWidth()/2 ) - ( w/2 )) + 'px';
 	}
 }
+String.prototype.Trim = function () 
+{
+    return (this.replace(/\s+$/,"").replace(/^\s+/,""));
+};
