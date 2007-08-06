@@ -75,12 +75,12 @@ function actionRequest(showlabel,labeltext) {
 			if(gray_layer != null)
 			{
 				if(gray_layer.className == 'hidden')
-					gray_layer.className = '';
+					gray_layer.className = 'active';
 			}
 			if(label.className == 'hidden')
 			{
 				//only if using style.visibility (not style.display!!) we can center the div exactly
-				label.className = '';
+				label.className = 'active';
 				center_div("action_in_progress",document.getElementById("action_in_progress").offsetWidth,document.getElementById("action_in_progress").offsetHeight);
 			}
 			else 
@@ -129,14 +129,17 @@ function flux_filterResults(n_win, n_docel, n_body) {
 }
 
 function center_div(name,w,h){
-	div = document.getElementById(name);
-	if(div != null)
-	{
-		div.style.position = "fixed";
-		div.style.top = (( flux_clientHeight()/2 ) - ( h/2 )) + 'px';
-		div.style.left = (( flux_clientWidth()/2 ) - ( w/2 )) + 'px';
-	}
+	var div = document.getElementById(name);
+	if(div == null)
+		return;
+	// If using IE hack, nothing to do here (centering is done in CSS).
+	if (div.currentStyle && div.currentStyle.position == 'absolute')
+		return;
+	div.style.position = "fixed";
+	div.style.top = (( flux_clientHeight()/2 ) - ( h/2 )) + 'px';
+	div.style.left = (( flux_clientWidth()/2 ) - ( w/2 )) + 'px';
 }
+
 String.prototype.Trim = function () 
 {
     return (this.replace(/\s+$/,"").replace(/^\s+/,""));

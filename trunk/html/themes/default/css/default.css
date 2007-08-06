@@ -39,7 +39,18 @@ A:hover         {BACKGROUND: none; COLOR: #363636; FONT-SIZE: 12px; FONT-FAMILY:
 {
 	visibility:hidden;
 }
-#action_in_progress 
+
+
+/*
+ * IE 5 to 7 don't support position: fixed (in quirks mode), so use expression(...) trick
+ * to dynamically adjust positions/sizes to emulate it. Prefix those CSS identifiers with
+ * '_' to hide them from other browsers (IE ignores the leading underscore, others don't).
+ *
+ * expression(...) are in separate classes to only activate them when needed
+ * (frequently evaluated JS: too CPU-intensive to keep active all the time).
+ */
+
+#action_in_progress
 { 
 	background: #DDDDFF;
 	border:3px solid #a0b9d8;
@@ -51,7 +62,19 @@ A:hover         {BACKGROUND: none; COLOR: #363636; FONT-SIZE: 12px; FONT-FAMILY:
 	position: fixed;
 	top:0px;
 	left:0px;
+	/* --- IE-specific ---- */
+	_position: absolute;
+	_top:  0px;
+	_left: 0px;
+	/* -------------------- */
 	z-index:10102 !important;
+}
+#action_in_progress.active
+{
+	/* --- IE-specific ---- */
+	_top:  expression( ( flux_scrollTop()  + (flux_clientHeight() - /*this.*/offsetHeight) / 2 ) + 'px' );
+	_left: expression( ( flux_scrollLeft() + (flux_clientWidth()  - /*this.*/offsetWidth ) / 2 ) + 'px' );
+	/* -------------------- */
 }
 
 #grey_out
@@ -59,6 +82,11 @@ A:hover         {BACKGROUND: none; COLOR: #363636; FONT-SIZE: 12px; FONT-FAMILY:
 	position: fixed;
 	height:100%;
 	width:100%;
+	/* ---- IE-specific ---- */
+	_position: absolute;
+	_height: 0px;
+	_width:  0px;
+	/* --------------------- */
 	z-index:10100 !important;
 	top: 0px;
 	left: 0px;
@@ -67,5 +95,14 @@ A:hover         {BACKGROUND: none; COLOR: #363636; FONT-SIZE: 12px; FONT-FAMILY:
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
+#grey_out.active
+{
+	/* ---- IE-specific ---- */
+	_height: expression( document.body.scrollHeight + 'px' );
+	_width:  expression( document.body.scrollWidth  + 'px' );
+	/* --------------------- */
+}
+
+
 hr{ color: #94ABC0; noshade }
 /* #transferList { overflow: auto; } */
