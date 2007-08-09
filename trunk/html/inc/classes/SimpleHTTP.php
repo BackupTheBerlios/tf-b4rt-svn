@@ -635,19 +635,39 @@ class SimpleHTTP
 				}
 				// Now fetch the torrent file
 				$data = $this->instance_getData($durl);
+			// demonoid
+			} elseif (strpos(strtolower($domain["host"]), "demonoid") !== false) {
+				// Sample (http://www.demonoid.com/rss/0.xml):
+				// http://www.demonoid.com/files/details/241739/6976998/
+				// <a href="/files/download/HTTP/241739/6976998">...</a>
+
+				// If received a /details/ page url, change it to the download url
+				if (strpos($durl, "/details/") !== false) {
+					// Need to make it grab the torrent
+					$durl = str_replace("/details/", "/download/HTTP/", $durl);
+				}
+				// Now fetch the torrent file
+				$data = $this->instance_getData($durl);
 			// isohunt
 			} elseif (strpos(strtolower($domain["host"]), "isohunt") !== false) {
 				// Sample (http://isohunt.com/js/rss.php):
-				// http://isohunt.com/download.php?mode=bt&id=8837938
-				// http://isohunt.com/btDetails.php?ihq=&id=8464972
 				$treferer = "http://" . $domain["host"] . "/btDetails.php?id=";
-
+				// http://isohunt.com/torrent_details/7591035/
+				// http://isohunt.com/download/7591035/
+				// If the url points to the details page, change it to the download url
+				if (strpos($durl, "/torrent_details/") !== false) {
+					// Need to make it grab the torrent
+					$durl = str_replace("/torrent_details/", "/download/", $durl);
+				}
+				// old one, but still works:
+				// http://isohunt.com/btDetails.php?ihq=&id=8464972
+				// http://isohunt.com/download.php?mode=bt&id=8837938
 				// If the url points to the details page, change it to the download url
 				if (strpos(strtolower($durl), "/btdetails.php?") !== false) {
 					// Need to make it grab the torrent
 					$durl = str_replace("/btDetails.php?", "/download.php?", $durl) . "&mode=bt";
 				}
-				// Grab contents of details page
+				// Now fetch the torrent file
 				$data = $this->instance_getData($durl, $treferer);
 			// details.php
 			} elseif (strpos(strtolower($durl), "details.php?") !== false) {
