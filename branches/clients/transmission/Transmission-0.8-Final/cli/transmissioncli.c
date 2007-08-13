@@ -40,15 +40,15 @@ int main(int argc, char ** argv) {
 	// vars
 	int i, error;
 	tr_handle_t * h;
-	tr_stat_t * s;
-	tr_info_t * info;
+	const tr_stat_t * s;
+	const tr_info_t * info;
 	double tf_sharing = 0.0;
 	char tf_eta[80];
 	int tf_seeders, tf_leechers;
 
 	/* get options */
 	if (parseCommandLine(argc, argv)) {
-		printf(HEADER, VERSION_STRING, VERSION_REVISION, VERSION_REVISION_CLI);
+		printf(HEADER, VERSION_STRING, VERSION_REVISION);
 		printf(USAGE, argv[0], TR_DEFAULT_PORT,
 			tf_displayInterval, tf_seedLimit, tf_dieWhenDone
 		);
@@ -90,7 +90,7 @@ int main(int argc, char ** argv) {
         tr_metainfo_builder_t* builder = tr_metaInfoBuilderCreate( h, sourceFile );
         tr_makeMetaInfo( builder, NULL, announce, comment, isPrivate );
         while( !builder->isDone ) {
-            usleep( 1 );
+            wait_msecs( 1 );
             printf( "." );
         }
         ret = !builder->failed;
@@ -99,7 +99,7 @@ int main(int argc, char ** argv) {
     }
 
 	// open and parse torrent file
-	if (!(tor = tr_torrentInit(h, torrentPath, ".", NULL, 0, &error))) {
+	if (!(tor = tr_torrentInit(h, torrentPath, ".", 0, &error))) {
 		tf_print(sprintf(tf_message,
 			"Failed opening torrent file '%s'\n", torrentPath));
 		tr_close(h);
@@ -107,10 +107,12 @@ int main(int argc, char ** argv) {
 	}
 
 	/* show info */
+#if 0
 	if (showInfo) {
 		tf_showInfo();
 		goto cleanup;
 	}
+#endif
 
 	/* show scrape */
 	if (showScrape) {
@@ -184,8 +186,11 @@ int main(int argc, char ** argv) {
 	signal(SIGQUIT, sigHandler);
 
 	tr_setBindPort(h, bindPort);
-	tr_setGlobalUploadLimit(h, uploadLimit);
-	tr_setGlobalDownloadLimit(h, downloadLimit);
+	
+	tr_setGlobalSpeedLimit   ( h, TR_UP,   uploadLimit );
+    tr_setUseGlobalSpeedLimit( h, TR_UP,   uploadLimit > 0 );
+    tr_setGlobalSpeedLimit   ( h, TR_DOWN, downloadLimit );
+    tr_setUseGlobalSpeedLimit( h, TR_DOWN, downloadLimit > 0 );
 
 	tr_natTraversalEnable(h, natTraversal);
 
@@ -226,7 +231,6 @@ int main(int argc, char ** argv) {
 
 			// reset flag
 			gotsig = 0;
-
 			// set shutdown-flag
 			tf_shutdown = 1;
 		}
@@ -239,12 +243,13 @@ int main(int argc, char ** argv) {
 
 			// stop torrent
 			tr_torrentStop(tor);
+			tr_natTraversalEnable( h, 0 );
 
 		/* in shutdown */
 		} else if (tf_shutdown == 2) {
 
 			// sleep 0.5 secs
-			usleep(500000);
+			wait_msecs( 500 );
 
 		/* normal running */
 		} else {
@@ -263,7 +268,7 @@ int main(int argc, char ** argv) {
 				}
 
 				// sleep
-				sleep(1);
+				wait_secs( 1 );
 			}
 
 			// continue to init shutdown asap
@@ -384,8 +389,8 @@ int main(int argc, char ** argv) {
 					s->rateDownload,                  /* download speed   */
 					s->rateUpload,                    /* upload speed     */
 					tf_owner,                         /* owner            */
-					s->peersUploading, tf_seeders,    /* seeds            */
-					s->peersDownloading, tf_leechers, /* peers            */
+					s->peersSendingToUs, tf_seeders,    /* seeds            */
+					s->peersGettingFromUs, tf_leechers, /* peers            */
 					tf_sharing,                       /* sharing          */
 					tf_seedLimit,                     /* seedlimit        */
 					s->uploaded,                      /* uploaded bytes   */
@@ -444,8 +449,8 @@ int main(int argc, char ** argv) {
 					s->rateDownload,                  /* download speed   */
 					s->rateUpload,                    /* upload speed     */
 					tf_owner,                         /* owner            */
-					s->peersUploading, tf_seeders,    /* seeds            */
-					s->peersDownloading, tf_leechers, /* peers            */
+					s->peersSendingToUs, tf_seeders,    /* seeds            */
+					s->peersGettingFromUs, tf_leechers, /* peers            */
 					tf_sharing,                       /* sharing          */
 					tf_seedLimit,                     /* seedlimit        */
 					s->uploaded,                      /* uploaded bytes   */
@@ -459,8 +464,8 @@ int main(int argc, char ** argv) {
 			}
 
 		/* --- STOPPING --- */
-		} else if (s->status & TR_STATUS_STOPPING) {
-
+		} else if (s->status & TR_STATUS_STOPPING) 
+		{
 			// write stat-file
 			tf_stat_fp = fopen(tf_stat_file, "w+");
 			if (tf_stat_fp != NULL) {
@@ -485,8 +490,11 @@ int main(int argc, char ** argv) {
 					"error opening stat-file for write : %s\n",
 					tf_stat_file));
 			}
-
-		} // end status-if
+		}
+        else if( s->status & TR_STATUS_INACTIVE )
+        {
+            break;
+        } // end status-if
 
 		// errors
 		if (s->error)
@@ -532,7 +540,7 @@ static void tf_showInfo(void) {
 	// vars
 	int i;
 	tr_info_t * info;
-	tr_stat_t * s;
+	const tr_stat_t * s;
 
 	// info
 	info = tr_torrentInfo(tor);
@@ -582,7 +590,7 @@ static void tf_torrentStop(tr_handle_t * h, tr_info_t * info) {
 
 	// vars
 	int i;
-	tr_stat_t * s;
+	const tr_stat_t * s;
 	tr_handle_status_t * hstat;
 	double tf_sharing;
 	char tf_eta[80];
@@ -638,7 +646,8 @@ static void tf_torrentStop(tr_handle_t * h, tr_info_t * info) {
 			/* Port mappings were deleted */
 			break;
 		}
-		usleep(500000);
+		wait_msecs( 500 );
+
 	}
 
 	// remove pid file
@@ -1098,7 +1107,7 @@ static int parseCommandLine(int argc, char ** argv) {
 		  { 0, 0, 0, 0} };
 		int c, optind = 0;
 		c = getopt_long(argc, argv,
-			"hisrv:p:u:d:f:c:m:a:w:l:e:o:n:", long_options, &optind);
+			"hisrv:p:u:d:f:c:m:a:w:l:e:o:n", long_options, &optind);
 		if (c < 0)
 			break;
 		switch (c) {
@@ -1108,9 +1117,11 @@ static int parseCommandLine(int argc, char ** argv) {
 			case 'i':
 				showInfo = 1;
 				break;
+			#if 0
 			case 's':
 				showScrape = 1;
 				break;
+			#endif
 			case 'r':
 				isPrivate = 1;
 				break;

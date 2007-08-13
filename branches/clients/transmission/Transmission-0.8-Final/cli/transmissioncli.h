@@ -38,12 +38,22 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <signal.h>
-#include <transmission.h>
-#include <makemeta.h>
+
+#include <libtransmission/transmission.h>
+#include <libtransmission/makemeta.h>
+
 //#include <sys/types.h>
-#ifdef SYS_BEOS
-#include <kernel/OS.h>
-#define usleep snooze
+#ifdef __BEOS__
+    #include <kernel/OS.h>
+    #define wait_msecs(N)  snooze( (N) * 1000 )
+    #define wait_secs(N)   sleep( (N) )
+#elif defined(WIN32)
+    #include <windows.h>
+    #define wait_msecs(N)  Sleep( (N) )
+    #define wait_secs(N)   Sleep( (N) * 1000 )
+#else
+    #define wait_msecs(N)  usleep( (N) * 1000 )
+    #define wait_secs(N)   sleep( (N) )
 #endif
 
 /* macro to shut up "unused parameter" warnings */
@@ -54,7 +64,7 @@
 #endif
 
 const char * HEADER =
-"Transmission %s [%d] - tfCLI [%d]\nhttp://transmission.m0k.org/ - http://tf-b4rt.berlios.de/\n\n";
+"Transmission %s (%d) - tfCLI \nhttp://transmission.m0k.org/ - http://tf-b4rt.berlios.de/\n\n";
 
 const char * USAGE =
 "Usage: %s [options] file.torrent [options]\n\n"
@@ -69,7 +79,9 @@ const char * USAGE =
 "  -i, --info           Print metainfo and exit\n"
 "  -n  --nat-traversal  Attempt NAT traversal using NAT-PMP or UPnP IGD\n"
 "  -p, --port <int>     Port we should listen on (default = %d)\n"
+#if 0
 "  -s, --scrape         Print counts of seeders/leechers and exit\n"
+#endif
 "  -u, --upload <int>   Maximum upload rate (-1 = no limit, default = 20)\n"
 "  -v, --verbose <int>  Verbose level (0 to 2, default = 0)\n\n"
 "Torrentflux Commands:\n"
@@ -88,7 +100,9 @@ const char * USAGE =
 // tr
 static int 			 showHelp      = 0;
 static int 			 showInfo      = 0;
+#if 0
 static int 			 showScrape    = 0;
+#endif
 static int           isPrivate     = 0;
 static int 			 verboseLevel  = 0;
 static int 			 bindPort      = TR_DEFAULT_PORT;
