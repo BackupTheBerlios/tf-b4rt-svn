@@ -1,4 +1,4 @@
-/*  $Id: dirname.c 2683 2007-08-08 23:33:01Z charles $            */
+/*  $Id: dirname.c 2551 2007-07-30 14:31:03Z charles $            */
 /*	$OpenBSD: dirname.c,v 1.13 2005/08/08 08:05:33 espie Exp $	*/
 
 /*
@@ -21,7 +21,6 @@
 
 #include <errno.h>
 #include <string.h>
-#include <unistd.h> /* for MAXPATHLEN */
 #include <sys/param.h>
 
 char *

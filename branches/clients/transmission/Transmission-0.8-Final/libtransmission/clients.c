@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: clients.c 2713 2007-08-10 18:06:52Z livings124 $
+ * $Id: clients.c 2641 2007-08-06 21:34:38Z livings124 $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -110,8 +110,9 @@ char * tr_clientForId( uint8_t * id )
         }
         else if( !memcmp( &id[1], "XX", 2 ) )
         {
-            asprintf( &ret, "Xtorrent %c.%c (%d)",
-                      id[3], id[4], charToInt( id[5] ) * 10 + charToInt( id[6] ) );
+            asprintf( &ret, "Xtorrent (%d)",
+                      charToInt( id[3] ) * 1000 + charToInt( id[4] ) * 100
+                      + charToInt( id[5] ) * 10 + charToInt( id[6] ) );
         }
         else if( !memcmp( &id[1], "TS", 2 ) )
         {

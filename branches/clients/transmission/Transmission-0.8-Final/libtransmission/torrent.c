@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: torrent.c 2738 2007-08-13 16:43:33Z charles $
+ * $Id: torrent.c 2573 2007-07-31 14:26:44Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -157,13 +157,6 @@ calculatePiecePriority ( const tr_torrent_t * tor,
           && file->lastPiece  >= piece
           && file->priority   >  priority)
               priority = file->priority;
-
-        /* when dealing with multimedia files, getting the first and
-           last pieces can sometimes allow you to preview it a bit
-           before it's fully downloaded... */
-        if ( file->priority >= TR_PRI_NORMAL )
-            if ( file->firstPiece == piece || file->lastPiece == piece )
-                priority = TR_PRI_HIGH;
     }
 
     return priority;
@@ -288,18 +281,10 @@ torrentRealInit( tr_handle_t   * h,
     assert( !tor->uploadedCur );
 
     tor->error   = TR_OK;
+    tor->runStatus = flags & TR_FLAG_PAUSED ? TR_RUN_STOPPED : TR_RUN_RUNNING;
 
     uncheckedPieces = tr_bitfieldNew( tor->info.pieceCount );
     loaded = tr_fastResumeLoad( tor, uncheckedPieces );
-
-    /* the `paused' flag has highest precedence...
-       after that, the fastresume setting is used...
-       if that's not found, default to RUNNING */
-    if( flags & TR_FLAG_PAUSED )
-        tor->runStatus = TR_RUN_STOPPED;
-    else if( !(loaded & TR_FR_RUN ) )
-        tor->runStatus = TR_RUN_RUNNING;
-
     if( tr_bitfieldIsEmpty( uncheckedPieces ) )
         tr_bitfieldFree( uncheckedPieces );
     else
@@ -750,8 +735,8 @@ fileBytesCompleted ( const tr_torrent_t * tor, int fileIndex )
     assert( tor != NULL );
     assert( 0<=fileIndex && fileIndex<tor->info.fileCount );
     assert( file->offset + file->length <= tor->info.totalSize );
-    assert( ( (int)firstBlock < tor->blockCount ) || (!file->length && file->offset==tor->info.totalSize) );
-    assert( ( (int)lastBlock < tor->blockCount ) || (!file->length && file->offset==tor->info.totalSize) );
+    assert( (int)firstBlock < tor->blockCount );
+    assert( (int)lastBlock < tor->blockCount );
     assert( firstBlock <= lastBlock );
     assert( (int)tr_torBlockPiece( tor, firstBlock ) == file->firstPiece );
     assert( (int)tr_torBlockPiece( tor, lastBlock ) == file->lastPiece );

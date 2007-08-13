@@ -22,20 +22,18 @@ Mac OS X, current release:
     	Anton Sotkov  (Russian)
 
 GTK+:
-	Calorì Alessandro  (Italian)
-        Daniel Nylander  (Swedish)
-        Filipe Gomes (Portuguese)
-        Jaakko Huhtala  (Finnish)
-        Jan Geboers (Dutch)
-        Lubomir Marinov  (Bulgarian)
-        Mircea Suciu  (Romanian)
-        Nickolay V. Shmyrev  (Russian)
-        Pavel Shevchuk  (Russian)
-        Pierre-Henri Quelen  (French)
-        Raphael Higino (Brazilian Portuguese)
-	Jean-François Fortin Tam  (French)
-        Tomasz Dominikowski  (Polish)
-        Vicente Carro Fernandez  (Spanish)
+	Calor“ Alessandro  (Italian)
+	Pierre-Henri Quelen  (French)
+	Robert-AndrŽ Mauchin  (French)
+	Jan Geboers (Dutch)
+	Vicente Carro Fernandez  (Spanish)
+	Tomasz Dominikowski  (Polish)
+	Nickolay V. Shmyrev  (Russian)
+	Pavel Shevchuk  (Russian)
+	Lubomir Marinov  (Bulgarian)
+	Mircea Suciu  (Romanian)
+	Daniel Nylander  (Swedish)
+	Jaakko Huhtala  (Finnish)
 
 Special Thanks
 
@@ -57,7 +55,6 @@ Other Contributors
 	Michael Demars <keul@m0k.org>  (Mac OS X patches)
 	Fredrik Modéen (BeOS patches)
 	Deanna Phillips  (transmissioncli manpage)
-	Nicholas Shanks  (Mac OS X patches)
 
 Third-Party Resources
 Thanks to:

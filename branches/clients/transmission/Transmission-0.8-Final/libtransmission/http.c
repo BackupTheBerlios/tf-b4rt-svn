@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: http.c 2686 2007-08-08 23:48:10Z charles $
+ * $Id: http.c 2614 2007-08-04 01:17:39Z joshe $
  *
  * Copyright (c) 2006-2007 Transmission authors and contributors
  *
@@ -23,7 +23,6 @@
  *****************************************************************************/
 
 #include <assert.h>
-#include <ctype.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -345,16 +344,10 @@ tr_httpParseUrl( const char * url, int len,
     const char * pathstart, * hostend;
     int          ii, colon, portnum;
     char         str[6];
-    
+
     if( 0 > len )
     {
         len = strlen( url );
-    }
-
-    while( len && url && isspace(*url) )
-    {
-        --len;
-        ++url;
     }
 
     ii = tr_httpIsUrl( url, len );

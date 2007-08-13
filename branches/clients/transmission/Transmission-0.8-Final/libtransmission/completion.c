@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: completion.c 2657 2007-08-08 05:17:51Z charles $
+ * $Id: completion.c 2555 2007-07-30 18:04:10Z charles $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -122,9 +122,9 @@ tr_cpEnsureDoneValid( const tr_completion_t * ccp )
 
     /* the last piece/block is probably smaller than the others */
     if( !info->pieces[info->pieceCount-1].dnd ) {
-        total -= ( info->pieceSize - tr_torPieceCountBytes(tor,info->pieceCount-1) );
+        total -= ( info->pieceSize - ( info->totalSize % info->pieceSize ) );
         if( tr_cpBlockIsComplete( cp, tor->blockCount-1 ) )
-            have -= ( tor->blockSize - tr_torBlockCountBytes(tor,tor->blockCount-1) );
+            have -= ( tor->blockSize - ( info->totalSize % tor->blockSize ) );
     }
 
     assert( have <= total );

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: fastresume.h 2739 2007-08-13 18:41:19Z charles $
+ * $Id: fastresume.h 2555 2007-07-30 18:04:10Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -34,8 +34,7 @@ enum
   TR_FR_PEERS        = (1<<2),
   TR_FR_PROGRESS     = (1<<3),
   TR_FR_PRIORITY     = (1<<4),
-  TR_FR_SPEEDLIMIT   = (1<<5),
-  TR_FR_RUN          = (1<<6),
+  TR_FR_SPEEDLIMIT   = (1<<5)
 };
 
 /**

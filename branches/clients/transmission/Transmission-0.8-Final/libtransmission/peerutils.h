@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peerutils.h 2672 2007-08-08 15:07:06Z charles $
+ * $Id: peerutils.h 2482 2007-07-24 18:59:37Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -34,56 +34,81 @@ static int peerCmp( tr_peer_t * peer1, tr_peer_t * peer2 )
     return memcmp( peer1->id, peer2->id, 20 );
 }
 
-static int
-checkPeer( tr_peer_t * peer )
+static int checkPeer( tr_peer_t * peer )
 {
-    int ret;
-    tr_torrent_t * tor = peer->tor;
-    const uint64_t now = tr_date( );
-    const uint64_t idleTime = now - peer->date;
-    const uint64_t idleSecs = idleTime / 1000u;
-    uint64_t lo, hi, limit;
-    int relaxStrictnessIfFewerThanN;
-    double strictness;
-
-    /* when deciding whether or not to keep a peer, judge its responsiveness
-       on a sliding scale that's based on how many other peers are available */
-    relaxStrictnessIfFewerThanN =
-        (int)(((TR_MAX_PEER_COUNT * PERCENT_PEER_WANTED) / 100.0) + 0.5);
-
-    /* if we have >= relaxIfFewerThan, strictness is 100%.
-       if we have zero connections, strictness is 0% */
-    if( tor->peerCount >= relaxStrictnessIfFewerThanN )
-        strictness = 1.0;
-    else
-        strictness = tor->peerCount / (double)relaxStrictnessIfFewerThanN;
-
-    /* test: has it been too long since we were properly connected to them? */
-    lo = MIN_CON_TIMEOUT;
-    hi = MAX_CON_TIMEOUT;
-    limit = lo + ((hi-lo) * strictness);
-    if( peer->status < PEER_STATUS_CONNECTED && idleTime > limit ) {
-        peer_dbg( "connection timeout, idled %"PRIu64" seconds", idleSecs );
-        return TR_ERROR;
-    }
-
-    /* test: have we been waiting on a request for too long? */
-    lo = MIN_UPLOAD_IDLE; 
-    hi = MAX_UPLOAD_IDLE;
-    limit = lo + ((hi-lo) * strictness);
-    if( peer->inRequestCount && idleTime > limit ) {
-        peer_dbg( "idle uploader timeout, idled %"PRIu64" seconds", idleSecs );
-        return TR_ERROR;
-    }
-
-    /* test: has it been too long since the peer gave us any response at all? */
-    lo = MIN_KEEP_ALIVE;
-    hi = MAX_KEEP_ALIVE;
-    limit = lo + ((hi-lo) * strictness);
-    if( idleTime > limit ) {
-        peer_dbg( "peer timeout, idled %"PRIu64" seconds", idleSecs );
-        return TR_ERROR;
-    }
+	tr_torrent_t * tor = peer->tor;
+    
+	uint64_t now;
+	int      idleTime, peersWanted, percentOfRange;
+	int      ret;
+	
+	now = tr_date();
+	idleTime = now - peer->date;
+	
+	/* assume any peer over with an idleTime lower than 
+		8 seconds has not timed out */
+	if ( idleTime > MIN_CON_TIMEOUT )
+	{
+		peersWanted = ( TR_MAX_PEER_COUNT * PERCENT_PEER_WANTED ) / 100;
+		if ( tor->peerCount > peersWanted )
+		{
+			/* strict requirements for connecting timeout */
+			if ( peer->status < PEER_STATUS_CONNECTED )
+			{
+				peer_dbg( "connection timeout, idled %i seconds", 
+						  ( idleTime / 1000 ) );
+				return TR_ERROR;
+			}
+			
+			/* strict requirements for idle uploading timeout */
+			if ( peer->inRequestCount && idleTime > MIN_UPLOAD_IDLE )
+			{
+				peer_dbg( "idle uploader timeout, idled %i seconds", 
+						  ( idleTime / 1000 ) );
+				return TR_ERROR;
+			}
+			
+			/* strict requirements for keep-alive timeout */
+			if ( idleTime > MIN_KEEP_ALIVE )
+			{
+				peer_dbg( "peer timeout, idled %i seconds", 
+						  ( idleTime / 1000 ) );
+				return TR_ERROR;
+			}
+		} 
+		/* if we are tight for peers, relax the enforcement of timeouts */
+		else 
+		{
+			percentOfRange = tor->peerCount / (TR_MAX_PEER_COUNT - peersWanted);
+			
+			/* relax requirements for connecting timeout */
+			if ( peer->status < PEER_STATUS_CONNECTED && idleTime > MIN_CON_TIMEOUT + 
+				 ( MAX_CON_TIMEOUT - MIN_CON_TIMEOUT ) * percentOfRange )
+			{
+				peer_dbg( "connection timeout, idled %i seconds", 
+						  ( idleTime / 1000 ) );
+				return TR_ERROR;
+			} 
+					
+			/* relax requirements for idle uploading timeout */
+			if ( peer->inRequestCount && idleTime >  MIN_UPLOAD_IDLE + 
+				 ( MAX_UPLOAD_IDLE - MIN_UPLOAD_IDLE ) * percentOfRange )
+			{
+				peer_dbg( "idle uploader timeout, idled %i seconds", 
+						  ( idleTime / 1000 ) );
+				return TR_ERROR;
+			}
+					
+			/* relax requirements for keep-alive timeout */
+			if ( idleTime >  MIN_KEEP_ALIVE + 
+				 ( MAX_KEEP_ALIVE - MIN_KEEP_ALIVE ) * percentOfRange )
+			{
+				peer_dbg( "peer timeout, idled %i seconds", 
+						  ( idleTime / 1000 ) );
+				return TR_ERROR;
+			}
+		}
+	}
 
     if( PEER_STATUS_CONNECTED == peer->status )
     {
