@@ -99,7 +99,7 @@ int main(int argc, char ** argv) {
     }
 
 	// open and parse torrent file
-	if (!(tor = tr_torrentInit(h, torrentPath, NULL, 0, &error))) {
+	if (!(tor = tr_torrentInit(h, torrentPath, ".", NULL, 0, &error))) {
 		tf_print(sprintf(tf_message,
 			"Failed opening torrent file '%s'\n", torrentPath));
 		tr_close(h);
@@ -183,18 +183,12 @@ int main(int argc, char ** argv) {
 	signal(SIGTERM, sigHandler);
 	signal(SIGQUIT, sigHandler);
 
-	// set port + rates
 	tr_setBindPort(h, bindPort);
 	tr_setGlobalUploadLimit(h, uploadLimit);
 	tr_setGlobalDownloadLimit(h, downloadLimit);
 
-	// nat-traversal
 	tr_natTraversalEnable(h, natTraversal);
 
-	// set folder
-	tr_torrentSetFolder(tor, ".");
-
-	// start the torrent
 	tr_torrentStart(tor);
 
 	// info
@@ -282,15 +276,8 @@ int main(int argc, char ** argv) {
 		// torrent-stat
 		s = tr_torrentStat(tor);
 
-		/* --- PAUSE --- */
-		if (s->status & TR_STATUS_PAUSE) {
-
-			// break
-			break;
-
-		/* --- CHECK_WAIT --- */
-		} else if (s->status & TR_STATUS_CHECK_WAIT) {
-
+		if (s->status & TR_STATUS_CHECK_WAIT) 
+		{
 			// write stat-file
 			tf_stat_fp = fopen(tf_stat_file, "w+");
 			if (tf_stat_fp != NULL) {
