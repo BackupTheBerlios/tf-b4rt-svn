@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: fdlimit.h 2004 2007-06-09 15:36:46Z charles $
+ * $Id: fdlimit.h 2573 2007-07-31 14:26:44Z charles $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -22,12 +22,14 @@
  * DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
 
+#include "net.h"
+
 /***********************************************************************
  * tr_fdInit
  ***********************************************************************
  * Detect the maximum number of open files and initializes things.
  **********************************************************************/
-void tr_fdInit();
+void tr_fdInit( void );
 
 /***********************************************************************
  * tr_fdFileOpen
@@ -61,7 +63,7 @@ void tr_fdFileClose( const char * folder, const char * name );
  * Sockets
  **********************************************************************/
 int  tr_fdSocketCreate( int type, int priority );
-int  tr_fdSocketAccept( int b, struct in_addr * addr, in_port_t * port );
+int  tr_fdSocketAccept( int b, struct in_addr * addr, tr_port_t * port );
 void tr_fdSocketClose( int s );
 
 /***********************************************************************
@@ -69,5 +71,5 @@ void tr_fdSocketClose( int s );
  ***********************************************************************
  * Frees resources allocated by tr_fdInit.
  **********************************************************************/
-void tr_fdClose();
+void tr_fdClose( void );
 

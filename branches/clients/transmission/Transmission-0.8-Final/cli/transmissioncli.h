@@ -39,33 +39,45 @@
 #include <getopt.h>
 #include <signal.h>
 #include <transmission.h>
-#include <sys/types.h>
+#include <makemeta.h>
+//#include <sys/types.h>
 #ifdef SYS_BEOS
 #include <kernel/OS.h>
 #define usleep snooze
 #endif
-#define HEADER \
-"Transmission %s [%d] - tfCLI [%d]\nhttp://transmission.m0k.org/ - http://tf-b4rt.berlios.de/\n\n"
-#define USAGE \
-"Usage: %s [options] file.torrent [options]\n\n" \
-"Options:\n" \
-"  -h, --help                     Print this help and exit\n" \
-"  -i, --info                     Print metainfo and exit\n" \
-"  -s, --scrape                   Print counts of seeders/leechers and exit\n" \
-"  -v, --verbose <int>            Verbose level (0 to 2, default = %d)\n" \
-"  -n, --nat-traversal            Attempt NAT traversal using NAT-PMP or UPnP IGD (default = %d)\n" \
-"  -p, --port <int>               Port we should listen on (default = %d)\n" \
-"  -u, --upload <int>             Maximum upload rate \n" \
-"                                 (-1|0 = no limit, -2 = null, default = %d)\n" \
-"  -d, --download <int>           Maximum download rate \n" \
-"                                 (-1|0 = no limit, -2 = null, default = %d)\n" \
-"  -f, --finish <shell script>    Command you wish to run on completion (default = none)\n" \
-"  -r, --die-when-done            Auto-Shutdown when done (0 = False, 1 = True, default = %d)\n" \
-"  -c, --seedlimit <int>          Seed-Limit (Percent) to reach before shutdown\n" \
-"                                 (0 = seed forever, -1 = no seeding, default = %d)\n" \
-"  -e, --display-interval <int>   Time between updates of stat-file (default = %d)\n" \
-"  -o, --owner <string>           Name of the owner (default = 'n/a')\n" \
-"\n"
+
+/* macro to shut up "unused parameter" warnings */
+#ifdef __GNUC__
+#define UNUSED                  __attribute__((unused))
+#else
+#define UNUSED
+#endif
+
+const char * HEADER =
+"Transmission %s [%d] - tfCLI [%d]\nhttp://transmission.m0k.org/ - http://tf-b4rt.berlios.de/\n\n";
+
+const char * USAGE =
+"Usage: %s [options] file.torrent [options]\n\n"
+"Options:\n"
+"  -c, --create-from <file>  Create torrent from the specified source file.\n"
+"  -a, --announce <url> Used in conjunction with -c.\n"
+"  -r, --private        Used in conjunction with -c.\n"
+"  -m, --comment <text> Adds an optional comment when creating a torrent.\n"
+"  -d, --download <int> Maximum download rate (-1 = no limit, default = -1)\n"
+"  -f, --finish <shell script> Command you wish to run on completion\n" 
+"  -h, --help           Print this help and exit\n" 
+"  -i, --info           Print metainfo and exit\n"
+"  -n  --nat-traversal  Attempt NAT traversal using NAT-PMP or UPnP IGD\n"
+"  -p, --port <int>     Port we should listen on (default = %d)\n"
+"  -s, --scrape         Print counts of seeders/leechers and exit\n"
+"  -u, --upload <int>   Maximum upload rate (-1 = no limit, default = 20)\n"
+"  -v, --verbose <int>  Verbose level (0 to 2, default = 0)\n\n"
+"Torrentflux Commands:\n"
+"  -e, --display-interval <int> Time between updates of stat-file (default = %d)\n"
+"  -l, --seedlimit <int> Seed-Limit (Percent) to reach before shutdown\n"
+"                        (0 = seed forever, -1 = no seeding, default = %d)\n"
+"  -o, --owner <string> Name of the owner (default = 'n/a')\n"
+"  -w, --die-when-done  Auto-Shutdown when done (0 = Off, 1 = On, default = %d)\n";
 
 #define TF_CMDFILE_MAXLEN 65536
 
@@ -74,18 +86,23 @@
  ******************************************************************************/
 
 // tr
-static int showHelp = 0;
-static int showInfo = 0;
-static int showScrape = 0;
-static int verboseLevel = 0;
-static int bindPort = TR_DEFAULT_PORT;
-static int uploadLimit = 10;
-static int downloadLimit = -1;
-static char * torrentPath = NULL;
-static int natTraversal = 0;
-static sig_atomic_t gotsig = 0;
-static char * finishCall = NULL;
-static tr_torrent_t * tor;
+static int 			 showHelp      = 0;
+static int 			 showInfo      = 0;
+static int 			 showScrape    = 0;
+static int           isPrivate     = 0;
+static int 			 verboseLevel  = 0;
+static int 			 bindPort      = TR_DEFAULT_PORT;
+static int 			 uploadLimit   = 20;
+static int 			 downloadLimit = -1;
+static char 		 * torrentPath = NULL;
+static int 			 natTraversal  = 0;
+static sig_atomic_t  gotsig        = 0;
+static tr_torrent_t  * tor;
+
+static char          * finishCall  = NULL;
+static char          * announce    = NULL;
+static char          * sourceFile  = NULL;
+static char          * comment     = NULL;
 
 // tf
 static volatile char tf_shutdown = 0;

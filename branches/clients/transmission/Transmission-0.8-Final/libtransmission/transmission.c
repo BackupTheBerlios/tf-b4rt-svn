@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.c 2004 2007-06-09 15:36:46Z charles $
+ * $Id: transmission.c 2591 2007-08-02 19:43:29Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -22,8 +22,45 @@
  * DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
 
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <signal.h>
+#include <sys/types.h> /* stat */
+#include <sys/stat.h> /* stat */
+#include <unistd.h> /* stat */
+#include <dirent.h> /* opendir */
+
 #include "transmission.h"
+#include "fdlimit.h"
+#include "list.h"
+#include "net.h"
+#include "platform.h"
+#include "ratecontrol.h"
 #include "shared.h"
+#include "utils.h"
+
+/* Generate a peer id : "-TRxyzb-" + 12 random alphanumeric
+   characters, where x is the major version number, y is the
+   minor version number, z is the maintenance number, and b
+   designates beta (Azureus-style) */
+void
+tr_peerIdNew ( char * buf, int buflen )
+{
+    int i;
+    assert( buflen == TR_ID_LEN + 1 );
+
+    snprintf( buf, TR_ID_LEN, "%s", PEERID_PREFIX );
+    assert( strlen(buf) == 8 );
+    for( i=8; i<TR_ID_LEN; ++i ) {
+        const int r = tr_rand( 36 );
+        buf[i] = ( r < 26 ) ? ( 'a' + r ) : ( '0' + r - 26 ) ;
+    }
+    buf[TR_ID_LEN] = '\0';
+}
+
 
 /***********************************************************************
  * tr_init
@@ -33,9 +70,10 @@
 tr_handle_t * tr_init( const char * tag )
 {
     tr_handle_t * h;
-    int           i, r;
+    int           i;
 
     tr_msgInit();
+    tr_netInit();
     tr_netResolveThreadInit();
 
     h = calloc( 1, sizeof( tr_handle_t ) );
@@ -51,32 +89,23 @@ tr_handle_t * tr_init( const char * tag )
         return NULL;
     }
 
-    /* Generate a peer id : "-TRxxyz-" + 12 random alphanumeric
-       characters, where xx is the major version number, y is the
-       minor version number, and z is the maintenance number (Azureus-style) */
-    snprintf( h->id, sizeof h->id, "-TR%02d%01d%01d-",
-              VERSION_MAJOR, VERSION_MINOR, VERSION_MAINTENANCE );
-    for( i = 8; i < TR_ID_LEN; i++ )
-    {
-        r        = tr_rand( 36 );
-        h->id[i] = ( r < 26 ) ? ( 'a' + r ) : ( '0' + r - 26 ) ;
-    }
-
     /* Random key */
-    for( i = 0; i < TR_KEY_LEN; i++ )
+    for( i=0; i < TR_KEY_LEN; ++i )
     {
-        r         = tr_rand( 36 );
+        const int r = tr_rand( 36 );
         h->key[i] = ( r < 26 ) ? ( 'a' + r ) : ( '0' + r - 26 ) ;
     }
 
     /* Azureus identity */
-    for( i = 0; i < TR_AZ_ID_LEN; i++ )
+    for( i=0; i < TR_AZ_ID_LEN; ++i )
     {
         h->azId[i] = tr_rand( 0xff );
     }
 
+#ifndef WIN32
     /* Don't exit when writing on a broken socket */
     signal( SIGPIPE, SIG_IGN );
+#endif
 
     /* Initialize rate and file descripts controls */
     h->upload   = tr_rcInit();
@@ -84,6 +113,8 @@ tr_handle_t * tr_init( const char * tag )
 
     tr_fdInit();
     h->shared = tr_sharedInit( h );
+
+    tr_inf( TR_NAME " " LONG_VERSION_STRING " started" );
 
     return h;
 }
@@ -123,16 +154,47 @@ tr_handle_status_t * tr_handleStatus( tr_handle_t * h )
     return s;
 }
 
-void tr_setGlobalUploadLimit( tr_handle_t * h, int limit )
+/***
+****
+***/
+
+void
+tr_setUseGlobalSpeedLimit( tr_handle_t  * h,
+                           int            up_or_down,
+                           int            use_flag )
 {
-    tr_rcSetLimit( h->upload, limit );
-    tr_sharedSetLimit( h->shared, limit );
+    char * ch = up_or_down==TR_UP ? &h->useUploadLimit
+                                  : &h->useDownloadLimit;
+    *ch = use_flag;
 }
 
-void tr_setGlobalDownloadLimit( tr_handle_t * h, int limit )
+void
+tr_setGlobalSpeedLimit( tr_handle_t  * h,
+                        int            up_or_down,
+                        int            KiB_sec )
 {
-    tr_rcSetLimit( h->download, limit );
+    if( up_or_down == TR_DOWN )
+        tr_rcSetLimit( h->download, KiB_sec );
+    else {
+        tr_rcSetLimit( h->upload, KiB_sec );
+        tr_sharedSetLimit( h->shared, KiB_sec );
+    }
 }
+
+void
+tr_getGlobalSpeedLimit( tr_handle_t  * h,
+                        int            up_or_down,
+                        int          * setme_enabled,
+                        int          * setme_KiBsec )
+{
+    if( setme_enabled != NULL )
+       *setme_enabled = up_or_down==TR_UP ? h->useUploadLimit
+                                          : h->useDownloadLimit;
+    if( setme_KiBsec != NULL )
+       *setme_KiBsec = tr_rcGetLimit( up_or_down==TR_UP ? h->upload
+                                                        : h->download );
+}
+
 
 void tr_torrentRates( tr_handle_t * h, float * dl, float * ul )
 {
@@ -143,11 +205,11 @@ void tr_torrentRates( tr_handle_t * h, float * dl, float * ul )
     tr_sharedLock( h->shared );
     for( tor = h->torrentList; tor; tor = tor->next )
     {
-        tr_lockLock( &tor->lock );
-        if( tor->status & TR_STATUS_DOWNLOAD )
+        tr_torrentReaderLock( tor );
+        if( tor->cpStatus == TR_CP_INCOMPLETE )
             *dl += tr_rcRate( tor->download );
         *ul += tr_rcRate( tor->upload );
-        tr_lockUnlock( &tor->lock );
+        tr_torrentReaderUnlock( tor );
     }
     tr_sharedUnlock( h->shared );
 }
@@ -179,4 +241,52 @@ void tr_close( tr_handle_t * h )
     free( h );
 
     tr_netResolveThreadClose();
+}
+
+tr_torrent_t **
+tr_loadTorrents ( tr_handle_t   * h,
+                  const char    * destination,
+                  int             flags,
+                  int          * setmeCount )
+{
+    int i, n = 0;
+    struct stat sb;
+    DIR * odir = NULL;
+    const char * torrentDir = tr_getTorrentsDirectory( );
+    tr_torrent_t ** torrents;
+    tr_list_t *l=NULL, *list=NULL;
+
+    if( !stat( torrentDir, &sb )
+        && S_ISDIR( sb.st_mode )
+        && (( odir = opendir ( torrentDir ) )) )
+    {
+        struct dirent *d;
+        for (d = readdir( odir ); d!=NULL; d=readdir( odir ) )
+        {
+            if( d->d_name && d->d_name[0]!='.' ) /* skip dotfiles, ., and .. */
+            {
+                tr_torrent_t * tor;
+                char path[MAX_PATH_LENGTH];
+                tr_buildPath( path, sizeof(path), torrentDir, d->d_name, NULL );
+                tor = tr_torrentInit( h, path, destination, flags, NULL );
+                if( tor != NULL ) {
+                    list = tr_list_append( list, tor );
+                    //fprintf (stderr, "#%d - %s\n", n, tor->info.name );
+                    n++;
+                }
+            }
+        }
+        closedir( odir );
+    }
+
+    torrents = tr_new( tr_torrent_t*, n );
+    for( i=0, l=list; l!=NULL; l=l->next )
+        torrents[i++] = (tr_torrent_t*) l->data;
+    assert( i==n );
+
+    tr_list_free( list );
+
+    *setmeCount = n;
+    tr_inf( "Loaded %d torrents from disk", *setmeCount );
+    return torrents;
 }

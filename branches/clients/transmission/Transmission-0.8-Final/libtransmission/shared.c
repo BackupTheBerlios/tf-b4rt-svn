@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: shared.c 1725 2007-04-16 05:48:52Z joshe $
+ * $Id: shared.c 2573 2007-07-31 14:26:44Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -22,18 +22,32 @@
  * DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
 
-#include "shared.h"
+#include <assert.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <sys/types.h>
+
+#include "transmission.h"
+#include "choking.h"
+#include "natpmp.h"
+#include "net.h"
 #include "peer.h"
+#include "platform.h"
+#include "shared.h"
+#include "upnp.h"
+#include "utils.h"
 
 /* Maximum number of peers that we keep in our local list */
-#define MAX_PEER_COUNT 42
+/* This is an arbitrary number, but it seems to work well */
+#define MAX_PEER_COUNT 128
 
 struct tr_shared_s
 {
     tr_handle_t  * h;
-    volatile int die;
-    tr_thread_t  thread;
-    tr_lock_t    lock;
+    volatile int   die;
+    tr_thread_t  * thread;
+    tr_lock_t    * lock;
 
     /* Incoming connections */
     int          publicPort;
@@ -69,19 +83,16 @@ tr_shared_t * tr_sharedInit( tr_handle_t * h )
 {
     tr_shared_t * s = calloc( 1, sizeof( tr_shared_t ) );
 
-    s->h = h;
-    tr_lockInit( &s->lock );
-
+    s->h          = h;
+    s->lock       = tr_lockNew( );
     s->publicPort = -1;
     s->bindPort   = -1;
     s->bindSocket = -1;
     s->natpmp     = tr_natpmpInit();
     s->upnp       = tr_upnpInit();
     s->choking    = tr_chokingInit( h );
-
-    /* Launch the thread */
-    s->die = 0;
-    tr_threadCreate( &s->thread, SharedLoop, s, "shared" );
+    s->die        = 0;
+    s->thread     = tr_threadNew( SharedLoop, s, "shared" );
 
     return s;
 }
@@ -97,7 +108,7 @@ void tr_sharedClose( tr_shared_t * s )
 
     /* Stop the thread */
     s->die = 1;
-    tr_threadJoin( &s->thread );
+    tr_threadJoin( s->thread );
 
     /* Clean up */
     for( ii = 0; ii < s->peerCount; ii++ )
@@ -108,7 +119,7 @@ void tr_sharedClose( tr_shared_t * s )
     {
         tr_netClose( s->bindSocket );
     }
-    tr_lockClose( &s->lock );
+    tr_lockFree( s->lock );
     tr_natpmpClose( s->natpmp );
     tr_upnpClose( s->upnp );
     tr_chokingClose( s->choking );
@@ -122,11 +133,11 @@ void tr_sharedClose( tr_shared_t * s )
  **********************************************************************/
 void tr_sharedLock( tr_shared_t * s )
 {
-    tr_lockLock( &s->lock );
+    tr_lockLock( s->lock );
 }
 void tr_sharedUnlock( tr_shared_t * s )
 {
-    tr_lockUnlock( &s->lock );
+    tr_lockUnlock( s->lock );
 }
 
 /***********************************************************************
@@ -293,6 +304,8 @@ static void SharedLoop( void * _s )
             lastchoke = date1;
         }
 
+        tr_swiftPulse ( s->h );
+
         /* Wait up to 20 ms */
         date2 = tr_date();
         if( date2 < date1 + 20 )
@@ -318,9 +331,9 @@ static void SetPublicPort( tr_shared_t * s, int port )
 
     for( tor = h->torrentList; tor; tor = tor->next )
     {
-        tr_lockLock( &tor->lock );
+        tr_torrentWriterLock( tor );
         tor->publicPort = port;
-        tr_lockUnlock( &tor->lock );
+        tr_torrentWriterUnlock( tor );
     }
 }
 
@@ -346,7 +359,7 @@ static void AcceptPeers( tr_shared_t * s )
         {
             break;
         }
-        s->peers[s->peerCount++] = tr_peerInit( addr, 0, socket,
+        s->peers[s->peerCount++] = tr_peerInit( &addr, 0, socket,
                                                 TR_PEER_FROM_INCOMING );
     }
 }
@@ -382,14 +395,12 @@ static void ReadPeers( tr_shared_t * s )
 static void DispatchPeers( tr_shared_t * s )
 {
     tr_handle_t * h = s->h;
-    tr_torrent_t * tor;
-    uint8_t * hash;
     int ii;
-    uint64_t now = tr_date();
+    const uint64_t now = tr_date();
 
     for( ii = 0; ii < s->peerCount; )
     {
-        hash = tr_peerHash( s->peers[ii] );
+        const uint8_t * hash = tr_peerHash( s->peers[ii] );
 
         if( !hash && now > tr_peerDate( s->peers[ii] ) + 10000 )
         {
@@ -399,24 +410,25 @@ static void DispatchPeers( tr_shared_t * s )
         }
         if( hash )
         {
+            tr_torrent_t * tor;
+
             for( tor = h->torrentList; tor; tor = tor->next )
             {
-                tr_lockLock( &tor->lock );
-                if( tor->status & TR_STATUS_INACTIVE )
+                tr_torrentWriterLock( tor );
+                if( tor->runStatus != TR_RUN_RUNNING )
                 {
-                    tr_lockUnlock( &tor->lock );
+                    tr_torrentWriterUnlock( tor );
                     continue;
                 }
 
-                if( 0 == memcmp( tor->info.hash, hash,
-                            SHA_DIGEST_LENGTH ) )
+                if( !memcmp( tor->info.hash, hash, SHA_DIGEST_LENGTH ) )
                 {
                     /* Found it! */
                     tr_torrentAttachPeer( tor, s->peers[ii] );
-                    tr_lockUnlock( &tor->lock );
+                    tr_torrentWriterUnlock( tor );
                     goto removePeer;
                 }
-                tr_lockUnlock( &tor->lock );
+                tr_torrentWriterUnlock( tor );
             }
 
             /* Couldn't find a torrent, we probably removed it */

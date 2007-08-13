@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: clients.c 1895 2007-05-21 15:25:28Z livings124 $
+ * $Id: clients.c 2713 2007-08-10 18:06:52Z livings124 $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -22,7 +22,12 @@
  * DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
 
+#include <ctype.h> /* isprint */
+#include <stdio.h>
+#include <string.h>
+
 #include "transmission.h"
+#include "trcompat.h"
 
 static int charToInt( char character );
 
@@ -31,6 +36,8 @@ static int charToInt( char character )
     int value;
     if( character >= 'A' && character <= 'Z' )
         value = 10 + character - 'A';
+    else if( character >= 'a' && character <= 'z')
+        value = 36 + character - 'a';
     else
         value = character - '0';
     
@@ -54,9 +61,9 @@ char * tr_clientForId( uint8_t * id )
             }
             else
             {
-                asprintf( &ret, "Transmission %d.%c%c",
-                        charToInt( id[3] ) * 10 + charToInt( id[4] ),
-                        id[5], id[6] );
+                asprintf( &ret, "Transmission %d.%c%c%s",
+                        charToInt( id[3] ), id[4], id[5],
+                        id[6] == 'Z' ? "+" : "" );
             }
         }
         else if( !memcmp( &id[1], "AZ", 2 ) )
@@ -103,9 +110,8 @@ char * tr_clientForId( uint8_t * id )
         }
         else if( !memcmp( &id[1], "XX", 2 ) )
         {
-            asprintf( &ret, "Xtorrent (%d)",
-                      charToInt( id[3] ) * 1000 + charToInt( id[4] ) * 100
-                      + charToInt( id[5] ) * 10 + charToInt( id[6] ) );
+            asprintf( &ret, "Xtorrent %c.%c (%d)",
+                      id[3], id[4], charToInt( id[5] ) * 10 + charToInt( id[6] ) );
         }
         else if( !memcmp( &id[1], "TS", 2 ) )
         {
@@ -220,6 +226,16 @@ char * tr_clientForId( uint8_t * id )
             asprintf( &ret, "FoxTorrent (%c%c%c%c)",
                       id[3], id[4], id[5], id[6] );
         }
+        else if( !memcmp( &id[1], "GR", 2 ) )
+        {
+            asprintf( &ret, "GetRight (%c.%c.%c.%c)",
+                      id[3], id[4], id[5], id[6] );
+        }
+        else if( !memcmp( &id[1], "PD", 2 ) )
+        {
+            asprintf( &ret, "Pando %c.%c.%c.%c",
+                      id[3], id[4], id[5], id[6] );
+        }
         
         if( ret )
         {
@@ -317,6 +333,11 @@ char * tr_clientForId( uint8_t * id )
                   charToInt( id[3] ) * 10 + charToInt( id[4] ),
                       id[5], id[6] );
     }
+    else if( !memcmp( id, "DNA", 3 ) )
+    {
+        asprintf( &ret, "BitTorrent DNA %d.%d.%d", charToInt( id[3] ) * 10 + charToInt( id[4] ),
+                    charToInt( id[5] ) * 10 + charToInt( id[6] ), charToInt( id[7] ) * 10 + charToInt( id[8] ) );
+    }
     else if( !memcmp( id, "Plus", 4 ) )
     {
         asprintf( &ret, "Plus! v2 %c.%c%c", id[4], id[5], id[6] );
@@ -362,6 +383,10 @@ char * tr_clientForId( uint8_t * id )
     else if( !memcmp( id, "eX", 2 ) )
     {
         asprintf( &ret, "eXeem" );
+    }
+    else if( '\0' == id[0] && 'B' == id[2] && 'S' == id[3] )
+    {
+        asprintf( &ret, "BitSpirit v%u", ( 0 == id[1] ? 1 : id[1] ) );
     }
 
     /* No match */

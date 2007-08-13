@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: utils.h 2004 2007-06-09 15:36:46Z charles $
+ * $Id: utils.h 2611 2007-08-04 00:43:47Z joshe $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -25,32 +25,37 @@
 #ifndef TR_UTILS_H
 #define TR_UTILS_H 1
 
+#include <inttypes.h>
+#include <stdarg.h>
+
 void tr_msgInit( void );
 
 #define tr_err( a... ) tr_msg( TR_MSG_ERR, ## a )
 #define tr_inf( a... ) tr_msg( TR_MSG_INF, ## a )
 #define tr_dbg( a... ) tr_msg( TR_MSG_DBG, ## a )
-void tr_msg  ( int level, char * msg, ... ) PRINTF( 2, 3 );
+void tr_msg  ( int level, char * msg, ... );
 
 int  tr_rand ( int );
 
 void * tr_memmem( const void *, size_t, const void *, size_t );
 
 /***********************************************************************
- * tr_mkdir
+ * tr_mkdirp
  ***********************************************************************
  * Create a directory and any needed parent directories.
  * Note that the string passed in must be writable!
  **********************************************************************/
-int tr_mkdir( char * path );
+int tr_mkdirp( char * path, int permissions );
+
+int tr_mkdir( const char * path, int permissions );
 
 /***********************************************************************
  * tr_strcasecmp
  ***********************************************************************
  * A case-insensitive strncmp()
  **********************************************************************/
-#define tr_strcasecmp( ff, ss ) ( tr_strncasecmp( (ff), (ss), -1 ) )
-int tr_strncasecmp( const char * first, const char * second, int len );
+#define tr_strcasecmp( ff, ss ) ( tr_strncasecmp( (ff), (ss), ULONG_MAX ) )
+int tr_strncasecmp( const char * first, const char * second, size_t len );
 
 /***********************************************************************
  * tr_sprintf
@@ -59,182 +64,89 @@ int tr_strncasecmp( const char * first, const char * second, int len );
  * growing the buffer if needed
  **********************************************************************/
 int tr_sprintf( char ** buf, int * used, int * max,
-                const char * format, ... ) PRINTF( 4, 5 );
+                const char * format, ... );
 /* gee, it sure would be nice if BeOS had va_copy() */
 int tr_vsprintf( char **, int *, int *, const char *, va_list, va_list );
 /* this concatenates some binary data onto the end of a buffer */
 int tr_concat( char ** buf, int * used, int * max,
                const char * data, int len );
 
-/***********************************************************************
- * tr_dupstr
- ***********************************************************************
- * Creates a nul-terminated string 
- **********************************************************************/
-char * tr_dupstr( const char * base, int len );
+/* creates a filename from a series of elements using the
+   correct separator for filenames. */
+void tr_buildPath ( char* buf, size_t buflen,
+                    const char * first_element, ... );
+
 
 int    tr_ioErrorFromErrno( void );
 
 char * tr_errorString( int code );
 
-/***********************************************************************
- * tr_date
- ***********************************************************************
- * Returns the current date in milliseconds
- **********************************************************************/
-static inline uint64_t tr_date()
-{
-    struct timeval tv;
-    gettimeofday( &tv, NULL );
-    return (uint64_t) tv.tv_sec * 1000 + ( tv.tv_usec / 1000 );
-}
+/* return the current date in milliseconds */
+uint64_t tr_date( void );
 
-/***********************************************************************
- * tr_wait
- ***********************************************************************
- * Wait 'delay' milliseconds
- **********************************************************************/
-static inline void tr_wait( uint64_t delay )
-{
-#ifdef SYS_BEOS
-    snooze( 1000 * delay );
-#else
-    usleep( 1000 * delay );
+/* wait the specified number of milliseconds */
+void tr_wait( uint64_t delay_milliseconds );
+
+/***
+****
+***/
+
+/* Sometimes the system defines MAX/MIN, sometimes not. In the latter
+   case, define those here since we will use them */
+#ifndef MAX
+#define MAX(a,b) ((a)>(b)?(a):(b))
 #endif
-}
+#ifndef MIN
+#define MIN(a,b) ((a)>(b)?(b):(a))
+#endif
 
-struct tr_bitfield_s
+/***
+****
+***/
+
+#define tr_new(struct_type, n_structs)           \
+    ((struct_type *) tr_malloc (((size_t) sizeof (struct_type)) * ((size_t) (n_structs))))
+#define tr_new0(struct_type, n_structs)          \
+    ((struct_type *) tr_malloc0 (((size_t) sizeof (struct_type)) * ((size_t) (n_structs))))
+#define tr_renew(struct_type, mem, n_structs)    \
+    ((struct_type *) realloc ((mem), ((size_t) sizeof (struct_type)) * ((size_t) (n_structs))))
+
+void* tr_malloc  ( size_t );
+void* tr_malloc0 ( size_t );
+void* tr_calloc  ( size_t nmemb, size_t size );
+void  tr_free    ( void* );
+
+char* tr_strdup( const char * str );
+char* tr_strndup( const char * str, int len );
+
+/***
+****
+***/
+
+typedef struct tr_bitfield_s
 {
     uint8_t * bits;
-    int       len;
-};
-
-/* note that the argument is how many bits are needed, not bytes */
-static inline tr_bitfield_t * tr_bitfieldNew( int bitcount )
-{
-    tr_bitfield_t * ret;
-
-    ret = calloc( 1, sizeof *ret );
-    if( NULL == ret )
-    {
-        return NULL;
-    }
-    ret->len = ( bitcount + 7 ) / 8;
-    ret->bits = calloc( ret->len, 1 );
-    if( NULL == ret->bits )
-    {
-        free( ret );
-        return NULL;
-    }
-
-    return ret;
+    size_t len;
 }
+tr_bitfield_t;
 
-static inline void tr_bitfieldFree( tr_bitfield_t * bitfield )
-{
-    if( bitfield )
-    {
-        free( bitfield->bits );
-        free( bitfield );
-    }
-}
+tr_bitfield_t* tr_bitfieldNew( size_t bitcount );
+tr_bitfield_t* tr_bitfieldDup( const tr_bitfield_t* );
+void tr_bitfieldFree( tr_bitfield_t*);
 
-static inline void tr_bitfieldClear( tr_bitfield_t * bitfield )
-{
-    memset( bitfield->bits, 0, bitfield->len );
-}
+void tr_bitfieldClear( tr_bitfield_t* );
+void tr_bitfieldAdd( tr_bitfield_t*, size_t bit );
+void tr_bitfieldRem( tr_bitfield_t*, size_t bit );
+void tr_bitfieldAddRange( tr_bitfield_t *, size_t begin, size_t end );
+void tr_bitfieldRemRange ( tr_bitfield_t*, size_t begin, size_t end );
 
-/***********************************************************************
- * tr_bitfieldHas
- **********************************************************************/
-static inline int tr_bitfieldHas( tr_bitfield_t * bitfield, int piece )
-{
-    assert( piece / 8 < bitfield->len );
-    return ( bitfield->bits[ piece / 8 ] & ( 1 << ( 7 - ( piece % 8 ) ) ) );
-}
+int    tr_bitfieldIsEmpty( const tr_bitfield_t* );
+size_t tr_bitfieldCountTrueBits( const tr_bitfield_t* );
 
-/***********************************************************************
- * tr_bitfieldAdd
- **********************************************************************/
-static inline void tr_bitfieldAdd( tr_bitfield_t * bitfield, int piece )
-{
-    assert( piece / 8 < bitfield->len );
-    bitfield->bits[ piece / 8 ] |= ( 1 << ( 7 - ( piece % 8 ) ) );
-}
+tr_bitfield_t* tr_bitfieldNegate( tr_bitfield_t* );
+tr_bitfield_t* tr_bitfieldAnd( tr_bitfield_t*, const tr_bitfield_t* );
 
-static inline void tr_bitfieldRem( tr_bitfield_t * bitfield, int piece )
-{
-    assert( piece / 8 < bitfield->len );
-    bitfield->bits[ piece / 8 ] &= ~( 1 << ( 7 - ( piece % 8 ) ) );
-}
-
-#define tr_blockPiece(a) _tr_blockPiece(tor,a)
-static inline int _tr_blockPiece( const tr_torrent_t * tor, int block )
-{
-    const tr_info_t * inf = &tor->info;
-    return block / ( inf->pieceSize / tor->blockSize );
-}
-
-#define tr_blockSize(a) _tr_blockSize(tor,a)
-static inline int _tr_blockSize( const tr_torrent_t * tor, int block )
-{
-    const tr_info_t * inf = &tor->info;
-    int dummy;
-
-    if( block != tor->blockCount - 1 ||
-        !( dummy = inf->totalSize % tor->blockSize ) )
-    {
-        return tor->blockSize;
-    }
-
-    return dummy;
-}
-
-#define tr_blockPosInPiece(a) _tr_blockPosInPiece(tor,a)
-static inline int _tr_blockPosInPiece( const tr_torrent_t * tor, int block )
-{
-    const tr_info_t * inf = &tor->info;
-    return tor->blockSize *
-        ( block % ( inf->pieceSize / tor->blockSize ) );
-}
-
-#define tr_pieceCountBlocks(a) _tr_pieceCountBlocks(tor,a)
-static inline int _tr_pieceCountBlocks( const tr_torrent_t * tor, int piece )
-{
-    const tr_info_t * inf = &tor->info;
-    if( piece < inf->pieceCount - 1 ||
-        !( tor->blockCount % ( inf->pieceSize / tor->blockSize ) ) )
-    {
-        return inf->pieceSize / tor->blockSize;
-    }
-    return tor->blockCount % ( inf->pieceSize / tor->blockSize );
-}
-
-#define tr_pieceStartBlock(a) _tr_pieceStartBlock(tor,a)
-static inline int _tr_pieceStartBlock( const tr_torrent_t * tor, int piece )
-{
-    const tr_info_t * inf = &tor->info;
-    return piece * ( inf->pieceSize / tor->blockSize );
-}
-
-#define tr_pieceSize(a) _tr_pieceSize(tor,a)
-static inline int _tr_pieceSize( const tr_torrent_t * tor, int piece )
-{
-    const tr_info_t * inf = &tor->info;
-    if( piece < inf->pieceCount - 1 ||
-        !( inf->totalSize % inf->pieceSize ) )
-    {
-        return inf->pieceSize;
-    }
-    return inf->totalSize % inf->pieceSize;
-}
-
-#define tr_block(a,b) _tr_block(tor,a,b)
-static inline int _tr_block( const tr_torrent_t * tor, int index, int begin )
-{
-    const tr_info_t * inf = &tor->info;
-    return index * ( inf->pieceSize / tor->blockSize ) +
-        begin / tor->blockSize;
-}
+#define tr_bitfieldHas(bitfield,nth) \
+    ( ( bitfield ) && ( (bitfield)->bits[(nth)>>3] & 128 >>( (nth) & 7 ) ) )
 
 #endif

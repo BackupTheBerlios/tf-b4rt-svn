@@ -1,4 +1,4 @@
-# $Id: cli.mk 947 2006-09-28 16:04:06Z titer $
+# $Id: cli.mk 2411 2007-07-19 00:09:09Z charles $
 
 include ../mk/config.mk
 include ../mk/common.mk
@@ -6,7 +6,7 @@ include ../mk/common.mk
 SRCS = transmissioncli.c
 OBJS = $(SRCS:%.c=%.o)
 
-CFLAGS  += -I../libtransmission
+CFLAGS  += -I..
 LDLIBS  += ../libtransmission/libtransmission.a
 
 transmissioncli: $(OBJS) ../libtransmission/libtransmission.a

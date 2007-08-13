@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: ratecontrol.c 2004 2007-06-09 15:36:46Z charles $
+ * $Id: ratecontrol.c 2590 2007-08-02 16:07:34Z charles $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -22,26 +22,20 @@
  * DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
 
+#include <string.h>
+
 #include "transmission.h"
+#include "platform.h"
+#include "ratecontrol.h"
 #include "shared.h"
+#include "utils.h"
 
-/* Maximum number of packets we keep track of. Since most packets are
- * 1 KB, it means we remember the last 2 MB transferred */
-#define HISTORY_SIZE 2048
+#define GRANULARITY_MSEC 250
+#define SHORT_INTERVAL_MSEC 3000
+#define LONG_INTERVAL_MSEC 20000
+#define HISTORY_SIZE (LONG_INTERVAL_MSEC / GRANULARITY_MSEC)
 
-/* How far back we go to calculate rates to be displayed in the 
- * interface */
-#define LONG_INTERVAL 30000 /* 30 secs */
-
-/* How far back we go to calculate pseudo-instantaneous transfer rates,
- * for the actual rate control */
-#define SHORT_INTERVAL 1000 /* 1 sec */
-
-
-/***********************************************************************
- * Structures
- **********************************************************************/
-typedef struct tr_transfer_s
+typedef struct
 {
     uint64_t date;
     int      size;
@@ -50,149 +44,127 @@ tr_transfer_t;
 
 struct tr_ratecontrol_s
 {
-    tr_lock_t     lock;
-    int           limit;
-
-    /* Circular history: it's empty if transferStop == transferStart,
-     * full if ( transferStop + 1 ) % HISTORY_SIZE == transferStart */
+    tr_lock_t * lock;
+    int limit;
+    int newest;
     tr_transfer_t transfers[HISTORY_SIZE];
-    int           transferStart;
-    int           transferStop;
 };
 
-
-/***********************************************************************
- * Local prototypes
- **********************************************************************/
-static float rateForInterval( tr_ratecontrol_t * r, int interval );
-
-
-/***********************************************************************
- * Exported functions
- **********************************************************************/
-
-tr_ratecontrol_t * tr_rcInit()
+/* return the xfer rate over the last `interval' seconds in KiB/sec */
+static float
+rateForInterval( const tr_ratecontrol_t * r, int interval_msec )
 {
-    tr_ratecontrol_t * r;
+    uint64_t bytes = 0;
+    const uint64_t now = tr_date ();
+    int i = r->newest;
+    for( ;; )
+    {
+        if( r->transfers[i].date + interval_msec < now )
+            break;
 
-    r        = calloc( 1, sizeof( tr_ratecontrol_t ) );
-    r->limit = -1;
-    tr_lockInit( &r->lock );
+        bytes += r->transfers[i].size;
 
+        if( --i == -1 ) i = HISTORY_SIZE - 1; /* circular history */
+        if( i == r->newest ) break; /* we've come all the way around */
+    }
+
+    return (bytes/1024.0) * (1000.0/interval_msec);
+}
+
+/***
+****
+***/
+
+tr_ratecontrol_t*
+tr_rcInit( void )
+{
+    tr_ratecontrol_t * r = tr_new0( tr_ratecontrol_t, 1 );
+    r->limit = 0;
+    r->lock = tr_lockNew( );
     return r;
 }
 
-void tr_rcSetLimit( tr_ratecontrol_t * r, int limit )
-{
-    tr_lockLock( &r->lock );
-    r->limit = limit;
-    tr_lockUnlock( &r->lock );
-}
-
-int tr_rcCanTransfer( tr_ratecontrol_t * r )
-{
-    int ret;
-
-    tr_lockLock( &r->lock );
-    ret = ( r->limit <= 0 ) ? ( r->limit < 0 ) :
-            ( rateForInterval( r, SHORT_INTERVAL ) < r->limit );
-    tr_lockUnlock( &r->lock );
-
-    return ret;
-}
-
-void tr_rcTransferred( tr_ratecontrol_t * r, int size )
-{
-    tr_transfer_t * t;
-
-    if( size < 100 )
-    {
-        /* Don't count small messages */
-        return;
-    }
-    
-    tr_lockLock( &r->lock );
-
-    r->transferStop = ( r->transferStop + 1 ) % HISTORY_SIZE;
-    if( r->transferStop == r->transferStart )
-        /* History is full, forget about the first (oldest) item */
-        r->transferStart = ( r->transferStart + 1 ) % HISTORY_SIZE;
-
-    t = &r->transfers[r->transferStop];
-    t->date = tr_date();
-    t->size = size;
-
-    tr_lockUnlock( &r->lock );
-}
-
-float tr_rcRate( tr_ratecontrol_t * r )
-{
-    float ret;
-
-    tr_lockLock( &r->lock );
-    ret = rateForInterval( r, LONG_INTERVAL );
-    tr_lockUnlock( &r->lock );
-
-    return ret;
-}
-
-void tr_rcReset( tr_ratecontrol_t * r )
-{
-    tr_lockLock( &r->lock );
-    r->transferStart = 0;
-    r->transferStop = 0;
-    tr_lockUnlock( &r->lock );
-}
-
-void tr_rcClose( tr_ratecontrol_t * r )
+void
+tr_rcClose( tr_ratecontrol_t * r )
 {
     tr_rcReset( r );
-    tr_lockClose( &r->lock );
-    free( r );
+    tr_lockFree( r->lock );
+    tr_free( r );
 }
 
+/***
+****
+***/
 
-/***********************************************************************
- * Local functions
- **********************************************************************/
-
-/***********************************************************************
- * rateForInterval
- ***********************************************************************
- * Returns the transfer rate in KB/s on the last 'interval'
- * milliseconds
- **********************************************************************/
-static float rateForInterval( tr_ratecontrol_t * r, int interval )
+int
+tr_rcCanTransfer( const tr_ratecontrol_t * r )
 {
-    tr_transfer_t * t = NULL;
-    uint64_t now, start;
-    int i, total;
+    int ret;
+    tr_lockLock( (tr_lock_t*)r->lock );
 
-    now = tr_date();
-    start = now - interval;
+    ret = rateForInterval( r, SHORT_INTERVAL_MSEC ) < r->limit;
 
-    /* Browse the history back in time */
-    total = 0;
-    for( i = r->transferStop; i != r->transferStart; i-- )
-    {
-        t = &r->transfers[i];
-        if( t->date < start )
-            break;
-
-        total += t->size;
-
-        if( !i )
-            i = HISTORY_SIZE; /* Loop */
-    }
-    if( ( r->transferStop + 1 ) % HISTORY_SIZE == r->transferStart
-        && i == r->transferStart )
-    {
-        /* High bandwidth -> the history isn't big enough to remember
-         * everything transferred since 'interval' ms ago. Correct the
-         * interval so that we return the correct rate */
-        interval = now - t->date;
-    }
-
-    return ( 1000.0f / 1024.0f ) * total / interval;
+    tr_lockUnlock( (tr_lock_t*)r->lock );
+    return ret;
 }
 
+float
+tr_rcRate( const tr_ratecontrol_t * r )
+{
+    float ret;
+    tr_lockLock( (tr_lock_t*)r->lock );
+
+    ret = rateForInterval( r, LONG_INTERVAL_MSEC );
+
+    tr_lockUnlock( (tr_lock_t*)r->lock );
+    return ret;
+}
+
+/***
+****
+***/
+
+void
+tr_rcTransferred( tr_ratecontrol_t * r, int size )
+{
+    uint64_t now;
+
+    if( size < 100 ) /* don't count small messages */
+        return;
+    
+    tr_lockLock( (tr_lock_t*)r->lock );
+
+    now = tr_date ();
+    if( r->transfers[r->newest].date + GRANULARITY_MSEC >= now )
+        r->transfers[r->newest].size += size;
+    else {
+        if( ++r->newest == HISTORY_SIZE ) r->newest = 0;
+        r->transfers[r->newest].date = now;
+        r->transfers[r->newest].size = size;
+    }
+
+    tr_lockUnlock( (tr_lock_t*)r->lock );
+}
+
+void
+tr_rcReset( tr_ratecontrol_t * r )
+{
+    tr_lockLock( (tr_lock_t*)r->lock );
+    r->newest = 0;
+    memset( r->transfers, 0, sizeof(tr_transfer_t) * HISTORY_SIZE );
+    tr_lockUnlock( (tr_lock_t*)r->lock );
+}
+
+void
+tr_rcSetLimit( tr_ratecontrol_t * r, int limit )
+{
+    tr_lockLock( (tr_lock_t*)r->lock );
+    r->limit = limit;
+    tr_lockUnlock( (tr_lock_t*)r->lock );
+}
+
+int
+tr_rcGetLimit( const tr_ratecontrol_t * r )
+{
+    return r->limit;
+}

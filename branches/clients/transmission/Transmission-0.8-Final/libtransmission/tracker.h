@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: tracker.h 1517 2007-02-27 04:00:38Z joshe $
+ * $Id: tracker.h 2554 2007-07-30 17:11:00Z charles $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -29,27 +29,32 @@ typedef struct tr_tracker_s tr_tracker_t;
 
 tr_tracker_t * tr_trackerInit      ( tr_torrent_t * );
 
-#define tr_trackerPulse(tc,a,b) tr_trackerAnnouncePulse((tc),(a),(b),0)
-void           tr_trackerAnnouncePulse( tr_tracker_t *, int * peerCount,
-                                        uint8_t ** peerCompact, int );
+void           tr_trackerPulse     ( tr_tracker_t *,
+                                     int          * peerCount,
+                                     uint8_t     ** peerCompact );
 
 void           tr_trackerCompleted( tr_tracker_t * );
 void           tr_trackerStopped  ( tr_tracker_t * );
 void           tr_trackerClose    ( tr_tracker_t * );
+
+/* if a tracker is running, enqueue a manual announce. */
+void tr_trackerManualAnnounce( tr_tracker_t * );
+
+int tr_trackerCanManualAnnounce( const tr_tracker_t * );
 
 /***********************************************************************
  * tr_trackerSeeders
  ***********************************************************************
  * Looks for the seeders as returned by the tracker.
  **********************************************************************/
-int tr_trackerSeeders  ( tr_tracker_t * );
+int tr_trackerSeeders  ( const tr_tracker_t * );
 
 /***********************************************************************
  * tr_trackerLeechers
  ***********************************************************************
  * Looks for the leechers as returned by the tracker.
  **********************************************************************/
-int tr_trackerLeechers ( tr_tracker_t * );
+int tr_trackerLeechers ( const tr_tracker_t * );
 
 /***********************************************************************
  * tr_trackerDownloaded
@@ -57,17 +62,22 @@ int tr_trackerLeechers ( tr_tracker_t * );
  * Looks for number of completed downloads as returned by the tracker
  * (from scrape).
  **********************************************************************/
-int tr_trackerDownloaded( tr_tracker_t * tc );
+int tr_trackerDownloaded( const tr_tracker_t * tc );
 
 /***********************************************************************
  * tr_trackerGet
  ***********************************************************************
  * Return the tracker currently in use.
  **********************************************************************/
-tr_tracker_info_t * tr_trackerGet( tr_tracker_t * tc );
+const tr_tracker_info_t * tr_trackerGet( const tr_tracker_t * tc );
 
-int tr_trackerCannotConnect( tr_tracker_t * tc );
+int tr_trackerCannotConnect( const tr_tracker_t * tc );
 
+/* the time of the tracker's last message to us */
+uint64_t tr_trackerLastResponseDate ( const tr_tracker_t * );
+
+
+#if 0
 /***********************************************************************
  * tr_trackerScrape
  ***********************************************************************
@@ -75,5 +85,6 @@ int tr_trackerCannotConnect( tr_tracker_t * tc );
  * completed downloads if successful.
  **********************************************************************/
 int tr_trackerScrape( tr_torrent_t * tor, int * s, int * l, int * d );
+#endif
 
 #endif

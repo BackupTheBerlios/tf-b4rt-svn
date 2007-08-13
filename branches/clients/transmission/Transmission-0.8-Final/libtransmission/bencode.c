@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: bencode.c 2024 2007-06-10 15:38:58Z titer $
+ * $Id: bencode.c 2555 2007-07-30 18:04:10Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -22,34 +22,35 @@
  * DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
 
+#include <assert.h>
+#include <ctype.h> /* isdigit, isprint */
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "transmission.h"
+#include "bencode.h"
+#include "utils.h"
 
 /* setting to 1 to help expose bugs with tr_bencListAdd and tr_bencDictAdd */
 #define LIST_SIZE   20 /* number of items to increment list/dict buffer by */
 
 static int makeroom( benc_val_t * val, int count )
 {
-    int    len;
-    void * new;
-
     assert( TYPE_LIST == val->type || TYPE_DICT == val->type );
 
-    if( val->val.l.count + count <= val->val.l.alloc )
+    if( val->val.l.count + count > val->val.l.alloc )
     {
-        return 0;
-    }
+        /* We need a bigger boat */
+        const int len = val->val.l.alloc + count +
+            ( count % LIST_SIZE ? LIST_SIZE - ( count % LIST_SIZE ) : 0 );
+        void * new = realloc( val->val.l.vals, len * sizeof( benc_val_t ) );
+        if( NULL == new )
+            return 1;
 
-    /* We need a bigger boat */
-    len = val->val.l.alloc + count +
-        ( count % LIST_SIZE ? LIST_SIZE - ( count % LIST_SIZE ) : 0 );
-    new = realloc( val->val.l.vals, len * sizeof( benc_val_t ) );
-    if( NULL == new )
-    {
-        return 1;
+        val->val.l.alloc = len;
+        val->val.l.vals  = new;
     }
-
-    val->val.l.alloc = len;
-    val->val.l.vals  = new;
 
     return 0;
 }
@@ -58,115 +59,119 @@ int _tr_bencLoad( char * buf, int len, benc_val_t * val, char ** end )
 {
     char * p, * e, * foo;
 
-    if( NULL == buf || 1 >= len )
-    {
-        return 1;
-    }
-
     if( !end )
     {
         /* So we only have to check once */
         end = &foo;
     }
 
-    if( buf[0] == 'i' )
+    for( ;; )
     {
-        int64_t num;
-
-        e = memchr( &buf[1], 'e', len - 1 );
-        if( NULL == e )
-        {
+        if( !buf || len<1 ) /* no more text to parse... */
             return 1;
-        }
 
-        /* Integer: i1242e */
-        *e = '\0';
-        num = strtoll( &buf[1], &p, 10 );
-        *e = 'e';
-
-        if( p != e )
+        if( *buf=='i' ) /* Integer: i1234e */
         {
-            return 1;
+            int64_t num;
+
+            e = memchr( &buf[1], 'e', len - 1 );
+            if( !e )
+                return 1;
+
+            *e = '\0';
+            num = strtoll( &buf[1], &p, 10 );
+            *e = 'e';
+
+            if( p != e )
+                return 1;
+
+            tr_bencInitInt( val, num );
+            *end = p + 1;
+            break;
         }
-
-        tr_bencInitInt( val, num );
-        *end = p + 1;
-    }
-    else if( buf[0] == 'l' || buf[0] == 'd' )
-    {
-        /* List: l<item1><item2>e
-           Dict: d<string1><item1><string2><item2>e
-           A dictionary is just a special kind of list with an even
-           count of items, and where even items are strings. */
-        char * cur;
-        char   is_dict;
-        char   str_expected;
-
-        is_dict      = ( buf[0] == 'd' );
-        cur          = &buf[1];
-        str_expected = 1;
-        tr_bencInit( val, ( is_dict ? TYPE_DICT : TYPE_LIST ) );
-        while( cur - buf < len && cur[0] != 'e' )
+        else if( *buf=='l' || *buf=='d' )
         {
-            if( makeroom( val, 1 ) ||
-                tr_bencLoad( cur, len - (cur - buf),
-                             &val->val.l.vals[val->val.l.count], &p ) )
+            /* List: l<item1><item2>e
+               Dict: d<string1><item1><string2><item2>e
+               A dictionary is just a special kind of list with an even
+               count of items, and where even items are strings. */
+            char * cur;
+            char   is_dict;
+            char   str_expected;
+
+            is_dict      = ( buf[0] == 'd' );
+            cur          = &buf[1];
+            str_expected = 1;
+            tr_bencInit( val, ( is_dict ? TYPE_DICT : TYPE_LIST ) );
+            while( cur - buf < len && cur[0] != 'e' )
+            {
+                if( makeroom( val, 1 ) ||
+                    tr_bencLoad( cur, len - (cur - buf),
+                                 &val->val.l.vals[val->val.l.count], &p ) )
+                {
+                    tr_bencFree( val );
+                    return 1;
+                }
+                val->val.l.count++;
+                if( is_dict && str_expected &&
+                    val->val.l.vals[val->val.l.count - 1].type != TYPE_STR )
+                {
+                    tr_bencFree( val );
+                    return 1;
+                }
+                str_expected = !str_expected;
+
+                cur = p;
+            }
+
+            if( is_dict && ( val->val.l.count & 1 ) )
             {
                 tr_bencFree( val );
                 return 1;
             }
-            val->val.l.count++;
-            if( is_dict && str_expected &&
-                val->val.l.vals[val->val.l.count - 1].type != TYPE_STR )
+
+            *end = cur + 1;
+            break;
+        }
+        else if( isdigit(*buf) )
+        {
+            int    slen;
+            char * sbuf;
+
+            e = memchr( buf, ':', len );
+            if( NULL == e )
             {
-                tr_bencFree( val );
                 return 1;
             }
-            str_expected = !str_expected;
 
-            cur = p;
+            /* String: 12:whateverword */
+            e[0] = '\0';
+            slen = strtol( buf, &p, 10 );
+            e[0] = ':';
+
+            if( p != e || 0 > slen || len - ( ( p + 1 ) - buf ) < slen )
+            {
+                return 1;
+            }
+
+            sbuf = malloc( slen + 1 );
+            if( NULL == sbuf )
+            {
+                return 1;
+            }
+
+            memcpy( sbuf, p + 1, slen );
+            sbuf[slen] = '\0';
+            tr_bencInitStr( val, sbuf, slen, 0 );
+
+            *end = p + 1 + val->val.s.i;
+            break;
         }
-
-        if( is_dict && ( val->val.l.count & 1 ) )
+        else /* invalid bencoded text... march past it */
         {
-            tr_bencFree( val );
-            return 1;
+            ++buf;
+            --len;
         }
-
-        *end = cur + 1;
-    }
-    else
-    {
-        int    slen;
-        char * sbuf;
-
-        e = memchr( buf, ':', len );
-        if( NULL == e )
-        {
-            return 1;
-        }
-
-        /* String: 12:whateverword */
-        e[0] = '\0';
-        slen = strtol( buf, &p, 10 );
-        e[0] = ':';
-
-        if( p != e || 0 > slen || len - ( ( p + 1 ) - buf ) < slen )
-        {
-            return 1;
-        }
-
-        sbuf = malloc( slen + 1 );
-        if( NULL == sbuf )
-        {
-            return 1;
-        }
-
-        memcpy( sbuf, p + 1, slen );
-        sbuf[slen] = '\0';
-        tr_bencInitStr( val, sbuf, slen, 0 );
-
-        *end = p + 1 + val->val.s.i;
     }
 
     val->begin = buf;
@@ -327,19 +332,11 @@ void _tr_bencInitStr( benc_val_t * val, char * str, int len, int nofree )
 
 int tr_bencInitStrDup( benc_val_t * val, const char * str )
 {
-    char * new = NULL;
+    char * newStr = tr_strdup( str );
+    if( newStr == NULL )
+        return 1;
 
-    if( NULL != str )
-    {
-        new = strdup( str );
-        if( NULL == new )
-        {
-            return 1;
-        }
-    }
-
-    _tr_bencInitStr( val, new, 0, 0 );
-
+    _tr_bencInitStr( val, newStr, 0, 0 );
     return 0;
 }
 
@@ -353,24 +350,14 @@ int tr_bencListReserve( benc_val_t * val, int count )
 {
     assert( TYPE_LIST == val->type );
 
-    if( makeroom( val, count ) )
-    {
-        return 1;
-    }
-
-    return 0;
+    return makeroom( val, count );
 }
 
 int tr_bencDictReserve( benc_val_t * val, int count )
 {
     assert( TYPE_DICT == val->type );
 
-    if( makeroom( val, count * 2 ) )
-    {
-        return 1;
-    }
-
-    return 0;
+    return makeroom( val, count * 2 );
 }
 
 benc_val_t * tr_bencListAdd( benc_val_t * list )
@@ -390,26 +377,14 @@ benc_val_t * tr_bencListAdd( benc_val_t * list )
 benc_val_t * tr_bencDictAdd( benc_val_t * dict, const char * key )
 {
     benc_val_t * keyval, * itemval;
-    int i;
 
     assert( TYPE_DICT == dict->type );
     assert( dict->val.l.count + 2 <= dict->val.l.alloc );
 
-    /* Keep dictionaries sorted by keys alphabetically.
-       BitTornado-based clients (and maybe others) need this. */
-    for( i = 0; i < dict->val.l.count; i += 2 )
-    {
-        assert( TYPE_STR == dict->val.l.vals[i].type );
-        if( strcmp( key, dict->val.l.vals[i].val.s.s ) < 0 )
-            break;
-    }
-    memmove( &dict->val.l.vals[i+2], &dict->val.l.vals[i],
-             ( dict->val.l.count - i ) * sizeof(benc_val_t) );
-    keyval  = &dict->val.l.vals[i];
-    itemval = &dict->val.l.vals[i+1];
-    dict->val.l.count += 2;
+    keyval = dict->val.l.vals + dict->val.l.count++;
+    tr_bencInitStr( keyval, (char*)key, -1, 1 );
 
-    tr_bencInitStr( keyval, key, -1, 1 );
+    itemval = dict->val.l.vals + dict->val.l.count++;
     tr_bencInit( itemval, TYPE_INT );
 
     return itemval;
@@ -434,6 +409,20 @@ char * tr_bencSaveMalloc( benc_val_t * val, int * len )
     return buf;
 }
 
+typedef struct
+{
+    const char * key;
+    int index;
+}
+KeyIndex;
+
+static int compareKeyIndex( const void * va, const void * vb )
+{
+    const KeyIndex * a = (const KeyIndex *) va;
+    const KeyIndex * b = (const KeyIndex *) vb;
+    return strcmp( a->key, b->key );
+}
+
 int tr_bencSave( benc_val_t * val, char ** buf, int * used, int * max )
 {
     int ii;    
@@ -442,37 +431,49 @@ int tr_bencSave( benc_val_t * val, char ** buf, int * used, int * max )
     {
         case TYPE_INT:
             if( tr_sprintf( buf, used, max, "i%"PRId64"e", val->val.i ) )
-            {
                 return 1;
-            }
             break;
 
         case TYPE_STR:
             if( tr_sprintf( buf, used, max, "%i:", val->val.s.i ) ||
                 tr_concat( buf, used,  max, val->val.s.s, val->val.s.i ) )
-            {
                 return 1;
-            }
             break;
 
         case TYPE_LIST:
-        case TYPE_DICT:
-            if( tr_sprintf( buf, used, max,
-                            (TYPE_LIST == val->type ? "l" : "d") ) )
-            {
+            if( tr_sprintf( buf, used, max, "l" ) )
                 return 1;
-            }
             for( ii = 0; val->val.l.count > ii; ii++ )
-            {
                 if( tr_bencSave( val->val.l.vals + ii, buf, used, max ) )
-                {
                     return 1;
-                }
-            }
             if( tr_sprintf( buf, used, max, "e" ) )
-            {
                 return 1;
-            }
+            break;
+
+        case TYPE_DICT:
+            /* Keys must be strings and appear in sorted order
+               (sorted as raw strings, not alphanumerics). */
+            if( tr_sprintf( buf, used, max, "d" ) )
+                return 1;
+            if( 1 ) {
+                int i;
+                KeyIndex * indices = tr_new( KeyIndex, val->val.l.count );
+                for( ii=i=0; i<val->val.l.count; i+=2 ) {
+                    indices[ii].key = val->val.l.vals[i].val.s.s;
+                    indices[ii].index = i;
+                    ii++;
+                }
+                qsort( indices, ii, sizeof(KeyIndex), compareKeyIndex );
+                for( i=0; i<ii; ++i ) {
+                    const int index = indices[i].index;
+                    if( tr_bencSave( val->val.l.vals + index,     buf, used, max ) ||
+                        tr_bencSave( val->val.l.vals + index + 1, buf, used, max ) )
+                        return 1;
+                }
+                tr_free( indices );
+            } 
+            if( tr_sprintf( buf, used, max, "e" ) )
+                return 1;
             break;
     }
 

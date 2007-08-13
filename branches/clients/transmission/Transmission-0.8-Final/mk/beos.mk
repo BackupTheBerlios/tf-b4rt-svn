@@ -1,4 +1,4 @@
-# $Id: beos.mk 1531 2007-03-05 07:15:17Z joshe $
+# $Id: beos.mk 2411 2007-07-19 00:09:09Z charles $
 
 include ../mk/config.mk
 include ../mk/common.mk
@@ -7,7 +7,7 @@ SRCS = TRApplication.cpp TRWindow.cpp TRTransfer.cpp \
        TRPrefsWindow.cpp TRInfoWindow.cpp
 OBJS = $(SRCS:%.cpp=%.o)
 
-CXXFLAGS += -I../libtransmission -IlibPrefs
+CXXFLAGS += -I.. -IlibPrefs
 LDLIBS   += ../libtransmission/libtransmission.a
 CXXFLAGS += -IlibPrefs
 LDFLAGS  += -lbe -ltracker

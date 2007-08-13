@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: trcompat.h 1750 2007-04-18 16:39:10Z joshe $
+ * $Id: trcompat.h 2551 2007-07-30 14:31:03Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -24,6 +24,9 @@
 #ifndef TRCOMPAT_H
 #define TRCOMPAT_H
 
+#include <stdarg.h>
+#include <stddef.h> /* for size_t */
+
 #ifndef HAVE_STRLCPY
 size_t
 strlcpy(char *dst, const char *src, size_t siz);
@@ -32,6 +35,21 @@ strlcpy(char *dst, const char *src, size_t siz);
 #ifndef HAVE_STRLCAT
 size_t
 strlcat(char *dst, const char *src, size_t siz);
+#endif
+
+#ifndef HAVE_ASPRINTF
+int asprintf( char **, const char *, ... );
+int vasprintf( char **, const char *, va_list );
+#endif
+
+#if defined(HAVE_DIRNAME) || defined(HAVE_BASENAME)
+    #include <libgen.h>
+#endif
+#ifndef HAVE_DIRNAME
+    char* dirname(const char *path);
+#endif
+#ifndef HAVE_BASENAME
+    char* basename(const char *path);
 #endif
 
 #endif /* TRCOMPAT_H */

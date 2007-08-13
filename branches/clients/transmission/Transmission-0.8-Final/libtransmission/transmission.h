@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.h 1998 2007-06-06 00:30:13Z livings124 $
+ * $Id: transmission.h 2605 2007-08-03 15:55:32Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -52,6 +52,14 @@ extern "C" {
 #define INET_ADDRSTRLEN 16
 #endif
 
+#if defined(WIN32)
+#define TR_PATH_DELIMITER '\\'
+#define TR_PATH_DELIMITER_STR "\\"
+#else
+#define TR_PATH_DELIMITER '/'
+#define TR_PATH_DELIMITER_STR "/"
+#endif
+
 #define TR_DEFAULT_PORT   9090
 
 #define TR_PEER_FROM__MAX       4
@@ -72,9 +80,10 @@ extern "C" {
 #define TR_ERROR_IO_PARENT          0x80000001
 #define TR_ERROR_IO_PERMISSIONS     0x80000002
 #define TR_ERROR_IO_SPACE           0x80000004
-#define TR_ERROR_IO_RESOURCES       0x80000008
-#define TR_ERROR_IO_DUP_DOWNLOAD    0x8000000A
-#define TR_ERROR_IO_OTHER           0x80000010
+#define TR_ERROR_IO_FILE_TOO_BIG    0x80000008
+#define TR_ERROR_IO_OPEN_FILES      0x80000010
+#define TR_ERROR_IO_DUP_DOWNLOAD    0x80000020
+#define TR_ERROR_IO_OTHER           0x80000040
 /* Misc */
 #define TR_ERROR_TC_MASK            0x00000F00
 #define TR_ERROR_TC_ERROR           0x80000100
@@ -130,7 +139,7 @@ void tr_freeMessageList( tr_msg_list_t * list );
  * Returns the full path to a directory which can be used to store
  * preferences. The string belongs to libtransmission, do not free it.
  **********************************************************************/
-char * tr_getPrefsDirectory();
+const char * tr_getPrefsDirectory( void );
 
 /***********************************************************************
  * tr_setBindPort
@@ -156,19 +165,6 @@ void tr_natTraversalEnable( tr_handle_t *, int enable );
 typedef struct tr_handle_status_s tr_handle_status_t;
 tr_handle_status_t * tr_handleStatus( tr_handle_t * );
 
-/***********************************************************************
- * tr_setGlobalUploadLimit
- ***********************************************************************
- * Sets the total upload rate limit in KB/s
- **********************************************************************/
-void tr_setGlobalUploadLimit( tr_handle_t *, int );
-
-/***********************************************************************
- * tr_setGlobalDownloadLimit
- ***********************************************************************
- * Sets the total download rate limit in KB/s
- **********************************************************************/
-void tr_setGlobalDownloadLimit( tr_handle_t *, int );
 
 /***********************************************************************
  * tr_torrentCount
@@ -176,6 +172,7 @@ void tr_setGlobalDownloadLimit( tr_handle_t *, int );
  * Returns the count of open torrents
  **********************************************************************/
 int tr_torrentCount( tr_handle_t * h );
+
 
 /***********************************************************************
  * tr_torrentIterate
@@ -186,9 +183,92 @@ typedef struct tr_torrent_s tr_torrent_t;
 typedef void (*tr_callback_t) ( tr_torrent_t *, void * );
 void tr_torrentIterate( tr_handle_t *, tr_callback_t, void * );
 
-void tr_setUseCustomLimit( tr_torrent_t * tor, int limit );
-void tr_setUploadLimit( tr_torrent_t * tor, int limit );
-void tr_setDownloadLimit( tr_torrent_t * tor, int limit );
+
+/***********************************************************************
+*** Speed Limits
+**/
+
+enum { TR_UP, TR_DOWN };
+
+typedef enum
+{
+    TR_SPEEDLIMIT_GLOBAL,    /* only follow the overall speed limit */
+    TR_SPEEDLIMIT_SINGLE,    /* only follow the per-torrent limit */
+    TR_SPEEDLIMIT_UNLIMITED  /* no limits at all */
+}
+tr_speedlimit_t;
+
+void tr_torrentSetSpeedMode( tr_torrent_t     * tor,
+                             int                up_or_down,
+                             tr_speedlimit_t    mode );
+
+tr_speedlimit_t tr_torrentGetSpeedMode( const tr_torrent_t * tor,
+                                        int                  up_or_down);
+
+void tr_torrentSetSpeedLimit( tr_torrent_t   * tor,
+                              int              up_or_down,
+                              int              single_KiB_sec );
+
+int tr_torrentGetSpeedLimit( const tr_torrent_t  * tor,
+                             int                   up_or_down );
+
+void tr_setUseGlobalSpeedLimit( tr_handle_t * handle,
+                                int           up_or_down,
+                                int           use_flag );
+
+void tr_setGlobalSpeedLimit( tr_handle_t * handle,
+                             int           up_or_down,
+                             int           global_KiB_sec );
+
+void tr_getGlobalSpeedLimit( tr_handle_t * handle,
+                             int           up_or_down,
+                             int         * setme_is_enabled,
+                             int         * setme_KiBsec );
+
+/***********************************************************************
+ * Torrent Priorities
+ **********************************************************************/
+
+enum
+{
+    TR_PRI_LOW    = -1,
+    TR_PRI_NORMAL =  0, /* since NORMAL is 0, memset initializes nicely */
+    TR_PRI_HIGH   =  1
+};
+
+typedef int8_t tr_priority_t;
+
+/* set a batch of files to a particular priority. */
+void tr_torrentSetFilePriorities( tr_torrent_t        * tor,
+                                  int                 * files,
+                                  int                   fileCount,
+                                  tr_priority_t         priority );
+
+
+/* single-file form of tr_torrentPrioritizeFiles.
+ * priority must be one of TR_PRI_NORMAL, _HIGH, or _LOW */
+void tr_torrentSetFilePriority( tr_torrent_t *, int file, tr_priority_t priority );
+
+/* returns a malloc()ed array of tor->info.fileCount items,
+ * each holding a value of TR_PRI_NORMAL, _HIGH, or _LOW.
+   free the array when done. */
+tr_priority_t* tr_torrentGetFilePriorities( const tr_torrent_t * );
+
+/* single-file form of tr_torrentGetFilePriorities.
+ * returns one of TR_PRI_NORMAL, _HIGH, or _LOW. */
+tr_priority_t tr_torrentGetFilePriority( const tr_torrent_t *, int file );
+
+/* returns true if the file's `download' flag is set */
+int tr_torrentGetFileDL( const tr_torrent_t *, int file );
+
+/* set a batch of files to be downloaded or not. */
+void tr_torrentSetFileDLs ( tr_torrent_t   * tor,
+                            int            * files,
+                            int              fileCount,
+                            int              do_download );
+
+/* single-file form of tr_torrentSetFileDLs */
+void tr_torrentSetFileDL( tr_torrent_t *, int file, int do_download );
 
 /***********************************************************************
  * tr_torrentRates
@@ -204,6 +284,19 @@ void tr_torrentRates( tr_handle_t *, float *, float * );
  **********************************************************************/
 void tr_close( tr_handle_t * );
 
+
+
+/**
+ *  Load all the torrents in tr_getTorrentsDirectory().
+ *  This can be used at startup to kickstart all the torrents
+ *  from the previous session.
+ */
+tr_torrent_t ** tr_loadTorrents ( tr_handle_t  * h,
+                                  const char   * destination,
+                                  int            flags,
+                                  int          * setmeCount );
+
+
 /***********************************************************************
  * tr_torrentInit
  ***********************************************************************
@@ -218,8 +311,44 @@ void tr_close( tr_handle_t * );
 #define TR_EUNSUPPORTED 2
 #define TR_EDUPLICATE   3
 #define TR_EOTHER       666
-tr_torrent_t * tr_torrentInit( tr_handle_t *, const char * path,
-                               uint8_t * hash, int flags, int * error );
+tr_torrent_t * tr_torrentInit( tr_handle_t  * handle,
+                               const char   * metainfo_filename,
+                               const char   * destination,
+                               int            flags,
+                               int          * setme_error );
+
+typedef struct tr_info_s tr_info_t;
+
+/**
+ * Parses the specified metainfo file.
+ *
+ * Returns TR_OK if it parsed and can be added to Transmission.
+ * Returns TR_INVALID if it couldn't be parsed.
+ * Returns TR_EDUPLICATE if it parsed but can't be added.
+ *
+ * "destination" can be NULL if you don't need to know whether
+ * or not the torrent can be added.
+ *
+ " "setme_info" can be NULL if you don't need the information.
+ * If the metainfo can be parsed and setme_info is non-NULL,
+ * it will be filled with the metadata's info.  You'll need to
+ * call tr_metainfoFree( setme_info ) when done with it.
+ */
+int tr_torrentParse( const tr_handle_t  * handle,
+                     const char         * metainfo_filename,
+                     const char         * destination,
+                     tr_info_t          * setme_info );
+
+/**
+ * Parses the cached metainfo file that matches the given hash string.
+ * See tr_torrentParse() for a description of the arguments
+ */
+int
+tr_torrentParseHash( const tr_handle_t  * h,
+                     const char         * hashStr,
+                     const char         * destination,
+                     tr_info_t          * setme_info );
+
 
 /***********************************************************************
  * tr_torrentInitData
@@ -227,8 +356,9 @@ tr_torrent_t * tr_torrentInit( tr_handle_t *, const char * path,
  * Like tr_torrentInit, except the actual torrent data is passed in
  * instead of the filename.
  **********************************************************************/
-tr_torrent_t * tr_torrentInitData( tr_handle_t *, uint8_t * data,
-                                   size_t size, uint8_t * hash,
+tr_torrent_t * tr_torrentInitData( tr_handle_t *,
+                                   const uint8_t * data, size_t size,
+                                   const char * destination,
                                    int flags, int * error );
 
 /***********************************************************************
@@ -238,7 +368,9 @@ tr_torrent_t * tr_torrentInitData( tr_handle_t *, uint8_t * data,
  * the hash string of a saved torrent file instead of a filename. There
  * are currently no valid flags for this function.
  **********************************************************************/
-tr_torrent_t * tr_torrentInitSaved( tr_handle_t *, const char * hashStr,
+tr_torrent_t * tr_torrentInitSaved( tr_handle_t *,
+                                    const char * hashStr,
+                                    const char * destination,
                                     int flags, int * error );
 
 /***********************************************************************
@@ -250,14 +382,9 @@ tr_torrent_t * tr_torrentInitSaved( tr_handle_t *, const char * hashStr,
  **********************************************************************/
 void tr_torrentDisablePex( tr_torrent_t *, int disable );
 
-/***********************************************************************
- * tr_torrentScrape
- ***********************************************************************
- * Return torrent metainfo.
- **********************************************************************/
-typedef struct tr_info_s tr_info_t;
-tr_info_t * tr_torrentInfo( tr_torrent_t * );
+const tr_info_t * tr_torrentInfo( const tr_torrent_t * );
 
+#if 0
 /***********************************************************************
  * tr_torrentScrape
  ***********************************************************************
@@ -268,11 +395,10 @@ tr_info_t * tr_torrentInfo( tr_torrent_t * );
  * before returning.
  **********************************************************************/
 int tr_torrentScrape( tr_torrent_t *, int * s, int * l, int * d );
+#endif
 
 void   tr_torrentSetFolder( tr_torrent_t *, const char * );
-const char * tr_torrentGetFolder( tr_torrent_t * );
-
-int tr_torrentDuplicateDownload( tr_torrent_t * tor );
+const char * tr_torrentGetFolder( const tr_torrent_t * );
 
 /***********************************************************************
  * tr_torrentStart
@@ -296,19 +422,32 @@ void   tr_torrentStart( tr_torrent_t * );
 void tr_torrentStop( tr_torrent_t * );
 
 /***********************************************************************
- * tr_getFinished
+ * tr_getComplete, tr_getIncomplete and tr_getPartial
  ***********************************************************************
- * The first call after a torrent is completed returns 1. Returns 0
+ * The first call after a torrent changed state returns 1. Returns 0
  * in other cases.
  **********************************************************************/
-int tr_getFinished( tr_torrent_t * );
+int tr_getIncomplete( tr_torrent_t * tor );
+int tr_getDone( tr_torrent_t * tor );
+int tr_getComplete( tr_torrent_t * tor );
 
-/***********************************************************************
- * tr_manualUpdate
- ***********************************************************************
- * Reannounce to tracker regardless of wait interval
- **********************************************************************/
+
+/**
+ * MANUAL ANNOUNCE
+ *
+ * Trackers usually set an announce interval of 15 or 30 minutes.
+ * Users can send one-time announce requests that override this
+ * interval by calling tr_manualUpdate().
+ *
+ * The wait interval for tr_manualUpdate() is much smaller.
+ * You can test whether or not a manual update is possible
+ * (for example, to desensitize the button) by calling
+ * tr_torrentCanManualUpdate().
+ */
+
 void tr_manualUpdate( tr_torrent_t * );
+
+int tr_torrentCanManualUpdate( const tr_torrent_t * );
 
 /***********************************************************************
  * tr_torrentStat
@@ -321,14 +460,19 @@ void tr_manualUpdate( tr_torrent_t * );
  * to update itself.
  **********************************************************************/
 typedef struct tr_stat_s tr_stat_t;
-tr_stat_t * tr_torrentStat( tr_torrent_t * );
+const tr_stat_t * tr_torrentStat( tr_torrent_t * );
 
 /***********************************************************************
  * tr_torrentPeers
  ***********************************************************************/
 typedef struct tr_peer_stat_s tr_peer_stat_t;
-tr_peer_stat_t * tr_torrentPeers( tr_torrent_t *, int * peerCount );
+tr_peer_stat_t * tr_torrentPeers( const tr_torrent_t *, int * peerCount );
 void tr_torrentPeersFree( tr_peer_stat_t *, int peerCount );
+
+typedef struct tr_file_stat_s tr_file_stat_t;
+tr_file_stat_t * tr_torrentFiles( const tr_torrent_t *, int * fileCount );
+void tr_torrentFilesFree( tr_file_stat_t *, int fileCount );
+
 
 /***********************************************************************
  * tr_torrentAvailability
@@ -338,18 +482,9 @@ void tr_torrentPeersFree( tr_peer_stat_t *, int peerCount );
  * to either -1 if we have the piece, otherwise it is set to the number
  * of connected peers who have the piece.
  **********************************************************************/
-void tr_torrentAvailability( tr_torrent_t *, int8_t * tab, int size );
+void tr_torrentAvailability( const tr_torrent_t *, int8_t * tab, int size );
 
-void tr_torrentAmountFinished( tr_torrent_t * tor, float * tab, int size );
-
-/***********************************************************************
- * tr_torrentCompletion
- ***********************************************************************
- * Returns the completion progress for each file in the torrent as an
- * array of floats the same size and order as in tr_info_t. Free the
- * array when done.
- **********************************************************************/
-float * tr_torrentCompletion( tr_torrent_t * tor );
+void tr_torrentAmountFinished( const tr_torrent_t * tor, float * tab, int size );
 
 /***********************************************************************
  * tr_torrentRemoveSaved
@@ -359,25 +494,40 @@ float * tr_torrentCompletion( tr_torrent_t * tor );
  **********************************************************************/
 void tr_torrentRemoveSaved( tr_torrent_t * );
 
-void tr_torrentRemoveFastResume( tr_torrent_t * tor );
+void tr_torrentRecheck( tr_torrent_t * );
 
 /***********************************************************************
  * tr_torrentClose
  ***********************************************************************
  * Frees memory allocated by tr_torrentInit. If the torrent was running,
- * you must call tr_torrentStop() before closing it.
+ * it is stopped first.
  **********************************************************************/
 void tr_torrentClose( tr_torrent_t * );
 
 /***********************************************************************
  * tr_info_s
  **********************************************************************/
+
 typedef struct tr_file_s
 {
     uint64_t length;                /* Length of the file, in bytes */
     char     name[MAX_PATH_LENGTH]; /* Path to the file */
+    int8_t   priority;              /* TR_PRI_HIGH, _NORMAL, or _LOW */
+    int8_t   dnd;                   /* nonzero if the file shouldn't be downloaded */
+    int      firstPiece;            /* We need pieces [firstPiece... */
+    int      lastPiece;             /* ...lastPiece] to dl this file */
+    uint64_t offset;                /* file begins at the torrent's nth byte */
 }
 tr_file_t;
+
+typedef struct tr_piece_s
+{
+    uint8_t  hash[SHA_DIGEST_LENGTH];  /* pieces hash */
+    int8_t   priority;                 /* TR_PRI_HIGH, _NORMAL, or _LOW */
+    int8_t   dnd;                      /* nonzero if the piece shouldn't be downloaded */
+}
+tr_piece_t;
+    
 struct tr_info_s
 {
     /* Path to torrent */
@@ -391,6 +541,7 @@ struct tr_info_s
     /* Flags */
 #define TR_FLAG_SAVE    0x01 /* save a copy of the torrent file */
 #define TR_FLAG_PRIVATE 0x02 /* do not share information for this torrent */
+#define TR_FLAG_PAUSED  0x04 /* don't start the torrent when adding it */
     int                  flags;
 
     /* Tracker info */
@@ -410,7 +561,7 @@ struct tr_info_s
     int                  pieceSize;
     int                  pieceCount;
     uint64_t             totalSize;
-    uint8_t            * pieces;
+    tr_piece_t         * pieces;
 
     /* Files info */
     int                  multifile;
@@ -418,44 +569,65 @@ struct tr_info_s
     tr_file_t          * files;
 };
 
+typedef enum
+{
+    TR_STATUS_CHECK_WAIT   = (1<<0), /* Waiting in queue to check files */
+    TR_STATUS_CHECK        = (1<<1), /* Checking files */
+    TR_STATUS_DOWNLOAD     = (1<<2), /* Downloading */
+    TR_STATUS_DONE         = (1<<3), /* not at 100% so can't tell the tracker
+                                        we're a seeder, but due to DND files
+                                        there's nothing we want right now */
+    TR_STATUS_SEED         = (1<<4), /* Seeding */
+    TR_STATUS_STOPPING     = (1<<5), /* Stopping -- closing connections, etc. */
+    TR_STATUS_STOPPED      = (1<<6)  /* Torrent is stopped */
+}
+torrent_status_t;
+
+#define TR_STATUS_ACTIVE \
+    (TR_STATUS_CHECK_WAIT|TR_STATUS_CHECK|TR_STATUS_DOWNLOAD|TR_STATUS_DONE|TR_STATUS_SEED)
+#define TR_STATUS_INACTIVE \
+    (TR_STATUS_STOPPING|TR_STATUS_STOPPED)
+
+typedef enum
+{
+    TR_CP_INCOMPLETE,   /* doesn't have all the desired pieces */
+    TR_CP_DONE,         /* has all the pieces but the DND ones */
+    TR_CP_COMPLETE      /* has every piece */
+}
+cp_status_t;
+
 /***********************************************************************
  * tr_stat_s
  **********************************************************************/
 struct tr_stat_s
 {
-#define TR_STATUS_CHECK_WAIT 0x001 /* Waiting in queue to check files */
-#define TR_STATUS_CHECK      0x002 /* Checking files */
-#define TR_STATUS_DOWNLOAD   0x004 /* Downloading */
-#define TR_STATUS_SEED       0x008 /* Seeding */
-#define TR_STATUS_STOPPING   0x010 /* Sending 'stopped' to the tracker */
-#define TR_STATUS_STOPPED    0x020 /* Sent 'stopped' but thread still
-                                    running (for internal use only) */
-#define TR_STATUS_PAUSE    0x040 /* Paused */
-
-#define TR_STATUS_ACTIVE   (TR_STATUS_CHECK_WAIT|TR_STATUS_CHECK|TR_STATUS_DOWNLOAD|TR_STATUS_SEED)
-#define TR_STATUS_INACTIVE (TR_STATUS_STOPPING|TR_STATUS_STOPPED|TR_STATUS_PAUSE)
-    int                 status;
+    torrent_status_t    status;
+    cp_status_t         cpStatus;
 
     int                 error;
     char                errorString[128];
     int                 cannotConnect;
 
-    tr_tracker_info_t * tracker;
+    const tr_tracker_info_t * tracker;
 
-    float               progress;
+    float               recheckProgress;
+    float               percentComplete;
+    float               percentDone;
     float               rateDownload;
     float               rateUpload;
     int                 eta;
     int                 peersTotal;
+    int                 peersConnected;
     int                 peersFrom[TR_PEER_FROM__MAX];
-    int                 peersUploading;
-    int                 peersDownloading;
+    int                 peersSendingToUs;
+    int                 peersGettingFromUs;
     int                 seeders;
     int                 leechers;
     int                 completedFromTracker;
 
     uint64_t            left;
     uint64_t            downloaded;
+    uint64_t            downloadedValid;
     uint64_t            uploaded;
     float               swarmspeed;
 
@@ -464,6 +636,13 @@ struct tr_stat_s
     
     uint64_t            startDate;
     uint64_t            activityDate;
+};
+
+struct tr_file_stat_s
+{
+    uint64_t bytesCompleted;
+    float progress;
+    cp_status_t completionStatus;
 };
 
 struct tr_peer_stat_s

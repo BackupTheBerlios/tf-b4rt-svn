@@ -49,10 +49,8 @@ int main(int argc, char ** argv) {
 	/* get options */
 	if (parseCommandLine(argc, argv)) {
 		printf(HEADER, VERSION_STRING, VERSION_REVISION, VERSION_REVISION_CLI);
-		printf(USAGE, argv[0],
-			verboseLevel, natTraversal, TR_DEFAULT_PORT,
-			uploadLimit, downloadLimit,
-			tf_dieWhenDone, tf_seedLimit, tf_displayInterval
+		printf(USAGE, argv[0], TR_DEFAULT_PORT,
+			tf_displayInterval, tf_seedLimit, tf_dieWhenDone
 		);
 		return EXIT_FAILURE;
 	}
@@ -60,10 +58,8 @@ int main(int argc, char ** argv) {
 	/* show help */
 	if (showHelp) {
 		printf(HEADER, VERSION_STRING, VERSION_REVISION, VERSION_REVISION_CLI);
-		printf(USAGE, argv[0],
-			verboseLevel, natTraversal, TR_DEFAULT_PORT,
-			uploadLimit, downloadLimit,
-			tf_dieWhenDone, tf_seedLimit, tf_displayInterval
+		printf(USAGE, argv[0], TR_DEFAULT_PORT,
+			tf_displayInterval, tf_seedLimit, tf_dieWhenDone
 		);
 		return EXIT_SUCCESS;
 	}
@@ -87,6 +83,20 @@ int main(int argc, char ** argv) {
 
 	// initialize libtransmission
 	h = tr_init("cli");
+	
+	if( sourceFile && *sourceFile ) /* creating a torrent */
+    {
+        int ret;
+        tr_metainfo_builder_t* builder = tr_metaInfoBuilderCreate( h, sourceFile );
+        tr_makeMetaInfo( builder, NULL, announce, comment, isPrivate );
+        while( !builder->isDone ) {
+            usleep( 1 );
+            printf( "." );
+        }
+        ret = !builder->failed;
+        tr_metaInfoBuilderFree( builder );
+        return ret;
+    }
 
 	// open and parse torrent file
 	if (!(tor = tr_torrentInit(h, torrentPath, NULL, 0, &error))) {
@@ -122,7 +132,7 @@ int main(int argc, char ** argv) {
 		strcpy(tf_owner, "n/a");
 	}
 
-	// check rate-args
+	/* check rate-args
 	// up
 	switch (uploadLimit) {
 		case 0:
@@ -140,7 +150,7 @@ int main(int argc, char ** argv) {
 		case -2:
 			downloadLimit = 0;
 			break;
-	}
+	}*/
 
 	// print what we are starting up
 	tf_print(sprintf(tf_message,
@@ -287,7 +297,7 @@ int main(int argc, char ** argv) {
 				fprintf(tf_stat_fp,
 					"%d\n%.1f\n%s\n0 kB/s\n0 kB/s\n%s\n0\n0\n0.0\n%d\n0\n%" PRIu64 "\n%" PRIu64,
 					1,                                /* State             */
-					100.0 * s->progress,              /* checking progress */
+					100.0 * s->percentDone,           /* checking progress */
 					"Waiting to check existing data", /* State text        */
 					                                  /* download speed    */
 					                                  /* upload speed      */
@@ -314,7 +324,7 @@ int main(int argc, char ** argv) {
 				fprintf(tf_stat_fp,
 					"%d\n%.1f\n%s\n0 kB/s\n0 kB/s\n%s\n0\n0\n0.0\n%d\n0\n%" PRIu64 "\n%" PRIu64,
 					1,                        /* State             */
-					100.0 * s->progress,      /* checking progress */
+					100.0 * s->percentDone,   /* checking progress */
 					"Checking existing data", /* State text        */
 					                          /* download speed    */
 					                          /* upload speed      */
@@ -382,7 +392,7 @@ int main(int argc, char ** argv) {
 				fprintf(tf_stat_fp,
 					"%d\n%.1f\n%s\n%.1f kB/s\n%.1f kB/s\n%s\n%d (%d)\n%d (%d)\n%.1f\n%d\n%" PRIu64 "\n%" PRIu64 "\n%" PRIu64,
 					1,                                /* State            */
-					100.0 * s->progress,              /* progress         */
+					100.0 * s->percentDone,           /* progress         */
 					tf_eta,                           /* Estimated time   */
 					s->rateDownload,                  /* download speed   */
 					s->rateUpload,                    /* upload speed     */
@@ -442,7 +452,7 @@ int main(int argc, char ** argv) {
 				fprintf(tf_stat_fp,
 					"%d\n%.1f\n%s\n%.1f kB/s\n%.1f kB/s\n%s\n%d (%d)\n%d (%d)\n%.1f\n%d\n%" PRIu64 "\n%" PRIu64 "\n%" PRIu64,
 					1,                                /* State            */
-					100.0 * s->progress,              /* progress         */
+					100.0 * s->percentDone,              /* progress         */
 					"Download Succeeded!",            /* State text       */
 					s->rateDownload,                  /* download speed   */
 					s->rateUpload,                    /* upload speed     */
@@ -470,7 +480,7 @@ int main(int argc, char ** argv) {
 				fprintf(tf_stat_fp,
 					"%d\n%.1f\n%s\n\n\n%s\n\n\n\n%d\n%" PRIu64 "\n%" PRIu64 "\n%" PRIu64,
 					0,                   /* State            */
-					100.0 * s->progress, /* progress         */
+					100.0 * s->percentDone, /* progress         */
 					"Stopping...",       /* State text       */
 									     /* download speed   */
 									     /* upload speed     */
@@ -497,7 +507,8 @@ int main(int argc, char ** argv) {
 				"errorString : %s\n", s->errorString));
 
 		// check if finished / finishCall / process command-stack / sleep
-		if (tr_getFinished(tor)) {
+		if( tr_getDone(tor) || tr_getComplete(tor) )
+        {
 			// finishCall
 			if (finishCall != NULL)
 				system(finishCall);
@@ -604,12 +615,12 @@ static void tf_torrentStop(tr_handle_t * h, tr_info_t * info) {
 	// write stat-file
 	tf_stat_fp = fopen(tf_stat_file, "w+");
 	if (tf_stat_fp != NULL) {
-		if (s->progress == 1) {
+		if (s->percentDone == 1) {
 			sprintf(tf_eta, "Download Succeeded!");
 			progress = 100;
 		} else {
 			sprintf(tf_eta, "Torrent Stopped");
-			progress = -(1 + s->progress) * 100;
+			progress = -(1 + s->percentDone) * 100;
 		}
 		fprintf(tf_stat_fp,
 			"%d\n%.1f\n%s\n\n\n%s\n\n\n%.1f\n%d\n%" PRIu64 "\n%" PRIu64 "\n%" PRIu64,
@@ -843,8 +854,8 @@ static int tf_execCommand(tr_handle_t *h, char *s) {
 			tr_setGlobalDownloadLimit(h, downloadLimit);
 			return 0;
 
-		// r
-		case 'r':
+		// w
+		case 'w':
 			if (strlen(workload) < 1) {
 				tf_print(sprintf(tf_message,
 					"invalid runtime-code.\n"));
@@ -1083,20 +1094,24 @@ static int parseCommandLine(int argc, char ** argv) {
 		{ { "help",               no_argument,       NULL, 'h' },
 		  { "info",               no_argument,       NULL, 'i' },
 		  { "scrape",             no_argument,       NULL, 's' },
+		  { "private",            no_argument,       NULL, 'r' },
 		  { "verbose",            required_argument, NULL, 'v' },
 		  { "port",               required_argument, NULL, 'p' },
 		  { "upload",             required_argument, NULL, 'u' },
 		  { "download",           required_argument, NULL, 'd' },
 		  { "finish",             required_argument, NULL, 'f' },
-		  { "die-when-done",      required_argument, NULL, 'r' },
-		  { "seedlimit",          required_argument, NULL, 'c' },
+		  { "create",             required_argument, NULL, 'c' },
+          { "comment",            required_argument, NULL, 'm' },
+          { "announce",           required_argument, NULL, 'a' },
+		  { "die-when-done",      required_argument, NULL, 'w' },
+		  { "seedlimit",          required_argument, NULL, 'l' },
 		  { "display-interval",   required_argument, NULL, 'e' },
 		  { "owner",              required_argument, NULL, 'o' },
 		  { "nat-traversal",      no_argument,       NULL, 'n' },
 		  { 0, 0, 0, 0} };
 		int c, optind = 0;
 		c = getopt_long(argc, argv,
-			"hisv:p:u:d:f:r:c:e:o:n", long_options, &optind);
+			"hisrv:p:u:d:f:c:m:a:w:l:e:o:n:", long_options, &optind);
 		if (c < 0)
 			break;
 		switch (c) {
@@ -1108,6 +1123,9 @@ static int parseCommandLine(int argc, char ** argv) {
 				break;
 			case 's':
 				showScrape = 1;
+				break;
+			case 'r':
+				isPrivate = 1;
 				break;
 			case 'v':
 				verboseLevel = atoi(optarg);
@@ -1123,14 +1141,23 @@ static int parseCommandLine(int argc, char ** argv) {
 				break;
 			case 'f':
 				finishCall = optarg;
+			    break;
+            case 'c':
+                sourceFile = optarg;
+                break;
+            case 'm':
+                comment = optarg;
+                break;
+            case 'a':
+                announce = optarg;
 				break;
 			case 'n':
 				natTraversal = 1;
 				break;
-			case 'r':
+			case 'w':
 				tf_dieWhenDone = atoi(optarg);
 				break;
-			case 'c':
+			case 'l':
 				tf_seedLimit = atoi(optarg);
 				break;
 			case 'e':

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: inout.h 1822 2007-04-30 19:43:43Z livings124 $
+ * $Id: inout.h 2462 2007-07-23 03:00:20Z charles $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -27,10 +27,9 @@
 
 typedef struct tr_io_s tr_io_t;
 
-void      tr_ioLoadResume  ( tr_torrent_t * );
-void      tr_ioRemoveResume( tr_torrent_t * tor );
+void tr_ioCheckFiles  ( tr_torrent_t * );
 
-tr_io_t * tr_ioInit        ( tr_torrent_t * );
+tr_io_t * tr_ioNew ( tr_torrent_t * );
 
 /***********************************************************************
  * tr_ioRead, tr_ioWrite

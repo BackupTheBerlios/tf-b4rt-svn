@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: http.c 2040 2007-06-10 23:12:43Z joshe $
+ * $Id: http.c 2686 2007-08-08 23:48:10Z charles $
  *
  * Copyright (c) 2006-2007 Transmission authors and contributors
  *
@@ -22,7 +22,24 @@
  * DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
 
+#include <assert.h>
+#include <ctype.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <sys/types.h>
+
+#ifdef __BEOS__
+extern int vasprintf( char **, const char *, va_list );
+#endif
+
 #include "transmission.h"
+#include "http.h"
+#include "net.h"
+#include "trcompat.h"
+#include "utils.h"
 
 #define HTTP_PORT               80      /* default http port 80 */
 #define HTTP_TIMEOUT            60000   /* one minute http timeout */
@@ -135,7 +152,7 @@ tr_httpRequestType( const char * data, int len, char ** method, char ** uri )
     /* copy the method */
     if( 0 <= ret && NULL != method )
     {
-        *method = tr_dupstr( words[0], words[1] - words[0] );
+        *method = tr_strndup( words[0], words[1] - words[0] );
         if( NULL == *method )
         {
             ret = -1;
@@ -144,7 +161,7 @@ tr_httpRequestType( const char * data, int len, char ** method, char ** uri )
     /* copy uri */
     if( 0 <= ret && NULL != uri )
     {
-        *uri = tr_dupstr( words[2], words[3] - words[2] );
+        *uri = tr_strndup( words[2], words[3] - words[2] );
         if( NULL == *uri )
         {
             free( *method );
@@ -328,10 +345,16 @@ tr_httpParseUrl( const char * url, int len,
     const char * pathstart, * hostend;
     int          ii, colon, portnum;
     char         str[6];
-
+    
     if( 0 > len )
     {
         len = strlen( url );
+    }
+
+    while( len && url && isspace(*url) )
+    {
+        --len;
+        ++url;
     }
 
     ii = tr_httpIsUrl( url, len );
@@ -371,7 +394,7 @@ tr_httpParseUrl( const char * url, int len,
 
     if( NULL != host )
     {
-        *host = tr_dupstr( url, hostend - url );
+        *host = tr_strndup( url, hostend - url );
     }
     if( NULL != port )
     {
@@ -381,7 +404,7 @@ tr_httpParseUrl( const char * url, int len,
     {
         if( 0 < len - ( pathstart - url ) )
         {
-            *path = tr_dupstr( pathstart, len - ( pathstart - url ) );
+            *path = tr_strndup( pathstart, len - ( pathstart - url ) );
         }
         else
         {
@@ -449,9 +472,9 @@ tr_httpClient( int method, const char * host, int port, const char * fmt, ... )
 
     if( tr_sprintf( EXPANDBUF( http->header ), " HTTP/1.1" CR LF
                     "Host: %s:%d" CR LF
-                    "User-Agent: %s/%d.%d%d" CR LF
+                    "User-Agent: " TR_NAME "/" LONG_VERSION_STRING CR LF
                     "Connection: close" CR LF,
-                    http->host, http->port, TR_NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_MAINTENANCE ) )
+                    http->host, http->port ) )
     {
         goto err;
     }
@@ -559,7 +582,7 @@ tr_httpPulse( tr_http_t * http, const char ** data, int * len )
             }
             if( !tr_netResolve( http->host, &addr ) )
             {
-                http->sock = tr_netOpenTCP( addr, htons( http->port ), 1 );
+                http->sock = tr_netOpenTCP( &addr, htons( http->port ), 1 );
                 http->state = HTTP_STATE_CONNECT;
                 break;
             }
@@ -581,7 +604,7 @@ tr_httpPulse( tr_http_t * http, const char ** data, int * len )
                 case TR_NET_OK:
                     tr_netResolveClose( http->resolve );
                     http->resolve = NULL;
-                    http->sock = tr_netOpenTCP( addr, htons( http->port ), 1 );
+                    http->sock = tr_netOpenTCP( &addr, htons( http->port ), 1 );
                     http->state = HTTP_STATE_CONNECT;
             }
             /* fallthrough */
@@ -640,12 +663,9 @@ static tr_tristate_t
 sendrequest( tr_http_t * http )
 {
     struct buf * buf;
-    int          ret;
 
-    if( 0 == http->date )
-    {
-        http->date = tr_date();
-    }
+    if( !http->date )
+         http->date = tr_date();
 
     if( 0 > http->sock || tr_date() > http->date + HTTP_TIMEOUT )
     {
@@ -655,15 +675,9 @@ sendrequest( tr_http_t * http )
     buf = ( 0 < http->header.used ? &http->header : &http->body );
     while( 0 < buf->used )
     {
-      ret = tr_netSend( http->sock, (uint8_t *) buf->buf, buf->used );
-        if( ret & TR_NET_CLOSE )
-        {
-            return TR_NET_ERROR;
-        }
-        else if( ret & TR_NET_BLOCK )
-        {
-            return TR_NET_WAIT;
-        }
+        const int ret = tr_netSend( http->sock, buf->buf, buf->used );
+        if( ret & TR_NET_CLOSE ) return TR_NET_ERROR;
+        if( ret & TR_NET_BLOCK ) return TR_NET_WAIT;
         buf->used = 0;
         buf = &http->body;
     }
@@ -843,7 +857,7 @@ learnlength( tr_http_t * http )
         {
             http->lengthtype = HTTP_LENGTH_FIXED;
             http->chunkoff = body - http->header.buf;
-            duped = tr_dupstr( hdr[0].data, hdr[0].len );
+            duped = tr_strndup( hdr[0].data, hdr[0].len );
             http->chunklen = strtol( duped, NULL, 10 );
             free( duped );
         }

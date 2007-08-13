@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peertree.h 1579 2007-03-23 08:28:01Z joshe $
+ * $Id: peertree.h 2555 2007-07-30 18:04:10Z charles $
  *
  * Copyright (c) 2007 Transmission authors and contributors
  *
@@ -40,13 +40,13 @@ tr_peertree_t;
 #define peertreeNext(tree, item) RB_NEXT(  tr_peertree_s, (tree), (item) )
 #define peertreeFind(tree, item) RB_FIND(  tr_peertree_s, (tree), (item) )
 
-static inline int
+static int
 peertreekeycmp( tr_peertree_entry_t * aa, tr_peertree_entry_t * bb )
 {
     return memcmp( aa->peer, bb->peer, 6 );
 }
 
-RB_GENERATE_STATIC( tr_peertree_s, tr_peertree_entry_s, magic, peertreekeycmp );
+RB_GENERATE_STATIC( tr_peertree_s, tr_peertree_entry_s, magic, peertreekeycmp )
 
 static int
 peertreeCount( tr_peertree_t * tree )
@@ -64,7 +64,7 @@ peertreeCount( tr_peertree_t * tree )
 }
 
 static tr_peertree_entry_t *
-peertreeGet( tr_peertree_t * tree, struct in_addr * addr, in_port_t port )
+peertreeGet( tr_peertree_t * tree, struct in_addr * addr, tr_port_t port )
 {
     tr_peertree_entry_t entry;
 
@@ -76,7 +76,7 @@ peertreeGet( tr_peertree_t * tree, struct in_addr * addr, in_port_t port )
 }
 
 static tr_peertree_entry_t *
-peertreeAdd( tr_peertree_t * tree, struct in_addr * addr, in_port_t port )
+peertreeAdd( tr_peertree_t * tree, struct in_addr * addr, tr_port_t port )
 {
     tr_peertree_entry_t * entry;
 

@@ -1,4 +1,4 @@
-# $Id: daemon.mk 1923 2007-05-24 03:44:40Z joshe $
+# $Id: daemon.mk 2411 2007-07-19 00:09:09Z charles $
 
 include ../mk/config.mk
 include ../mk/common.mk
@@ -14,7 +14,7 @@ CLIOBJS  = $(CLISRCS:%.c=%.o)
 PXYOBJS  = $(PXYSRCS:%.c=%.o)
 SRCS     = $(COMSRCS) $(SRVSRCS) $(CLISRCS) $(PXYSRCS)
 
-CFLAGS  += $(CFLAGS_EVENT) -I../libtransmission
+CFLAGS  += $(CFLAGS_EVENT) -I..
 LDLIBS  += ../libtransmission/libtransmission.a
 LDFLAGS += $(LDFLAGS_EVENT)
 

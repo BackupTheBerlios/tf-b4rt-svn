@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: platform.c 2034 2007-06-10 22:26:59Z joshe $
+ * $Id: platform.c 2614 2007-08-04 01:17:39Z joshe $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -22,310 +22,678 @@
  * DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
 
-#ifdef SYS_BEOS
+#include <assert.h>
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#ifdef __BEOS__
+  #include <signal.h> 
   #include <fs_info.h>
   #include <FindDirectory.h>
+  #include <kernel/OS.h>
+  #define BEOS_MAX_THREADS 256
+#elif defined(WIN32)
+  #include <windows.h>
+  #include <shlobj.h> /* for CSIDL_APPDATA, CSIDL_PROFILE */
+#else
+  #include <pthread.h>
 #endif
+
 #include <sys/types.h>
 #include <dirent.h>
+#include <fcntl.h>
+#include <unistd.h> /* getuid getpid close */
 
 #include "transmission.h"
+#include "list.h"
+#include "net.h"
+#include "platform.h"
+#include "utils.h"
 
-#if !defined( SYS_BEOS ) && !defined( __AMIGAOS4__ )
+/***
+****  THREADS
+***/
 
-#include <pwd.h>
-
-const char *
-tr_getHomeDirectory( void )
+struct tr_thread_s
 {
-    static char     homeDirectory[MAX_PATH_LENGTH];
-    static int      init = 0;
-    char          * envHome;
-    struct passwd * pw;
+    void          (* func ) ( void * );
+    void           * arg;
+    char           * name;
 
-    if( init )
-    {
-        return homeDirectory;
-    }
+#ifdef __BEOS__
+    thread_id        thread;
+#elif defined(WIN32)
+    HANDLE           thread;
+#else
+    pthread_t        thread;
+#endif
 
-    envHome = getenv( "HOME" );
-    if( NULL == envHome )
-    {
-        pw = getpwuid( getuid() );
-        endpwent();
-        if( NULL == pw )
-        {
-            /* XXX need to handle this case */
-            return NULL;
-        }
-        envHome = pw->pw_dir;
-    }
+};
 
-    snprintf( homeDirectory, MAX_PATH_LENGTH, "%s", envHome );
-    init = 1;
+#ifdef WIN32
+#define ThreadFuncReturnType unsigned WINAPI
+#else
+#define ThreadFuncReturnType void
+#endif
 
-    return homeDirectory;
+static ThreadFuncReturnType
+ThreadFunc( void * _t )
+{
+    tr_thread_t * t = _t;
+    char* name = tr_strdup( t->name );
+
+#ifdef __BEOS__
+    /* This is required because on BeOS, SIGINT is sent to each thread,
+       which kills them not nicely */
+    signal( SIGINT, SIG_IGN );
+#endif
+
+    tr_dbg( "Thread '%s' started", name );
+    t->func( t->arg );
+    tr_dbg( "Thread '%s' exited", name );
+
+    tr_free( name );
+
+#ifdef WIN32
+    _endthreadex( 0 );
+    return 0;
+#endif
 }
+
+tr_thread_t *
+tr_threadNew( void (*func)(void *),
+              void * arg,
+              const char * name )
+{
+    tr_thread_t * t = tr_new0( tr_thread_t, 1 );
+    t->func = func;
+    t->arg  = arg;
+    t->name = tr_strdup( name );
+
+#ifdef __BEOS__
+    t->thread = spawn_thread( (void*)ThreadFunc, name, B_NORMAL_PRIORITY, t );
+    resume_thread( t->thread );
+#elif defined(WIN32)
+    t->thread = (HANDLE) _beginthreadex( NULL, 0, &ThreadFunc, t, 0, NULL );
+#else
+    pthread_create( &t->thread, NULL, (void * (*) (void *)) ThreadFunc, t );
+#endif
+
+    return t;
+}
+
+void
+tr_threadJoin( tr_thread_t * t )
+{
+    if( t != NULL )
+    {
+#ifdef __BEOS__
+        long exit;
+        wait_for_thread( t->thread, &exit );
+#elif defined(WIN32)
+        WaitForSingleObject( t->thread, INFINITE );
+        CloseHandle( t->thread );
+#else
+        pthread_join( t->thread, NULL );
+#endif
+
+        tr_dbg( "Thread '%s' joined", t->name );
+        tr_free( t->name );
+        t->name = NULL;
+        t->func = NULL;
+        tr_free( t );
+    }
+}
+
+/***
+****  LOCKS
+***/
+
+struct tr_lock_s
+{
+#ifdef __BEOS__
+    sem_id lock;
+#elif defined(WIN32)
+    CRITICAL_SECTION lock;
+#else
+    pthread_mutex_t lock;
+#endif
+};
+
+tr_lock_t*
+tr_lockNew( void )
+{
+    tr_lock_t * l = tr_new0( tr_lock_t, 1 );
+
+#ifdef __BEOS__
+    l->lock = create_sem( 1, "" );
+#elif defined(WIN32)
+    InitializeCriticalSection( &l->lock );
+#else
+    pthread_mutex_init( &l->lock, NULL );
+#endif
+
+    return l;
+}
+
+void
+tr_lockFree( tr_lock_t * l )
+{
+#ifdef __BEOS__
+    delete_sem( l->lock );
+#elif defined(WIN32)
+    DeleteCriticalSection( &l->lock );
+#else
+    pthread_mutex_destroy( &l->lock );
+#endif
+    tr_free( l );
+}
+
+int
+tr_lockTryLock( tr_lock_t * l ) /* success on zero! */
+{
+#ifdef __BEOS__
+    return acquire_sem_etc( l->lock, 1, B_RELATIVE_TIMEOUT, 0 );
+#elif defined(WIN32)
+    return !TryEnterCriticalSection( &l->lock );
+#else
+    return pthread_mutex_trylock( &l->lock );
+#endif
+}
+
+void
+tr_lockLock( tr_lock_t * l )
+{
+#ifdef __BEOS__
+    acquire_sem( l->lock );
+#elif defined(WIN32)
+    EnterCriticalSection( &l->lock );
+#else
+    pthread_mutex_lock( &l->lock );
+#endif
+}
+
+void
+tr_lockUnlock( tr_lock_t * l )
+{
+#ifdef __BEOS__
+    release_sem( l->lock );
+#elif defined(WIN32)
+    LeaveCriticalSection( &l->lock );
+#else
+    pthread_mutex_unlock( &l->lock );
+#endif
+}
+
+/***
+****  RW LOCK
+***/
+
+struct tr_rwlock_s
+{
+    tr_lock_t * lock;
+    tr_cond_t * readCond;
+    tr_cond_t * writeCond;
+    size_t readCount;
+    size_t wantToRead;
+    size_t wantToWrite;
+    int haveWriter;
+};
+
+static void
+tr_rwSignal( tr_rwlock_t * rw )
+{
+  if ( rw->wantToWrite )
+    tr_condSignal( rw->writeCond );
+  else if ( rw->wantToRead )
+    tr_condBroadcast( rw->readCond );
+}
+
+tr_rwlock_t*
+tr_rwNew ( void )
+{
+    tr_rwlock_t * rw = tr_new0( tr_rwlock_t, 1 );
+    rw->lock = tr_lockNew( );
+    rw->readCond = tr_condNew( );
+    rw->writeCond = tr_condNew( );
+    return rw;
+}
+
+void
+tr_rwReaderLock( tr_rwlock_t * rw )
+{
+    tr_lockLock( rw->lock );
+    rw->wantToRead++;
+    while( rw->haveWriter || rw->wantToWrite )
+        tr_condWait( rw->readCond, rw->lock );
+    rw->wantToRead--;
+    rw->readCount++;
+    tr_lockUnlock( rw->lock );
+}
+
+int
+tr_rwReaderTrylock( tr_rwlock_t * rw )
+{
+    int ret = FALSE;
+    tr_lockLock( rw->lock );
+    if ( !rw->haveWriter && !rw->wantToWrite ) {
+        rw->readCount++;
+        ret = TRUE;
+    }
+    tr_lockUnlock( rw->lock );
+    return ret;
+
+}
+
+void
+tr_rwReaderUnlock( tr_rwlock_t * rw )
+{
+    tr_lockLock( rw->lock );
+    --rw->readCount;
+    if( !rw->readCount )
+        tr_rwSignal( rw );
+    tr_lockUnlock( rw->lock );
+}
+
+void
+tr_rwWriterLock( tr_rwlock_t * rw )
+{
+    tr_lockLock( rw->lock );
+    rw->wantToWrite++;
+    while( rw->haveWriter || rw->readCount )
+        tr_condWait( rw->writeCond, rw->lock );
+    rw->wantToWrite--;
+    rw->haveWriter = TRUE;
+    tr_lockUnlock( rw->lock );
+}
+
+int
+tr_rwWriterTrylock( tr_rwlock_t * rw )
+{
+    int ret = FALSE;
+    tr_lockLock( rw->lock );
+    if( !rw->haveWriter && !rw->readCount )
+        ret = rw->haveWriter = TRUE;
+    tr_lockUnlock( rw->lock );
+    return ret;
+}
+void
+tr_rwWriterUnlock( tr_rwlock_t * rw )
+{
+    tr_lockLock( rw->lock );
+    rw->haveWriter = FALSE;
+    tr_rwSignal( rw );
+    tr_lockUnlock( rw->lock );
+}
+
+void
+tr_rwFree( tr_rwlock_t * rw )
+{
+    tr_condFree( rw->writeCond );
+    tr_condFree( rw->readCond );
+    tr_lockFree( rw->lock );
+    tr_free( rw );
+}
+
+/***
+****  COND
+***/
+
+struct tr_cond_s
+{
+#ifdef __BEOS__
+    sem_id sem;
+    thread_id threads[BEOS_MAX_THREADS];
+    int start, end;
+#elif defined(WIN32)
+    tr_list_t * events;
+    tr_lock_t * lock;
+#else
+    pthread_cond_t cond;
+#endif
+};
+
+#ifdef WIN32
+static DWORD getContEventTLS( void )
+{
+    static int inited = FALSE;
+    static DWORD event_tls;
+    if( !inited ) {
+        inited = TRUE;
+        event_tls = TlsAlloc();
+    }
+    return event_tls;
+}
+#endif
+
+tr_cond_t*
+tr_condNew( void )
+{
+    tr_cond_t * c = tr_new0( tr_cond_t, 1 );
+#ifdef __BEOS__
+    c->sem = create_sem( 1, "" );
+    c->start = 0;
+    c->end = 0;
+#elif defined(WIN32)
+    c->events = NULL;
+    c->lock = tr_lockNew( );
+#else
+    pthread_cond_init( &c->cond, NULL );
+#endif
+    return c;
+}
+
+void
+tr_condWait( tr_cond_t * c, tr_lock_t * l )
+{
+#ifdef __BEOS__
+
+    /* Keep track of that thread */
+    acquire_sem( c->sem );
+    c->threads[c->end] = find_thread( NULL );
+    c->end = ( c->end + 1 ) % BEOS_MAX_THREADS;
+    assert( c->end != c->start ); /* We hit BEOS_MAX_THREADS, arggh */
+    release_sem( c->sem );
+
+    release_sem( l->lock );
+    suspend_thread( find_thread( NULL ) ); /* Wait for signal */
+    acquire_sem( l->lock );
+
+#elif defined(WIN32)
+
+    /* get this thread's cond event */
+    DWORD key = getContEventTLS ( );
+    HANDLE hEvent = TlsGetValue( key );
+    if( !hEvent ) {
+        hEvent = CreateEvent( 0, FALSE, FALSE, 0 );
+        TlsSetValue( key, hEvent );
+    }
+
+    /* add it to the list of events waiting to be signaled */
+    tr_lockLock( c->lock );
+    c->events = tr_list_append( c->events, hEvent );
+    tr_lockUnlock( c->lock );
+
+    /* now wait for it to be signaled */
+    tr_lockUnlock( l );
+    WaitForSingleObject( hEvent, INFINITE );
+    tr_lockLock( l );
+
+    /* remove it from the list of events waiting to be signaled */
+    tr_lockLock( c->lock );
+    c->events = tr_list_remove_data( c->events, hEvent );
+    tr_lockUnlock( c->lock );
 
 #else
 
+    pthread_cond_wait( &c->cond, &l->lock );
+
+#endif
+}
+
+#ifdef __BEOS__
+static int condTrySignal( tr_cond_t * c )
+{
+    if( c->start == c->end )
+        return 1;
+
+    for( ;; )
+    {
+        thread_info info;
+        get_thread_info( c->threads[c->start], &info );
+        if( info.state == B_THREAD_SUSPENDED )
+        {
+            resume_thread( c->threads[c->start] );
+            c->start = ( c->start + 1 ) % BEOS_MAX_THREADS;
+            break;
+        }
+        /* The thread is not suspended yet, which can happen since
+         * tr_condWait does not atomically suspends after releasing
+         * the semaphore. Wait a bit and try again. */
+        snooze( 5000 );
+    }
+    return 0;
+}
+#endif
+void
+tr_condSignal( tr_cond_t * c )
+{
+#ifdef __BEOS__
+
+    acquire_sem( c->sem );
+    condTrySignal( c );
+    release_sem( c->sem );
+
+#elif defined(WIN32)
+
+    tr_lockLock( c->lock );
+    if( c->events != NULL )
+        SetEvent( (HANDLE)c->events->data );
+    tr_lockUnlock( c->lock );
+
+#else
+
+    pthread_cond_signal( &c->cond );
+
+#endif
+}
+
+void
+tr_condBroadcast( tr_cond_t * c )
+{
+#ifdef __BEOS__
+
+    acquire_sem( c->sem );
+    while( !condTrySignal( c ) );
+    release_sem( c->sem );
+
+#elif defined(WIN32)
+
+    tr_list_t * l;
+    tr_lockLock( c->lock );
+    for( l=c->events; l!=NULL; l=l->next )
+        SetEvent( (HANDLE)l->data );
+    tr_lockUnlock( c->lock );
+
+#else
+
+    pthread_cond_broadcast( &c->cond );
+
+#endif
+}
+
+void
+tr_condFree( tr_cond_t * c )
+{
+#ifdef __BEOS__
+    delete_sem( c->sem );
+#elif defined(WIN32)
+    tr_list_free( c->events );
+    tr_lockFree( c->lock );
+#else
+    pthread_cond_destroy( &c->cond );
+#endif
+    tr_free( c );
+}
+
+
+/***
+****  PATHS
+***/
+
+#if !defined(WIN32) && !defined(__BEOS__) && !defined(__AMIGAOS4__)
+#include <pwd.h>
+#endif
+
 const char *
 tr_getHomeDirectory( void )
 {
-    /* XXX */
-    return "";
+    static char buf[MAX_PATH_LENGTH];
+    static int init = 0;
+    const char * envHome;
+
+    if( init )
+        return buf;
+
+    envHome = getenv( "HOME" );
+    if( envHome )
+        snprintf( buf, sizeof(buf), "%s", envHome );
+    else {
+#ifdef WIN32
+        SHGetFolderPath( NULL, CSIDL_PROFILE, NULL, 0, buf );
+#elif defined(__BEOS__) || defined(__AMIGAOS4__)
+        *buf = '\0';
+#else
+        struct passwd * pw = getpwuid( getuid() );
+        endpwent();
+        if( pw != NULL )
+            snprintf( buf, sizeof(buf), "%s", pw->pw_dir );
+#endif
+    }
+
+    init = 1;
+    return buf;
 }
 
-#endif /* !SYS_BEOS && !__AMIGAOS4__ */
 
 static void
 tr_migrateResume( const char *oldDirectory, const char *newDirectory )
 {
-    DIR * dirh;
-    struct dirent * dirp;
-    char oldFile[MAX_PATH_LENGTH];
-    char newFile[MAX_PATH_LENGTH];
+    DIR * dirh = opendir( oldDirectory );
 
-    if( ( dirh = opendir( oldDirectory ) ) )
+    if( dirh != NULL )
     {
+        struct dirent * dirp;
+
         while( ( dirp = readdir( dirh ) ) )
         {
-            if( strncmp( "resume.", dirp->d_name, 7 ) )
+            if( !strncmp( "resume.", dirp->d_name, 7 ) )
             {
-                continue;
+                char o[MAX_PATH_LENGTH];
+                char n[MAX_PATH_LENGTH];
+                tr_buildPath( o, sizeof(o), oldDirectory, dirp->d_name, NULL );
+                tr_buildPath( n, sizeof(n), newDirectory, dirp->d_name, NULL );
+                rename( o, n );
             }
-            snprintf( oldFile, MAX_PATH_LENGTH, "%s/%s",
-                      oldDirectory, dirp->d_name );
-            snprintf( newFile, MAX_PATH_LENGTH, "%s/%s",
-                      newDirectory, dirp->d_name );
-            rename( oldFile, newFile );
         }
 
         closedir( dirh );
     }
 }
 
-char * tr_getPrefsDirectory()
+const char *
+tr_getPrefsDirectory( void )
 {
-    static char prefsDirectory[MAX_PATH_LENGTH];
-    static int  init = 0;
+    static char   buf[MAX_PATH_LENGTH];
+    static int    init = 0;
+    static size_t buflen = sizeof(buf);
+    const char* h;
 
     if( init )
-    {
-        return prefsDirectory;
-    }
+        return buf;
 
-#ifdef SYS_BEOS
-	find_directory( B_USER_SETTINGS_DIRECTORY, dev_for_path("/boot"),
-	                true, prefsDirectory, MAX_PATH_LENGTH );
-	strcat( prefsDirectory, "/Transmission" );
+    h = tr_getHomeDirectory();
+#ifdef __BEOS__
+    find_directory( B_USER_SETTINGS_DIRECTORY,
+                    dev_for_path("/boot"), true, buf, buflen );
+    strcat( buf, "/Transmission" );
 #elif defined( SYS_DARWIN )
-    snprintf( prefsDirectory, MAX_PATH_LENGTH,
-              "%s/Library/Application Support/Transmission",
-              tr_getHomeDirectory() );
+    tr_buildPath ( buf, buflen, h,
+                  "Library", "Application Support", "Transmission", NULL );
 #elif defined(__AMIGAOS4__)
-    snprintf( prefsDirectory, MAX_PATH_LENGTH, "PROGDIR:.transmission" );
+    snprintf( buf, buflen, "PROGDIR:.transmission" );
+#elif defined(WIN32)
+    {
+        char tmp[MAX_PATH_LENGTH];
+        SHGetFolderPath( NULL, CSIDL_APPDATA, NULL, 0, tmp );
+        tr_buildPath( buf, sizeof(buf), tmp, "Transmission", NULL );
+        buflen = strlen( buf );
+    }
 #else
-    snprintf( prefsDirectory, MAX_PATH_LENGTH, "%s/.transmission",
-              tr_getHomeDirectory() );
+    tr_buildPath ( buf, buflen, h, ".transmission", NULL );
 #endif
 
-    tr_mkdir( prefsDirectory );
+    tr_mkdirp( buf, 0700 );
     init = 1;
 
 #ifdef SYS_DARWIN
-    char oldDirectory[MAX_PATH_LENGTH];
-    snprintf( oldDirectory, MAX_PATH_LENGTH, "%s/.transmission",
-              tr_getHomeDirectory() );
-    tr_migrateResume( oldDirectory, prefsDirectory );
-    rmdir( oldDirectory );
+    char old[MAX_PATH_LENGTH];
+    tr_buildPath ( old, sizeof(old), h, ".transmission", NULL );
+    tr_migrateResume( old, buf );
+    rmdir( old );
 #endif
 
-    return prefsDirectory;
+    return buf;
 }
 
-char * tr_getCacheDirectory()
+const char *
+tr_getCacheDirectory( void )
 {
-    static char cacheDirectory[MAX_PATH_LENGTH];
+    static char buf[MAX_PATH_LENGTH];
     static int  init = 0;
+    static const size_t buflen = sizeof(buf);
+    const char * p;
 
     if( init )
-    {
-        return cacheDirectory;
-    }
+        return buf;
 
-#ifdef SYS_BEOS
-    /* XXX hey Bryan, is this fine with you? */
-    snprintf( cacheDirectory, MAX_PATH_LENGTH, "%s/Cache",
-              tr_getPrefsDirectory() );
+    p = tr_getPrefsDirectory();
+#if defined(__BEOS__) || defined(WIN32)
+    tr_buildPath( buf, buflen, p, "Cache", NULL );
 #elif defined( SYS_DARWIN )
-    snprintf( cacheDirectory, MAX_PATH_LENGTH, "%s/Library/Caches/Transmission",
-              tr_getHomeDirectory() );
+    tr_buildPath( buf, buflen, tr_getHomeDirectory(),
+                  "Library", "Caches", "Transmission", NULL );
 #else
-    snprintf( cacheDirectory, MAX_PATH_LENGTH, "%s/cache",
-              tr_getPrefsDirectory() );
+    tr_buildPath( buf, buflen, p, "cache", NULL );
 #endif
 
-    tr_mkdir( cacheDirectory );
+    tr_mkdirp( buf, 0700 );
     init = 1;
 
-    if( strcmp( tr_getPrefsDirectory(), cacheDirectory ) )
-    {
-        tr_migrateResume( tr_getPrefsDirectory(), cacheDirectory );
-    }
+    if( strcmp( p, buf ) )
+        tr_migrateResume( p, buf );
 
-    return cacheDirectory;
+    return buf;
 }
 
-char * tr_getTorrentsDirectory()
+const char *
+tr_getTorrentsDirectory( void )
 {
-    static char torrentsDirectory[MAX_PATH_LENGTH];
+    static char buf[MAX_PATH_LENGTH];
     static int  init = 0;
+    static const size_t buflen = sizeof(buf);
+    const char * p;
 
     if( init )
-    {
-        return torrentsDirectory;
-    }
+        return buf;
 
-#ifdef SYS_BEOS
-    /* XXX hey Bryan, is this fine with you? */
-    snprintf( torrentsDirectory, MAX_PATH_LENGTH, "%s/Torrents",
-              tr_getPrefsDirectory() );
+    p = tr_getPrefsDirectory ();
+
+#if defined(__BEOS__) || defined(WIN32)
+    tr_buildPath( buf, buflen, p, "Torrents", NULL );
 #elif defined( SYS_DARWIN )
-    snprintf( torrentsDirectory, MAX_PATH_LENGTH, "%s/Torrents",
-              tr_getPrefsDirectory() );
+    tr_buildPath( buf, buflen, p, "Torrents", NULL );
 #else
-    snprintf( torrentsDirectory, MAX_PATH_LENGTH, "%s/torrents",
-              tr_getPrefsDirectory() );
+    tr_buildPath( buf, buflen, p, "torrents", NULL );
 #endif
 
-    tr_mkdir( torrentsDirectory );
+    tr_mkdirp( buf, 0700 );
     init = 1;
-
-    return torrentsDirectory;
+    return buf;
 }
 
-static void ThreadFunc( void * _t )
-{
-    tr_thread_t * t = _t;
+/***
+****  SOCKETS
+***/
 
-#ifdef SYS_BEOS
-    /* This is required because on BeOS, SIGINT is sent to each thread,
-       which kills them not nicely */
-    signal( SIGINT, SIG_IGN );
-#endif
+#ifdef BSD
 
-    tr_dbg( "Thread '%s' started", t->name );
-    t->func( t->arg );
-    tr_dbg( "Thread '%s' exited", t->name );
-}
-
-void tr_threadCreate( tr_thread_t * t, void (*func)(void *), void * arg,
-                      char * name )
-{
-    t->func = func;
-    t->arg  = arg;
-    t->name = strdup( name );
-#ifdef SYS_BEOS
-    t->thread = spawn_thread( (void *) ThreadFunc, name,
-                              B_NORMAL_PRIORITY, t );
-    resume_thread( t->thread );
-#else
-    pthread_create( &t->thread, NULL, (void *) ThreadFunc, t );
-#endif
-}
-
-const tr_thread_t THREAD_EMPTY = { NULL, NULL, NULL, 0 };
-
-void tr_threadJoin( tr_thread_t * t )
-{
-    if (t->func != NULL)
-    {
-#ifdef SYS_BEOS
-        long exit;
-        wait_for_thread( t->thread, &exit );
-#else
-        pthread_join( t->thread, NULL );
-#endif
-        tr_dbg( "Thread '%s' joined", t->name );
-        free( t->name );
-        t->name = NULL;
-        t->func = NULL;
-    }
-}
-
-void tr_lockInit( tr_lock_t * l )
-{
-#ifdef SYS_BEOS
-    *l = create_sem( 1, "" );
-#else
-    pthread_mutex_init( l, NULL );
-#endif
-}
-
-void tr_lockClose( tr_lock_t * l )
-{
-#ifdef SYS_BEOS
-    delete_sem( *l );
-#else
-    pthread_mutex_destroy( l );
-#endif
-}
-
-
-void tr_condInit( tr_cond_t * c )
-{
-#ifdef SYS_BEOS
-    *c = -1;
-#else
-    pthread_cond_init( c, NULL );
-#endif
-}
-
-void tr_condWait( tr_cond_t * c, tr_lock_t * l )
-{
-#ifdef SYS_BEOS
-    *c = find_thread( NULL );
-    release_sem( *l );
-    suspend_thread( *c );
-    acquire_sem( *l );
-    *c = -1;
-#else
-    pthread_cond_wait( c, l );
-#endif
-}
-
-void tr_condSignal( tr_cond_t * c )
-{
-#ifdef SYS_BEOS
-    while( *c != -1 )
-    {
-        thread_info info;
-        get_thread_info( *c, &info );
-        if( info.state == B_THREAD_SUSPENDED )
-        {
-            resume_thread( *c );
-            break;
-        }
-        snooze( 5000 );
-    }
-#else
-    pthread_cond_signal( c );
-#endif
-}
-
-void tr_condClose( tr_cond_t * c )
-{
-#ifdef SYS_BEOS
-    *c = -1; /* Shut up gcc */
-#else
-    pthread_cond_destroy( c );
-#endif
-}
-
-
-#if defined( BSD )
-
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include <sys/sysctl.h>
 #include <net/route.h>
 
@@ -382,7 +750,7 @@ getroute( int * buflen )
         if( ENOENT != errno )
         {
             tr_err( "sysctl net.route.0.inet.flags.gateway failed (%s)",
-                    strerror( errno ) );
+                    strerror( sockerrno ) );
         }
         *buflen = 0;
         return NULL;
@@ -398,7 +766,7 @@ getroute( int * buflen )
     if( sysctl( mib, 6, buf, &len, NULL, 0 ) )
     {
         tr_err( "sysctl net.route.0.inet.flags.gateway failed (%s)",
-                strerror( errno ) );
+                strerror( sockerrno ) );
         free( buf );
         *buflen = 0;
         return NULL;
@@ -528,14 +896,14 @@ getsock( void )
     fd = socket( PF_NETLINK, SOCK_DGRAM, NETLINK_ROUTE );
     if( 0 > fd )
     {
-        tr_err( "failed to create routing socket (%s)", strerror( errno ) );
+        tr_err( "failed to create routing socket (%s)", strerror( sockerrno ) );
         return -1;
     }
 
     flags = fcntl( fd, F_GETFL );
     if( 0 > flags || 0 > fcntl( fd, F_SETFL, O_NONBLOCK | flags ) )
     {
-        tr_err( "failed to set socket nonblocking (%s)", strerror( errno ) );
+        tr_err( "failed to set socket nonblocking (%s)", strerror( sockerrno ) );
         close( fd );
         return -1;
     }
@@ -554,7 +922,7 @@ getsock( void )
     if( 0 > sendto( fd, &req, sizeof( req ), 0,
                     (struct sockaddr *) &snl, sizeof( snl ) ) )
     {
-        tr_err( "failed to write to routing socket (%s)", strerror( errno ) );
+        tr_err( "failed to write to routing socket (%s)", strerror( sockerrno ) );
         close( fd );
         return -1;
     }
@@ -586,10 +954,10 @@ getroute( int fd, unsigned int * buflen )
         res = recvfrom( fd, buf, len, 0, (struct sockaddr *) &snl, &slen );
         if( 0 > res )
         {
-            if( EAGAIN != errno )
+            if( EAGAIN != sockerrno )
             {
                 tr_err( "failed to read from routing socket (%s)",
-                        strerror( errno ) );
+                        strerror( sockerrno ) );
             }
             free( buf );
             *buflen = 0;

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: internal.h 1946 2007-05-25 19:14:42Z livings124 $
+ * $Id: internal.h 2607 2007-08-03 16:28:32Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -25,152 +25,95 @@
 #ifndef TR_INTERNAL_H
 #define TR_INTERNAL_H 1
 
-/* Standard headers used here and there.
-   That is probably ugly to put them all here, but it is sooo
-   convenient */
-#if ( defined( __unix__ ) || defined( unix ) ) && !defined( USG )
-#include <sys/param.h>
-#endif
-#include <stdio.h>
-#include <stdarg.h>
-#ifdef SYS_BEOS
-/* BeOS doesn't declare vasprintf in its headers, but actually
- * implements it */
-int vasprintf( char **, const char *, va_list );
-#endif
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <signal.h>
-#include <time.h>
-#include <sys/time.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#ifndef __AMIGAOS4__ 
-#include <sys/resource.h>
-#endif
-#include <netdb.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <fcntl.h>
-#include <assert.h>
-#ifdef SYS_BEOS
-#  define socklen_t uint32_t
-#endif
-#ifdef BEOS_NETSERVER
-#  define in_port_t uint16_t
-#else
-#  include <arpa/inet.h>
-#endif
-
-#define TR_NAME                 "Transmission"
-
-#ifndef INADDR_NONE
-#define INADDR_NONE             0xffffffff
-#endif
+#define TR_NAME "Transmission"
 
 #ifdef __GNUC__
-#  define UNUSED __attribute__((unused))
-#  define PRINTF( fmt, args ) __attribute__((format (printf, fmt, args)))
+#define UNUSED __attribute__((unused))
 #else
-#  define UNUSED
-#  define PRINTF( fmt, args )
-#endif
-
-/* We use OpenSSL whenever possible, since it is likely to be more
-   optimized and it is ok to use it with a MIT-licensed application.
-   Otherwise, we use the included implementation by vi@nwr.jp. */
-#ifdef HAVE_OPENSSL
-#  undef SHA_DIGEST_LENGTH
-#  include <openssl/sha.h>
-#else
-#  include "sha1.h"
-#  define SHA1(p,i,h) \
-   { \
-     sha1_state_s pms; \
-     sha1_init( &pms ); \
-     sha1_update( &pms, (sha1_byte_t *) p, i ); \
-     sha1_finish( &pms, (sha1_byte_t *) h ); \
-   }
-#endif
-
-/* Convenient macros to perform uint32_t endian conversions with
-   char pointers */
-#define TR_NTOHL(p,a) (a) = tr_ntohl((p))
-#define TR_HTONL(a,p) tr_htonl((a), ( uint8_t * )(p))
-static inline uint32_t tr_ntohl( uint8_t * p )
-{
-	uint32_t u;
-	memcpy( &u, p, sizeof( uint32_t ) );
-	return ntohl( u );
-}
-static inline void tr_htonl( uint32_t a, uint8_t * p )
-{
-	uint32_t u;
-	u = htonl( a );
-	memcpy ( p, &u, sizeof( uint32_t ) );
-}
-
-/* Sometimes the system defines MAX/MIN, sometimes not. In the latter
-   case, define those here since we will use them */
-#ifndef MAX
-#define MAX(a,b) ((a)>(b)?(a):(b))
-#endif
-#ifndef MIN
-#define MIN(a,b) ((a)>(b)?(b):(a))
+#define UNUSED
 #endif
 
 #define TR_MAX_PEER_COUNT 60
 
-typedef struct tr_completion_s tr_completion_t;
-typedef struct tr_shared_s tr_shared_t;
-typedef struct tr_bitfield_s tr_bitfield_t;
-
 typedef enum { TR_NET_OK, TR_NET_ERROR, TR_NET_WAIT } tr_tristate_t;
 
-#include "trcompat.h"
-#include "bsdqueue.h"
-#include "bsdtree.h"
-#include "platform.h"
-#include "bencode.h"
-#include "metainfo.h"
-#include "tracker.h"
-#include "fdlimit.h"
-#include "peer.h"
-#include "net.h"
-#include "inout.h"
-#include "ratecontrol.h"
-#include "clients.h"
-#include "choking.h"
-#include "natpmp.h"
-#include "upnp.h"
-#include "http.h"
-#include "xml.h"
+#ifndef TRUE
+#define TRUE 1
+#endif
+
+#ifndef FALSE
+#define FALSE 0
+#endif
+
+struct tr_peer_s;
+
+void tr_peerIdNew ( char* buf, int buflen );
+
+void tr_torrentResetTransferStats( tr_torrent_t * );
 
 int tr_torrentAddCompact( tr_torrent_t * tor, int from,
                            uint8_t * buf, int count );
-int tr_torrentAttachPeer( tr_torrent_t * tor, tr_peer_t * peer );
+int tr_torrentAttachPeer( tr_torrent_t * tor, struct tr_peer_s * );
+
+void tr_torrentSetHasPiece( tr_torrent_t * tor, int pieceIndex, int has );
+
+void tr_torrentReaderLock    ( const tr_torrent_t * );
+void tr_torrentReaderUnlock  ( const tr_torrent_t * );
+void tr_torrentWriterLock    ( tr_torrent_t * );
+void tr_torrentWriterUnlock  ( tr_torrent_t * );
+
+/* get the index of this piece's first block */
+#define tr_torPieceFirstBlock(tor,piece) ( (piece) * (tor)->blockCountInPiece )
+
+/* what piece index is this block in? */
+#define tr_torBlockPiece(tor,block) ( (block) / (tor)->blockCountInPiece )
+
+/* how many blocks are in this piece? */
+#define tr_torPieceCountBlocks(tor,piece) \
+    ( ((piece)==((tor)->info.pieceCount-1)) ? (tor)->blockCountInLastPiece : (tor)->blockCountInPiece )
+
+/* how many bytes are in this piece? */
+#define tr_torPieceCountBytes(tor,piece) \
+    ( ((piece)==((tor)->info.pieceCount-1)) ? (tor)->lastPieceSize : (tor)->info.pieceSize )
+
+/* how many bytes are in this block? */
+#define tr_torBlockCountBytes(tor,block) \
+    ( ((block)==((tor)->blockCount-1)) ? (tor)->lastBlockSize : (tor)->blockSize )
+
+#define tr_block(a,b) _tr_block(tor,a,b)
+int _tr_block( const tr_torrent_t * tor, int index, int begin );
+
+
+typedef enum
+{
+    TR_RUN_CHECKING           = (1<<0), /* checking files' checksums */
+    TR_RUN_RUNNING            = (1<<1), /* seeding or leeching */
+    TR_RUN_STOPPING           = (1<<2), /* stopping */
+    TR_RUN_STOPPING_NET_WAIT  = (1<<3), /* waiting on network -- we're
+                                           telling tracker we've stopped */
+    TR_RUN_STOPPED            = (1<<4)  /* stopped */
+}
+run_status_t;
+
+#define TR_ID_LEN               20
+#define TR_KEY_LEN              20
 
 struct tr_torrent_s
 {
     tr_handle_t * handle;
     tr_info_t info;
 
-    int                customUploadLimit;
-    int                customDownloadLimit;
-    tr_ratecontrol_t * upload;
-    tr_ratecontrol_t * download;
-    tr_ratecontrol_t * swarmspeed;
+    tr_speedlimit_t    uploadLimitMode;
+    tr_speedlimit_t    downloadLimitMode;
+    struct tr_ratecontrol_s * upload;
+    struct tr_ratecontrol_s * download;
+    struct tr_ratecontrol_s * swarmspeed;
 
-    int               status;
     int               error;
     char              errorString[128];
-    int               finished;
+    int               hasChangedState;
 
-    char            * id;
+    char              peer_id[TR_ID_LEN+1];
     char            * key;
     uint8_t         * azId;
     int               publicPort;
@@ -184,22 +127,31 @@ struct tr_torrent_s
     /* How many bytes we ask for per request */
     int               blockSize;
     int               blockCount;
+
+    int               lastBlockSize;
+    int               lastPieceSize;
+
+    int               blockCountInPiece;
+    int               blockCountInLastPiece;
     
-    tr_completion_t * completion;
+    struct tr_completion_s * completion;
 
-    volatile char     die;
-    tr_thread_t       thread;
-    tr_lock_t         lock;
-    tr_cond_t         cond;
+    volatile char     dieFlag;
+    struct tr_bitfield_s   * uncheckedPieces;
+    run_status_t      runStatus;
+    cp_status_t       cpStatus;
+    struct tr_thread_s     * thread;
+    struct tr_rwlock_s     * lock;
 
-    tr_tracker_t    * tracker;
-    tr_io_t         * io;
+    struct tr_tracker_s    * tracker;
+    struct tr_io_s         * io;
     uint64_t          startDate;
     uint64_t          stopDate;
-    int               ioLoaded;
+    char              ioLoaded;
+    char              fastResumeDirty;
 
     int               peerCount;
-    tr_peer_t       * peers[TR_MAX_PEER_COUNT];
+    struct tr_peer_s * peers[TR_MAX_PEER_COUNT];
 
     uint64_t          downloadedCur;
     uint64_t          downloadedPrev;
@@ -209,15 +161,11 @@ struct tr_torrent_s
 
     uint8_t           pexDisabled;
 
+    int8_t            statCur;
     tr_stat_t         stats[2];
-    int               statCur;
 
-    tr_torrent_t    * prev;
     tr_torrent_t    * next;
 };
-
-#include "utils.h"
-#include "completion.h"
 
 struct tr_handle_s
 {
@@ -227,14 +175,13 @@ struct tr_handle_s
     char             * tag;
     int                isPortSet;
 
-    tr_ratecontrol_t * upload;
-    tr_ratecontrol_t * download;
+    char               useUploadLimit;
+    char               useDownloadLimit;
+    struct tr_ratecontrol_s * upload;
+    struct tr_ratecontrol_s * download;
 
-    tr_shared_t      * shared;
+    struct tr_shared_s      * shared;
 
-#define TR_ID_LEN               20
-    char           id[TR_ID_LEN+1];
-#define TR_KEY_LEN              20
     char           key[TR_KEY_LEN+1];
 
     tr_handle_status_t stats[2];

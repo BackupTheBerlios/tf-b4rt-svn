@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: natpmp.c 1730 2007-04-17 02:35:14Z joshe $
+ * $Id: natpmp.c 2619 2007-08-04 02:55:06Z charles $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -22,7 +22,23 @@
  * DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
 
+#include <assert.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+#ifdef __BEOS__
+    #include <netdb.h>
+#endif
+
+#include <sys/types.h>
+
 #include "transmission.h"
+#include "natpmp.h"
+#include "net.h"
+#include "platform.h" /* tr_getDefaultRoute() */
+#include "utils.h"
 
 #define PMP_PORT                5351
 #define PMP_MCAST_ADDR          "224.0.0.1"
@@ -508,7 +524,7 @@ newreq( int adding, struct in_addr addr, int port )
         return NULL;
     }
 
-    ret->fd = tr_netOpenUDP( addr, htons( PMP_PORT ), 1 );
+    ret->fd = tr_netOpenUDP( &addr, htons( PMP_PORT ), 1 );
     if( 0 > ret->fd )
     {
         free( ret );
@@ -583,14 +599,14 @@ pulsereq( tr_natpmp_t * pmp )
     }
     else if( TR_NET_CLOSE & res )
     {
-        if( ECONNRESET == errno || ECONNREFUSED == errno )
+        if( ECONNRESET == sockerrno || ECONNREFUSED == sockerrno )
         {
             tr_dbg( "nat-pmp not supported by device" );
             req->nobodyhome = 1;
         }
         else
         {
-            tr_inf( "error reading nat-pmp response (%s)", strerror( errno ) );
+            tr_inf( "error reading nat-pmp response (%s)", strerror( sockerrno ) );
         }
         return TR_NET_ERROR;
     }
@@ -639,13 +655,13 @@ sendreq( tr_natpmp_req_t * req )
     }
 
     res = tr_netSend( req->fd, buf, sizeof( buf ) );
-    if( TR_NET_CLOSE & res && EHOSTUNREACH == errno )
+    if( TR_NET_CLOSE & res && EHOSTUNREACH == sockerrno )
     {
         res = TR_NET_BLOCK;
     }
     if( TR_NET_CLOSE & res )
     {
-        tr_err( "failed to send nat-pmp request (%s)", strerror( errno ) );
+        tr_err( "failed to send nat-pmp request (%s)", strerror( sockerrno ) );
         return 1;
     }
     else if( !( TR_NET_BLOCK & res ) )
@@ -664,7 +680,7 @@ mcastsetup()
     struct in_addr addr;
 
     addr.s_addr = inet_addr( PMP_MCAST_ADDR );
-    fd = tr_netMcastOpen( PMP_PORT, addr );
+    fd = tr_netMcastOpen( PMP_PORT, &addr );
     if( 0 > fd )
     {
         return -1;

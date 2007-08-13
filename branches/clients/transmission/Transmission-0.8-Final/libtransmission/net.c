@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: net.c 1425 2007-01-21 19:42:11Z titer $
+ * $Id: net.c 2614 2007-08-04 01:17:39Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -22,7 +22,38 @@
  * DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
 
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <sys/types.h>
+
+#ifndef WIN32
+#include <netdb.h>
+#include <fcntl.h>
+#endif
+
 #include "transmission.h"
+#include "fdlimit.h"
+#include "net.h"
+#include "platform.h"
+#include "utils.h"
+
+
+void
+tr_netInit( void )
+{
+    static int initialized = FALSE;
+    if( !initialized )
+    {
+#ifdef WIN32
+        WSADATA wsaData;
+        WSAStartup(MAKEWORD(2,2), &wsaData);
+#endif
+        initialized = TRUE;
+    }
+}
 
 /***********************************************************************
  * DNS resolution
@@ -41,10 +72,10 @@ int tr_netResolve( const char * address, struct in_addr * addr )
     return ( addr->s_addr == 0xFFFFFFFF );
 }
 
-static tr_thread_t  resolveThread;
-static tr_lock_t    resolveLock;
-static tr_cond_t    resolveCond;
-static volatile int resolveDie;
+static tr_thread_t  * resolveThread;
+static tr_lock_t    * resolveLock;
+static tr_cond_t    * resolveCond;
+static volatile int   resolveDie;
 static tr_resolve_t * resolveQueue;
 
 static void resolveRelease ( tr_resolve_t * );
@@ -66,13 +97,13 @@ struct tr_resolve_s
  * Initializes the static variables used for resolution and launch the
  * gethostbyname thread.
  **********************************************************************/
-void tr_netResolveThreadInit()
+void tr_netResolveThreadInit( void )
 {
     resolveDie   = 0;
     resolveQueue = NULL;
-    tr_lockInit( &resolveLock );
-    tr_condInit( &resolveCond );
-    tr_threadCreate( &resolveThread, resolveFunc, NULL, "resolve" );
+    resolveLock = tr_lockNew( );
+    resolveCond = tr_condNew( );
+    resolveThread = tr_threadNew( resolveFunc, NULL, "resolve" );
 }
 
 /***********************************************************************
@@ -82,12 +113,12 @@ void tr_netResolveThreadInit()
  * wait until it does, in case it is stuck in a resolution: we let it
  * die and clean itself up.
  **********************************************************************/
-void tr_netResolveThreadClose()
+void tr_netResolveThreadClose( void )
 {
-    tr_lockLock( &resolveLock );
+    tr_lockLock( resolveLock );
     resolveDie = 1;
-    tr_lockUnlock( &resolveLock );
-    tr_condSignal( &resolveCond );
+    tr_lockUnlock( resolveLock );
+    tr_condSignal( resolveCond );
     tr_wait( 200 );
 }
 
@@ -98,15 +129,13 @@ void tr_netResolveThreadClose()
  **********************************************************************/
 tr_resolve_t * tr_netResolveInit( const char * address )
 {
-    tr_resolve_t * r;
-
-    r           = malloc( sizeof( tr_resolve_t ) );
+    tr_resolve_t * r = tr_new0( tr_resolve_t, 1 );
     r->status   = TR_NET_WAIT;
     r->address  = strdup( address );
     r->refcount = 2;
     r->next     = NULL;
 
-    tr_lockLock( &resolveLock );
+    tr_lockLock( resolveLock );
     if( !resolveQueue )
     {
         resolveQueue = r;
@@ -117,8 +146,8 @@ tr_resolve_t * tr_netResolveInit( const char * address )
         for( iter = resolveQueue; iter->next; iter = iter->next );
         iter->next = r;
     }
-    tr_lockUnlock( &resolveLock );
-    tr_condSignal( &resolveCond );
+    tr_lockUnlock( resolveLock );
+    tr_condSignal( resolveCond );
 
     return r;
 }
@@ -132,13 +161,13 @@ tr_tristate_t tr_netResolvePulse( tr_resolve_t * r, struct in_addr * addr )
 {
     tr_tristate_t ret;
 
-    tr_lockLock( &resolveLock );
+    tr_lockLock( resolveLock );
     ret = r->status;
     if( ret == TR_NET_OK )
     {
         *addr = r->addr;
     }
-    tr_lockUnlock( &resolveLock );
+    tr_lockUnlock( resolveLock );
 
     return ret;
 }
@@ -181,20 +210,20 @@ static void resolveFunc( void * arg UNUSED )
     tr_resolve_t * r;
     struct hostent * host;
 
-    tr_lockLock( &resolveLock );
+    tr_lockLock( resolveLock );
 
     while( !resolveDie )
     {
         if( !( r = resolveQueue ) )
         {
-            tr_condWait( &resolveCond, &resolveLock );
+            tr_condWait( resolveCond, resolveLock );
             continue;
         }
 
         /* Blocking resolution */
-        tr_lockUnlock( &resolveLock );
+        tr_lockUnlock( resolveLock );
         host = gethostbyname( r->address );
-        tr_lockLock( &resolveLock );
+        tr_lockLock( resolveLock );
 
         if( host )
         {
@@ -211,8 +240,9 @@ static void resolveFunc( void * arg UNUSED )
     }
 
     /* Clean up  */
-    tr_lockUnlock( &resolveLock );
-    tr_lockClose( &resolveLock );
+    tr_lockUnlock( resolveLock );
+    tr_lockFree( resolveLock );
+    resolveLock = NULL;
     while( ( r = resolveQueue ) )
     {
         resolveQueue = r->next;
@@ -227,19 +257,21 @@ static void resolveFunc( void * arg UNUSED )
 
 static int makeSocketNonBlocking( int s )
 {
-    int flags;
-
-#ifdef SYS_BEOS
-    flags = 1;
+#ifdef WIN32
+    unsigned long flags = 1;
+    if( ioctlsocket( s, FIONBIO, &flags) == SOCKET_ERROR )
+#elif defined(__BEOS__)
+    int flags = 1;
     if( setsockopt( s, SOL_SOCKET, SO_NONBLOCK,
                     &flags, sizeof( int ) ) < 0 )
 #else
+    int flags = 1;
     if( ( flags = fcntl( s, F_GETFL, 0 ) ) < 0 ||
         fcntl( s, F_SETFL, flags | O_NONBLOCK ) < 0 )
 #endif
     {
-        tr_err( "Could not set socket to non-blocking mode (%s)",
-                strerror( errno ) );
+        tr_err( "Couldn't set socket to non-blocking mode (%s)",
+                strerror( sockerrno ) );
         tr_netClose( s );
         return -1;
     }
@@ -257,7 +289,9 @@ static int createSocket( int type, int priority )
     return makeSocketNonBlocking( s );
 }
 
-int tr_netOpen( struct in_addr addr, in_port_t port, int type, int priority )
+static int
+tr_netOpen( const struct in_addr * addr, tr_port_t port,
+            int type, int priority )
 {
     int s;
     struct sockaddr_in sock;
@@ -269,23 +303,38 @@ int tr_netOpen( struct in_addr addr, in_port_t port, int type, int priority )
 
     memset( &sock, 0, sizeof( sock ) );
     sock.sin_family      = AF_INET;
-    sock.sin_addr.s_addr = addr.s_addr;
+    sock.sin_addr.s_addr = addr->s_addr;
     sock.sin_port        = port;
 
-    if( connect( s, (struct sockaddr *) &sock,
-                 sizeof( struct sockaddr_in ) ) < 0 &&
-        errno != EINPROGRESS )
+    if( ( connect( s, (struct sockaddr *) &sock,
+                   sizeof( struct sockaddr_in ) ) < 0 )
+#ifdef WIN32
+        && ( sockerrno != WSAEWOULDBLOCK )
+#endif
+        && ( sockerrno != EINPROGRESS ) )
     {
-        tr_err( "Could not connect socket (%s)", strerror( errno ) );
+        tr_err( "Couldn't connect socket (%s)", strerror( sockerrno ) );
         tr_netClose( s );
         return -1;
     }
 
     return s;
 }
+  
+int
+tr_netOpenTCP( const struct in_addr * addr, tr_port_t port, int priority )
+{
+    return tr_netOpen( addr, port, SOCK_STREAM, priority );
+}
+
+int
+tr_netOpenUDP( const struct in_addr * addr, tr_port_t port, int priority )
+{
+    return tr_netOpen( addr, port, SOCK_DGRAM, priority );
+}
 
 #ifdef IP_ADD_MEMBERSHIP
-int tr_netMcastOpen( int port, struct in_addr addr )
+int tr_netMcastOpen( int port, const struct in_addr * addr )
 {
     int fd;
     struct ip_mreq req;
@@ -297,11 +346,11 @@ int tr_netMcastOpen( int port, struct in_addr addr )
     }
 
     memset( &req, 0, sizeof( req ) );
-    req.imr_multiaddr.s_addr = addr.s_addr;
+    req.imr_multiaddr.s_addr = addr->s_addr;
     req.imr_interface.s_addr = htonl( INADDR_ANY );
-    if( setsockopt( fd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &req, sizeof ( req ) ) )
+    if( setsockopt( fd, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char*)&req, sizeof ( req ) ) )
     {
-        tr_err( "Could not join multicast group (%s)", strerror( errno ) );
+        tr_err( "Couldn't join multicast group (%s)", strerror( sockerrno ) );
         tr_netClose( fd );
         return -1;
     }
@@ -309,13 +358,14 @@ int tr_netMcastOpen( int port, struct in_addr addr )
     return fd;
 }
 #else /* IP_ADD_MEMBERSHIP */
-int tr_netMcastOpen( int port UNUSED, struct in_addr addr UNUSED )
+int tr_netMcastOpen( int port UNUSED, const struct in_addr * addr UNUSED )
 {
     return -1;
 }
 #endif /* IP_ADD_MEMBERSHIP */
 
-int tr_netBind( int port, int type )
+static int
+tr_netBind( int port, int type )
 {
     int s;
     struct sockaddr_in sock;
@@ -330,7 +380,7 @@ int tr_netBind( int port, int type )
 
 #ifdef SO_REUSEADDR
     optval = 1;
-    setsockopt( s, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof( optval ) );
+    setsockopt( s, SOL_SOCKET, SO_REUSEADDR, (char*)&optval, sizeof( optval ) );
 #endif
 
 #ifdef SO_REUSEPORT
@@ -349,7 +399,7 @@ int tr_netBind( int port, int type )
     if( bind( s, (struct sockaddr *) &sock,
                sizeof( struct sockaddr_in ) ) )
     {
-        tr_err( "Could not bind port %d", port );
+        tr_err( "Couldn't bind port %d", port );
         tr_netClose( s );
         return -1;
     }
@@ -357,7 +407,20 @@ int tr_netBind( int port, int type )
     return s;
 }
 
-int tr_netAccept( int b, struct in_addr * addr, in_port_t * port )
+int
+tr_netBindTCP( int port )
+{
+    return tr_netBind( port, SOCK_STREAM );
+}
+
+int
+tr_netBindUDP( int port )
+{
+    return tr_netBind( port, SOCK_DGRAM );
+}
+
+
+int tr_netAccept( int b, struct in_addr * addr, tr_port_t * port )
 {
     int s;
     if( ( s = tr_fdSocketAccept( b, addr, port ) ) < 0 )
@@ -367,24 +430,17 @@ int tr_netAccept( int b, struct in_addr * addr, in_port_t * port )
     return makeSocketNonBlocking( s );
 }
 
-int tr_netSend( int s, uint8_t * buf, int size )
+int
+tr_netSend( int s, const void * buf, int size )
 {
-    int ret;
+    const int ret = send( s, buf, size, 0 );
+    if( ret >= 0 )
+        return ret;
 
-    ret = send( s, buf, size, 0 );
-    if( ret < 0 )
-    {
-        if( errno == ENOTCONN || errno == EAGAIN || errno == EWOULDBLOCK )
-        {
-            ret = TR_NET_BLOCK;
-        }
-        else
-        {
-            ret = TR_NET_CLOSE;
-        }
-    }
+    if( sockerrno == ENOTCONN || sockerrno == EAGAIN || sockerrno == EWOULDBLOCK )
+        return TR_NET_BLOCK;
 
-    return ret;
+    return TR_NET_CLOSE;
 }
 
 int tr_netRecvFrom( int s, uint8_t * buf, int size, struct sockaddr_in * addr )
@@ -396,7 +452,7 @@ int tr_netRecvFrom( int s, uint8_t * buf, int size, struct sockaddr_in * addr )
     ret = recvfrom( s, buf, size, 0, ( struct sockaddr * ) addr, &len );
     if( ret < 0 )
     {
-        if( errno == EAGAIN || errno == EWOULDBLOCK )
+        if( sockerrno == EAGAIN || sockerrno == EWOULDBLOCK )
         {
             ret = TR_NET_BLOCK;
         }

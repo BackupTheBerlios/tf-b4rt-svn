@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peerext.h 1998 2007-06-06 00:30:13Z livings124 $
+ * $Id: peerext.h 2497 2007-07-25 17:46:00Z charles $
  *
  * Copyright (c) 2006-2007 Transmission authors and contributors
  *
@@ -36,6 +36,11 @@ makeCommonPex( tr_torrent_t * tor, tr_peer_t * peer,
     tr_peer_t           * pp;
     tr_peertree_entry_t * found;
     benc_val_t            val, * addval, * delval, * extra;
+
+    assert( tor != NULL );
+    assert( peer != NULL );
+    assert( retbuf != NULL );
+    assert( retlen != NULL );
 
     *retbuf = NULL;
     *retlen = 0;
@@ -120,21 +125,13 @@ static char *
 makeExtendedHandshake( tr_torrent_t * tor, tr_peer_t * peer, int * len )
 {
     benc_val_t val, * msgsval;
-    char * buf, * vers;
-
-    /* get human-readable version string */
-    vers = NULL;
-    asprintf( &vers, "%s %s", TR_NAME, VERSION_STRING );
-    if( NULL == vers )
-    {
-        return NULL;
-    }
+    char * buf;
+    char * vers = tr_strdup( TR_NAME " " SHORT_VERSION_STRING );
 
     /* reserve space in toplevel dictionary for v, m, and possibly p */
     tr_bencInit( &val, TYPE_DICT );
     if( tr_bencDictReserve( &val, ( 0 < tor->publicPort ? 3 : 2 ) ) )
     {
-        free( vers );
         tr_bencFree( &val );
         return NULL;
     }
@@ -218,7 +215,7 @@ makeUTPex( tr_torrent_t * tor, tr_peer_t * peer, char ** buf, int * len )
                           buf, len );
 }
 
-static inline int
+static int
 parseExtendedHandshake( tr_peer_t * peer, uint8_t * buf, int len )
 {
     benc_val_t val, * sub;
@@ -284,7 +281,7 @@ parseExtendedHandshake( tr_peer_t * peer, uint8_t * buf, int len )
     return TR_OK;
 }
 
-static inline int
+static int
 parseUTPex( tr_torrent_t * tor, tr_peer_t * peer, uint8_t * buf, int len )
 {
     benc_val_t val, * sub;

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: upnp.c 2040 2007-06-10 23:12:43Z joshe $
+ * $Id: upnp.c 2619 2007-08-04 02:55:06Z charles $
  *
  * Copyright (c) 2006-2007 Transmission authors and contributors
  *
@@ -22,7 +22,28 @@
  * DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
 
+#include <assert.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+#ifdef __BEOS__
+    #include <netdb.h>
+#endif
+
+#include <sys/types.h>
+
 #include "transmission.h"
+#include "http.h"
+#include "net.h"
+#include "trcompat.h"
+#include "upnp.h"
+#include "utils.h"
+#include "xml.h"
 
 /* uncomment this to log requests and responses to ~/transmission-upnp.log */
 /* #define VERBOSE_LOG */
@@ -383,10 +404,10 @@ sendSSDP( int fd )
     if( 0 > sendto( fd, buf, len, 0,
                     (struct sockaddr*) &sin, sizeof( sin ) ) )
     {
-        if( EAGAIN != errno )
+        if( EAGAIN != sockerrno )
         {
             tr_err( "Could not send SSDP discover message (%s)",
-                    strerror( errno ) );
+                    strerror( sockerrno ) );
         }
         killSock( &fd );
         return -1;
@@ -402,7 +423,7 @@ mcastStart()
     struct in_addr addr;
 
     addr.s_addr = inet_addr( SSDP_ADDR );
-    fd = tr_netMcastOpen( SSDP_PORT, addr );
+    fd = tr_netMcastOpen( SSDP_PORT, &addr );
     if( 0 > fd )
     {
         return -1;
@@ -490,7 +511,7 @@ recvSSDP( int fd, char * buf, int * len )
     }
     else if( TR_NET_CLOSE & *len )
     {
-        tr_err( "Could not receive SSDP message (%s)", strerror( errno ) );
+        tr_err( "Could not receive SSDP message (%s)", strerror( sockerrno ) );
         return TR_NET_ERROR;
     }
     else
@@ -588,7 +609,7 @@ deviceAdd( tr_upnp_device_t ** first, const char * id, int idLen,
         free( ii );
         return;
     }
-    ii->id = tr_dupstr( id, idLen );
+    ii->id = tr_strndup( id, idLen );
     ii->state = UPNPDEV_STATE_ROOT;
     actionSetup( &ii->getcmd, "GetSpecificPortMappingEntry", 8 );
     actionSetup( &ii->addcmd, "AddPortMapping", 8 );
@@ -992,7 +1013,7 @@ devicePulseHttp( tr_upnp_device_t * dev,
             }
             dev->soapretry = 0;
             *body = tr_httpParse( headers, hlen, NULL );
-            *len = ( NULL == body ? 0 : hlen - ( *body - headers ) );
+            *len = ( NULL == *body ? 0 : hlen - ( *body - headers ) );
             return code;
         case TR_NET_ERROR:
             killHttp( &dev->http );
@@ -1089,7 +1110,7 @@ parseRoot( const char * root, const char *buf, int len,
     {
         basedup = strrchr( root, '/' );
         assert( NULL != basedup );
-        basedup = tr_dupstr( root, basedup - root + 1 );
+        basedup = tr_strndup( root, basedup - root + 1 );
     }
     else
     {
@@ -1461,7 +1482,7 @@ main( int argc, char * argv[] )
 
     if( 0 > stat( argv[2], &sb ) )
     {
-        tr_err( "failed to stat file %s: %s", argv[2], strerror( errno ) );
+        tr_err( "failed to stat file %s: %s", argv[2], strerror( sockerrno ) );
         return 1;
     }
 
@@ -1475,7 +1496,7 @@ main( int argc, char * argv[] )
     fd = open( argv[2], O_RDONLY );
     if( 0 > fd )
     {
-        tr_err( "failed to open file %s: %s", argv[2], strerror( errno ) );
+        tr_err( "failed to open file %s: %s", argv[2], strerror( sockerrno ) );
         free( data );
         return 1;
     }
@@ -1484,7 +1505,7 @@ main( int argc, char * argv[] )
     if( sb.st_size > res )
     {
         tr_err( "failed to read file %s: %s", argv[2],
-                ( 0 > res ? strerror( errno ) : "short read count" ) );
+                ( 0 > res ? strerror( sockerrno ) : "short read count" ) );
         close( fd );
         free( data );
         return 1;

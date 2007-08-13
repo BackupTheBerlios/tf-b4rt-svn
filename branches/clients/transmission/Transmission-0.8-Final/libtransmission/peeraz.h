@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peeraz.h 1727 2007-04-16 21:21:00Z joshe $
+ * $Id: peeraz.h 2428 2007-07-19 10:49:44Z charles $
  *
  * Copyright (c) 2006-2007 Transmission authors and contributors
  *
@@ -61,7 +61,7 @@ az_msgs[] = {
 #define azmsgId( idx )  ( az_msgs[(idx)].id )
 #define azmsgCount()    ( (int)(sizeof( az_msgs ) / sizeof( az_msgs[0] ) ) )
 
-static inline int
+static int
 azmsgIdIndex( int id )
 {
     int ii;
@@ -79,7 +79,7 @@ azmsgIdIndex( int id )
     return 0;
 }
 
-static inline int
+static int
 azmsgNameIndex( const char * name, int len )
 {
     int ii;
@@ -114,9 +114,9 @@ makeAZHandshake( tr_torrent_t * tor, tr_peer_t * peer, int * buflen )
     }
 
     /* set length to zero for now, we won't know it until after bencoding */
-    TR_HTONL( 0, buf );
+    tr_htonl( 0, buf );
     /* set name length, name, and version */
-    TR_HTONL( azmsgLen( idx ), buf + 4 );
+    tr_htonl( azmsgLen( idx ), buf + 4 );
     memcpy( buf + 8, azmsgStr( idx ), azmsgLen( idx ) );
     buf[8 + azmsgLen( idx )] = AZ_EXT_VERSION;
 
@@ -133,7 +133,7 @@ makeAZHandshake( tr_torrent_t * tor, tr_peer_t * peer, int * buflen )
     tr_bencInitStr( tr_bencDictAdd( &val, "identity" ),
                     tor->azId, TR_AZ_ID_LEN, 1 );
     tr_bencInitStr( tr_bencDictAdd( &val, "client" ),   TR_NAME, 0, 1 );
-    tr_bencInitStr( tr_bencDictAdd( &val, "version" ),  VERSION_STRING, 0, 1 );
+    tr_bencInitStr( tr_bencDictAdd( &val, "version" ),  SHORT_VERSION_STRING, 0, 1 );
     if( 0 < tor->publicPort )
     {
         tr_bencInitInt( tr_bencDictAdd( &val, "tcp_port" ), tor->publicPort );
@@ -187,7 +187,7 @@ makeAZHandshake( tr_torrent_t * tor, tr_peer_t * peer, int * buflen )
 
     tr_bencFree( &val );
     /* we know the length now, fill it in */
-    TR_HTONL( len - 4, buf );
+    tr_htonl( len - 4, buf );
 
     /* XXX is there a way to tell azureus that the public port has changed? */
     peer->advertisedPort = tor->publicPort;
@@ -272,7 +272,7 @@ sendAZHandshake( tr_torrent_t * tor, tr_peer_t * peer )
     return len;
 }
 
-static inline int
+static int
 parseAZMessageHeader( tr_peer_t * peer, uint8_t * buf, int len,
                       int * msgidret, int * msglenret )
 {
@@ -284,7 +284,7 @@ parseAZMessageHeader( tr_peer_t * peer, uint8_t * buf, int len,
         return TR_NET_BLOCK;
     }
     /* message length */
-    TR_NTOHL( buf, msglen );
+    msglen = tr_ntohl( buf );
     msglen += 4;
     off = 4;
     if( msglen > len )
@@ -297,7 +297,7 @@ parseAZMessageHeader( tr_peer_t * peer, uint8_t * buf, int len,
         return TR_NET_CLOSE;
     }
     /* name length */
-    TR_NTOHL( buf + off, namelen );
+    namelen = tr_ntohl( buf + off );
     off += 4;
     if( off + namelen + 1 > msglen )
     {
@@ -338,7 +338,7 @@ parseAZMessageHeader( tr_peer_t * peer, uint8_t * buf, int len,
     return off;
 }
 
-static inline int
+static int
 parseAZHandshake( tr_peer_t * peer, uint8_t * buf, int len )
 {
     benc_val_t      val, * sub, * dict, * subsub;
@@ -393,7 +393,7 @@ parseAZHandshake( tr_peer_t * peer, uint8_t * buf, int len )
 
     /* find the supported message list */
     sub = tr_bencDictFind( &val, "messages" );
-    if( NULL == sub && TYPE_LIST != sub->type )
+    if( !sub || sub->type != TYPE_LIST )
     {
         tr_bencFree( &val );
         peer_dbg( "GET  azureus-handshake, missing 'messages'" );
@@ -453,7 +453,7 @@ parseAZHandshake( tr_peer_t * peer, uint8_t * buf, int len )
     return TR_OK;
 }
 
-static inline int
+static int
 parseAZPex( tr_torrent_t * tor, tr_peer_t * peer, uint8_t * buf, int len )
 {
     tr_info_t * info = &tor->info;

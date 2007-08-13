@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# $Id: configure 1750 2007-04-18 16:39:10Z joshe $
+# $Id: configure 2604 2007-08-03 15:46:06Z charles $
 
 #
 # Default settings
@@ -176,6 +176,64 @@ EOF
   if runcmd $CC -o testconf testconf.c && runcmd ./testconf
   then
     CFLAGS="$CFLAGS -DHAVE_STRLCAT"
+  fi
+  rm -f testconf*
+}
+
+asprintf_test()
+{
+  verbose asprintf_test
+  cat > testconf.c <<EOF
+#define _GNU_SOURCE
+#include <stdio.h>
+int main()
+{
+  asprintf( NULL, NULL );
+  return 0;
+}
+EOF
+  if runcmd $CC -o testconf testconf.c
+  then
+    CFLAGS="$CFLAGS -DHAVE_ASPRINTF"
+  fi
+  rm -f testconf*
+}
+
+snprintf_test()
+{
+  verbose snprintf_test
+  cat > testconf.c <<EOF
+#include <stdio.h>
+int main()
+{
+  char buf[] = "blueberry";
+  return ( 6 != snprintf( buf, 4, "%s%s", "foo", "bar" ) ||
+           0 != memcmp( buf, "foo\0berry", 9 ) );
+}
+EOF
+  if ! runcmd $CC -o testconf testconf.c || ! runcmd ./testconf
+  then
+    echo "error: broken snprintf() found"
+    exit 1
+  fi
+  rm -f testconf*
+}
+
+libgen_test()
+{
+  verbose libgen_test
+  cat > testconf.c << EOF
+#include <libgen.h>
+int main()
+{
+  return 0;
+}
+EOF
+  if [ "x$SYSTEM" != xBeOS ]; then
+    if runcmd $CC -o testconf testconf.c
+    then
+      CFLAGS="$CFLAGS -DHAVE_DIRNAME -DHAVE_BASENAME"
+    fi
   fi
   rm -f testconf*
 }
@@ -450,6 +508,9 @@ lrintf_test
 #
 strlcpy_test
 strlcat_test
+asprintf_test
+snprintf_test
+libgen_test
 
 #
 # Generate config.mk
@@ -478,3 +539,4 @@ EOF
 echo
 echo "Now use GNU make to build Transmission."
 echo "It may be called 'make' or 'gmake' depending on your system."
+

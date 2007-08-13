@@ -1,12 +1,38 @@
-# $Id: lib.mk 1926 2007-05-24 04:05:50Z joshe $
+# $Id: lib.mk 2339 2007-07-13 22:22:46Z charles $
 
 include ../mk/config.mk
 include ../mk/common.mk
 
-SRCS = transmission.c bencode.c net.c tracker.c peer.c inout.c \
-       metainfo.c sha1.c utils.c fdlimit.c clients.c completion.c \
-       platform.c ratecontrol.c choking.c natpmp.c upnp.c http.c xml.c \
-       shared.c torrent.c strlcpy.c strlcat.c ipcparse.c
+SRCS = \
+  basename.c \
+  bencode.c \
+  choking.c \
+  clients.c \
+  completion.c \
+  dirname.c \
+  fastresume.c \
+  fdlimit.c \
+  http.c \
+  inout.c \
+  ipcparse.c \
+  list.c \
+  makemeta.c \
+  metainfo.c \
+  natpmp.c \
+  net.c \
+  peer.c \
+  platform.c \
+  ratecontrol.c \
+  sha1.c \
+  shared.c \
+  strlcat.c \
+  strlcpy.c \
+  torrent.c \
+  tracker.c \
+  transmission.c \
+  upnp.c \
+  utils.c \
+  xml.c
 
 OBJS = $(SRCS:%.c=%.o)
 

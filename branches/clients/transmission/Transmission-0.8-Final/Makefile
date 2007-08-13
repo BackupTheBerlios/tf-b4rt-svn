@@ -1,4 +1,4 @@
-# $Id: Makefile 1202 2006-12-14 03:17:23Z titer $
+# $Id$
 
 include mk/common.mk
 

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: xml.c 1805 2007-04-26 05:40:24Z joshe $
+ * $Id: xml.c 2430 2007-07-19 11:54:37Z charles $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -22,7 +22,12 @@
  * DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
 
-#include "transmission.h"
+#include <assert.h>
+#include <string.h>
+#include <stdlib.h>
+
+#include "utils.h"
+#include "xml.h"
 
 /* http://www.w3.org/TR/2004/REC-xml-20040204/ */
 
@@ -229,7 +234,7 @@ catrange( char * str, const char * begin, const char * end )
 
     if( NULL == str )
     {
-        return tr_dupstr( begin, end - begin );
+        return tr_strndup( begin, end - begin );
     }
 
     len = strlen( str );

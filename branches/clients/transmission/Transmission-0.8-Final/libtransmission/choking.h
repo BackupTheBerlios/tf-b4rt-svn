@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: choking.h 261 2006-05-29 21:27:31Z titer $
+ * $Id: choking.h 2311 2007-07-09 20:10:42Z charles $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -22,9 +22,14 @@
  * DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
 
+#ifndef TR_CHOKING_H
+#define TR_CHOKING_H
+
 typedef struct tr_choking_s tr_choking_t;
 
 tr_choking_t * tr_chokingInit( tr_handle_t * );
 void           tr_chokingSetLimit( tr_choking_t *, int );
 void           tr_chokingPulse( tr_choking_t * );
 void           tr_chokingClose( tr_choking_t * );
+
+#endif /* TR_CHOKING_H */

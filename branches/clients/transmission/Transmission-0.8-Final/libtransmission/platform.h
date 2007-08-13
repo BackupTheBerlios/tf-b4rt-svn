@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: platform.h 2034 2007-06-10 22:26:59Z joshe $
+ * $Id: platform.h 2552 2007-07-30 15:27:52Z charles $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -22,68 +22,47 @@
  * DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
 #ifndef TR_PLATFORM_H
-#define TR_PLATFORM_H 1
+#define TR_PLATFORM_H
 
-#ifdef SYS_BEOS
-  #include <kernel/OS.h>
-  typedef thread_id tr_thread_id_t;
-  typedef sem_id    tr_lock_t;
-  typedef int       tr_cond_t;
-#else
-  #include <pthread.h>
-  typedef pthread_t       tr_thread_id_t;
-  typedef pthread_mutex_t tr_lock_t;
-  typedef pthread_cond_t  tr_cond_t;
-#endif
-typedef struct tr_thread_s
-{
-    void          (* func ) ( void * );
-    void           * arg;
-    char           * name;
-    tr_thread_id_t thread;;
-}
-tr_thread_t;
+typedef struct tr_lock_s   tr_lock_t;
+typedef struct tr_cond_s   tr_cond_t;
+typedef struct tr_thread_s tr_thread_t;
 
-/* only for debugging purposes */
 const char * tr_getHomeDirectory( void );
+const char * tr_getCacheDirectory( void );
+const char * tr_getTorrentsDirectory( void );
 
-char * tr_getCacheDirectory();
-char * tr_getTorrentsDirectory();
+tr_thread_t*  tr_threadNew  ( void (*func)(void *), void * arg, const char * name );
+void          tr_threadJoin ( tr_thread_t * );
 
-/**
- * When instantiating a thread with a deferred call to tr_threadCreate(),
- * initializing it to THREAD_EMPTY makes calls tr_threadJoin() safe.
- */ 
-const tr_thread_t THREAD_EMPTY;
+tr_lock_t * tr_lockNew        ( void );
+void        tr_lockFree       ( tr_lock_t * );
+int         tr_lockTryLock    ( tr_lock_t * );
+void        tr_lockLock       ( tr_lock_t * );
+void        tr_lockUnlock     ( tr_lock_t * );
 
-void tr_threadCreate ( tr_thread_t *, void (*func)(void *),
-                       void * arg, char * name );
-void tr_threadJoin   ( tr_thread_t * );
-void tr_lockInit     ( tr_lock_t * );
-void tr_lockClose    ( tr_lock_t * );
+tr_cond_t * tr_condNew       ( void );
+void        tr_condFree      ( tr_cond_t * );
+void        tr_condSignal    ( tr_cond_t * );
+void        tr_condBroadcast ( tr_cond_t * );
+void        tr_condWait      ( tr_cond_t *, tr_lock_t * );
 
-static inline void tr_lockLock( tr_lock_t * l )
-{
-#ifdef SYS_BEOS
-    acquire_sem( *l );
-#else
-    pthread_mutex_lock( l );
-#endif
-}
+/***
+**** RW lock:
+**** The lock can be had by one writer or any number of readers.
+***/
 
-static inline void tr_lockUnlock( tr_lock_t * l )
-{
-#ifdef SYS_BEOS
-    release_sem( *l );
-#else
-    pthread_mutex_unlock( l );
-#endif
-}
+typedef struct tr_rwlock_s tr_rwlock_t;
 
-void tr_condInit( tr_cond_t * );
-void tr_condWait( tr_cond_t *, tr_lock_t * );
-void tr_condSignal( tr_cond_t * );
-void tr_condClose( tr_cond_t * );
+tr_rwlock_t*  tr_rwNew           ( void );
+void          tr_rwFree          ( tr_rwlock_t * );
+void          tr_rwReaderLock    ( tr_rwlock_t * );
+int           tr_rwReaderTrylock ( tr_rwlock_t * );
+void          tr_rwReaderUnlock  ( tr_rwlock_t * );
+void          tr_rwWriterLock    ( tr_rwlock_t * );
+int           tr_rwWriterTrylock ( tr_rwlock_t * );
+void          tr_rwWriterUnlock  ( tr_rwlock_t * );
+
 
 struct in_addr; /* forward declaration to calm gcc down */
 int

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: shared.h 1463 2007-02-06 05:37:48Z joshe $
+ * $Id: shared.h 2555 2007-07-30 18:04:10Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -26,6 +26,8 @@
 #define SHARED_H 1
 
 #include "transmission.h"
+
+typedef struct tr_shared_s tr_shared_t;
 
 /***********************************************************************
  * tr_sharedInit, tr_sharedClose

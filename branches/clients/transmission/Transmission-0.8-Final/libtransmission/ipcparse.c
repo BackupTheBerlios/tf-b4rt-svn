@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: ipcparse.c 2038 2007-06-10 22:56:18Z joshe $
+ * $Id: ipcparse.c 2391 2007-07-18 17:25:42Z joshe $
  *
  * Copyright (c) 2007 Joshua Elsasser
  *
@@ -24,6 +24,7 @@
 
 #include <assert.h>
 #include <errno.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -195,6 +196,7 @@ static struct inf gl_stat[] =
     { "completed",              IPC_ST_COMPLETED,     RB_ENTRY_INITIALIZER() },
     { "download-speed",         IPC_ST_DOWNSPEED,     RB_ENTRY_INITIALIZER() },
     { "download-total",         IPC_ST_DOWNTOTAL,     RB_ENTRY_INITIALIZER() },
+    { "download-valid",         IPC_ST_DOWNVALID,     RB_ENTRY_INITIALIZER() },
     { "error",                  IPC_ST_ERROR,         RB_ENTRY_INITIALIZER() },
     { "error-message",          IPC_ST_ERRMSG,        RB_ENTRY_INITIALIZER() },
     { "eta",                    IPC_ST_ETA,           RB_ENTRY_INITIALIZER() },
@@ -221,7 +223,7 @@ static int          gotmsg     ( struct ipc_info *, benc_val_t *, benc_val_t *,
 static int          msgcmp     ( struct msg *, struct msg * );
 static int          infcmp     ( struct inf *, struct inf * );
 static struct msg * msglookup  ( const char * );
-static int          filltracker( benc_val_t *, tr_tracker_info_t * );
+static int          filltracker( benc_val_t *, const tr_tracker_info_t * );
 static int          handlercmp ( struct msgfunc *, struct msgfunc * );
 
 RB_GENERATE_STATIC( msgtree, msg, link, msgcmp )
@@ -238,7 +240,7 @@ ipc_initmsgs( void )
     if( NULL != tree )
     {
         RB_INIT( &tree->msgs );
-        tree->def = NULL;
+        tree->def = (trd_msgfunc) NULL;
     }
 
     return tree;
@@ -252,7 +254,7 @@ ipc_addmsg( struct ipc_funcs * tree, enum ipc_msg id, trd_msgfunc func )
     assert( MSGVALID( id ) );
     assert( IPC_MSG_VERSION != id );
 
-    bzero( &key, sizeof key );
+    memset( &key, 0, sizeof key );
     key.id = id;
     entry = RB_FIND( functree, &tree->msgs, &key );
     assert( NULL == entry );
@@ -291,12 +293,29 @@ ipc_freemsgs( struct ipc_funcs * tree )
     free( tree );
 }
 
-void
-ipc_newcon( struct ipc_info * info, struct ipc_funcs * funcs )
+struct ipc_info *
+ipc_newcon( struct ipc_funcs * funcs )
 {
-    bzero( info, sizeof *info );
-    info->funcs = funcs;
-    info->vers  = -1;
+    struct ipc_info * info;
+
+    info = calloc( 1, sizeof *info );
+    if( NULL != info )
+    {
+        info->funcs = funcs;
+        info->vers  = -1;
+    }
+
+    return info;
+}
+
+void
+ipc_freecon( struct ipc_info * info )
+{
+    if( NULL != info )
+    {
+        free( info->label );
+        free( info );
+    }
 }
 
 benc_val_t *
@@ -438,7 +457,7 @@ ipc_mkstr( struct ipc_info * info, size_t * len, enum ipc_msg id, int64_t tag,
 }
 
 uint8_t *
-ipc_mkvers( size_t * len )
+ipc_mkvers( size_t * len, const char * label )
 {
     benc_val_t pk, * dict;
     uint8_t  * ret;
@@ -451,13 +470,15 @@ ipc_mkvers( size_t * len )
     dict = tr_bencDictAdd( &pk, MSGNAME( IPC_MSG_VERSION ) );
 
     tr_bencInit( dict, TYPE_DICT );
-    if( tr_bencDictReserve( dict, 2 ) )
+    if( tr_bencDictReserve( dict, ( NULL == label ? 2 : 3 ) ) )
     {
         SAFEBENCFREE( &pk );
         return NULL;
     }
     tr_bencInitInt( tr_bencDictAdd( dict, "min" ), PROTO_VERS_MIN );
     tr_bencInitInt( tr_bencDictAdd( dict, "max" ), PROTO_VERS_MAX );
+    if( NULL != label )
+        tr_bencInitStr( tr_bencDictAdd( dict, "label" ), label, -1, 1 );
 
     ret = ipc_mkval( &pk, len );
     SAFEBENCFREE( &pk );
@@ -564,7 +585,7 @@ ipc_mkgetinfo( struct ipc_info * info, size_t * len, enum ipc_msg id,
 }
 
 int
-ipc_addinfo( benc_val_t * list, int tor, tr_info_t * inf, int types )
+ipc_addinfo( benc_val_t * list, int tor, const tr_info_t * inf, int types )
 {
     benc_val_t * dict, * item, * file, * tier;
     int          ii, jj, kk;
@@ -705,8 +726,8 @@ ipc_addinfo( benc_val_t * list, int tor, tr_info_t * inf, int types )
 }
 
 int
-ipc_addstat( benc_val_t * list, int tor, tr_info_t * inf,
-             tr_stat_t * st, int types )
+ipc_addstat( benc_val_t * list, int tor,
+             const tr_stat_t * st, int types )
 {
     benc_val_t  * dict, * item;
     int           ii, used;
@@ -746,13 +767,16 @@ ipc_addstat( benc_val_t * list, int tor, tr_info_t * inf,
         switch( 1 << ii )
         {
             case IPC_ST_COMPLETED:
-                tr_bencInitInt( item, st->progress * ( float )inf->totalSize );
+                tr_bencInitInt( item, st->downloadedValid );
                 break;
             case IPC_ST_DOWNSPEED:
                 tr_bencInitInt( item, st->rateDownload * 1024 );
                 break;
             case IPC_ST_DOWNTOTAL:
                 tr_bencInitInt( item, st->downloaded );
+                break;
+            case IPC_ST_DOWNVALID:
+                tr_bencInitInt( item, st->downloadedValid );
                 break;
             case IPC_ST_ERROR:
                 error = st->error;
@@ -776,9 +800,13 @@ ipc_addstat( benc_val_t * list, int tor, tr_info_t * inf,
                 {
                     tr_bencInitStr( item, "io-space", -1, 1 );
                 }
-                else if( TR_ERROR_ISSET( TR_ERROR_IO_RESOURCES, error ) )
+                else if( TR_ERROR_ISSET( TR_ERROR_IO_FILE_TOO_BIG, error ) )
                 {
-                    tr_bencInitStr( item, "io-resources", -1, 1 );
+                    tr_bencInitStr( item, "io-file-too-big", -1, 1 );
+                }
+                else if( TR_ERROR_ISSET( TR_ERROR_IO_OPEN_FILES, error ) )
+                {
+                    tr_bencInitStr( item, "io-open-files", -1, 1 );
                 }
                 else if( TR_ERROR_ISSET( TR_ERROR_IO_MASK, error ) )
                 {
@@ -814,7 +842,7 @@ ipc_addstat( benc_val_t * list, int tor, tr_info_t * inf,
                 tr_bencInitInt( item, tor );
                 break;
             case IPC_ST_PEERDOWN:
-                tr_bencInitInt( item, st->peersDownloading );
+                tr_bencInitInt( item, st->peersSendingToUs );
                 break;
             case IPC_ST_PEERFROM:
                 tr_bencInit( item, TYPE_DICT );
@@ -835,7 +863,7 @@ ipc_addstat( benc_val_t * list, int tor, tr_info_t * inf,
                 tr_bencInitInt( item, st->peersTotal );
                 break;
             case IPC_ST_PEERUP:
-                tr_bencInitInt( item, st->peersUploading );
+                tr_bencInitInt( item, st->peersGettingFromUs );
                 break;
             case IPC_ST_RUNNING:
                 tr_bencInitInt( item,
@@ -948,7 +976,7 @@ ipc_parse( struct ipc_info * info, uint8_t * buf, ssize_t total, void * arg )
     return off;
 }
 
-int
+static int
 handlevers( struct ipc_info * info, benc_val_t * dict )
 {
     benc_val_t * vers, * num;
@@ -1008,7 +1036,7 @@ handlevers( struct ipc_info * info, benc_val_t * dict )
     return 0;
 }
 
-int
+static int
 handlemsgs( struct ipc_info * info, benc_val_t * pay, void * arg )
 {
     benc_val_t * name, * val, * tag;
@@ -1055,7 +1083,7 @@ handlemsgs( struct ipc_info * info, benc_val_t * pay, void * arg )
     return 0;
 }
 
-int
+static int
 gotmsg( struct ipc_info * info, benc_val_t * name, benc_val_t * val,
         benc_val_t * tagval, void * arg )
 {
@@ -1086,7 +1114,7 @@ gotmsg( struct ipc_info * info, benc_val_t * name, benc_val_t * val,
     msg = msglookup( name->val.s.s );
     if( NULL != msg && msg->minvers <= info->vers )
     {
-        bzero( &key, sizeof key );
+        memset( &key, 0, sizeof key );
         key.id  = msg->id;
         handler = RB_FIND( functree, &info->funcs->msgs, &key );
         if( NULL != handler )
@@ -1098,6 +1126,8 @@ gotmsg( struct ipc_info * info, benc_val_t * name, benc_val_t * val,
             info->funcs->def( msg->id, val, tag, arg );
         }
     }
+    else if( NULL != info->funcs->def )
+        info->funcs->def( IPC__MSG_UNKNOWN, NULL, tag, arg );
 
     return 0;
 }
@@ -1132,7 +1162,7 @@ ipc_ishandled( struct ipc_info * info, enum ipc_msg id )
 
     assert( MSGVALID( id ) );
 
-    bzero( &key, sizeof key );
+    memset( &key, 0, sizeof key );
     key.id = id;
     return ( NULL != RB_FIND( functree, &info->funcs->msgs, &key ) );
 }
@@ -1188,7 +1218,7 @@ ipc_infotypes( enum ipc_msg id, benc_val_t * list )
         return ret;
     }
 
-    bzero( &key, sizeof key );
+    memset( &key, 0, sizeof key );
     for( jj = 0; list->val.l.count > jj; jj++ )
     {
         name = &list->val.l.vals[jj];
@@ -1241,19 +1271,19 @@ ipc_infoname( enum ipc_msg id, int type )
     return NULL;
 }
 
-int
+static int
 msgcmp( struct msg * first, struct msg * second )
 {
     return strcmp( first->name, second->name );
 }
 
-int
+static int
 infcmp( struct inf * first, struct inf * second )
 {
     return strcmp( first->name, second->name );
 }
 
-struct msg *
+static struct msg *
 msglookup( const char * name )
 {
     static struct msgtree tree = RB_INITIALIZER( &tree );
@@ -1272,13 +1302,13 @@ msglookup( const char * name )
         }
     }
 
-    bzero( &key, sizeof key );
+    memset( &key, 0, sizeof key );
     key.name = name;
     return RB_FIND( msgtree, &tree, &key );
 }
 
-int
-filltracker( benc_val_t * val, tr_tracker_info_t * tk )
+static int
+filltracker( benc_val_t * val, const tr_tracker_info_t * tk )
 {
     tr_bencInit( val, TYPE_DICT );
     if( tr_bencDictReserve( val, ( NULL == tk->scrape ? 3 : 4 ) ) )

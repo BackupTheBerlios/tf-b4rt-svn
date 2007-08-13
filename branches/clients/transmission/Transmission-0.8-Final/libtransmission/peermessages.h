@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peermessages.h 1727 2007-04-16 21:21:00Z joshe $
+ * $Id: peermessages.h 2531 2007-07-28 15:43:34Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -81,13 +81,13 @@ fillHeader( tr_peer_t * peer, int size, int id, uint8_t * buf )
 {
     int index;
 
-    TR_HTONL( size - 4, buf );
+    tr_htonl( size - 4, buf );
     buf += 4;
     if( peer->azproto )
     {
         index = azmsgIdIndex( id );
         assert( 0 <= index );
-        TR_HTONL( azmsgLen( index ), buf );
+        tr_htonl( azmsgLen( index ), buf );
         buf += 4;
         memcpy( buf, azmsgStr( index ), azmsgLen( index ) );
         buf += azmsgLen( index );
@@ -104,34 +104,33 @@ fillHeader( tr_peer_t * peer, int size, int id, uint8_t * buf )
     return buf;
 }
 
-static uint8_t * blockPending( tr_torrent_t * tor, tr_peer_t * peer,
-                               int * size )
+static uint8_t *
+blockPending( tr_torrent_t  * tor,
+              tr_peer_t     * peer,
+              int           * size )
 {
-    if( !peer->outBlockLoaded )
+    if( !peer->outBlockLoaded ) /* we need to load the block for the next request */
     {
         uint8_t      * buf;
         tr_request_t * r;
         int            hdrlen;
 
-        if( peer->amChoking || peer->outRequestCount < 1 )
-        {
-            /* No piece to send */
+        if( peer->isChokedByUs ) /* we don't want to send them anything */
             return NULL;
-        }
 
-        /* We need to load the block for the next request */
-        r = &peer->outRequests[0];
+        if( !peer->outRequests ) /* nothing to send */
+            return NULL;
 
-        /* Sanity check */
-        if( !tr_cpPieceIsComplete( tor->completion, r->index ) )
+        r = (tr_request_t*) peer->outRequests->data;
+        assert( r != NULL );
+        peer->outRequests = tr_list_remove_data( peer->outRequests, r );
+
+        if( !tr_cpPieceIsComplete( tor->completion, r->index ) ) /* sanity clause */
         {
-            /* We have been asked for something we don't have, buggy client?
-               Let's just drop this request */
+            /* We've been asked for something we don't have.  buggy client? */
             tr_inf( "Block %d/%d/%d was requested but we don't have it",
                     r->index, r->begin, r->length );
-            (peer->outRequestCount)--;
-            memmove( &peer->outRequests[0], &peer->outRequests[1],
-                     peer->outRequestCount * sizeof( tr_request_t ) );
+            tr_free( r );
             return NULL;
         }
 
@@ -139,28 +138,19 @@ static uint8_t * blockPending( tr_torrent_t * tor, tr_peer_t * peer,
         assert( hdrlen <= ( signed )sizeof peer->outBlock );
         buf = fillHeader( peer, hdrlen, PEER_MSG_PIECE, peer->outBlock );
 
-        TR_HTONL( r->index, buf );
+        tr_htonl( r->index, buf );
         buf += 4;
-        TR_HTONL( r->begin, buf );
+        tr_htonl( r->begin, buf );
         buf += 4;
 
         tr_ioRead( tor->io, r->index, r->begin, r->length, buf );
 
-        if( peer->outRequestCount < 1 )
-        {
-            /* We were choked during the read */
-            return NULL;
-        }
-
         peer_dbg( "SEND piece %d/%d (%d bytes)",
                   r->index, r->begin, r->length );
-
         peer->outBlockSize   = hdrlen;
         peer->outBlockLoaded = 1;
 
-        (peer->outRequestCount)--;
-        memmove( &peer->outRequests[0], &peer->outRequests[1],
-                 peer->outRequestCount * sizeof( tr_request_t ) );
+        tr_free( r );
     }
 
     *size = MIN( 1024, peer->outBlockSize );
@@ -230,13 +220,14 @@ static void sendChoke( tr_peer_t * peer, int yes )
     id = ( yes ? PEER_MSG_CHOKE : PEER_MSG_UNCHOKE );
     getMessagePointer( peer, 0, id );
 
-    peer->amChoking = yes;
+    peer->isChokedByUs = yes;
 
     if( !yes )
     {
-        /* Drop older requests from the last time it was unchoked,
-           if any */
-        peer->outRequestCount = 0;
+        /* Drop older requests from the last time it was unchoked, if any */
+        tr_list_foreach( peer->outRequests, tr_free );
+        tr_list_free( peer->outRequests );
+        peer->outRequests = NULL;
     }
 
     peer_dbg( "SEND %schoke", yes ? "" : "un" );
@@ -254,7 +245,7 @@ static void sendInterest( tr_peer_t * peer, int yes )
     id = ( yes ? PEER_MSG_INTERESTED : PEER_MSG_UNINTERESTED );
     getMessagePointer( peer, 0, id );
 
-    peer->amInterested = yes;
+    peer->isInteresting = yes;
 
     peer_dbg( "SEND %sinterested", yes ? "" : "un" );
 }
@@ -270,7 +261,7 @@ static void sendHave( tr_peer_t * peer, int piece )
 
     p = getMessagePointer( peer, 4, PEER_MSG_HAVE );
 
-    TR_HTONL( piece, p );
+    tr_htonl( piece, p );
 
     peer_dbg( "SEND have %d", piece );
 }
@@ -285,8 +276,8 @@ static void sendHave( tr_peer_t * peer, int piece )
  **********************************************************************/
 static void sendBitfield( tr_torrent_t * tor, tr_peer_t * peer )
 {
-    uint8_t       * p;
-    tr_bitfield_t * bitfield;
+    uint8_t             * p;
+    const tr_bitfield_t * bitfield;
 
     bitfield = tr_cpPieceBitfield( tor->completion );
     p = getMessagePointer( peer, bitfield->len, PEER_MSG_BITFIELD );
@@ -313,15 +304,15 @@ static void sendRequest( tr_torrent_t * tor, tr_peer_t * peer, int block )
     r->index  = block / ( inf->pieceSize / tor->blockSize );
     r->begin  = ( block % ( inf->pieceSize / tor->blockSize ) ) *
                     tor->blockSize;
-    r->length = tr_blockSize( block );
+    r->length = tr_torBlockCountBytes( tor, block );
     (peer->inRequestCount)++;
 
     /* Build the "ask" message */
     p = getMessagePointer( peer, 12, PEER_MSG_REQUEST );
 
-    TR_HTONL( r->index,  p     );
-    TR_HTONL( r->begin,  p + 4 );
-    TR_HTONL( r->length, p + 8 );
+    tr_htonl( r->index,  p     );
+    tr_htonl( r->begin,  p + 4 );
+    tr_htonl( r->length, p + 8 );
 
     tr_cpDownloaderAdd( tor->completion, block );
 
@@ -340,9 +331,9 @@ static void sendCancel( tr_peer_t * peer, int index, int begin,
     uint8_t * p;
     p = getMessagePointer( peer, 12, PEER_MSG_CANCEL );
 
-    TR_HTONL( index,  p     );
-    TR_HTONL( begin,  p + 4 );
-    TR_HTONL( length, p + 8 );
+    tr_htonl( index,  p     );
+    tr_htonl( begin,  p + 4 );
+    tr_htonl( length, p + 8 );
 
     peer_dbg( "SEND cancel %d/%d (%d bytes)", index, begin, length );
 }

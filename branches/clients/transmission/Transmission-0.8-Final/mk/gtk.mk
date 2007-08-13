@@ -1,15 +1,14 @@
-# $Id: gtk.mk 1998 2007-06-06 00:30:13Z livings124 $
+# $Id: gtk.mk 2411 2007-07-19 00:09:09Z charles $
 
 include ../mk/config.mk
 include ../mk/common.mk
 
-SRCS = conf.c dialogs.c hig.c io.c ipc.c main.c msgwin.c \
-        torrent-inspector.c \
-	tr_cell_renderer_progress.c tr_core.c tr_icon.c tr_prefs.c \
-	tr_torrent.c tr_window.c util.c
+SRCS = actions.c conf.c dialogs.c hig.c io.c ipc.c main.c msgwin.c \
+       makemeta-ui.c torrent-inspector.c tr_cell_renderer_progress.c \
+       tr_core.c tr_icon.c tr_prefs.c tr_torrent.c tr_window.c util.c
 OBJS = $(SRCS:%.c=%.o)
 
-CFLAGS  += $(CFLAGS_GTK) -I../libtransmission
+CFLAGS  += $(CFLAGS_GTK) -I..
 LDFLAGS += $(LDFLAGS_GTK)
 LDLIBS  += ../libtransmission/libtransmission.a
 
