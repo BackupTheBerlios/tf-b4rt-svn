@@ -101,8 +101,16 @@ if (isAuthenticated() == 1) {
 // log the hit
 AuditAction($cfg["constants"]["hit"], $_SERVER['PHP_SELF']);
 
+// if at this moment no user is set there is something wrong
+if(!isset($currentUser) || empty($currentUser))
+{
+	@header('location: login.php');
+	exit();
+}
+	
+
 // cache is not set
-if (!(cacheIsSet($currentUser))) {
+if (!cacheIsSet($currentUser)) {
 
 	// login-check-tasks
 	if (!isset($_SESSION['login_tasks'])) {
