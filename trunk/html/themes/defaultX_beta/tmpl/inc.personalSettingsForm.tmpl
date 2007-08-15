@@ -11,11 +11,7 @@
 			<td valign="top">
 				<select name="enable_index_meta_refresh" id="enable_index_meta_refresh">
 					<option value="1">true</option>
-					<option value="0"
-					<tmpl_if name="enable_index_meta_refresh" value="0">
-						 selected
-					</tmpl_if>
-					>false</option>
+					<option value="0"<tmpl_if name="enable_index_meta_refresh" value="0"> selected="selected"</tmpl_if>>false</option>
 				</select>
 			</td>
 		</tr>
@@ -120,7 +116,7 @@
 			<td style="text-align:left;width:50%;vertical-align:top;">
 				<div style="width:350px;float:right;">
 					<label style="font-weight:bold;" for="index_ajax_update">AJAX Update Interval:</label><br/>
-					<span class="small">Number of seconds between AJAX updates<br>
+					<span class="small">Number of seconds between AJAX updates<br />
 					(default: 5)</span>
 				</div>
 			</td>
@@ -132,7 +128,7 @@
 			<td style="text-align:left;width:50%;vertical-align:top;">
 				<div style="width:350px;float:right;">
 					<label style="font-weight:bold;" for="ui_dim_main_w">Width:</label><br/>
-					<span class="small">Width in pixels of the index page<br>
+					<span class="small">Width in pixels of the index page<br />
 					(default: 900)</span>
 				</div>
 			</td>
@@ -150,11 +146,7 @@
 			<td valign="top">
 				<select name="ui_displaylinks" id="ui_displaylinks">
 					<option value="1">true</option>
-					<option value="0"
-					<tmpl_if name="ui_displaylinks" value="0">
-						 selected="selected"
-					</tmpl_if>
-					>false</option>
+					<option value="0"<tmpl_if name="ui_displaylinks" value="0"> selected="selected"</tmpl_if>>false</option>
 				</select>
 			</td>
 		</tr>
@@ -168,11 +160,7 @@
 			<td valign="top">
 				<select name="ui_displayusers" id="ui_displayusers">
 					<option value="1">true</option>
-					<option value="0"
-					<tmpl_if name="ui_displayusers" value="0">
-						 selected="selected"
-					</tmpl_if>
-					>false</option>
+					<option value="0"<tmpl_if name="ui_displayusers" value="0"> selected="selected"</tmpl_if>>false</option>
 				</select>
 			</td>
 		</tr>
@@ -186,10 +174,7 @@
 			<td valign="top">
 				<select name="enable_goodlookstats" id="enable_goodlookstats">
 					<option value="1">true</option>
-					<option value="0"
-					<tmpl_if name="enable_goodlookstats" value="0">
-						 selected="selected"
-					</tmpl_if>
+					<option value="0"<tmpl_if name="enable_goodlookstats" value="0"> selected="selected"</tmpl_if>
 					>false</option>
 				</select>
 			</td>
@@ -215,11 +200,7 @@
 			<td valign="top">
 				<select name="ui_displaybandwidthbars" id="ui_displaybandwidthbars">
 					<option value="1">true</option>
-					<option value="0"
-					<tmpl_if name="ui_displaybandwidthbars" value="0">
-						 selected="selected"
-					</tmpl_if>
-					>false</option>
+					<option value="0"<tmpl_if name="ui_displaybandwidthbars" value="0"> selected="selected"</tmpl_if>>false</option>
 				</select>
 			</td>
 		</tr>
@@ -232,16 +213,8 @@
 			</td>
 			<td valign="top">
 				<select name="bandwidthbar" id="bandwidthbar">
-					<option value="tf"
-					<tmpl_if name="bandwidthbar" value="tf">
-						 selected
-					</tmpl_if>
-					>tf</option>
-					<option value="xfer"
-					<tmpl_if name="bandwidthbar" value="xfer">
-						 selected="selected"
-					</tmpl_if>
-					>xfer</option>
+					<option value="tf"<tmpl_if name="bandwidthbar" value="tf"> selected="selected"</tmpl_if>>tf</option>
+					<option value="xfer"<tmpl_if name="bandwidthbar" value="xfer"> selected="selected"</tmpl_if>>xfer</option>
 				</select>
 			</td>
 		</tr>
@@ -255,11 +228,7 @@
 			<td valign="top">
 				<select name="enable_bigboldwarning" id="enable_bigboldwarning">
 					<option value="1">true</option>
-					<option value="0"
-					<tmpl_if name="enable_bigboldwarning" value="0">
-						 selected="selected"
-					</tmpl_if>
-					>false</option>
+					<option value="0"<tmpl_if name="enable_bigboldwarning" value="0"> selected="selected"</tmpl_if>>false</option>
 				</select>
 			</td>
 		</tr>
@@ -273,11 +242,7 @@
 			<td valign="top">
 				<select name="index_show_seeding" id="index_show_seeding">
 					<option value="1">true</option>
-					<option value="0"
-					<tmpl_if name="index_show_seeding" value="0">
-						selected="selected"
-					</tmpl_if>
-					>false</option>
+					<option value="0"<tmpl_if name="index_show_seeding" value="0"> selected="selected"</tmpl_if>>false</option>
 				</select>
 			</td>
 		</tr>
@@ -291,11 +256,7 @@
 			<td valign="top">
 				<select name="display_seeding_time" id="display_seeding_time">
                     <option value="1">true</option>
-                    <option value="0"
-                    <tmpl_if name="display_seeding_time" value="0">
-                         selected="selected"
-                    </tmpl_if>
-                    >false</option>
+                    <option value="0"<tmpl_if name="display_seeding_time" value="0"> selected="selected"</tmpl_if>>false</option>
                 </select>
 			</td>
 		</tr>
@@ -309,11 +270,7 @@
 			<td valign="top">
 				<select name="enable_sorttable" id="enable_sorttable">
 					<option value="1">true</option>
-					<option value="0"
-					<tmpl_if name="enable_sorttable" value="0">
-						 selected="selected"
-					</tmpl_if>
-					>false</option>
+					<option value="0"<tmpl_if name="enable_sorttable" value="0"> selected="selected"</tmpl_if>>false</option>
 				</select>
 			</td>
 		</tr>
@@ -349,7 +306,7 @@
 			<td valign="top">
 				<select name="transfer_window_default" id="transfer_window_default">
 					<tmpl_loop name="transfer_window_default_list">
-						<option value="<tmpl_var name="value">"<tmpl_if name="is_selected" value="1"> selected</tmpl_if>>
+						<option value="<tmpl_var name="value">"<tmpl_if name="is_selected" value="1"> selected="selected"</tmpl_if>>
 							<tmpl_var name="name">
 						</option>
 					</tmpl_loop>
@@ -366,11 +323,7 @@
 			<td valign="top">
 				<select name="index_page_stats" id="index_page_stats">
 					<option value="1">true</option>
-					<option value="0"
-					<tmpl_if name="index_page_stats" value="0">
-						 selected="selected"
-					</tmpl_if>
-					>false</option>
+					<option value="0"<tmpl_if name="index_page_stats" value="0"> selected="selected"</tmpl_if>>false</option>
 				</select>
 			</td>
 		</tr>
@@ -384,11 +337,7 @@
 			<td valign="top">
 				<select name="index_page_connections" id="index_page_connections">
 					<option value="1">true</option>
-					<option value="0"
-					<tmpl_if name="index_page_connections" value="0">
-						 selected="selected"
-					</tmpl_if>
-					>false</option>
+					<option value="0"<tmpl_if name="index_page_connections" value="0"> selected="selected"</tmpl_if>>false</option>
 				</select>
 			</td>
 		</tr>
@@ -402,11 +351,7 @@
 			<td valign="top">
 				<select name="show_server_load" id="show_server_load">
 					<option value="1">true</option>
-					<option value="0"
-					<tmpl_if name="show_server_load" value="0">
-						 selected="selected"
-					</tmpl_if>
-					>false</option>
+					<option value="0"<tmpl_if name="show_server_load" value="0"> selected="selected"</tmpl_if>>false</option>
 				</select>
 			</td>
 		</tr>
@@ -419,16 +364,8 @@
 			</td>
 			<td valign="top">
 				<select name="drivespacebar" id="drivespacebar">
-					<option value="tf"
-					<tmpl_if name="drivespacebar" value="tf">
-						 selected
-					</tmpl_if>
-					>tf</option>
-					<option value="xfer"
-					<tmpl_if name="drivespacebar" value="xfer">
-						 selected="selected"
-					</tmpl_if>
-					>xfer</option>
+					<option value="tf"<tmpl_if name="drivespacebar" value="tf"> selected="selected"</tmpl_if>>tf</option>
+					<option value="xfer" <tmpl_if name="drivespacebar" value="xfer"> selected="selected"</tmpl_if>>xfer</option>
 				</select>
 			</td>
 		</tr>
@@ -442,11 +379,7 @@
 			<td valign="top">
 				<select name="transferStatsType" id="transferStatsType">
 					<option value="standard">standard</option>
-					<option value="ajax"
-					<tmpl_if name="transferStatsType" value="ajax">
-						 selected="selected"
-					</tmpl_if>
-					>ajax</option>
+					<option value="ajax"<tmpl_if name="transferStatsType" value="ajax"> selected="selected"</tmpl_if>>ajax</option>
 				</select>
 			</td>
 		</tr>
@@ -458,7 +391,7 @@
 				</div>
 			</td>
 			<td valign="top">
-				<input name="transferStatsUpdate" id="transferStatsUpdate" type="text" maxlength="3" value="<tmpl_var name="transferStatsUpdate">" size="3">
+				<input name="transferStatsUpdate" id="transferStatsUpdate" type="text" maxlength="3" value="<tmpl_var name="transferStatsUpdate">" size="3" />
 			</td>
 		</tr>
 		<tr>
@@ -471,11 +404,7 @@
 			<td valign="top">
 				<select name="transferHosts" id="transferHosts">
 					<option value="1">Hostnames</option>
-					<option value="0"
-					<tmpl_if name="transferHosts" value="0">
-						 selected="selected"
-					</tmpl_if>
-					>IPs</option>
+					<option value="0"<tmpl_if name="transferHosts" value="0"> selected="selected"</tmpl_if>>IPs</option>
 				</select>
 			</td>
 		</tr>
@@ -487,12 +416,12 @@
 				</div>
 			</td>
 			<td valign="top">
-				<input name="servermon_update" id="servermon_update" type="text" maxlength="3" value="<tmpl_var name="servermon_update">" size="3">
+				<input name="servermon_update" id="servermon_update" type="text" maxlength="3" value="<tmpl_var name="servermon_update">" size="3" />
 			</td>
 		</tr>
 		<tr>
 			<td align="center" colspan="2">
-				<input type="submit" value="Update Settings">
+				<input type="submit" value="Update Settings" />
 			</td>
 		</tr>
 		</tbody>
