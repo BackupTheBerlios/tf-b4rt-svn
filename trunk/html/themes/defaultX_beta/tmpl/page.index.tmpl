@@ -382,7 +382,7 @@
 					</tmpl_if>
 					</tr>
 					<tr class="small tablecontent">
-						<td colspan="9" style="text-align:center;">
+						<td colspan="<tmpl_if name="enable_metafile_download"><tmpl_if name="queueActive" value="1"><tmpl_if name="enable_multiops">10<tmpl_else>9</tmpl_if><tmpl_else><tmpl_if name="enable_multiops">9<tmpl_else>8</tmpl_if></tmpl_if><tmpl_else><tmpl_if name="queueActive" value="1"><tmpl_if name="enable_multiops">9<tmpl_else>8</tmpl_if><tmpl_else><tmpl_if name="enable_multiops">8<tmpl_else>7</tmpl_if></tmpl_if></tmpl_if>" style="text-align:center;">
 						<br />
 						<tmpl_if name="page_refresh">
 							<a href="dispatcher.php?action=set&amp;key=index_meta_refresh&amp;val=0" onclick="return actionClick(true)">
@@ -423,7 +423,7 @@
 					</tr>
 					<tr class="small tablecontent">
 						<tmpl_if name="index_page_stats">
-						<td colspan="9">
+						<td colspan="<tmpl_if name="enable_metafile_download"><tmpl_if name="queueActive" value="1"><tmpl_if name="enable_multiops">10<tmpl_else>9</tmpl_if><tmpl_else><tmpl_if name="enable_multiops">9<tmpl_else>8</tmpl_if></tmpl_if><tmpl_else><tmpl_if name="queueActive" value="1"><tmpl_if name="enable_multiops">9<tmpl_else>8</tmpl_if><tmpl_else><tmpl_if name="enable_multiops">8<tmpl_else>7</tmpl_if></tmpl_if></tmpl_if>">
 							<br />
 							<table style="width:100%;">
 							<tbody>
