@@ -110,8 +110,8 @@ class ClientHandlerTransmission extends ClientHandler
         $this->command .= " -d ".tfb_shellencode($this->drate);
         $this->command .= " -u ".tfb_shellencode($this->rate);
         $this->command .= " -p ".tfb_shellencode($this->port);
-		$this->command .= " -r ".tfb_shellencode(($this->runtime == "True") ? 1 : 0);
-        $this->command .= " -c ".tfb_shellencode($this->sharekill_param);
+		$this->command .= " -w ".tfb_shellencode(($this->runtime == "True") ? 1 : 0);
+        $this->command .= " -l ".tfb_shellencode($this->sharekill_param);
         $this->command .= " -e 5";
         $this->command .= " -o ".tfb_shellencode($this->owner);
         if (strlen($cfg["btclient_transmission_options"]) > 0)
@@ -256,7 +256,7 @@ class ClientHandlerTransmission extends ClientHandler
     	// set runtime-field
     	$this->runtime = $runtime;
     	// add command
-		CommandHandler::add($transfer, "r".(($this->runtime == "True") ? "1" : "0"));
+		CommandHandler::add($transfer, "w".(($this->runtime == "True") ? "1" : "0"));
 		// send command to client
         if ($autosend)
 			CommandHandler::send($transfer);
@@ -274,7 +274,7 @@ class ClientHandlerTransmission extends ClientHandler
 		// set sharekill
         $this->sharekill = $sharekill;
     	// add command
-		CommandHandler::add($transfer, "s".$this->sharekill);
+		CommandHandler::add($transfer, "l".$this->sharekill);
 		// send command to client
         if ($autosend)
 			CommandHandler::send($transfer);

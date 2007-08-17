@@ -816,8 +816,8 @@ static int tf_execCommand(tr_handle_t *h, char *s) {
 			tr_setGlobalDownloadLimit(h, downloadLimit);
 			return 0;
 
-		// r
-		case 'r':
+		// w
+		case 'w':
 			if (strlen(workload) < 1) {
 				tf_print(sprintf(tf_message,
 					"invalid runtime-code.\n"));
@@ -841,8 +841,8 @@ static int tf_execCommand(tr_handle_t *h, char *s) {
 			}
 			return 0;
 
-		// s
-		case 's':
+		// l
+		case 'l':
 			if (strlen(workload) < 1) {
 				tf_print(sprintf(tf_message,
 					"invalid sharekill.\n"));
@@ -1061,15 +1061,15 @@ static int parseCommandLine(int argc, char ** argv) {
 		  { "upload",             required_argument, NULL, 'u' },
 		  { "download",           required_argument, NULL, 'd' },
 		  { "finish",             required_argument, NULL, 'f' },
-		  { "die-when-done",      required_argument, NULL, 'r' },
-		  { "seedlimit",          required_argument, NULL, 'c' },
+		  { "die-when-done",      required_argument, NULL, 'w' },
+		  { "seedlimit",          required_argument, NULL, 'l' },
 		  { "display-interval",   required_argument, NULL, 'e' },
 		  { "owner",              required_argument, NULL, 'o' },
 		  { "nat-traversal",      no_argument,       NULL, 'n' },
 		  { 0, 0, 0, 0} };
 		int c, optind = 0;
 		c = getopt_long(argc, argv,
-			"hisv:p:u:d:f:r:c:e:o:n", long_options, &optind);
+			"hisv:p:u:d:f:w:l:e:o:n", long_options, &optind);
 		if (c < 0)
 			break;
 		switch (c) {
@@ -1100,10 +1100,10 @@ static int parseCommandLine(int argc, char ** argv) {
 			case 'n':
 				natTraversal = 1;
 				break;
-			case 'r':
+			case 'w':
 				tf_dieWhenDone = atoi(optarg);
 				break;
-			case 'c':
+			case 'l':
 				tf_seedLimit = atoi(optarg);
 				break;
 			case 'e':

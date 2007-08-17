@@ -83,8 +83,8 @@ const char * USAGE =
 "  -s, --scrape         Print counts of seeders/leechers and exit\n"
 #endif
 "  -u, --upload <int>   Maximum upload rate (-1 = no limit, default = 20)\n"
-"  -v, --verbose <int>  Verbose level (0 to 2, default = 0)\n\n"
-"Torrentflux Commands:\n"
+"  -v, --verbose <int>  Verbose level (0 to 2, default = 0)\n"
+"\nTorrentflux Commands:\n"
 "  -e, --display-interval <int> Time between updates of stat-file (default = %d)\n"
 "  -l, --seedlimit <int> Seed-Limit (Percent) to reach before shutdown\n"
 "                        (0 = seed forever, -1 = no seeding, default = %d)\n"
