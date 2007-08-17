@@ -48,7 +48,7 @@ int main(int argc, char ** argv) {
 
 	/* get options */
 	if (parseCommandLine(argc, argv)) {
-		printf(HEADER, VERSION_STRING, VERSION_REVISION);
+		printf(HEADER, LONG_VERSION_STRING);
 		printf(USAGE, argv[0], TR_DEFAULT_PORT,
 			tf_displayInterval, tf_seedLimit, tf_dieWhenDone
 		);
@@ -57,7 +57,7 @@ int main(int argc, char ** argv) {
 
 	/* show help */
 	if (showHelp) {
-		printf(HEADER, VERSION_STRING, VERSION_REVISION, VERSION_REVISION_CLI);
+		printf(HEADER, LONG_VERSION_STRING);
 		printf(USAGE, argv[0], TR_DEFAULT_PORT,
 			tf_displayInterval, tf_seedLimit, tf_dieWhenDone
 		);
@@ -107,19 +107,18 @@ int main(int argc, char ** argv) {
 	}
 
 	/* show info */
-#if 0
+
 	if (showInfo) {
 		tf_showInfo();
 		goto cleanup;
 	}
-#endif
-
+#if 0
 	/* show scrape */
 	if (showScrape) {
 		tf_showScrape();
 		goto cleanup;
 	}
-
+#endif
 	/* start up transmission */
 
 	// check owner-arg
@@ -539,7 +538,7 @@ static void tf_showInfo(void) {
 
 	// vars
 	int i;
-	tr_info_t * info;
+	const tr_info_t * info;
 	const tr_stat_t * s;
 
 	// info
@@ -574,19 +573,23 @@ static void tf_showInfo(void) {
 /*******************************************************************************
  * tf_showScrape
  ******************************************************************************/
+ #if 0
 static void tf_showScrape(void) {
+
 	int seeders, leechers, downloaded;
 	if (tr_torrentScrape(tor, &seeders, &leechers, &downloaded))
 		printf("Scrape failed.\n");
 	else
 		printf("%d seeder(s), %d leecher(s), %d download(s).\n",
 				seeders, leechers, downloaded);
+
 }
+#endif
 
 /*******************************************************************************
  * tf_torrentStop
  ******************************************************************************/
-static void tf_torrentStop(tr_handle_t * h, tr_info_t * info) {
+static void tf_torrentStop(tr_handle_t * h, const tr_info_t * info) {
 
 	// vars
 	int i;
@@ -834,7 +837,8 @@ static int tf_execCommand(tr_handle_t *h, char *s) {
 			uploadLimit = atoi(workload);
 			tf_print(sprintf(tf_message,
 				"command: setting upload-rate to %d...\n", uploadLimit));
-			tr_setGlobalUploadLimit(h, uploadLimit);
+			tr_setGlobalSpeedLimit   ( h, TR_UP,   uploadLimit );
+		    tr_setUseGlobalSpeedLimit( h, TR_UP,   uploadLimit > 0 );
 			return 0;
 
 		// d
@@ -847,7 +851,8 @@ static int tf_execCommand(tr_handle_t *h, char *s) {
 			downloadLimit = atoi(workload);
 			tf_print(sprintf(tf_message,
 				"command: setting download-rate to %d...\n", downloadLimit));
-			tr_setGlobalDownloadLimit(h, downloadLimit);
+		    tr_setGlobalSpeedLimit   ( h, TR_DOWN, downloadLimit );
+		    tr_setUseGlobalSpeedLimit( h, TR_DOWN, downloadLimit > 0 );
 			return 0;
 
 		// w

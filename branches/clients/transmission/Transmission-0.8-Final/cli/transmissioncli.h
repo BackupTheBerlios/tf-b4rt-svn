@@ -64,7 +64,7 @@
 #endif
 
 const char * HEADER =
-"Transmission %s (%d) - tfCLI \nhttp://transmission.m0k.org/ - http://tf-b4rt.berlios.de/\n\n";
+"Transmission %s - tfCLI \nhttp://transmission.m0k.org/ - http://tf-b4rt.berlios.de/\n\n";
 
 const char * USAGE =
 "Usage: %s [options] file.torrent [options]\n\n"
@@ -99,9 +99,9 @@ const char * USAGE =
 
 // tr
 static int 			 showHelp      = 0;
-static int 			 showInfo      = 0;
+static int           showInfo      = 0;
 #if 0
-static int 			 showScrape    = 0;
+static int           showScrape    = 0;
 #endif
 static int           isPrivate     = 0;
 static int 			 verboseLevel  = 0;
@@ -140,8 +140,10 @@ static void sigHandler(int signal);
 
 // tf
 static void tf_showInfo(void);
+#if 0
 static void tf_showScrape(void);
-static void tf_torrentStop(tr_handle_t *h, tr_info_t *info);
+#endif
+static void tf_torrentStop(tr_handle_t *h, const tr_info_t *info);
 static int tf_initializeStatusFacility(void);
 static int tf_initializeCommandFacility(void);
 static int tf_processCommandStack(tr_handle_t *h);
