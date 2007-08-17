@@ -13,6 +13,7 @@ STRING=0.80
 PEERID_PREFIX="-TR0800-"
 USERAGENT_PREFIX="0.80"
 SVN_REVISION="2641"
+REV="2641"
   
 # Generate files to be included: only overwrite them if changed so make
 # won't rebuild everything unless necessary
