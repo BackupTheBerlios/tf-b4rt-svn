@@ -865,12 +865,12 @@ static int tf_execCommand(tr_handle_t *h, char *s) {
 			switch (workload[0]) {
 				case '0':
 					tf_print(sprintf(tf_message,
-						"command: command: setting die-when-done to 0\n"));
+						"command: setting die-when-done to 0\n"));
 					tf_dieWhenDone = 0;
 					return 0;
 				case '1':
 					tf_print(sprintf(tf_message,
-						"command: command: setting die-when-done to 1\n"));
+						"command: setting die-when-done to 1\n"));
 					tf_dieWhenDone = 1;
 					return 0;
 				default:
@@ -880,8 +880,8 @@ static int tf_execCommand(tr_handle_t *h, char *s) {
 			}
 			return 0;
 
-		// s
-		case 's':
+		// l
+		case 'l':
 			if (strlen(workload) < 1) {
 				tf_print(sprintf(tf_message,
 					"invalid sharekill.\n"));
