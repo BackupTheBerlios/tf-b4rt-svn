@@ -2,57 +2,35 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<title><tmpl_var name="pagetitle"></title>
-	<link rel="StyleSheet" href="themes/default/css/default.css" type="text/css" />
-	<meta http-equiv="pragma" content="no-cache" />
-	<meta content="charset=iso-8859-1" />
+	<link rel="icon" href="themes/<tmpl_var name="theme">/images/favicon.ico" type="image/x-icon" />
+	<link rel="shortcut icon" href="themes/<tmpl_var name="theme">/images/favicon.ico" type="image/x-icon" />
+	<link rel="stylesheet" href="themes/<tmpl_var name="theme">/css/default.css" type="text/css" />
+	<meta http-equiv="content-type" content="text/html;charset=iso-8859-1" />
+	<meta http-equiv="Pragma" content="no-cache;" />
 </head>
-<body bgcolor="#829FB5">
-<br /><br /><br />
-<div align="center">
-	<table border="1" bordercolor="#A2BED4" cellpadding="0" cellspacing="0">
+<body style="text-align:center;">
+	<table class="table" style="text-align:left;width:70%;margin:75px auto auto auto;" cellspacing="0">
+	<thead>
 		<tr>
-			<td>
-			<table border="0" cellpadding="4" cellspacing="0" width="100%">
-				<tr>
-					<td align="left" background="themes/default/images/bar.gif" bgcolor="#829FB5">
-						<font color="red"><strong>Error<strong></font>
-					</td>
-				</tr>
-			</table>
+			<td style="font-weight:bold;color:#FF0000;" class="tableheading">Error - <tmpl_var name="message"></td>
+		</tr>
+	</thead>
+	<tbody>
+		<tmpl_if name="messages">
+		<tr>
+			<td style="text-align:left;padding:6px;" class="tablecontent">
+				<tmpl_var name="messages">
 			</td>
 		</tr>
+		</tmpl_if>
+		<tmpl_if name="link">
 		<tr>
-			<td bgcolor="#A2BED4">
-				<div align="center">
-					<table width="100%" bgcolor="#A2BED4">
-						<tr>
-							<td>
-								<table bgcolor="#A2BED4" width="740" cellpadding="1">
-									<tr>
-										<td>
-											<div align="center">
-												<table border="0" cellpadding="4" cellspacing="0" width="90%">
-													<tr>
-														<td>
-															<strong><tmpl_var name="message"></strong>
-															<tmpl_if name="messages">
-																<p><div align="left"><pre><tmpl_var name="messages"></pre></div></p>
-															</tmpl_if>
-															<tmpl_if name="link">
-																<p>[<a href="<tmpl_var name="link">"><tmpl_var name="linklabel"></a>]</p>
-															</tmpl_if>
-														</td>
-													</tr>
-												</table>
-											</div>
-										</td>
-									</tr>
-								</table>
-							</td>
-						</tr>
-					</table>
-				</div>
+			<td style="text-align:center;padding:0px 6px 6px 6px" class="tablecontent">
+				[<a href="<tmpl_var name="link">"><tmpl_var name="linklabel"></a>]
 			</td>
 		</tr>
+		</tmpl_if>
+	</tbody>
 	</table>
-</div>
+</body>
+</html>
