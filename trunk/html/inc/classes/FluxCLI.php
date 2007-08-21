@@ -1269,7 +1269,8 @@ class FluxCLI
 		// initialize service-mod (why here ? see "fluxd-single-thread-problem")
 		FluxdServiceMod::initializeServiceMod('Qmgr');
 		require_once("inc/classes/MaintenanceAndRepair.php");
-		MaintenanceAndRepair::maintenance($trestart);
+		MaintenanceAndRepair::maintenance(
+			$trestart ? MAINTENANCEANDREPAIR_TYPE_EXT : MAINTENANCEANDREPAIR_TYPE_STD);
 		return true;
 	}
 

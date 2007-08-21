@@ -249,7 +249,7 @@ function sa_maintenance($action = "") {
 			$htmlMain .= '<br>';
 			$htmlMain .= 'Standard Maintenance Run: ';
 			require_once("inc/classes/MaintenanceAndRepair.php");
-			MaintenanceAndRepair::maintenance(false);
+			MaintenanceAndRepair::maintenance(MAINTENANCEANDREPAIR_TYPE_STD);
 			$htmlMain .= ' <font color="green">done</font>';
 			$htmlMain .= '<br><br>';
 			break;
@@ -259,7 +259,7 @@ function sa_maintenance($action = "") {
 			$htmlMain .= '<br>';
 			$htmlMain .= 'Extended Maintenance Run: ';
 			require_once("inc/classes/MaintenanceAndRepair.php");
-			MaintenanceAndRepair::maintenance(true);
+			MaintenanceAndRepair::maintenance(MAINTENANCEANDREPAIR_TYPE_EXT);
 			$htmlMain .= ' <font color="green">done</font>';
 			$htmlMain .= '<br><br>';
 			break;

@@ -29,6 +29,11 @@ define('MAINTENANCEANDREPAIR_STATE_ERROR', -1);                         // error
 define('MAINTENANCEANDREPAIR_MODE_CLI', 1);                               // cli
 define('MAINTENANCEANDREPAIR_MODE_WEB', 2);                               // web
 
+// types
+define('MAINTENANCEANDREPAIR_TYPE_INT', 0);                          // internal
+define('MAINTENANCEANDREPAIR_TYPE_STD', 1);                          // standard
+define('MAINTENANCEANDREPAIR_TYPE_EXT', 2);                          // extended
+
 /**
  * MaintenanceAndRepair
  */
@@ -114,12 +119,12 @@ class MaintenanceAndRepair
 	 *
 	 * @param $trestart
 	 */
-	function maintenance($trestart = false) {
+	function maintenance($type = MAINTENANCEANDREPAIR_TYPE_STD) {
 		global $instanceMaintenanceAndRepair;
 		// initialize
 		MaintenanceAndRepair::initialize();
 		// maintenance run
-		$instanceMaintenanceAndRepair->instance_maintenance($trestart);
+		$instanceMaintenanceAndRepair->instance_maintenance($type);
 	}
 
 	/**
@@ -161,17 +166,24 @@ class MaintenanceAndRepair
 	 *
 	 * @param $trestart
 	 */
-	function instance_maintenance($trestart = false) {
+	function instance_maintenance($type = MAINTENANCEANDREPAIR_TYPE_STD) {
     	// (re)set state
     	$this->state = MAINTENANCEANDREPAIR_STATE_NULL;
 		// output
 		$this->_outputMessage("Running Maintenance...\n");
-		// fluxd
-		$this->_maintenanceFluxd();
-		// transfers
-		$this->_maintenanceTransfers($trestart);
-		// database
-		$this->_maintenanceDatabase();
+
+		if ($type == MAINTENANCEANDREPAIR_TYPE_INT) {
+			// prune database
+			$this->_maintenanceDatabasePrune();
+		} else {
+			// fluxd
+			$this->_maintenanceFluxd();
+			// transfers
+			$this->_maintenanceTransfers($type == MAINTENANCEANDREPAIR_TYPE_EXT);
+			// database
+			$this->_maintenanceDatabase();
+		}
+
 		// output
 		$this->_outputMessage("Maintenance done.\n");
 		// state

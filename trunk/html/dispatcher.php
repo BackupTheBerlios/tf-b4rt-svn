@@ -102,7 +102,8 @@ switch ($action) {
  ******************************************************************************/
     case "maintenance":
 		require_once("inc/classes/MaintenanceAndRepair.php");
-		MaintenanceAndRepair::maintenance((tfb_getRequestVar('trestart') == "true") ? true : false);
+		MaintenanceAndRepair::maintenance((tfb_getRequestVar('trestart') == "true") ?
+			MAINTENANCEANDREPAIR_TYPE_EXT : MAINTENANCEANDREPAIR_TYPE_STD);
 		// set transfers-cache
 		cacheTransfersSet();
     	break;

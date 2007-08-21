@@ -187,7 +187,8 @@ if (!cacheIsSet($currentUser)) {
 
 		// maintenance-run
 		require_once("inc/classes/MaintenanceAndRepair.php");
-		MaintenanceAndRepair::maintenance(false);
+		MaintenanceAndRepair::maintenance(MAINTENANCEANDREPAIR_TYPE_STD);
+		$_SESSION['next_int_maintenance'] = null;
 
 		// set flag
 		$_SESSION['login_tasks'] = 1;
@@ -212,7 +213,19 @@ else
 	// Check for valid theme
 	if(isset($cfg["theme"]))
 		$cfg["theme"] = CheckandSetUserTheme();
+
+	// Run internal maintenance regularly
+	if (!empty($_SESSION['next_int_maintenance']) && $_SESSION['next_int_maintenance'] < time()) {
+		require_once("inc/classes/MaintenanceAndRepair.php");
+		MaintenanceAndRepair::maintenance(MAINTENANCEANDREPAIR_TYPE_INT);
+		$_SESSION['next_int_maintenance'] = null;
+	}
 }
+
+// schedule next internal maintenance if needed
+if (empty($_SESSION['next_int_maintenance']))
+	$_SESSION['next_int_maintenance'] = time() + 2 * 3600 + mt_rand(-1200, 1200);	// 2h (+/- 20m)
+
 // free space in MB var
 $cfg["free_space"] = @disk_free_space($cfg["path"]) / 1048576;
 
