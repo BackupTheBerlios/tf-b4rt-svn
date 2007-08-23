@@ -696,10 +696,29 @@ class SimpleHTTP
 					// return empty data:
 					return($data="");
 				}
+			// torrentspy
+			} elseif (strpos(strtolower($domain["host"]), "torrentspy") !== false) {
+				// Sample (http://torrentspy.com/rss.asp):
+				// http://www.torrentspy.com/torrent/1166188/gentoo_livedvd_i686_installer_2007_0
+				$treferer = "http://" . $domain["host"] . "/download.asp?id=";
+				$data = $this->instance_getData($durl, $treferer);
+				// If received a /download.asp?, a /directory.asp?mode=torrentdetails
+				// or a /torrent/, extract real torrent link
+				if (
+					strpos($durl, "/download.asp?") !== false ||
+					strpos($durl, "/directory.asp?mode=torrentdetails") !== false ||
+					strpos($durl, "/torrent/") !== false
+					) {
+					// Check for the tag used in download details page
+					if (preg_match("#<a\s+id=\"downloadlink0\"[^>]*?\s+href=\"(http[^\"]+)\"#i", $data, $data_preg_match)) {
+						// This is the real torrent download link
+						$durl = $data_preg_match[1];
+						// Follow it
+						$data = $this->instance_getData($durl);
+					}
+				}
 			// download.asp
 			} elseif (strpos(strtolower($durl), "download.asp?") !== false) {
-				// Sample (TF's TorrentSpy Search):
-				// http://www.torrentspy.com/download.asp?id=519793
 				$treferer = "http://" . $domain["host"] . "/download.asp?id=";
 				$data = $this->instance_getData($durl, $treferer);
 			// default
