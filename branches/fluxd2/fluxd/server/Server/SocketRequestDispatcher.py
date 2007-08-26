@@ -110,8 +110,6 @@ class SocketRequestDispatcher(object):
                 self.logger.error("failed to process queue (%s) (%s)" % (self.__name, e))
                 # running-flag
                 self.__running = False
-                # commit in queue
-                self.__queueResult.task_done()
 
         # shutdown
         self.shutdown()
@@ -272,9 +270,6 @@ class SocketRequestDispatcher(object):
 
             # running-flag
             self.__running = False
-
-            # commit in queue
-            self.__queueResult.task_done()
 
     """ -------------------------------------------------------------------- """
     """ recvall                                                              """
