@@ -22,6 +22,7 @@
 ################################################################################
 # standard-imports
 import os
+import popen2
 from threading import Lock
 # fluxd-imports
 from fluxd.Config import Config
@@ -94,28 +95,29 @@ class Fluxcli(IActivator):
             # unshift fluxcli-arg
             args.insert(0, '%s%s' % (Config().get('dir', 'docroot').strip(), "bin/fluxcli.php"))
 
-            # php
+            # unshift php-arg (command is invoked thru an args
+            # list, not by building a string command-line given
+            # to a shell -- this avoids any quoting troubles)
             php = Config().get('file', 'php').strip()
+            args.insert(0, php)
+
+            # log pseudo-cmdline (see above, php is not actually invoked that way)
+            self.logger.debug(' '.join([("'%s'" % arg) for arg in args]))
 
             # open
             if readResult:
-                # build command
-                cmd = php
-                for arg in args:
-                    cmd += " '%s'" % arg
-                # log command
-                self.logger.debug(cmd)
-                # invoke
-                p = os.popen(cmd)
-                result = p.read()
-                p.close()
+                # invoke (use popen2.Popen3 directly to be able to reap
+                # child correctly -- using os.popen2 leaves zombies)
+                p = popen2.Popen3(args)
+                p.tochild.close()
+                result = p.fromchild.read()
+                p.fromchild.close()
+                p.wait()
                 # return result
                 return result
 
             # spawn
             else:
-                # log
-                self.logger.debug(php)
                 # invoke and return bool
                 return (os.spawnv(os.P_WAIT, php, args) == 0)
 
