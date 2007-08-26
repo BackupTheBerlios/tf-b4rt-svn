@@ -27,6 +27,7 @@ from fluxd.Config import Config
 from fluxd.interfaces.IActivator import IActivator
 from fluxd.activator.Activator import Activator
 from fluxd.functions.generic import getClassByName
+from fluxd.functions.string import isTrue
 from fluxd.decorators.synchronized import synchronized
 from fluxd.interfaces.IModule import IModule
 ################################################################################
@@ -91,7 +92,7 @@ class ModuleManager(IActivator):
                 names = Config().get('modules', 'Modules').strip().split(',')
                 for name in names:
                     name = name.strip()
-                    if Config().get(name, 'enabled').strip() == 'True':
+                    if isTrue(Config().getExt(name, 'enabled').strip()):
                         try:
                             # check if exists
                             if ModuleManager.Modules.has_key(name):
@@ -105,7 +106,7 @@ class ModuleManager(IActivator):
             # start single module
             else:
                 self.logger.info('Starting Module %s...' % name)
-                if Config().get(name, 'enabled').strip() == 'True':
+                if isTrue(Config().getExt(name, 'enabled').strip()):
                     try:
                         # check if exists
                         if ModuleManager.Modules.has_key(name):

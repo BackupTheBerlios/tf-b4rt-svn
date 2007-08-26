@@ -27,6 +27,7 @@ from fluxd.Config import Config
 from fluxd.interfaces.IActivator import IActivator
 from fluxd.activator.Activator import Activator
 from fluxd.functions.generic import getClassByName
+from fluxd.functions.string import isTrue
 from fluxd.decorators.synchronized import synchronized
 from fluxd.interfaces.IServer import IServer
 ################################################################################
@@ -91,7 +92,7 @@ class ServerManager(IActivator):
                 serverNames = Config().get('server', 'Servers').strip().split(',')
                 for name in serverNames:
                     name = name.strip()
-                    if Config().get(name, 'enabled').strip() == 'True':
+                    if isTrue(Config().getExt(name, 'enabled').strip()):
                         try:
                             # check if exists
                             if ServerManager.Servers.has_key(name):
@@ -105,7 +106,7 @@ class ServerManager(IActivator):
             # start single server
             else:
                 self.logger.info('Starting Server %s...' % name)
-                if Config().get(name, 'enabled').strip() == 'True':
+                if isTrue(Config().getExt(name, 'enabled').strip()):
                     try:
                         # check if exists
                         if ServerManager.Servers.has_key(name):

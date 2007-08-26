@@ -26,6 +26,7 @@ from threading import Lock
 # fluxd-imports
 from fluxd.Config import Config
 from fluxd.activator.Activator import Activator
+from fluxd.functions.string import isTrue
 from fluxd.modules.Modules.BasicModule import BasicModule
 from fluxd.decorators.synchronized import synchronized
 ################################################################################
@@ -54,7 +55,7 @@ class Maintenance(BasicModule):
 
         # restart
         self.restart = 'false'
-        if Config().getExt(name, 'restart').strip() == '1':
+        if isTrue(Config().getExt(name, 'restart').strip()):
             self.restart = 'true'
 
         # invocation-count
