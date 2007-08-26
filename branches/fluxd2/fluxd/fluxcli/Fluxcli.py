@@ -50,6 +50,9 @@ class Fluxcli(IActivator):
     # lock
     InstanceLock = Lock()
 
+    # path (relative to docroot)
+    Path = 'bin/fluxcli.php'
+
     """ -------------------------------------------------------------------- """
     """ __new__                                                              """
     """ -------------------------------------------------------------------- """
@@ -79,6 +82,12 @@ class Fluxcli(IActivator):
         return self.__name
 
     """ -------------------------------------------------------------------- """
+    """ getPath                                                              """
+    """ -------------------------------------------------------------------- """
+    def getPath(self):
+        return '%s%s' % (Config().get('dir', 'docroot').strip(), Fluxcli.Path)
+
+    """ -------------------------------------------------------------------- """
     """ invoke                                                               """
     """ -------------------------------------------------------------------- """
     @synchronized(InstanceLock)
@@ -93,7 +102,7 @@ class Fluxcli(IActivator):
         try:
 
             # unshift fluxcli-arg
-            args.insert(0, '%s%s' % (Config().get('dir', 'docroot').strip(), "bin/fluxcli.php"))
+            args.insert(0, self.getPath())
 
             # unshift php-arg (command is invoked thru an args
             # list, not by building a string command-line given

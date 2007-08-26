@@ -80,11 +80,11 @@ def defaultConfig():
 
 	# modules
 	configParser.add_section('modules')
-	configParser.set('modules', 'Modules', 'Dummy, Maintenance, Rssad, Watch')
+	configParser.set('modules', 'Modules', 'Dummy, Maintenance, Rssad, Watch, Trigger')
 
 	# Dummy
 	configParser.add_section('Dummy')
-	configParser.set('Dummy', 'enabled', 'True')
+	configParser.set('Dummy', 'enabled', 'False')
 	configParser.set('Dummy', 'module', 'fluxd.modules.Modules.Dummy')
 	configParser.set('Dummy', 'class', 'Dummy')
 
@@ -111,6 +111,14 @@ def defaultConfig():
 	configParser.set('Watch', 'class', 'Watch')
 	configParser.set('Watch', 'interval', 'DB:fluxd_Watch_interval')
 	configParser.set('Watch', 'jobs', 'DB:fluxd_Watch_jobs')
+
+	# Trigger
+	configParser.add_section('Trigger')
+	configParser.set('Trigger', 'enabled', 'False')
+	configParser.set('Trigger', 'module', 'fluxd.modules.Modules.Trigger')
+	configParser.set('Trigger', 'class', 'Trigger')
+	configParser.set('Trigger', 'interval', 'DB:fluxd_Trigger_interval')
+	configParser.set('Trigger', 'cmd-OnDownloadCompleted', 'echo \[%CURDATE%\] Transfer %TRANSFER% completed for user %OWNER% >> %FLUXD%transfers.log')
 
 	# return
 	return configParser
