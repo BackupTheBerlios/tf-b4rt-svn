@@ -69,7 +69,13 @@ const char * USAGE =
 "  -s, --scrape         Print counts of seeders/leechers and exit\n"
 #endif
 "  -u, --upload <int>   Maximum upload rate (-1 = no limit, default = 20)\n"
-"  -v, --verbose <int>  Verbose level (0 to 2, default = 0)\n";
+"  -v, --verbose <int>  Verbose level (0 to 2, default = 0)\n"
+"\nTorrentflux Commands:\n"
+"  -e, --display-interval <int> Time between updates of stat-file (default = %d)\n"
+"  -l, --seedlimit <int> Seed-Limit (Percent) to reach before shutdown\n"
+"                        (0 = seed forever, -1 = no seeding, default = %d)\n"
+"  -o, --owner <string> Name of the owner (default = 'n/a')\n"
+"  -w, --die-when-done  Auto-Shutdown when done (0 = Off, 1 = On, default = %d)\n";
 
 static int           showHelp      = 0;
 static int           showInfo      = 0;
@@ -91,8 +97,37 @@ static char          * announce     = NULL;
 static char          * sourceFile   = NULL;
 static char          * comment      = NULL;
 
+/* Torrentflux -START- */
+//static volatile char tf_shutdown = 0;
+static int           TOF_dieWhenDone     = 0; 
+static int           TOF_seedLimit       = 0;
+static int           TOF_displayInterval = 5;
+
+static char          * TOF_owner = NULL;
+//static char * tf_stat_file = NULL;
+//static FILE * tf_stat_fp = NULL;
+//static char * tf_cmd_file = NULL;
+//static FILE * tf_cmd_fp = NULL;
+/* -END- */
+
 static int  parseCommandLine ( int argc, char ** argv );
 static void sigHandler       ( int signal );
+
+/* Torrentflux -START- */
+static void tf_showInfo(void);
+#if 0
+static void tf_showScrape(void);
+#endif
+static void tf_torrentStop(tr_handle_t *h, const tr_info_t *info);
+static int tf_initializeStatusFacility(void);
+static int tf_initializeCommandFacility(void);
+static int tf_processCommandStack(tr_handle_t *h);
+static int tf_processCommandFile(tr_handle_t *h);
+static int tf_execCommand(tr_handle_t *h, char *s);
+static int tf_pidWrite(void);
+static int tf_pidDelete(void);
+static int TOF_print(char *printmsg);
+/* -END- */
 
 char * getStringRatio( float ratio )
 {
@@ -112,20 +147,29 @@ int main( int argc, char ** argv )
     tr_handle_t  * h;
     const tr_stat_t    * s;
     tr_handle_status_t * hstat;
+	
+	
+	// vars
+	static char TOF_message[512];
+	//const tr_info_t * info;
+	//double tf_sharing = 0.0;
+	//char tf_eta[80];
+	//int tf_seeders, tf_leechers;
+	
 
-    printf( "Transmission %s - http://transmission.m0k.org/\n\n",
+    printf( "Transmission %s - http://transmission.m0k.org/ - modified for Torrentflux\n\n",
             LONG_VERSION_STRING );
 
     /* Get options */
     if( parseCommandLine( argc, argv ) )
     {
-        printf( USAGE, argv[0], TR_DEFAULT_PORT );
+        printf( USAGE, argv[0], TR_DEFAULT_PORT, TOF_displayInterval, TOF_seedLimit, TOF_dieWhenDone );
         return EXIT_FAILURE;
     }
 
     if( showHelp )
     {
-        printf( USAGE, argv[0], TR_DEFAULT_PORT );
+        printf( USAGE, argv[0], TR_DEFAULT_PORT, TOF_displayInterval, TOF_seedLimit, TOF_dieWhenDone );
         return EXIT_SUCCESS;
     }
 
@@ -146,7 +190,9 @@ int main( int argc, char ** argv )
 
     if( bindPort < 1 || bindPort > 65535 )
     {
-        printf( "Invalid port '%d'\n", bindPort );
+		sprintf( TOF_message, "Invalid port '%d'\n", bindPort )
+        TOF_print( TOF_message );
+		//printf( "Invalid port '%d'\n", bindPort );
         return EXIT_FAILURE;
     }
 
@@ -170,7 +216,9 @@ int main( int argc, char ** argv )
     /* Open and parse torrent file */
     if( !( tor = tr_torrentInit( h, torrentPath, ".", 0, &error ) ) )
     {
-        printf( "Failed opening torrent file `%s'\n", torrentPath );
+        sprintf( TOF_message, "Failed opening torrent file '%s'\n", torrentPath )
+        TOF_print( TOF_message );
+		//printf( "Failed opening torrent file `%s'\n", torrentPath );
         tr_close( h );
         return EXIT_FAILURE;
     }
@@ -235,6 +283,52 @@ int main( int argc, char ** argv )
     }
 #endif
 
+	//* Torrentflux -START- */
+	if (TOF_owner == NULL) 
+	{
+		sprintf( TOF_message, "No owner supplied, using 'n/a'.\n" )
+        TOF_print( TOF_message );
+		
+		TOF_owner = "n/a";
+		/*
+		TOF_owner = malloc((4) * sizeof(char));
+		if (TOF_owner == NULL) {
+			tf_print(sprintf(tf_message,
+				"Error : not enough mem for malloc\n"));
+			goto cleanup;
+		}
+		strcpy(tf_owner, "n/a");
+		*/
+	}
+	
+	// Output for log
+	sprintf( TOF_message, "transmission starting up :\n" )
+    TOF_print( TOF_message );
+	sprintf( TOF_message, " - torrent : %s\n", torrentPath )
+    TOF_print( TOF_message );
+	sprintf( TOF_message, " - owner : %s\n", TOF_owner )
+    TOF_print( TOF_message );
+	sprintf( TOF_message, " - dieWhenDone : %d\n", TOF_dieWhenDone )
+    TOF_print( TOF_message );
+	sprintf( TOF_message, " - seedLimit : %d\n", TOF_seedLimit )
+    TOF_print( TOF_message );
+	sprintf( TOF_message, " - bindPort : %d\n", bindPort )
+    TOF_print( TOF_message );
+	sprintf( TOF_message, " - uploadLimit : %d\n", uploadLimit )
+    TOF_print( TOF_message );
+	sprintf( TOF_message, " - downloadLimit : %d\n", downloadLimit )
+    TOF_print( TOF_message );
+	sprintf( TOF_message, " - natTraversal : %d\n", natTraversal )
+    TOF_print( TOF_message );
+	sprintf( TOF_message, " - displayInterval : %d\n", tf_displayInterval )
+    TOF_print( TOF_message );
+	if (finishCall != NULL)
+	{
+		sprintf( TOF_message, " - finishCall : %s\n", finishCall )
+		TOF_print( TOF_message );
+	}	
+	/* -END- */
+	
     signal( SIGINT, sigHandler );
 
     tr_setBindPort( h, bindPort );
@@ -440,3 +534,24 @@ static void sigHandler( int signal )
             break;
     }
 }
+
+/* Torrentflux -START- */
+static int TOF_print(char *printmsg) 
+{
+	time_t rawtime;
+	struct tm * timeinfo;
+	time(&rawtime);
+	timeinfo = localtime(&rawtime);
+
+	return fprintf(stderr, "[%4d/%02d/%02d - %02d:%02d:%02d] %s",
+		timeinfo->tm_year + 1900,
+		timeinfo->tm_mon + 1,
+		timeinfo->tm_mday,
+		timeinfo->tm_hour,
+		timeinfo->tm_min,
+		timeinfo->tm_sec,
+		((printmsg != NULL) && (strlen(printmsg) > 0)) ? printmsg : ""
+	);
+}
+
+/* -END- */
