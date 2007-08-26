@@ -90,9 +90,9 @@ class StatFile(object):
                     self.downtotal = content[11].strip()
                     self.size = content[12].strip()
                 else:
-                    raise Exception, "StatFile::initialize: Failed to parse file %s (%s)" % (self.file, e)
+                    raise Exception, "StatFile::initialize: Failed to parse file %s" % (self.file)
 
-            except:
+            except Exception, e:
                 raise Exception, "StatFile::initialize: Failed to read file %s (%s)" % (self.file, e)
 
         else:
