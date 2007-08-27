@@ -119,6 +119,7 @@ def defaultConfig():
 	configParser.set('Trigger', 'class', 'Trigger')
 	configParser.set('Trigger', 'interval', 'DB:fluxd_Trigger_interval')
 	configParser.set('Trigger', 'cmd-OnDownloadCompleted', 'echo \[%CURDATE%\] Transfer %TRANSFER% completed for user %OWNER% >> %FLUXD%transfers.log')
+	configParser.set('Trigger', 'cmd-OnSeedingStopped', 'echo \[%CURDATE%\] Transfer %TRANSFER% stopped for user %OWNER% >> %FLUXD%transfers.log')
 
 	# return
 	return configParser

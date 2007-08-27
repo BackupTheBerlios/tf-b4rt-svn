@@ -46,7 +46,8 @@ class Trigger(BasicModule):
 
     # events
     Events = [
-        'OnDownloadCompleted',
+        'OnDownloadCompleted',  # For all transfer types.
+        'OnSeedingStopped',     # For torrents only.
     ]
 
     # params
@@ -59,7 +60,8 @@ class Trigger(BasicModule):
     Param_OWNER    = ParamPrefix + 'OWNER'      # Transfer owner.
     Param_PATH     = ParamPrefix + 'PATH'       # Transfer parent path (dir.pathTf).
     Param_PHP      = ParamPrefix + 'PHP'        # php-cli path (the one to use for fluxcli invocations).
-    Param_TRANSFER = ParamPrefix + 'TRANSFER'   # Name of transfer.
+    Param_TRANSFER = ParamPrefix + 'TRANSFER'   # Transfer name.
+    Param_TYPE     = ParamPrefix + 'TYPE'       # Transfer type (torrent, wget, nzb, unknown).
 
     # path
     TransfersPath = '.transfers/'
@@ -232,14 +234,14 @@ class Trigger(BasicModule):
         for statfile in glob.glob(self.transfersPath + '*.stat'):
 
             # extract transfer name,
-            transfername = os.path.splitext(os.path.basename(statfile))[0]
+            name = os.path.splitext(os.path.basename(statfile))[0]
 
             # and load stat file.
             try:
-                ret[transfername] = StatFile(statfile)
+                ret[name] = StatFile(statfile)
             except Exception, e:
-                self.logger.warning("Error when loading transfer state (%s)" % e)
-                ret[transfername] = False
+                self.logger.warning("Error loading state for transfer %s (%s)" % (name, e))
+                ret[name] = False
 
         return ret
 
@@ -252,19 +254,19 @@ class Trigger(BasicModule):
         if old is None or new is None: return
 
         # For every current transfer,
-        for transfername, newstatfile in new.iteritems():
+        for name, newstatfile in new.iteritems():
 
             # try and get its old state,
-            if transfername in old:
-                oldstatfile = old[transfername]
+            if name in old:
+                oldstatfile = old[name]
             else:
                 oldstatfile = None
 
             # and detect changes for this transfer.
             try:
-                self._detectChangesOne(transfername, oldstatfile, newstatfile)
+                self._detectChangesOne(name, oldstatfile, newstatfile)
             except Exception, e:
-                self.logger.error("Error checking transfer %s (%s)" % (transfername, e))
+                self.logger.error("Error checking transfer %s (%s)" % (name, e))
 
     """ -------------------------------------------------------------------- """
     """ _detectChangesOne                                                    """
@@ -273,6 +275,11 @@ class Trigger(BasicModule):
 
         # On error, don't do anything.
         if old == False or new == False: return
+
+        # Extract type from transfer name.
+        type = os.path.splitext(name)[1][1:]
+        if type not in ('torrent', 'wget', 'nzb'):
+            type = 'unknown'
 
         # Extract running, percent_done and downtotal values.
         if old is not None:
@@ -293,12 +300,21 @@ class Trigger(BasicModule):
         if old_percent_done < 100. and \
            new_running in (0, 1) and new_percent_done == 100. and \
            new_downtotal > 0L:
-            self._fireEvent('OnDownloadCompleted', name, old, new)
+            self._fireEvent('OnDownloadCompleted', name, type, old, new)
+
+        # OnSeedingStopped:
+        #   * torrents only
+        #   * transition of (running, percent_done)
+        #       from (!0, *) to (0, 100)
+        if type == 'torrent' and \
+           old_running != 0 and \
+           new_running == 0 and new_percent_done == 100.:
+            self._fireEvent('OnSeedingStopped', name, type, old, new)
 
     """ -------------------------------------------------------------------- """
     """ _fireEvent                                                           """
     """ -------------------------------------------------------------------- """
-    def _fireEvent(self, event, name, old, new):
+    def _fireEvent(self, event, name, type, old, new):
 
         # Get command.
         if event not in self.commands:
@@ -314,14 +330,14 @@ class Trigger(BasicModule):
 
         # And fire event.
         try:
-            self._fireEventCore(event, name, old, new, command)
+            self._fireEventCore(event, name, type, old, new, command)
         except Exception, e:
             self.logger.warning("Error running %s command for transfer %s (%s)" % (event, name, e))
 
     """ -------------------------------------------------------------------- """
     """ _fireEventCore                                                       """
     """ -------------------------------------------------------------------- """
-    def _fireEventCore(self, event, name, old, new, command):
+    def _fireEventCore(self, event, name, type, old, new, command):
 
         # Store transfer parent path, will be command's cwd for convenience.
         pathTf = Config().get('dir', 'pathTf').strip()
@@ -337,6 +353,7 @@ class Trigger(BasicModule):
         params[Trigger.Param_PATH]     = pathTf
         params[Trigger.Param_PHP]      = Config().get('file', 'php').strip()
         params[Trigger.Param_TRANSFER] = name
+        params[Trigger.Param_TYPE]     = type
 
         # Prepare command (replace params).
         command = self._prepareCommand(command, params)
