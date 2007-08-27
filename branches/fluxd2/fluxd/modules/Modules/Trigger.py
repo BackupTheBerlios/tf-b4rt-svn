@@ -23,7 +23,6 @@
 # standard-imports
 import os
 import glob
-import re
 import time
 from threading import Lock
 # fluxd-imports
@@ -355,48 +354,9 @@ class Trigger(BasicModule):
         params[Trigger.Param_TRANSFER] = name
         params[Trigger.Param_TYPE]     = type
 
-        # Prepare command (replace params).
-        command = self._prepareCommand(command, params)
-
         # Prepare environment (clean up and add params).
         env = dict([(k, v) for k, v in os.environ.iteritems() if not k.startswith(Trigger.ParamPrefix)])
         env.update(params)
 
         # Run command.
         bgShellCmd(self.logger, self.name + ':' + event, command, pathTf, env)
-
-    """ -------------------------------------------------------------------- """
-    """ _prepareCommand                                                      """
-    """ -------------------------------------------------------------------- """
-    def _prepareCommand(self, command, params):
-
-        # Go from beginning to end, stopping at each '%', and test
-        # if it is a %PARAMNAME% construct, PARAMNAME being valid.
-        # If yes replace it, otherwise leave it alone.
-
-        # Find beginning of first param.
-        start = command.find('%')
-        while start != -1:
-
-            # Find end of param.
-            start += 1
-            end = command.find('%', start)
-            if end == -1: break
-
-            # Extract param name.
-            name = Trigger.ParamPrefix + command[start:end]
-
-            if name in params:
-                # Valid param, replace it by shell-escaped version of param's
-                # value (re.escape does more than needed, but it does the job).
-                value = re.escape(params[name])
-                start -= 1
-                command = command[:start] + value + command[end+1:]
-                # Find beginning of next param.
-                start = command.find('%', start + len(value))
-
-            else:
-                # Not a valid param, skip it.
-                start = end
-
-        return command
