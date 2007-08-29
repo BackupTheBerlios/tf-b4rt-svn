@@ -260,7 +260,11 @@ if dopal.__dopal_mode__ == 1:
         raise RuntimeError, 'difference in class sizes'
 
 # We do more to generate a nice docstring in epydoc mode.
-if dopal.__dopal_mode__ == 2:
+# Bugfix for tf-b4rt: don't try to use/change __doc__ if it's
+# empty, which is the case if Python was invoked with -OO
+# (except for early Python 2.5 releases where -OO is broken:
+# http://mail.python.org/pipermail/python-bugs-list/2007-June/038590.html).
+if __doc__ is not None and dopal.__dopal_mode__ == 2:
     grouped_classes = {}
     for package_name, class_name in azureus_class_list:
         grouped_classes.setdefault(package_name, []).append(class_name)

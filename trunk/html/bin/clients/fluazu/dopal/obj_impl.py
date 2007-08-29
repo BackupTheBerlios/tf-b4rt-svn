@@ -300,20 +300,27 @@ for az_class in STANDARD_CLASS_MAP.values():
 del az_class
 
 
-# Amend the docstring to contain all the object types defined.
-doc_string_sub_dict = {}
-for class_map_dict, dict_entry in [
-    (STANDARD_CLASS_MAP, 'standard_classes'),
-    (DOPAL_CLASS_MAP, 'dopal_classes'),
-]:
-    cls = None
-    classes_in_map = [cls.__name__ for cls in class_map_dict.values()]
-    classes_in_map.sort()
-    doc_string_sub_dict[dict_entry] = ', '.join(classes_in_map)
-    del classes_in_map, cls
+# Bugfix for tf-b4rt: don't try to use/change __doc__ if it's
+# empty, which is the case if Python was invoked with -OO
+# (except for early Python 2.5 releases where -OO is broken:
+# http://mail.python.org/pipermail/python-bugs-list/2007-June/038590.html).
+if __doc__ is not None:
 
-__doc__ = __doc__ % doc_string_sub_dict
-del doc_string_sub_dict
+    # Amend the docstring to contain all the object types defined.
+    doc_string_sub_dict = {}
+    for class_map_dict, dict_entry in [
+        (STANDARD_CLASS_MAP, 'standard_classes'),
+        (DOPAL_CLASS_MAP, 'dopal_classes'),
+    ]:
+        cls = None
+        classes_in_map = [cls.__name__ for cls in class_map_dict.values()]
+        classes_in_map.sort()
+        doc_string_sub_dict[dict_entry] = ', '.join(classes_in_map)
+        del classes_in_map, cls
+
+    __doc__ = __doc__ % doc_string_sub_dict
+    del doc_string_sub_dict
+
 del __epydoc_mode
 
 STANDARD_CLASS_MAP[None] = DOPAL_CLASS_MAP[None] = TypelessRemoteObject
