@@ -50,7 +50,7 @@ $tmpl->setvar('path_incoming', $cfg["path_incoming"]);
 $tmpl->setvar('path_incoming_ok', (checkDirectory($cfg["path"].$cfg["path_incoming"], 0777)) ? 1 : 0);
 // bins
 $tmpl->setvar('btclient_transmission_bin', $cfg["btclient_transmission_bin"]);
-$tmpl->setvar('validate_transmission_bin', validateBinary($cfg["btclient_transmission_bin"]));
+$tmpl->setvar('validate_transmission_bin', validateTransmissionCli($cfg["btclient_transmission_bin"]));
 $tmpl->setvar('perlCmd', $cfg["perlCmd"]);
 $tmpl->setvar('validate_perl', validateBinary($cfg["perlCmd"]));
 $tmpl->setvar('bin_grep', $cfg["bin_grep"]);
