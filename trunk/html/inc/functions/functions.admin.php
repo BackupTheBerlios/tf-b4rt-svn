@@ -764,16 +764,30 @@ function tmplSetUserSection() {
 }
 
 /**
+ * Returns the status image after a validation
+ *
+ * @param $ok bool
+ * @param $msg string
+ * @return string
+ */
+function validationMsg($ok, $msg = null) {
+	global $cfg;
+	return
+		'<img src="themes/'.$cfg['theme'].'/images/'.($ok ? 'green.gif' : 'red.gif').
+		'" align="absmiddle" title="'.(!empty($msg) ? $msg : $ok ? 'Valid' : 'Invalid').'">'.
+		(empty($msg) ? '' : ('<br><font color="'.($ok ? '#008000' : '#ff0000').'">'.$msg.'</font>'));
+}
+
+/**
  * Validates the existence of a file and returns the status image
  *
  * @param $the_file
  * @return string
  */
 function validateFile($the_file) {
-	global $cfg;
-	return (isFile($the_file))
-		? '<img src="themes/'.$cfg['theme'].'/images/green.gif" align="absmiddle" title="Valid">'
-		: '<img src="themes/'.$cfg['theme'].'/images/red.gif" align="absmiddle" title="Path is not Valid"><br><font color="#ff0000">Path is not Valid</font>';
+	if (!isFile($the_file))
+		return validationMsg(false, 'Path is not valid');
+	return validationMsg(true);
 }
 
 /**
@@ -783,13 +797,11 @@ function validateFile($the_file) {
  * @return string
  */
 function validateBinary($the_file) {
-	global $cfg;
-	if (isFile($the_file)) {
-		return (is_executable($the_file))
-			? '<img src="themes/'.$cfg['theme'].'/images/green.gif" align="absmiddle" title="Valid">'
-			: '<img src="themes/'.$cfg['theme'].'/images/red.gif" align="absmiddle" title="File exists but is not executable"><br><font color="#ff0000">File exists but is not executable</font>';
-	}
-	return '<img src="themes/'.$cfg['theme'].'/images/red.gif" align="absmiddle" title="Path is not Valid"><br><font color="#ff0000">Path is not Valid</font>';
+	if (!isFile($the_file))
+		return validationMsg(false, 'Path is not valid');
+	if (!is_executable($the_file))
+		return validationMsg(false, 'File exists but is not executable');
+	return validationMsg(true);
 }
 
 /**
@@ -799,17 +811,14 @@ function validateBinary($the_file) {
  * @return string
  */
 function validatePhpCli($the_file) {
-	global $cfg;
-	if (isFile($the_file)) {
-		if (is_executable($the_file)) {
-			$phpVersion = shell_exec($the_file.' -v');
-			return (((strpos($phpVersion, 'PHP')) !== false) && ((strpos($phpVersion, '(cli)')) !== false))
-				? '<img src="themes/'.$cfg['theme'].'/images/green.gif" align="absmiddle" title="Valid">'
-				: '<img src="themes/'.$cfg['theme'].'/images/red.gif" align="absmiddle" title="PHP-CLI required"><br><font color="#ff0000">PHP-CLI required</font>';
-		}
-		return '<img src="themes/'.$cfg['theme'].'/images/red.gif" align="absmiddle" title="File exists but is not executable"><br><font color="#ff0000">File exists but is not executable</font>';
-	}
-	return '<img src="themes/'.$cfg['theme'].'/images/red.gif" align="absmiddle" title="Path is not Valid"><br><font color="#ff0000">Path is not Valid</font>';
+	if (!isFile($the_file))
+		return validationMsg(false, 'Path is not valid');
+	if (!is_executable($the_file))
+		return validationMsg(false, 'File exists but is not executable');
+	$phpVersion = shell_exec($the_file.' -v');
+	if ((strpos($phpVersion, 'PHP')) === false || (strpos($phpVersion, '(cli)')) === false)
+		return validationMsg(false, 'Executable is not PHP-CLI');
+	return validationMsg(true);
 }
 
 /**
@@ -819,20 +828,19 @@ function validatePhpCli($the_file) {
  * @return string
  */
 function validateTransmissionCli($the_file) {
-	global $cfg;
-	if (isFile($the_file)) {
-		if (is_executable($the_file)) {
-			$transmissionHelp = shell_exec($the_file.' --help');
-			return
-				((strpos($transmissionHelp, 'Torrentflux') !== false) ||
-				 (strpos($transmissionHelp, 'TorrentFlux') !== false) ||
-				 (strpos($transmissionHelp, 'torrentflux') !== false))
-				? '<img src="themes/'.$cfg['theme'].'/images/green.gif" align="absmiddle" title="Valid">'
-				: '<img src="themes/'.$cfg['theme'].'/images/red.gif" align="absmiddle" title="Executable is not TorrentFlux-bundled transmissioncli"><br><font color="#ff0000">Executable is not TorrentFlux-bundled transmissioncli</font>';
-		}
-		return '<img src="themes/'.$cfg['theme'].'/images/red.gif" align="absmiddle" title="File exists but is not executable"><br><font color="#ff0000">File exists but is not executable</font>';
-	}
-	return '<img src="themes/'.$cfg['theme'].'/images/red.gif" align="absmiddle" title="Path is not Valid"><br><font color="#ff0000">Path is not Valid</font>';
+	if (!isFile($the_file))
+		return validationMsg(false, 'Path is not valid');
+	if (!is_executable($the_file))
+		return validationMsg(false, 'File exists but is not executable');
+	$transmissionHelp = shell_exec($the_file.' --help');
+	if (
+		strpos($transmissionHelp, 'Transmission') === false ||
+		((strpos($transmissionHelp, 'Torrentflux') === false) &&
+		 (strpos($transmissionHelp, 'TorrentFlux') === false) &&
+		 (strpos($transmissionHelp, 'torrentflux') === false))
+	)
+		return validationMsg(false, 'Executable is not TorrentFlux-bundled transmissioncli');
+	return validationMsg(true);
 }
 
 /**
