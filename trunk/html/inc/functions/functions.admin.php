@@ -833,14 +833,13 @@ function validateTransmissionCli($the_file) {
 	if (!is_executable($the_file))
 		return validationMsg(false, 'File exists but is not executable');
 	$transmissionHelp = shell_exec($the_file.' --help');
-	if (
-		strpos($transmissionHelp, 'Transmission') === false ||
-		((strpos($transmissionHelp, 'Torrentflux') === false) &&
-		 (strpos($transmissionHelp, 'TorrentFlux') === false) &&
-		 (strpos($transmissionHelp, 'torrentflux') === false))
+	return (
+		stristr($transmissionHelp, 'transmission') === false ||
+		((stristr($transmissionHelp, 'tfcli') === false) &&
+		 (stristr($transmissionHelp, 'torrentflux') === false))
 	)
-		return validationMsg(false, 'Executable is not TorrentFlux-bundled transmissioncli');
-	return validationMsg(true);
+		? validationMsg(false, 'Executable is not TorrentFlux-bundled transmissioncli')
+		: validationMsg(true);
 }
 
 /**
