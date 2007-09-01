@@ -774,7 +774,7 @@ function validationMsg($ok, $msg = null) {
 	global $cfg;
 	return
 		'<img src="themes/'.$cfg['theme'].'/images/'.($ok ? 'green.gif' : 'red.gif').
-		'" align="absmiddle" title="'.(!empty($msg) ? $msg : $ok ? 'Valid' : 'Invalid').'">'.
+		'" align="absmiddle" title="'.(!empty($msg) ? $msg : ($ok ? 'Valid' : 'Invalid')).'">'.
 		(empty($msg) ? '' : ('<br><font color="'.($ok ? '#008000' : '#ff0000').'">'.$msg.'</font>'));
 }
 
