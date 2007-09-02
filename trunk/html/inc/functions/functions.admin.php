@@ -764,6 +764,30 @@ function tmplSetUserSection() {
 }
 
 /**
+ * shell_exec php binary with given command-line,
+ * taking necessary precautions in case binary
+ * it is not really a php-cli
+ *
+ * @param $php string
+ * @param $args string
+ * @return string
+ */
+function safePhpCli($php, $args) {
+	# Need to be careful in order to avoid problems with cgi-fcgi SAPI php's:
+	# - they detect whether they are in fcgi mode by testing whether their stdin is
+	#   a socket -- so if this code is run by a fcgi php (whose stdin is a socket),
+	#   child will inherit the same stdin and thus believe it is invoked in fcgi mode
+	#    => '< /dev/null'
+	# - they detect whether they are in cgi mode by testing the presence of environment
+	#   variables -- so if this code is run by a cgi php (with those env. vars set),
+	#   child will inherit those and thus believe it is invoked in cgi mode
+	#    => 'unset ...'
+	$cmd = 'unset SERVER_SOFTWARE SERVER_NAME GATEWAY_INTERFACE REQUEST_METHOD ; ';
+	$cmd .= $php . ' ' . $args . ' < /dev/null';
+	return shell_exec($cmd);
+}
+
+/**
  * Returns the status image after a validation
  *
  * @param $ok bool
@@ -815,7 +839,7 @@ function validatePhpCli($the_file) {
 		return validationMsg(false, 'Path is not valid');
 	if (!is_executable($the_file))
 		return validationMsg(false, 'File exists but is not executable');
-	$phpVersion = shell_exec($the_file.' -v');
+	$phpVersion = safePhpCli($the_file, '-v');
 	if ((strpos($phpVersion, 'PHP')) === false || (strpos($phpVersion, '(cli)')) === false)
 		return validationMsg(false, 'Executable is not PHP-CLI');
 	return validationMsg(true);

@@ -1012,7 +1012,7 @@ function sa_misc($action = "") {
 			$htmlTitle = "Misc - Check Requirements - PHP CLI Binary Installation";
 			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 			$htmlMain .= '<pre>';
-			$htmlMain .= tfb_htmlencode(shell_exec($cfg["bin_php"]." ".tfb_shellencode($cfg["docroot"]."bin/check/check-cli.php")));
+			$htmlMain .= tfb_htmlencode(safePhpCli($cfg["bin_php"], tfb_shellencode($cfg["docroot"]."bin/check/check-cli.php")));
 			$htmlMain .= '</pre>';
 			$htmlMain .= '</div>';
 			break;
