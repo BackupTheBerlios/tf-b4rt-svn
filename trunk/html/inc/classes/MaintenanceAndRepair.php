@@ -164,7 +164,7 @@ class MaintenanceAndRepair
 	/**
 	 * instance_maintenance
 	 *
-	 * @param $trestart
+	 * @param $type
 	 */
 	function instance_maintenance($type = MAINTENANCEANDREPAIR_TYPE_STD) {
     	// (re)set state
@@ -178,6 +178,8 @@ class MaintenanceAndRepair
 		} else {
 			// fluxd
 			$this->_maintenanceFluxd();
+			// fluazu
+			$this->_maintenanceFluazu();
 			// transfers
 			$this->_maintenanceTransfers($type == MAINTENANCEANDREPAIR_TYPE_EXT);
 			// database
@@ -200,6 +202,8 @@ class MaintenanceAndRepair
 		$this->_outputMessage("Running Repair...\n");
 		// fluxd
 		$this->_maintenanceFluxd();
+		// fluazu
+		$this->_maintenanceFluazu();
 		// repair app
 		$this->_repairApp();
 		// database
@@ -261,6 +265,58 @@ class MaintenanceAndRepair
 		$this->_outputMessage("fluxd-maintenance done.\n");
 	}
 
+	/**
+	 * _maintenanceFluazu
+	 * delete leftovers of fluazu (only do this if daemon is not running)
+	 */
+	function _maintenanceFluazu() {
+		global $cfg;
+		// output
+		$this->_outputMessage("fluazu-maintenance...\n");
+		// files
+		$fdp = $cfg["path"].'.fluazu/fluazu.pid';
+		$fds = $cfg["path"].'.fluazu/fluazu.stat';
+		$fdc = $cfg["path"].'.fluazu/fluazu.cmd';
+		$fdpe = file_exists($fdp);
+		$fdse = file_exists($fds);
+		$fdce = file_exists($fdc);
+		$leftoversFound = false;
+		$fctr = 0;
+		if ($fdpe)
+			$fctr++;
+		if ($fdse)
+			$fctr++;
+		if ($fdce)
+			$fctr++;
+		if ($fctr > 0) {
+			if ("1" != @trim(shell_exec("ps x -o pid='' -o ppid='' -o command='' -ww 2> /dev/null | ".$cfg['bin_grep']." -v grep | ".$cfg['bin_grep']." 'fluazu.py' | ".$cfg['bin_grep']." -c ".tfb_shellencode($cfg["path"]))))
+				$leftoversFound = true;
+		}
+		if ($leftoversFound) {
+			// problems
+			$this->_outputMessage("found and removing fluazu-leftovers...\n");
+			// pid
+			if ($fdpe)
+				@unlink($fdp);
+			// stat
+			if ($fdse)
+				@unlink($fds);
+			// command
+			if ($fdce)
+				@unlink($fdc);
+			// DEBUG : log the repair
+			if ($cfg['debuglevel'] > 0)
+				AuditAction($cfg["constants"]["debug"], "fluazu-maintenance : found and removed fluazu-leftovers.");
+			// output
+			$this->_outputMessage("done.\n");
+		} else {
+			// no problems
+			$this->_outputMessage("no problems found.\n");
+		}
+		/* done */
+		$this->_outputMessage("fluazu-maintenance done.\n");
+	}
+	
 	/**
 	 * _maintenanceTransfers
 	 *
