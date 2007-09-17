@@ -264,7 +264,7 @@ if (isset($_REQUEST["1"])) {                                                    
 		send("<p>The installation will now try to connect to the database server, create a new database if applicable and run some tests to check we can create tables in the database.</p>");
 
 		$databaseExists = true;
-		if (($create) && ($type != "sqlite")) {
+		if (($create) && (strtolower($type) != "sqlite")) {
 			$dbCon = getAdoConnection($type, $host, $user, $pass);
 			if (!$dbCon) {
 				$databaseExists = false;
