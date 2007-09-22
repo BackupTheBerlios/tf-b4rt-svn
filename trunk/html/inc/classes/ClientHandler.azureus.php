@@ -21,7 +21,7 @@
 *******************************************************************************/
 
 /**
- * class ClientHandler for transmission-client
+ * class ClientHandler for azureus-client
  */
 class ClientHandlerAzureus extends ClientHandler
 {
