@@ -250,7 +250,7 @@ function printPageFeatures() {
 			<li><a href="#metafiles">Uploading and injection of metafiles (.torrent, .wget, .nzb files)</a></li>
 			<li><a href="#fluxcli">fluxcli.php - a complete command-line version of torrentflux-b4rt</a></li>
 			<li><a href="#fluxd">Fluxd - background perl daemon to perform scheduled tasks</a></li>
-			<li><a href="#filemanager">Integrated Filemanager AJAX updates for maximum info with minimal bandwidth</a></li>
+			<li><a href="#filemanager">Integrated Filemanager - explore the filesystem and carry out common tasks such as decompressing archives, copying/moving files/directories, streaming media using VLC and more</a></li>
 			<li><a href="#ajax">AJAX updates for maximum info with minimal bandwidth</a></li>
 			<li><a href="#templating">Templating engine</a></li>
 		</ul>
