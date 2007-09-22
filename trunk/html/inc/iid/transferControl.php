@@ -111,9 +111,10 @@ switch ($pageop) {
 		        $running = $ch->runningProcesses();
 		        foreach ($running as $rng) {
 		            $rt = RunningTransfer::getInstance($rng['pinfo'], $ch->client);
-		            if ($rt->transferFile == $transfer)
+		            if ($rt->transferFile == $transfer) {
 		            	$pid = $rt->processId;
 						break;
+					}
 		        }
 				if ($pid == 0)
 					$pid = getTransferPid($transfer);
