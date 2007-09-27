@@ -139,7 +139,8 @@ a:hover.titlebarbutton
 	font-size:80%;
 }
 .subtableheading thead td,
-.subtableheading thead th
+.subtableheading thead th,
+.subtableheading tfoot td
 {
 	padding:3px 0px;
 }
