@@ -334,7 +334,7 @@ foreach ($entrys as $entry) {
 		}
 		$permission .= " (0".$permission_oct.")";
 	}
-	if(mb_detect_encoding(" ".$entry." ",'UTF-8,ISO-8859-1') == 'UTF-8')
+	if(function_exists('mb_detect_encoding') && function_exists('utf8_decode') && mb_detect_encoding(" ".$entry." ",'UTF-8,ISO-8859-1') == 'UTF-8')
 		$entry = utf8_decode($entry);
 	
 	// add entry to dir-array
