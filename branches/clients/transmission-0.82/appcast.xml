@@ -5,14 +5,8 @@
     <link>http://transmission.m0k.org/appcast.xml</link>
     <description>Most recent version available.</description>
     <language>en</language>
-<<<<<<< .mine
-<<<<<<< .mine
-    <pubDate>Mon, 30 Apr 2007 11:39:00 -0400</pubDate>
-    <lastBuildDate>Mon, 30 Apr 2007 11:39:00 -0400</lastBuildDate>
-=======
     <pubDate>Mon, 6 Aug 2007 21:55:00 -0400</pubDate>
-    <lastBuildDate>Thur, 23 Aug 2007 19:33:00 -0400</lastBuildDate>
->>>>>>> .r2645
+    <lastBuildDate>Tue, 22 Aug 2007 00:35:00 -0400</lastBuildDate>
 
 	<item>
       <title>Transmission 0.81 Released</title>
@@ -31,8 +25,8 @@
  <li>Multiple fixes to creating torrents and adding new torrents</li>
  <li>Updated Russian and Spanish translations</li>
 </ul>]]></description>
-      <pubDate>Thur, 23 Aug 2007 19:33:00 -0400</pubDate>
-      <enclosure sparkle:version="2896" sparkle:shortVersionString="0.81" url="http://mirrors.m0k.org/transmission/files/Transmission-0.81.dmg" length="1934018" type="application/octet-stream"/>
+      <pubDate>Tue, 22 Aug 2007 00:35:00 -0400</pubDate>
+      <enclosure sparkle:version="2896" sparkle:shortVersionString="0.81" url="http://mirror.m0k.org/transmission/files/Transmission-0.81.dmg" length="1934018" type="application/octet-stream"/>
     </item>
 	
     <item>
@@ -60,7 +54,7 @@
  <li>Italian, Korean, and Russian translations</li>
 </ul>]]></description>
       <pubDate>Mon, 6 Aug 2007 21:55:00 -0400</pubDate>
-      <enclosure sparkle:version="2641" sparkle:shortVersionString="0.80" url="http://mirrors.m0k.org/transmission/files/Transmission-0.80.dmg" length="2063634" type="application/octet-stream"/>
+      <enclosure sparkle:version="2641" sparkle:shortVersionString="0.80" url="http://mirror.m0k.org/transmission/files/Transmission-0.80.dmg" length="2063634" type="application/octet-stream"/>
     </item>
 
     <item>
@@ -72,28 +66,10 @@
 <ul>
  <li>Reset download/upload amounts when sending "started"</li>
  <li>Fix rare XML parsing bug</li>
-</ul]]></description>
-      <pubDate>Mon, 30 Apr 2007 11:39:00 -0400</pubDate>
-      <enclosure sparkle:version="1814" sparkle:shortVersionString="0.72" url="http://mirrors.m0k.org/transmission/files/Transmission-0.72.dmg" length="1435881" type="application/octet-stream"/>
-    </item>
-=======
-    <pubDate>Mon, 30 Apr 2007 11:39:00 -0400</pubDate>
-    <lastBuildDate>Mon, 30 Apr 2007 11:39:00 -0400</lastBuildDate>
-
-    <item>
-      <title>Transmission 0.72 Released</title>
-      <description><![CDATA[
-<h3>TRANSMISSION NOW REQUIRES MAC OS X 10.4. DO NOT UPDATE ON EARLIER SYSTEMS!</h3>
-
-<h4>Transmission Changes:</h4>
-<ul>
- <li>Reset download/upload rates when sending "started"</li>
- <li>Fix rare XML parsing bug</li>
 </ul>]]></description>
       <pubDate>Mon, 30 Apr 2007 11:39:00 -0400</pubDate>
       <enclosure sparkle:version="1814" sparkle:shortVersionString="0.72" url="http://mirrors.m0k.org/transmission/files/Transmission-0.72.dmg" length="1435881" type="application/octet-stream"/>
     </item>
->>>>>>> .r1820
     
     <item>
       <title>Transmission 0.71 Released</title>

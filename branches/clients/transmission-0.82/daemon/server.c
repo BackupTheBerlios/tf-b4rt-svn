@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: server.c 2415 2007-07-19 01:25:36Z joshe $
+ * $Id: server.c 2909 2007-08-23 05:08:22Z joshe $
  *
  * Copyright (c) 2007 Joshua Elsasser
  *
@@ -183,6 +183,21 @@ server_listen( int fd )
     event_add( ev, NULL );
 
     return 0;
+}
+
+void
+server_quit( void )
+{
+    struct client * ii, * next;
+
+    torrent_exit( 0 );
+    gl_exiting = 1;
+
+    for( ii = RB_MIN( allclients, &gl_clients ); NULL != ii; ii = next )
+    {
+        next = RB_NEXT( allclients, &gl_clients, ii );
+        byebye( ii->ev, EVBUFFER_EOF, NULL );
+    }
 }
 
 void
@@ -560,16 +575,7 @@ void
 quitmsg( enum ipc_msg id UNUSED, benc_val_t * val UNUSED, int64_t tag UNUSED,
          void * arg UNUSED )
 {
-    struct client * ii, * next;
-
-    torrent_exit( 0 );
-    gl_exiting = 1;
-
-    for( ii = RB_MIN( allclients, &gl_clients ); NULL != ii; ii = next )
-    {
-        next = RB_NEXT( allclients, &gl_clients, ii );
-        byebye( ii->ev, EVBUFFER_EOF, NULL );
-    }
+    server_quit();
 }
 
 void

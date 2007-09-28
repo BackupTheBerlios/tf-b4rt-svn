@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: torrent.c 2890 2007-08-21 15:12:09Z charles $
+ * $Id: torrent.c 3002 2007-09-09 17:43:04Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -1104,7 +1104,7 @@ torrentThreadLoop ( void * _tor )
     while( ! ( tor->dieFlag && (tor->runStatus == TR_RUN_STOPPED) ) )
     {
         /* sleep a little while */
-        tr_wait( tor->runStatus == TR_RUN_STOPPED ? 1600 : 600 );
+        tr_wait( tor->runStatus == TR_RUN_STOPPED ? 1600 : 100 );
 
         if( tor->fastResumeDirty )
         {

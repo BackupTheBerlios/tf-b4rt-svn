@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: utils.c 2736 2007-08-13 15:40:27Z charles $
+ * $Id: utils.c 3009 2007-09-09 18:02:10Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -555,7 +555,7 @@ tr_bitfieldNew( size_t bitcount )
     if( NULL == ret )
         return NULL;
 
-    ret->len = ( bitcount + 7u ) / 8u;
+    ret->len = (bitcount+7u) / 8u;
     ret->bits = calloc( ret->len, 1 );
     if( NULL == ret->bits ) {
         free( ret );

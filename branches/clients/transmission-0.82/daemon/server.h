@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: server.h 1806 2007-04-26 07:03:36Z joshe $
+ * $Id: server.h 2909 2007-08-23 05:08:22Z joshe $
  *
  * Copyright (c) 2007 Joshua Elsasser
  *
@@ -30,5 +30,6 @@ struct event_base;
 int  server_init(   struct event_base * );
 void server_debug( int );
 int  server_listen( int );
+void server_quit( void );
 
 #endif /* TR_DAEMON_SERVER_H */

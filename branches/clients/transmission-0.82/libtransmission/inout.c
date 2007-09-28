@@ -36,6 +36,10 @@ struct tr_io_s
 
 enum { TR_IO_READ, TR_IO_WRITE };
 
+#ifdef WIN32
+#define lseek _lseeki64
+#endif
+
 static int
 readOrWriteBytes ( const tr_torrent_t  * tor,
                    int                   ioMode,
@@ -123,7 +127,7 @@ ensureMinimumFileSize ( const tr_torrent_t  * tor,
         ret = fd;
     else if (fstat (fd, &sb) ) /* how big is the file? */
         ret = tr_ioErrorFromErrno ();
-    else if ((size_t)sb.st_size >= minSize) /* already big enough */
+    else if (sb.st_size >= (off_t)minSize) /* already big enough */
         ret = TR_OK;
     else if (!ftruncate( fd, minSize )) /* grow it */
         ret = TR_OK;
@@ -301,23 +305,26 @@ int
 tr_ioHash( tr_io_t * io, int pieceIndex )
 {
     int i;
-
+    int ret;
     tr_torrent_t * tor = io->tor;
     const int success = !checkPiece( tor, pieceIndex );
+
     if( success )
     {
-        tr_inf( "Piece %d hash OK", pieceIndex );
+        tr_dbg( "Piece %d hash OK", pieceIndex );
         tr_cpPieceAdd( tor->completion, pieceIndex );
+        ret = TR_OK;
     }
     else
     {
         tr_err( "Piece %d hash FAILED", pieceIndex );
         tr_cpPieceRem( tor->completion, pieceIndex );
+        ret = TR_ERROR;
     }
 
     /* Assign blame or credit to peers */
-    for( i = 0; i < tor->peerCount; ++i )
+    for( i=0; i<tor->peerCount; ++i )
         tr_peerBlame( tor->peers[i], pieceIndex, success );
 
-    return 0;
+    return ret;
 }
