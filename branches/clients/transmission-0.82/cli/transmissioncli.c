@@ -126,6 +126,7 @@ static void sigHandler       ( int signal );
 
 static void TOF_print(char *printmsg);
 static bool TOF_initStatus(void);
+static void TOF_writeStatus( const tr_stat_t *s, const tr_info_t *info, const int state, const char *status );
 static bool TOF_initCommand(void);
 static bool TOF_writePID(void);
 static void TOF_deletePID(void);
