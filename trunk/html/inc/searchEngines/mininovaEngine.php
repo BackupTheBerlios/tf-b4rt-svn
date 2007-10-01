@@ -92,14 +92,12 @@ class SearchEngine extends SearchEngineBase
 
         // create the request string.
         $searchTerm = str_replace(" ", "+", $searchTerm);
-        $request = "/search/?search=".$searchTerm;
+        $request = "/search/$searchTerm/seeds";
 
         if (!empty($this->pg))
         {
             $request .= "&ihs1=18&iho1=d&iht=-1&ihp=" . $this->pg;
         }
-
-        $request .= "&submit=Torrents";
 
         // make the request if successful call the parse routine.
         if ($this->makeRequest($request))
@@ -117,7 +115,6 @@ class SearchEngine extends SearchEngineBase
     // Function to parse the response.
     function parseResponse($latest = true)
     {
-
         $output = $this->tableHeader();
 
         $thing = $this->htmlPage;
@@ -128,61 +125,61 @@ class SearchEngine extends SearchEngineBase
         // We got a response so display it.
         // Chop the front end off.
 
-            $thing = substr($thing,strpos($thing,">Leechers<"));
-            $thing = substr($thing,strpos($thing,"<tr"));
-            $tmpList = substr($thing,0,strpos($thing,"</table>"));
+		$thing = substr($thing,strpos($thing,">Leechers<"));
+		$thing = substr($thing,strpos($thing,"<tr"));
+		$tmpList = substr($thing,0,strpos($thing,"</table>"));
 
-            // ok so now we have the listing.
-            $tmpListArr = split("</tr>",$tmpList);
+		// ok so now we have the listing.
+		$tmpListArr = split("</tr>",$tmpList);
 
-            $bg = $this->cfg["bgLight"];
+		$bg = $this->cfg["bgLight"];
 
-            foreach($tmpListArr as $key =>$value)
-            {
+		foreach($tmpListArr as $key =>$value)
+		{
 
-                //echo $value;
-                $buildLine = true;
-                if (strpos($value,'<a href="/get'))
-                {
-                    $ts = new mininova($value,$latest);
+			//echo $value;
+			$buildLine = true;
+			if (strpos($value,'<a href="/get'))
+			{
+				$ts = new mininova($value,$latest);
 
-                    // Determine if we should build this output
-                    if (is_int(array_search($ts->CatName,$this->catFilter)))
-                    {
-                        $buildLine = false;
-                    }
+				// Determine if we should build this output
+				if (is_int(array_search($ts->CatName,$this->catFilter)))
+				{
+					$buildLine = false;
+				}
 print_r("<!--");
 print_r($this->catFilter);
 print_r($ts->CatName);
 print_r("-->");
-                    if ($this->hideSeedless == "yes")
-                    {
-                        if($ts->Seeds == "---")
-                        {
-                            $buildLine = false;
-                        }
-                    }
+				if ($this->hideSeedless == "yes")
+				{
+					if($ts->Seeds == "---")
+					{
+						$buildLine = false;
+					}
+				}
 
-                    if (!empty($ts->torrentFile) && $buildLine) {
+				if (!empty($ts->torrentFile) && $buildLine) {
 
-                        $output .= trim($ts->BuildOutput($bg));
+					$output .= trim($ts->BuildOutput($bg));
 
-                        // ok switch colors.
-                        if ($bg == $this->cfg["bgLight"])
-                        {
-                            $bg = $this->cfg["bgDark"];
-                        }
-                        else
-                        {
-                            $bg = $this->cfg["bgLight"];
-                        }
-                    }
+					// ok switch colors.
+					if ($bg == $this->cfg["bgLight"])
+					{
+						$bg = $this->cfg["bgDark"];
+					}
+					else
+					{
+						$bg = $this->cfg["bgLight"];
+					}
+				}
 
-                }
-            }
+			}
+		}
 
-            // set thing to end of this table.
-            $thing = substr($thing,strpos($thing,"</table>"));
+		// set thing to end of this table.
+		$thing = substr($thing,strpos($thing,"</table>"));
 
 
         $output .= "</table>";
@@ -219,7 +216,6 @@ class mininova
 
             $this->Data = $htmlLine;
 
-
             // Chunck up the row into columns.
             $tmpListArr = split("</td>",$htmlLine);
             array_pop($tmpListArr);
@@ -249,8 +245,7 @@ class mininova
                     $this->CatName = $this->cleanLine($tmpListArr["1"]); // Type
                     $tmpStr = substr($tmpListArr["2"],strpos($tmpListArr["2"],"/tor/")+5);
                     $this->torrentFile = "http://www.mininova.org/get/".substr($tmpStr,0,strpos($tmpStr,'">'));
-                    $this->torrentName = $this->cleanLine($tmpListArr["2"]); // Name
-
+                    $this->torrentName = $this->cleanLine( substr($tmpListArr[2], strpos($tmpListArr["2"], "<a href=\"/tor")) ); // Name
                     $this->torrentSize = $this->cleanLine($tmpListArr["3"]); // MB
                     $this->Seeds = $this->cleanLine($tmpListArr["4"]); // Seeds
                     $this->Peers = $this->cleanLine($tmpListArr["5"]); // Leechers
@@ -272,7 +267,6 @@ class mininova
                 {
                     $this->torrentDisplayName = substr($this->torrentDisplayName,0,50)."...";
                 }
-
            }
         }
     }
