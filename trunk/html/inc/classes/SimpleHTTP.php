@@ -952,8 +952,8 @@ class SimpleHTTP
 	 * @return string
 	 */
 	function _fullURLEncode($url) {
-		# Split URL into fragments, delimiters are: ':', '@', '/', '?', '=', '&' and /%[[:xdigit:]]{2}/.
-		$fragments = preg_split('#[@:/?=&]+|%[[:xdigit:]]{2}#', $url, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_OFFSET_CAPTURE);
+		# Split URL into fragments, delimiters are: '+', ':', '@', '/', '?', '=', '&' and /%[[:xdigit:]]{2}/.
+		$fragments = preg_split('#[+:@/?=&]+|%[[:xdigit:]]{2}#', $url, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_OFFSET_CAPTURE);
 
 		for ($i = count($fragments) - 1; $i >= 0; $i--) {
 			$fragment = $fragments[$i];	# $fragment[0] is the fragment, $fragment[1] is its starting position.
