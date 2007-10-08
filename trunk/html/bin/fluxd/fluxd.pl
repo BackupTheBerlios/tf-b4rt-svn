@@ -883,7 +883,7 @@ sub set {
 		if (exists $serviceModuleNames{$pair[0]}) {
 			if ((exists $serviceModuleObjects{$pair[0]}) &&
 				($serviceModuleObjects{$pair[0]}->getState() == MOD_STATE_OK)) {
-				$return = $serviceModuleObjects{$pair[0]}-->set($pair[1], $value);
+				$return = $serviceModuleObjects{$pair[0]}->set($pair[1], $value);
 			}
 		} else {
 			$return = "Unknown Module";
