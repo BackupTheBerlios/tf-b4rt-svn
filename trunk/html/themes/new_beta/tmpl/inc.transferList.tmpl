@@ -58,12 +58,12 @@
 								<tmpl_if name="is_no_file">
 									<tmpl_if name="show_run" value="1">
 										<a href="#" onclick="showTransfer('index.php?iid=transferControl&transfer=<tmpl_var name="url_entry">')">
-											<img src="themes/default/images/bulkstart.gif" alt="<tmpl_var name="_RUNTRANSFER">" height="12">
+											<img src="themes/default/images/bulkstart.gif" alt="<tmpl_var name="_RUNTRANSFER"> (Advanced)" height="12">
 										</a>
 									<tmpl_else>
 										<tmpl_if name="upload_support_enabled" value="1">
 											<a href="#" onclick="showTransfer('index.php?iid=transferControl&transfer=<tmpl_var name="url_entry">')">
-												<img src="themes/default/images/seed.gif" alt="<tmpl_var name="_SEEDTRANSFER">" height="12">
+												<img src="themes/default/images/seed.gif" alt="<tmpl_var name="_SEEDTRANSFER"> (Advanced)" height="12">
 											</a>
 										<tmpl_else>
 											<img src="themes/default/images/blank.gif" height="12" border="0">
@@ -71,12 +71,12 @@
 									</tmpl_if>
 									<tmpl_if name="show_run" value="1">
 										<a href="dispatcher.php?action=start&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)">
-											<img src="themes/default/images/bulkresume.gif" alt="<tmpl_var name="_RUNTRANSFER">" height="12">
+											<img src="themes/default/images/bulkresume.gif" alt="<tmpl_var name="_RUNTRANSFER"> (Quick)" height="12">
 										</a>
 									<tmpl_else>
 										<tmpl_if name="upload_support_enabled" value="1">
 											<a href="dispatcher.php?action=start&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)">
-												<img src="themes/default/images/seedstart.gif" alt="<tmpl_var name="_SEEDTRANSFER">" height="12">
+												<img src="themes/default/images/seedstart.gif" alt="<tmpl_var name="_SEEDTRANSFER"> (Quick)" height="12">
 											</a>
 										<tmpl_else>
 											<img src="themes/default/images/run_off.gif" alt="Done" height="12">

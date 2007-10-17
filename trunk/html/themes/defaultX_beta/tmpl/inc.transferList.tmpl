@@ -204,12 +204,12 @@
 										<tmpl_if name="is_no_file">
 											<tmpl_if name="show_run" value="1">
 												<a onclick="showTransfer('index.php?iid=transferControl&amp;transfer=<tmpl_var name="url_entry">')" style="cursor:pointer;">
-													<img src="themes/<tmpl_var name="theme">/images/bulkstart.gif" title="<tmpl_var name="_RUNTRANSFER">" alt="" />
+													<img src="themes/<tmpl_var name="theme">/images/bulkstart.gif" title="<tmpl_var name="_RUNTRANSFER"> (Advanced)" alt="" />
 												</a>
 											<tmpl_else>
 												<tmpl_if name="upload_support_enabled" value="1">
 													<a onclick="showTransfer('index.php?iid=transferControl&amp;transfer=<tmpl_var name="url_entry">')" style="cursor:pointer;">
-														<img src="themes/<tmpl_var name="theme">/images/seed.gif"title="<tmpl_var name="_SEEDTRANSFER">" alt="" />
+														<img src="themes/<tmpl_var name="theme">/images/seed.gif"title="<tmpl_var name="_SEEDTRANSFER"> (Advanced)" alt="" />
 													</a>
 												<tmpl_else>
 													<img src="themes/<tmpl_var name="theme">/images/blank.gif" style="width:16px;height:16px;" alt="" />
@@ -217,12 +217,12 @@
 											</tmpl_if>
 											<tmpl_if name="show_run" value="1">
 												<a href="dispatcher.php?action=start&amp;transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true,'Starting Transfer')">
-													<img src="themes/<tmpl_var name="theme">/images/bulkresume.gif"title="<tmpl_var name="_RUNTRANSFER">" alt="" />
+													<img src="themes/<tmpl_var name="theme">/images/bulkresume.gif"title="<tmpl_var name="_RUNTRANSFER"> (Quick)" alt="" />
 												</a>
 											<tmpl_else>
 												<tmpl_if name="upload_support_enabled" value="1">
 													<a href="dispatcher.php?action=start&amp;transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true,'Starting Transfer')">
-														<img src="themes/<tmpl_var name="theme">/images/seedstart.gif" title="<tmpl_var name="_SEEDTRANSFER">" alt="" />
+														<img src="themes/<tmpl_var name="theme">/images/seedstart.gif" title="<tmpl_var name="_SEEDTRANSFER"> (Quick)" alt="" />
 													</a>
 												<tmpl_else>
 													<img src="themes/<tmpl_var name="theme">/images/run_off.gif" title="Done" alt="" />
