@@ -183,7 +183,8 @@ Torrentflux-b4rt 1.0 README file
 
     o PHP in 'web mode' (ie mod_php or php-cgi - preferably mod_php) >=
       4.3.x built with database (MySQL, SQLite or PostgreSQL), session,
-      sockets and PCRE support enabled.
+      sockets and PCRE support enabled.  For image recognition/captcha
+	  support for logins, GD support must be enabled in PHP.
 
     o PHP in 'commandline mode' (php-cli) >= 4.3.x built with database
       (MySQL, SQLite or PostgreSQL), session, sockets and PCRE support
