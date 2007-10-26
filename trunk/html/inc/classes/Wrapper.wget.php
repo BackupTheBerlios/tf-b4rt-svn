@@ -418,7 +418,7 @@ class WrapperWget
 	 * @return boolean
 	 */
 	function _clientIsRunning() {
-		return (strpos(exec('ps --pid '.tfb_shellencode($this->_pid)), $this->_pid) !== false);
+		return (strpos(exec('ps -p '.tfb_shellencode($this->_pid)), $this->_pid) !== false);
 	}
 
 	/**
