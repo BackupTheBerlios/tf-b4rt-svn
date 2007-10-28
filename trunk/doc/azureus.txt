@@ -196,10 +196,9 @@ Fluazu Limitations
         any connection information.
 
     -   The process list displayed in the superadmin window in
-        Torrentflux-b4rt will not include any Azureus based transfers
-        transfers.
+        Torrentflux-b4rt will not include any Azureus based transfers.
 
-        The force stop feature within the superadmin pages will also not
+    -   The force stop feature within the superadmin pages will also not
         work with transfers running under Azureus.
 
     -   The maintenance feature in Torrentflux-b4rt (auto-restart of
