@@ -134,18 +134,14 @@ if ($sf->percent_done < 0) {
 $tmpl->setvar('time_left', $sf->time_left);
 
 // graph width
-if ($sf->percent_done < 1) {
-	$tmpl->setvar('graph_width1', 3.5);
-	$tmpl->setvar('graph_width2', 100 * 3.5);
-} else {
-	$tmpl->setvar('graph_width1', $sf->percent_done * 3.5);
-	$tmpl->setvar('graph_width2', (100 - $sf->percent_done) * 3.5);
-}
+$tmpl->setvar('graph_width1', $sf->percent_done);
+$tmpl->setvar('graph_width2', (100 - $sf->percent_done));
+	
 if ($sf->percent_done >= 100) {
 	$sf->percent_done = 100;
-	$tmpl->setvar('background', "#0000ff");
+	$tmpl->setvar('background', "#0000ff"); //deprecated
 } else {
-	$tmpl->setvar('background', "#000000");
+	$tmpl->setvar('background', "#000000"); //deprecated
 }
 
 // percentage

@@ -130,6 +130,12 @@ a:hover.titlebarbutton
 	font-size:100%;
 }
 
+.subtable
+{
+	width:100%;
+	text-align:left;
+}
+
 .subtableheading
 {
 	background-color:#98accd;

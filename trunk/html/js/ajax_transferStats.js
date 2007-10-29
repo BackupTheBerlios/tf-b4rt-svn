@@ -26,7 +26,7 @@ var ajax_transferName = "";
  * @param delim
  * @param name
  */
-function ajax_initialize(timer, delim, name) {;
+function ajax_initialize(timer, delim, name) {
 	ajax_updateTimer = timer;
 	ajax_txtDelim = delim;
 	ajax_transferName = name;
@@ -67,17 +67,12 @@ function ajax_processText(content) {
  *
  * @param content
  */
-function ajax_updateContent(content) {
+function ajax_updateContent(content) 
+{
 	// progress-bar
 	currentPercentage = content[7];
-	if (currentPercentage == 0)
-		document.barImage1.width = 1;
-	else
-		document.barImage1.width = currentPercentage * 3.5;
-	if (currentPercentage == 100)
-		document.barImage2.width = 1;
-	else
-		document.barImage2.width = (100 - currentPercentage) * 3.5;
+	document.getElementById('barImage1').style.width = currentPercentage + '%';
+	document.getElementById('barImage2').style.width = (100 - currentPercentage) + '%';
 	// fields
 	for (i = 1; i < ajax_idCount; i++) {
 		if ((ajax_fieldIds[i] == 'eta') && (content[i] == '-'))

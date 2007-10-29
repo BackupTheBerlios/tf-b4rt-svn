@@ -42,13 +42,11 @@
 											</table>
 											<table bgcolor="#A2BED4" width="100%" cellpadding="1">
 												<tr>
-													<td>
-														<table width="100%" cellpadding="0" cellspacing="0" border="0">
-															<tr>
-																<td background="themes/default/images/proglass.gif"><img id="barImage1" name="barImage1" src="themes/default/images/blank.gif" width="<tmpl_var name="graph_width1">" height="12" border="0"></td>
-																<td background="themes/default/images/noglass.gif" bgcolor="<tmpl_var name="background">"><img id="barImage2" name="barImage2" src="themes/default/images/blank.gif" width="<tmpl_var name="graph_width2">" height="12" border="0"></td>
-															</tr>
-														</table>
+													<td style="text-align:center">
+														<div style="width:99%;height:12px;border-left:1px solid #000000;border-right:1px solid #000000;padding:0px;margin:0px auto;clear:both;">
+															<img id="barImage1" src="themes/<tmpl_var name="theme">/images/proglass.gif" style="height:12px;width:<tmpl_var name="graph_width1">%;float:left;" alt="" />
+															<img id="barImage2" src="themes/<tmpl_var name="theme">/images/noglass.gif" style="height:12px;width:<tmpl_var name="graph_width2">%;float:left;" alt="" />
+														</div>
 													</td>
 												</tr>
 												<tr>
