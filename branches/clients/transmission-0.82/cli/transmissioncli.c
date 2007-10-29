@@ -108,6 +108,7 @@ static char          * TOF_statFile = NULL;
 static FILE          * TOF_statFp   = NULL;
 static char          * TOF_cmdFile  = NULL;
 static FILE          * TOF_cmdFp    = NULL;
+static char          * TOF_message  = NULL;
 /* -END- */
 
 static int  parseCommandLine ( int argc, char ** argv );
@@ -125,10 +126,10 @@ static void sigHandler       ( int signal );
 //static int tf_execCommand(tr_handle_t *h, char *s);
 
 static void TOF_print(char *printmsg);
-static bool TOF_initStatus(void);
+static int TOF_initStatus(void);
 static void TOF_writeStatus( const tr_stat_t *s, const tr_info_t *info, const int state, const char *status );
-static bool TOF_initCommand(void);
-static bool TOF_writePID(void);
+static int TOF_initCommand(void);
+static int TOF_writePID(void);
 static void TOF_deletePID(void);
 /* -END- */
 
@@ -152,9 +153,8 @@ int main( int argc, char ** argv )
 	
 	
 	// vars
-	static char TOF_message[512];
 	//const tr_info_t * info;
-	char TOF_eta[80];
+	char *TOF_eta = NULL;
 	
 
     printf( "Transmission %s - http://transmission.m0k.org/ - modified for Torrentflux\n\n",
@@ -190,7 +190,7 @@ int main( int argc, char ** argv )
 
     if( bindPort < 1 || bindPort > 65535 )
     {
-		sprintf( TOF_message, "Invalid port '%d'\n", bindPort )
+		sprintf( TOF_message, "Invalid port '%d'\n", bindPort );
         TOF_print( TOF_message );
 		//printf( "Invalid port '%d'\n", bindPort );
         return EXIT_FAILURE;
@@ -216,7 +216,7 @@ int main( int argc, char ** argv )
     /* Open and parse torrent file */
     if( !( tor = tr_torrentInit( h, torrentPath, ".", 0, &error ) ) )
     {
-        sprintf( TOF_message, "Failed opening torrent file '%s'\n", torrentPath )
+        sprintf( TOF_message, "Failed opening torrent file '%s'\n", torrentPath );
         TOF_print( TOF_message );
 		//printf( "Failed opening torrent file `%s'\n", torrentPath );
         tr_close( h );
@@ -285,36 +285,36 @@ int main( int argc, char ** argv )
 	//* Torrentflux -START- */
 	if (TOF_owner == NULL) 
 	{
-		sprintf( TOF_message, "No owner supplied, using 'n/a'.\n" )
+		sprintf( TOF_message, "No owner supplied, using 'n/a'.\n" );
         TOF_print( TOF_message );
 		
 		strcpy(TOF_owner,"n/a");
 	}
 	
 	// Output for log
-	sprintf( TOF_message, "transmission starting up :\n" )
+	sprintf( TOF_message, "transmission starting up :\n" );
     TOF_print( TOF_message );
-	sprintf( TOF_message, " - torrent : %s\n", torrentPath )
+	sprintf( TOF_message, " - torrent : %s\n", torrentPath );
     TOF_print( TOF_message );
-	sprintf( TOF_message, " - owner : %s\n", TOF_owner )
+	sprintf( TOF_message, " - owner : %s\n", TOF_owner );
     TOF_print( TOF_message );
-	sprintf( TOF_message, " - dieWhenDone : %d\n", TOF_dieWhenDone )
+	sprintf( TOF_message, " - dieWhenDone : %d\n", TOF_dieWhenDone );
     TOF_print( TOF_message );
-	sprintf( TOF_message, " - seedLimit : %d\n", TOF_seedLimit )
+	sprintf( TOF_message, " - seedLimit : %d\n", TOF_seedLimit );
     TOF_print( TOF_message );
-	sprintf( TOF_message, " - bindPort : %d\n", bindPort )
+	sprintf( TOF_message, " - bindPort : %d\n", bindPort );
     TOF_print( TOF_message );
-	sprintf( TOF_message, " - uploadLimit : %d\n", uploadLimit )
+	sprintf( TOF_message, " - uploadLimit : %d\n", uploadLimit );
     TOF_print( TOF_message );
-	sprintf( TOF_message, " - downloadLimit : %d\n", downloadLimit )
+	sprintf( TOF_message, " - downloadLimit : %d\n", downloadLimit );
     TOF_print( TOF_message );
-	sprintf( TOF_message, " - natTraversal : %d\n", natTraversal )
+	sprintf( TOF_message, " - natTraversal : %d\n", natTraversal );
     TOF_print( TOF_message );
-	sprintf( TOF_message, " - displayInterval : %d\n", tf_displayInterval )
+	sprintf( TOF_message, " - displayInterval : %d\n", TOF_displayInterval );
     TOF_print( TOF_message );
 	if (finishCall != NULL)
 	{
-		sprintf( TOF_message, " - finishCall : %s\n", finishCall )
+		sprintf( TOF_message, " - finishCall : %s\n", finishCall );
 		TOF_print( TOF_message );
 	}	
 	/* -END- */
@@ -335,30 +335,30 @@ int main( int argc, char ** argv )
 	/* Torrentflux -START */
 	
 	// initialize status-facility
-	if (TOF_initStatus() == false) 
+	if (TOF_initStatus() == 0) 
 	{
-		sprintf( TOF_message, "Failed to init status-facility. exit transmission.\n" )
+		sprintf( TOF_message, "Failed to init status-facility. exit transmission.\n" );
 		TOF_print( TOF_message );
 		goto failed;
 	}
 
 	// initialize command-facility
-	if (TOF_initCommand() == false) 
+	if (TOF_initCommand() == 0) 
 	{
-		sprintf( TOF_message, "Failed to init command-facility. exit transmission.\n" )
+		sprintf( TOF_message, "Failed to init command-facility. exit transmission.\n" );
 		TOF_print( TOF_message );
 		goto failed;
 	}
 
 	// write pid
-	if (TOF_writePID() == false) 
+	if (TOF_writePID() == 0) 
 	{
-		sprintf( TOF_message, "Failed to write pid-file. exit transmission.\n" )
+		sprintf( TOF_message, "Failed to write pid-file. exit transmission.\n" );
 		TOF_print( TOF_message );
 		goto failed;
 	}
 	
-	sprintf( TOF_message, "Transmission up and running.\n" )
+	sprintf( TOF_message, "Transmission up and running.\n" );
     TOF_print( TOF_message );
 	
 	info = tr_torrentInfo( tor );
@@ -389,7 +389,7 @@ int main( int argc, char ** argv )
         }
         else if( s->status & TR_STATUS_DOWNLOAD )
         {
-			sprintf(TOF_eta, "");
+			sprintf(TOF_eta, "-");
 			if ( s->eta > 0 ) 
 			{
 				if ( s->eta < 604800 ) // 7 days
@@ -400,18 +400,16 @@ int main( int argc, char ** argv )
 					
 					if ( s->eta >= 3600 ) // 1 hour
 						sprintf(TOF_eta, "%s%02d:",
-							TOF_eta,((s->eta % 86400) / 3600);
+							TOF_eta,((s->eta % 86400) / 3600));
 					
 					if ( s->eta >= 60 ) // 1 Minute
 						sprintf(TOF_eta, "%s%02d:",
-							TOF_eta,((s->eta % 3600) / 60);
+							TOF_eta,((s->eta % 3600) / 60));
 							
 					sprintf(TOF_eta, "%s%02d",
-						TOF_eta,(s->eta % 60);
+						TOF_eta,(s->eta % 60));
 				} 
 			}
-			if ( TOF_eta == "" ) 
-				sprintf(TOF_eta, "-");
 				
             if ((s->seeders < -1) && (s->peersTotal == 0))
 				sprintf(TOF_eta, "Connecting to Peers");
@@ -427,14 +425,14 @@ int main( int argc, char ** argv )
 			} 
 			else 
 			{
-				if (tf_seedLimit == -1) 
+				if (TOF_seedLimit == -1) 
 				{
 					TOF_print( "Sharekill set to -1, setting shutdown-flag...\n" );
 					gotsig = 1;
 				} 
-				else if ( ( tf_seedLimit > 0 ) && ( ( s->ratio * 100.0 ) > (float)TOF_seedLimit ) ) 
+				else if ( ( TOF_seedLimit > 0 ) && ( ( s->ratio * 100.0 ) > (float)TOF_seedLimit ) ) 
 				{
-					sprintf( TOF_message, "Seed-limit %d reached, setting shutdown-flag...\n", TOF_seedLimit )
+					sprintf( TOF_message, "Seed-limit %d reached, setting shutdown-flag...\n", TOF_seedLimit );
 					TOF_print( TOF_message );
 					gotsig = 1;
 				}
@@ -452,7 +450,7 @@ int main( int argc, char ** argv )
 
         if( s->error )
         {
-			sprintf( TOF_message, "error: %s\n", s->errorString )
+			sprintf( TOF_message, "error: %s\n", s->errorString );
 			TOF_print( TOF_message );
         }
         
@@ -634,22 +632,22 @@ static void TOF_print( char *printmsg )
 	);
 }
 
-static bool TOF_initStatus( void ) 
+static int TOF_initStatus( void ) 
 {
-	TOF_statFile = torrentPath;
+	sprintf( TOF_statFile, "%s", torrentPath );
 	strcat( TOF_statFile, ".stat" );
 	
-	sprintf( TOF_message, "Initialized status-facility. (%s)\n", TOF_statFile )
+	sprintf( TOF_message, "Initialized status-facility. (%s)\n", TOF_statFile );
     TOF_print( TOF_message );
-	return true;
+	return 1;
 }
 
-static bool TOF_initCommand( void ) 
+static int TOF_initCommand( void ) 
 {
 	TOF_cmdFile = torrentPath;
 	strcat( TOF_cmdFile, ".cmd" );
 	
-	sprintf( TOF_message, "Initialized command-facility. (%s)\n", TOF_cmdFile )
+	sprintf( TOF_message, "Initialized command-facility. (%s)\n", TOF_cmdFile );
     TOF_print( TOF_message );
 
 	// remove command-file if exists
@@ -658,15 +656,15 @@ static bool TOF_initCommand( void )
 	if (TOF_cmdFp != NULL) 
 	{
 		fclose(TOF_cmdFp);
-		sprintf( TOF_message, "Removing command-file. (%s)\n", TOF_cmdFile )
+		sprintf( TOF_message, "Removing command-file. (%s)\n", TOF_cmdFile );
 		TOF_print( TOF_message );
 		remove(TOF_cmdFile);
 		TOF_cmdFp = NULL;
 	}
-	return true;
+	return 1;
 }
 
-static bool TOF_writePID( void ) 
+static int TOF_writePID( void ) 
 {
 	FILE * TOF_pidFp;
 	char TOF_pidFile[strlen(torrentPath) + 4];
@@ -678,15 +676,15 @@ static bool TOF_writePID( void )
 	{
 		fprintf(TOF_pidFp, "%d", getpid());
 		fclose(TOF_pidFp);
-		sprintf( TOF_message, "Wrote pid-file: %s (%d)\n", TOF_pidFile , getpid() )
+		sprintf( TOF_message, "Wrote pid-file: %s (%d)\n", TOF_pidFile , getpid() );
 		TOF_print( TOF_message );
-		return true;
+		return 1;
 	} 
 	else 
 	{
-		sprintf( TOF_message, "Error opening pid-file for writting: %s (%d)\n", TOF_pidFile , getpid() )
+		sprintf( TOF_message, "Error opening pid-file for writting: %s (%d)\n", TOF_pidFile , getpid() );
 		TOF_print( TOF_message );
-		return false;
+		return 0;
 	}
 }
 
@@ -696,26 +694,29 @@ static void TOF_deletePID( void )
 	
 	sprintf(TOF_pidFile,"%s.pid",torrentPath);
 	
-	sprintf( TOF_message, "Removing pid-file: %s (%d)\n", TOF_pidFile , getpid() )
+	sprintf( TOF_message, "Removing pid-file: %s (%d)\n", TOF_pidFile , getpid() );
 	TOF_print( TOF_message );
 	
 	remove(TOF_pidFile);
 }
 
-static void TOF_writeStatus( const tr_stat_t *s, const tr_info_t *info, const int state, const char *status );
+static void TOF_writeStatus( const tr_stat_t *s, const tr_info_t *info, const int state, const char *status )
 {
 	TOF_statFp = fopen(TOF_statFile, "w+");
 	if (TOF_statFp != NULL) 
 	{
-		int TOF_seeders  = ( s->seeders < 0 )  ? 0 : s->seeders;
-		int TOF_leechers = ( s->leechers < 0 ) ? 0 : s->leechers;
+		float TOF_pd,TOF_ratio;
+		int TOF_seeders,TOF_leechers;
+		
+		TOF_seeders  = ( s->seeders < 0 )  ? 0 : s->seeders;
+		TOF_leechers = ( s->leechers < 0 ) ? 0 : s->leechers;
 		
 		if (state == 0 && s->percentDone < 1)
-			float TOF_pd = ( -100.0 * s->percentDone ) - 100;
+			TOF_pd = ( -100.0 * s->percentDone ) - 100;
 		else
-			float TOF_pd = 100.0 * s->percentDone;
+			TOF_pd = 100.0 * s->percentDone;
 		
-		float TOF_ratio = s->ratio < 0 ? 0 : s->ratio;
+		TOF_ratio = s->ratio < 0 ? 0 : s->ratio;
 			
 		fprintf(TOF_statFp,
 			"%d\n%.1f\n%s\n%.1f kB/s\n%.1f kB/s\n%s\n%d (%d)\n%d (%d)\n%.1f\n%d\n%" PRIu64 "\n%" PRIu64 "\n%" PRIu64,
@@ -737,7 +738,7 @@ static void TOF_writeStatus( const tr_stat_t *s, const tr_info_t *info, const in
 	}
 	else 
 	{
-		sprintf( TOF_message, "Error opening stat-file for writting: %s\n", TOF_statFile )
+		sprintf( TOF_message, "Error opening stat-file for writting: %s\n", TOF_statFile );
 		TOF_print( TOF_message );
 	}
 }
