@@ -52,6 +52,8 @@
 #define UNUSED
 #endif
 
+#define TOF_CMDFILE_MAXLEN 65536
+
 const char * USAGE =
 "Usage: %s [options] file.torrent [options]\n\n"
 "Options:\n"
@@ -116,22 +118,14 @@ static int  parseCommandLine ( int argc, char ** argv );
 static void sigHandler       ( int signal );
 
 /* Torrentflux -START- */
-//static void tf_showInfo(void);
-//#if 0
-//static void tf_showScrape(void);
-//#endif
-//static void tf_torrentStop(tr_handle_t *h, const tr_info_t *info);
-
-//static int tf_processCommandStack(tr_handle_t *h);
-//static int tf_processCommandFile(tr_handle_t *h);
-//static int tf_execCommand(tr_handle_t *h, char *s);
-
-static void TOF_print(char *printmsg);
-static int TOF_initStatus(void);
-static void TOF_writeStatus( const tr_stat_t *s, const tr_info_t *info, const int state, const char *status );
-static int TOF_initCommand(void);
-static int TOF_writePID(void);
-static void TOF_deletePID(void);
+static int  TOF_processCommands(tr_handle_t *h);
+static int  TOF_execCommand(tr_handle_t *h, char *s);
+static void TOF_print ( char *printmsg );
+static int 	TOF_initStatus ( void );
+static void TOF_writeStatus ( const tr_stat_t *s, const tr_info_t *info, const int state, const char *status );
+static int 	TOF_initCommand ( void );
+static int 	TOF_writePID ( void );
+static void TOF_deletePID ( void );
 /* -END- */
 
 char * getStringRatio( float ratio )
@@ -157,7 +151,8 @@ torrentStateChanged( tr_torrent   * torrent UNUSED,
 int main( int argc, char ** argv )
 {
     int i, error;
-    tr_handle  * h;
+	int TOF_checkCmd = 0;
+    tr_handle        * h;
     const tr_stat    * s;
 	const tr_info    * info;
     tr_handle_status * hstat;
@@ -379,6 +374,19 @@ int main( int argc, char ** argv )
     for( ;; )
     {
         int result;
+		
+		/* Torrentflux -START */
+		
+		TOF_checkCmd++;
+		
+		if( TOF_checkCmd == TOF_displayInterval)
+		{
+			TOF_checkCmd = 1;
+			/* If Torrentflux wants us to shutdown */
+			if (TOF_processCommands(h))
+				gotsig = 1;
+		}
+		/* -END- */
 
         wait_secs( 1 );
 
@@ -489,12 +497,10 @@ int main( int argc, char ** argv )
         wait_msecs( 500 );
     }
 	
-	if (s->percentDone == 1)
-		sprintf(TOF_eta, "Download Succeeded!");
+	if (s->percentDone >= 1)
+		TOF_writeStatus(s, info, 0, "Download Succeeded" );
 	else 
-		sprintf(TOF_eta, "Torrent Stopped");
-	
-	TOF_writeStatus(s, info, 0, TOF_eta );
+		TOF_writeStatus(s, info, 0, "Torrent Stopped" );
 
 	TOF_deletePID();
 	
@@ -759,6 +765,208 @@ static void TOF_writeStatus( const tr_stat_t *s, const tr_info_t *info, const in
 		sprintf( TOF_message, "Error opening stat-file for writting: %s\n", TOF_statFile );
 		TOF_print( TOF_message );
 	}
+}
+
+static int TOF_processCommands(tr_handle * h)
+{
+	/*   return values:
+	 *   0 :: do not shutdown transmission
+	 *   1 :: shutdown transmission
+	 */
+	 
+	/* Try opening the CommandFile */
+	TOF_cmdFp = NULL;
+	TOF_cmdFp = fopen(TOF_cmdFile, "r");
+
+	/* File does not exist */
+	if( TOF_cmdFp == NULL )
+		return 0;
+	
+	/* Now Process the CommandFile */
+	
+	int  commandCount = 0;
+	int  isNewline;
+	long fileLen;
+	long index;
+	long startPos;
+	long totalChars;
+	char currentLine[128];
+	char *fileBuffer;
+	char *fileCurrentPos;
+
+	sprintf( TOF_message, "Processing command-file %s...\n", TOF_cmdFile );
+	TOF_print( TOF_message );
+
+	// get length
+	fseek(TOF_cmdFp, 0L, SEEK_END);
+	fileLen = ftell(TOF_cmdFp);
+	rewind(TOF_cmdFp);
+	
+	if ( fileLen >= TOF_CMDFILE_MAXLEN || fileLen < 1 ) 
+	{
+		if( fileLen >= TOF_CMDFILE_MAXLEN )
+			sprintf( TOF_message, "Size of command-file too big, skip. (max-size: %d)\n", TOF_CMDFILE_MAXLEN );
+		else
+			sprintf( TOF_message, "No commands found in command-file.\n" );
+		
+		TOF_print( TOF_message );
+		/* remove file */
+		remove(TOF_cmdFile);
+		goto finished;
+	}
+	
+	fileBuffer = calloc(fileLen + 1, sizeof(char));
+	if (fileBuffer == NULL) 
+	{
+		TOF_print( "Not enough memory to read command-file\n" );
+		/* remove file */
+		remove(TOF_cmdFile);
+		goto finished;
+	}
+	
+	fread(fileBuffer, fileLen, 1, TOF_cmdFp);
+	fclose(TOF_cmdFp);
+	remove(tf_cmd_file);
+	TOF_cmdFp = NULL;
+	totalChars = 0L;
+	fileCurrentPos = fileBuffer;
+	
+	while (*fileCurrentPos)
+	{
+		index = 0L;
+		isNewline = 0;
+		startPos = totalChars;
+		while (*fileCurrentPos) 
+		{
+			if (!isNewline) 
+			{
+				if ( *fileCurrentPos == 10 )
+					isNewline = 1;
+			} 
+			else if (*fileCurrentPos != 10) 
+			{
+				break;
+			}
+			++totalChars;
+			if ( index < 127 ) 
+				currentLine[index++] = *fileCurrentPos++;
+			else 
+			{
+				fileCurrentPos++;
+				break;
+			}
+		}
+
+		if ( index > 1 ) 
+		{
+			commandCount++;
+			currentLine[index - 1] = '\0';
+			
+			if (TOF_execCommand(h, currentLine)) 
+			{
+				free(fileBuffer);
+				return 1;
+			}
+		}
+	}
+	
+	if (commandCount == 0)
+		TOF_print( "No commands found in command-file.\n" );
+
+	free(fileBuffer);
+	
+	finished:
+		return 0;
+}
+
+static int TOF_execCommand(tr_handle_t *h, char *s) 
+{
+	int i;
+	int len = strlen(s);
+	char opcode;
+	char workload[len];
+
+	opcode = s[0];
+	for (i = 0; i < len - 1; i++)
+		workload[i] = s[i + 1];
+	workload[len - 1] = '\0';
+
+	switch (opcode) 
+	{
+		case 'q':
+			TOF_print( "command: stop-request, setting shutdown-flag...\n" );
+			return 1;
+
+		case 'u':
+			if (strlen(workload) < 1) 
+			{
+				TOF_print( "invalid upload-rate...\n" );
+				return 0;
+			}
+			
+			uploadLimit = atoi(workload);
+			sprintf( TOF_message, "command: setting upload-rate to %d...\n", uploadLimit );
+			TOF_print( TOF_message );
+
+			tr_setGlobalSpeedLimit   ( h, TR_UP,   uploadLimit );
+			tr_setUseGlobalSpeedLimit( h, TR_UP,   uploadLimit > 0 );
+			return 0;
+
+		case 'd':
+			if (strlen(workload) < 1) 
+			{
+				TOF_print( "invalid download-rate...\n" );
+				return 0;
+			}
+			
+			downloadLimit = atoi(workload);
+			sprintf( TOF_message, "command: setting download-rate to %d...\n", downloadLimit );
+			TOF_print( TOF_message );
+
+		    tr_setGlobalSpeedLimit   ( h, TR_DOWN, downloadLimit );
+			tr_setUseGlobalSpeedLimit( h, TR_DOWN, downloadLimit > 0 );
+			return 0;
+
+		case 'w':
+			if (strlen(workload) < 1) 
+			{
+				TOF_print( "invalid die-when-done flag...\n" );
+				return 0;
+			}
+			
+			switch (workload[0])
+			{
+				case '0':
+					TOF_print( "command: setting die-when-done to 0\n" );	
+					TOF_dieWhenDone = 0;
+				break;
+				case '1':
+					TOF_print( "command: setting die-when-done to 1\n" );	
+					TOF_dieWhenDone = 1;
+				break;
+				default:
+					sprintf( TOF_message, "invalid die-when-done flag: %c...\n", workload[0] );
+					TOF_print( TOF_message );
+			}
+			return 0;
+
+		case 'l':
+			if (strlen(workload) < 1) 
+			{
+				TOF_print( "invalid sharekill ratio...\n" );
+				return 0;
+			}
+			
+			TOF_seedLimit = atoi(workload);
+			sprintf( TOF_message, "command: setting sharekill to %d...\n", TOF_seedLimit );
+			TOF_print( TOF_message );
+			return 0;
+
+		default:
+			sprintf( TOF_message, "op-code unknown: %c\n", opcode );
+			TOF_print( TOF_message );
+	}
+	return 0;
 }
 
 /* -END- */
