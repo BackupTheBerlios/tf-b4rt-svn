@@ -1,2 +1,2 @@
-adodb : ADOdb V4.95a
+adodb : ADOdb V4.96a
 vlib  : vLIB 4.1.0
