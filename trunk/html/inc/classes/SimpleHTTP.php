@@ -383,7 +383,10 @@ class SimpleHTTP
 			if($this->httpVersion=="1.1"){
 				$this->request .= "Connection: Close\r\n";
 			}
-			$this->request .= "Cookie: " . $this->cookie . "\r\n\r\n";
+			if(!empty($this->cookie)){
+				$this->request .= "Cookie: " . $this->cookie . "\r\n";
+			}
+			$this->request .= "\r\n";
 
 			// Send header packet information to server
 			fputs($this->socket, $this->request);
