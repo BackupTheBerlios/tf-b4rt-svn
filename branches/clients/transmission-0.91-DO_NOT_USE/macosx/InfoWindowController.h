@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: InfoWindowController.h 3475 2007-10-20 19:13:52Z livings124 $
+ * $Id: InfoWindowController.h 3639 2007-10-29 18:18:18Z livings124 $
  *
  * Copyright (c) 2006-2007 Transmission authors and contributors
  *
@@ -69,8 +69,9 @@
     IBOutlet NSButton * fPexCheck;
 }
 
-- (void) updateInfoForTorrents: (NSArray *) torrents;
+- (void) setInfoForTorrents: (NSArray *) torrents;
 - (void) updateInfoStats;
+- (void) updateOptions;
 
 - (void) setTab: (id) sender;
 

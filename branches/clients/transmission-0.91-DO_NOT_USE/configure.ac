@@ -29,6 +29,7 @@ fi
 AC_HEADER_STDC
 AC_HEADER_TIME
 AC_CHECK_FUNCS([lrintf strlcpy strlcat daemon dirname basename])
+AC_CHECK_SIZEOF([void*])
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 AC_PROG_RANLIB
@@ -36,7 +37,9 @@ ACX_PTHREAD
 
 AC_SEARCH_LIBS([socket], [socket net])
 AC_SEARCH_LIBS([gethostbyname], [nsl bind])
-PKG_CHECK_MODULES(OPENSSL, [openssl >= 0.9.8])
+PKG_CHECK_MODULES(OPENSSL, [openssl >= 0.9.4])
+
+AC_SYS_LARGEFILE
 
 dnl ----------------------------------------------------------------------------
 dnl
@@ -89,15 +92,13 @@ AM_CONDITIONAL([WITH_GTK],[test "x$use_gtk" = "xyes"])
 AC_SUBST(GTK_LIBS)
 AC_SUBST(GTK_CFLAGS)
 
-if test "x$use_gtk" = "xyes"; then
-    IT_PROG_INTLTOOL([0.23],[no-xml])
-    GETTEXT_PACKAGE=transmission
-    AC_SUBST(GETTEXT_PACKAGE)
-    AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE],["$GETTEXT_PACKAGE"],[Gettext package])
-    AM_GLIB_GNU_GETTEXT
-    transmissionlocaledir='${prefix}/${DATADIRNAME}/locale'
-    AC_SUBST(transmissionlocaledir)
-fi
+IT_PROG_INTLTOOL([0.23],[no-xml])
+GETTEXT_PACKAGE=transmission
+AC_SUBST(GETTEXT_PACKAGE)
+AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE],["$GETTEXT_PACKAGE"],[Gettext package])
+AM_GLIB_GNU_GETTEXT
+transmissionlocaledir='${prefix}/${DATADIRNAME}/locale'
+AC_SUBST(transmissionlocaledir)
 
 dnl ----------------------------------------------------------------------------
 dnl
@@ -211,12 +212,9 @@ AC_CONFIG_FILES([Makefile
                  third-party/Makefile
                  macosx/Makefile
                  wx/Makefile
-                 wx/images/Makefile])
-
-if test "x$use_gtk" = "xyes"; then
-    AC_CONFIG_FILES([gtk/Makefile
-                     po/Makefile.in])
-fi
+                 wx/images/Makefile
+                 gtk/Makefile
+                 po/Makefile.in])
 
 ac_configure_args="$ac_configure_args --enable-static --disable-shared -q"
 AC_OUTPUT

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: ipcparse.c 3486 2007-10-20 22:07:21Z charles $
+ * $Id: ipcparse.c 3665 2007-10-31 18:10:54Z charles $
  *
  * Copyright (c) 2007 Joshua Elsasser
  *
@@ -779,10 +779,6 @@ ipc_addstat( benc_val_t * list, int tor,
                 else if( TR_ERROR_ISSET( TR_ERROR_ASSERT, error ) )
                 {
                     tr_bencInitStr( item, "assert", -1, 1 );
-                }
-                else if( TR_ERROR_ISSET( TR_ERROR_IO_PARENT, error ) )
-                {
-                    tr_bencInitStr( item, "io-parent", -1, 1 );
                 }
                 else if( TR_ERROR_ISSET( TR_ERROR_IO_PERMISSIONS, error ) )
                 {

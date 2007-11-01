@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: torrent.c 3618 2007-10-28 19:42:46Z charles $
+ * $Id: torrent.c 3649 2007-10-30 18:35:04Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -1060,7 +1060,6 @@ stopTorrent( void * vtor )
     tr_ioRecheckRemove( tor );
     tr_peerMgrStopTorrent( tor->handle->peerMgr, tor->info.hash );
     tr_trackerStop( tor->tracker );
-    tr_ioClose( tor );
 }
 
 void
@@ -1140,7 +1139,6 @@ tr_torrentRecheckCompleteness( tr_torrent * tor )
             && tor->downloadedCur ) {        /* and it just happened */
             tr_trackerCompleted( tor->tracker ); /* tell the tracker */
         }
-        tr_ioClose( tor );
         saveFastResumeNow( tor );
     }
     tr_torrentUnlock( tor );

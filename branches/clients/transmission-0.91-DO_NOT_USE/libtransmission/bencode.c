@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: bencode.c 3105 2007-09-20 16:32:01Z livings124 $
+ * $Id: bencode.c 3683 2007-11-01 18:44:36Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -467,8 +467,10 @@ int tr_bencSave( benc_val_t * val, char ** buf, int * used, int * max )
                 for( i=0; i<ii; ++i ) {
                     const int index = indices[i].index;
                     if( tr_bencSave( val->val.l.vals + index,     buf, used, max ) ||
-                        tr_bencSave( val->val.l.vals + index + 1, buf, used, max ) )
+                        tr_bencSave( val->val.l.vals + index + 1, buf, used, max ) ) {
+                        tr_free( indices );
                         return 1;
+                    }
                 }
                 tr_free( indices );
             } 

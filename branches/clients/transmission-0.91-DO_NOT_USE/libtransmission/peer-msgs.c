@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  *
- * $Id: peer-msgs.c 3614 2007-10-28 15:20:23Z charles $
+ * $Id: peer-msgs.c 3673 2007-11-01 13:47:30Z charles $
  */
 
 #include <assert.h>
@@ -163,8 +163,9 @@ myDebug( const char * file, int line,
         struct evbuffer * buf = evbuffer_new( );
         char * myfile = tr_strdup( file );
 
-        evbuffer_add_printf( buf, "[%s] %s [%s]: ",
+        evbuffer_add_printf( buf, "[%s] %s - %s [%s]: ",
                              tr_getLogTimeStr( timestr, sizeof(timestr) ),
+                             msgs->torrent->info.name,
                              tr_peerIoGetAddrStr( msgs->io ),
                              msgs->info->client );
         va_start( args, fmt );
@@ -937,7 +938,7 @@ messageLengthIsCorrect( const tr_peermsgs * msg, uint8_t id, uint32_t len )
             return len==13;
 
         case BT_PIECE:
-            return len > 9;
+            return len>9 && len<=16393;
 
         case BT_PORT:
             return len==3;
@@ -1210,7 +1211,7 @@ gotBlock( tr_peermsgs      * msgs,
         dbgmsg( msgs, "we didn't ask for this message..." );
         return;
     }
-    dbgmsg( msgs, "Got block %u:%u->%u (turnaround time %d secs)", 
+    dbgmsg( msgs, "got block %u:%u->%u (turnaround time %d secs)", 
                      req->index, req->offset, req->length,
                      (int)(time(NULL) - req->time_requested) );
     tr_free( req );
@@ -1241,6 +1242,15 @@ gotBlock( tr_peermsgs      * msgs,
 
     if( tr_ioWrite( tor, index, offset, length, EVBUFFER_DATA( inbuf )))
         return;
+
+#warning this sanity check is here to help track down the excess corrupt data bug, but is expensive and should be removed before the next release
+{
+    uint8_t * tmp = tr_new( uint8_t, length );
+    const int val = tr_ioRead( tor, index, offset, length, tmp );
+    assert( !val );
+    assert( !memcmp( tmp, EVBUFFER_DATA(inbuf), length ) );
+    tr_free( tmp );
+}
 
     tr_cpBlockAdd( tor->completion, block );
 

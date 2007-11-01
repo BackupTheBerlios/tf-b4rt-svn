@@ -156,9 +156,6 @@ int main( int argc, char ** argv )
     const tr_stat    * s;
 	const tr_info    * info;
     tr_handle_status * hstat;
-	
-	
-	// vars
 	char *TOF_eta = NULL;
 	
     printf( "Transmission %s - http://transmission.m0k.org/ - modified for Torrentflux\n\n",
@@ -373,7 +370,6 @@ int main( int argc, char ** argv )
 
     for( ;; )
     {
-        int result;
 		
 		/* Torrentflux -START */
 		

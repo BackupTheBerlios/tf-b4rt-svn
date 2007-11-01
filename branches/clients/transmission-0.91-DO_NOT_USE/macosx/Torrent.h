@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: Torrent.h 3485 2007-10-20 21:27:46Z livings124 $
+ * $Id: Torrent.h 3677 2007-11-01 14:19:12Z livings124 $
  *
  * Copyright (c) 2006-2007 Transmission authors and contributors
  *

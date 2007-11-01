@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: completion.c 3178 2007-09-26 01:55:04Z charles $
+ * $Id: completion.c 3662 2007-10-31 04:23:50Z charles $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -137,7 +137,11 @@ tr_cpInvalidateDND ( tr_completion * cp )
 int
 tr_cpPieceIsComplete( const tr_completion * cp, int piece )
 {
-    return cp->completeBlocks[piece] >= tr_torPieceCountBlocks(cp->tor,piece);
+    assert( piece >= 0 );
+    assert( piece < cp->tor->info.pieceCount );
+    assert( cp->completeBlocks[piece] <= tr_torPieceCountBlocks(cp->tor,piece) );
+
+    return cp->completeBlocks[piece] == tr_torPieceCountBlocks(cp->tor,piece);
 }
 
 const tr_bitfield * tr_cpPieceBitfield( const tr_completion * cp )
