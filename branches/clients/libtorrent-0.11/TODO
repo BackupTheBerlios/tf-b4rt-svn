@@ -1,0 +1,79 @@
+
+ To do (vaguely in priority order)
+ ---------------------------------
+
+* fix startup from webapp, first index page refresh often indicates
+    'Done / 100%' before correctly showing 'Connecting to Peers'
+
+* display seeds count when seeding (currently: 0 seeds) -- no clue how to get it
+    (is it even supported? afaict when seeding, rTorrent shows 0 everywhere...)
+
+* fix Makefile in -j1 mode (from a fresh tree "make -j2" works fine, but
+    "make" fails the 1st time with error below, has to be run a 2nd time)
+    make: *** No rule to make target `tfcli/.build/cmd_file.o', needed by `tfcli/.build/tfcli-libtorrent.full'.  Stop.
+
+* in Makefile, detect & warn (and/or auto-adjust CXXFLAGS) if user is using a buggy gcc version?
+    (http://libtorrent.rakshasa.no/wiki/LibTorrentKnownIssues)
+
+* .prio support
+
+* --create mode
+
+* test if .cmd open/unlink/.../read sequence works on NFS/Samba/...
+    and if it doesn't, well... at least I'll be aware of it :p
+
+* scrape (not sure it's supported in libtorrent... check further / look for a way to emulate it?)
+
+* save/reload resume data and/or other libtorrent-private data to speed up restarts?
+    (make sure stop / change .prio / restart is supported correctly, let's do better than tornado here)
+
+
+
+
+ Done
+ ----
+
+* super-seeding (doesn't seem supported by libtorrent? look more carefully)
+
+Not needed / supported, obsoleted by fast extensions (which aren't implemented yet)
+  http://libtorrent.rakshasa.no/ticket/801
+  http://www.bittorrent.org/fast_extensions.html
+  http://libtorrent.rakshasa.no/ticket/237
+
+* fix and further check stat-file reporting, includes at least:
+    - when DownTotal == 0, use Size to compute Ratio
+    - when stopped before completion, set Done to -100-Done
+
+* up/down speed limits
+
+* check seeds/peers reporting (not sure with all those peers_complete/connected/not_connected/accounted/...)
+
+* --info mode
+
+* get and log tracker errors (e.g. invalid passkey)
+
+* .cmd support
+
+* check order in which webapp writes commands in .cmd
+    (e.g. avoid sharekill overridding a previous autodie)
+
+Done, also a change in html/inc/iid/transferSettings.php (always send
+  sharekill and runtime together, in that order -- not in trunk yet)
+
+* fix link part of Makefile (either link statically if possible,
+    otherwise look for a way to avoid that evil .so lookup in .)
+
+* make default options sane (activate PEX, allow encryption, ...)
+
+* find a way to avoid 'tracker error: Tried all trackers'
+    message every announce interval (or at least mute it)
+
+Muted (even rakshasa doesn't seem to want to touch that code, so I certainly won't :p)
+
+* add an option to control encryption, sthg like:
+	--encryption=none          encryption_none
+	--encryption=accept        encryption_allow_incoming | encryption_prefer_plaintext
+	--encryption[=active]      encryption_allow_incoming | encryption_try_outgoing | encryption_enable_retry
+	--encryption=require       <active> | encryption_require
+	--encryption=require-full  <require> | encryption_require_RC4
+  default being <active>

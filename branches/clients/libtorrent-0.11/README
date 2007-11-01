@@ -1,0 +1,73 @@
+This is an experimental cli for libtorrent (http://libtorrent.rakshasa.no/,
+the core of rTorrent), written for integration with TorrentFlux-b4rt.
+
+The cli is written to be usable outside tf-b4rt (as a classic, standalone
+torrent client), or as a transfer client within tf-b4rt (which mainly means
+it handles a few auxiliary files for communication with the webapp).
+
+The command-line interface is 100% compatible with transmissioncli, except
+for the following 3 options which are not supported: --scrape (-s),
+--nat-traversal (-n) and --finish (-f).
+[FIXME] actually that'll be true when I rename -s (--skip-hash-check)
+        to not conflict with transmissioncli's -s (--scrape)
+Additional options are supported, run the client with no args to see them.
+
+See TODO file for features status.
+
+
+
+  -------------------------------
+  -- Building tfcli-libtorrent --
+  -------------------------------
+
+Just run make in this directory (GNU make is required).
+
+
+
+  ---------------------------------------
+  -- Integration with TorrentFlux-b4rt --
+  ---------------------------------------
+
+Note that this is an early prototype. NO SUPPORT for it (especially on how
+to install / use it) will be given in the forum. You may try to catch me
+(warion) in IRC, but I don't guarantee anything -- and don't expect a lot
+more than what is written below.
+If you want to try it out, you'll have to do a little work on your side.
+
+
+If you already want to test integration within tf-b4rt, for now this client
+should be almost usable in place of transmissioncli, with these exceptions
+(this hasn't been tested, I don't guarantee it actually works):
+
+- the transmissioncli-check (in admin / server) will fail (additional test
+  added after 1.0-beta1 will detect it's not a real transmissioncli) -- so
+  you'll have to disable that check or update the path in the db by hand.
+
+- the client-start command-line must be altered to add "-Tv" (-T puts the
+  client in tf-b4rt mode so that it handles .pid/.stat/.cmd files, -v makes
+  it log a little info to get the same behavior as other tf-b4rt clients)
+  in html/inc/classes/ClientHandler.transmission.php.
+
+- scrape is not supported. Don't click on the Scrape tab. Ever. Don't say
+  you haven't been warned.
+
+- torrent creation is not supported yet.
+
+
+
+  --------------------------
+  -- Compile-time options --
+  --------------------------
+
+The following compile-time options are supported:
+
+* TFCLILT_OPT_NO_QUICK_HASH: do not try libtorrent's quick-hash mode when
+   starting transfers (this has nothing to do with option --skip-hash-check,
+   which is always supported).
+=> Quick-hash mode has no problems that I know of so this option is... useless.
+
+* TFCLILT_OPT_NO_VARIABLE_FDSETS: do not use non-portable variable-sized
+   fdsets -- you need this if your system requires you to compile rTorrent
+   with option --without-variable-fdset (i.e. not with USE_VARIABLE_FDSET).
+=> This option is not needed on Linux.
+   [FIXME] no clue about *BSD
