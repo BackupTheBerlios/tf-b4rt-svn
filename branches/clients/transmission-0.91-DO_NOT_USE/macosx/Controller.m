@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: Controller.m 3688 2007-11-01 19:18:33Z livings124 $
+ * $Id: Controller.m 3589 2007-10-27 02:00:58Z livings124 $
  * 
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -1791,7 +1791,6 @@ void sleepCallBack(void * controller, io_service_t y, natural_t messageType, voi
 
 - (void) setSortReverse: (id) sender
 {
-    [fDefaults setBool: ![fDefaults boolForKey: @"SortReverse"] forKey: @"SortReverse"];
     [self sortTorrents];
 }
 
@@ -1998,13 +1997,13 @@ void sleepCallBack(void * controller, io_service_t y, natural_t messageType, voi
 
 - (void) applySpeedLimit: (id) sender
 {
-    [self toggleSpeedLimit: sender];
+    [fPrefsController applySpeedSettings: nil];
 }
 
 - (void) toggleSpeedLimit: (id) sender
 {
     [fDefaults setBool: ![fDefaults boolForKey: @"SpeedLimit"] forKey: @"SpeedLimit"];
-    [fPrefsController applySpeedSettings: nil];
+    [self applySpeedLimit: nil];
 }
 
 - (void) autoSpeedLimitChange: (NSNotification *) notification
@@ -2098,7 +2097,6 @@ void sleepCallBack(void * controller, io_service_t y, natural_t messageType, voi
     
     [self updateTorrentsInQueue];
     [fInfoController updateInfoStats];
-    [fInfoController updateOptions];
     
     if ([fDefaults boolForKey: @"PlaySeedingSound"])
     {
@@ -2326,7 +2324,7 @@ void sleepCallBack(void * controller, io_service_t y, natural_t messageType, voi
 
 - (void) torrentTableViewSelectionDidChange: (NSNotification *) notification
 {
-    [fInfoController setInfoForTorrents: [fDisplayedTorrents objectsAtIndexes: [fTableView selectedRowIndexes]]];
+    [fInfoController updateInfoForTorrents: [fDisplayedTorrents objectsAtIndexes: [fTableView selectedRowIndexes]]];
 }
 
 - (NSDragOperation) draggingEntered: (id <NSDraggingInfo>) info
@@ -2443,8 +2441,7 @@ void sleepCallBack(void * controller, io_service_t y, natural_t messageType, voi
 
 - (void) toggleSmallView: (id) sender
 {
-    BOOL makeSmall = ![fDefaults boolForKey: @"SmallView"];
-    [fDefaults setBool: makeSmall forKey: @"SmallView"];
+    BOOL makeSmall = [fDefaults boolForKey: @"SmallView"];
     
     [fTableView setRowHeight: makeSmall ? ROW_HEIGHT_SMALL : ROW_HEIGHT_REGULAR];
     
@@ -2817,12 +2814,6 @@ void sleepCallBack(void * controller, io_service_t y, natural_t messageType, voi
 - (BOOL) validateMenuItem: (NSMenuItem *) menuItem
 {
     SEL action = [menuItem action];
-    
-    if (action == @selector(applySpeedLimit:))
-    {
-        [menuItem setState: [fDefaults boolForKey: @"SpeedLimit"] ? NSOnState : NSOffState];
-        return YES;
-    }
 
     //only enable some items if it is in a context menu or the window is useable
     BOOL canUseTable = [fWindow isKeyWindow] || [[menuItem menu] supermenu] != [NSApp mainMenu];
@@ -2832,15 +2823,9 @@ void sleepCallBack(void * controller, io_service_t y, natural_t messageType, voi
         return [fWindow attachedSheet] == nil;
     
     //enable sort and advanced bar items
-    if (action == @selector(setSort:) /*|| action == @selector(toggleAdvancedBar:) ||*/)
+    if (action == @selector(setSort:) || /*action == @selector(toggleAdvancedBar:) ||*/ action == @selector(toggleSmallView:))
         return [fWindow isVisible];
-    
-    if (action == @selector(toggleSmallView:))
-    {
-        [menuItem setState: [fDefaults boolForKey: @"SmallView"] ? NSOnState : NSOffState];
-        return [fWindow isVisible];
-    }
-    
+
     //enable show info
     if (action == @selector(showInfo:))
     {
@@ -3031,10 +3016,7 @@ void sleepCallBack(void * controller, io_service_t y, natural_t messageType, voi
     
     //enable reverse sort item
     if (action == @selector(setSortReverse:))
-    {
-        [menuItem setState: [fDefaults boolForKey: @"SortReverse"] ? NSOnState : NSOffState];
         return ![[fDefaults stringForKey: @"Sort"] isEqualToString: @"Order"];
-    }
     
     //check proper filter search item
     if (action == @selector(setFilterSearchType:))
@@ -3216,7 +3198,7 @@ void sleepCallBack(void * controller, io_service_t y, natural_t messageType, voi
     [fWindow makeKeyAndOrderFront: nil];
 }
 
-- (void) windowDidBecomeMain: (NSNotification *) notification
+- (void) windowDidBecomeKey: (NSNotification *) notification
 {
     [fStatusBar setNeedsDisplay: YES];
     
@@ -3224,7 +3206,7 @@ void sleepCallBack(void * controller, io_service_t y, natural_t messageType, voi
     [self updateUI];
 }
 
-- (void) windowDidResignMain: (NSNotification *) notification
+- (void) windowDidResignKey: (NSNotification *) notification
 {
     [fStatusBar setNeedsDisplay: YES];
 }

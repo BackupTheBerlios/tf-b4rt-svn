@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  *
- * $Id: makemeta.c 3657 2007-10-30 20:11:23Z charles $
+ * $Id: makemeta.c 3574 2007-10-26 03:15:55Z charles $
  */
 
 #include <assert.h>
@@ -19,7 +19,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <libgen.h> /* dirname, basename */
 #include <dirent.h>
 
 #include "crypto.h" /* tr_sha1 */

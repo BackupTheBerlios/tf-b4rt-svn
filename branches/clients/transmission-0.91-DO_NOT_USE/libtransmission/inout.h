@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: inout.h 3649 2007-10-30 18:35:04Z charles $
+ * $Id: inout.h 3284 2007-10-04 19:58:30Z charles $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -42,6 +42,9 @@ int tr_ioWrite ( struct tr_torrent *, int index, int begin, int len, uint8_t * )
 
 /* hashes the specified piece and updates the completion accordingly. */
 int tr_ioHash ( tr_torrent*, int piece );
+
+/* close all the files associated with this torrent*/
+void tr_ioClose( const tr_torrent * );
 
 /**
 ***

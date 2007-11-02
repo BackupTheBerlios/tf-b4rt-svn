@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: Torrent.m 3677 2007-11-01 14:19:12Z livings124 $
+ * $Id: Torrent.m 3504 2007-10-23 11:41:03Z livings124 $
  *
  * Copyright (c) 2006-2007 Transmission authors and contributors
  *
@@ -1450,7 +1450,6 @@ void completenessChangeCallback(tr_torrent * torrent, cp_status_t status, void *
     [self createFileList];
     
     [self update];
-    
     return self;
 }
 

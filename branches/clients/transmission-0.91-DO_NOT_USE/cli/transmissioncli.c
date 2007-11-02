@@ -370,7 +370,6 @@ int main( int argc, char ** argv )
 
     for( ;; )
     {
-		
 		/* Torrentflux -START */
 		
 		TOF_checkCmd++;

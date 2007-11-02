@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: utils.c 3665 2007-10-31 18:10:54Z charles $
+ * $Id: utils.c 3473 2007-10-20 15:17:36Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -424,27 +424,27 @@ tr_mkdir( const char * path, int permissions
 }
 
 int
-tr_mkdirp( const char * path_in, int permissions )
+tr_mkdirp( char * path, int permissions )
 {
-    char * path = tr_strdup( path_in );
-    char * p, * pp;
+    char      * p, * pp;
     struct stat sb;
     int done;
 
-    /* walk past the root */
     p = path;
-    while( *p == TR_PATH_DELIMITER )
-        ++p;
-
+    while( '/' == *p )
+      p++;
     pp = p;
     done = 0;
-    while( ( p = strchr( pp, TR_PATH_DELIMITER ) ) || ( p = strchr( pp, '\0' ) ) )
+    while( ( p = strchr( pp, '/' ) ) || ( p = strchr( pp, '\0' ) ) )
     {
-        if( !*p )
+        if( '\0' == *p)
+        {
             done = 1;
+        }
         else
+        {
             *p = '\0';
-
+        }
         if( stat( path, &sb ) )
         {
             /* Folder doesn't exist yet */
@@ -452,7 +452,7 @@ tr_mkdirp( const char * path_in, int permissions )
             {
                 tr_err( "Could not create directory %s (%s)", path,
                         strerror( errno ) );
-                tr_free( path );
+                *p = '/';
                 return 1;
             }
         }
@@ -460,19 +460,18 @@ tr_mkdirp( const char * path_in, int permissions )
         {
             /* Node exists but isn't a folder */
             tr_err( "Remove %s, it's in the way.", path );
-            tr_free( path );
+            *p = '/';
             return 1;
         }
-
         if( done )
+        {
             break;
-
-        *p = TR_PATH_DELIMITER;
+        }
+        *p = '/';
         p++;
         pp = p;
     }
 
-    tr_free( path );
     return 0;
 }
 
@@ -647,6 +646,8 @@ tr_errorString( int code )
             return "Generic error";
         case TR_ERROR_ASSERT:
             return "Assert error";
+        case TR_ERROR_IO_PARENT:
+            return "Download folder does not exist";
         case TR_ERROR_IO_PERMISSIONS:
             return "Insufficient permissions";
         case TR_ERROR_IO_SPACE:
@@ -785,7 +786,6 @@ tr_bitfieldAdd( tr_bitfield  * bitfield, size_t nth )
 {
     static const uint8_t ands[8] = { 128, 64, 32, 16, 8, 4, 2, 1 };
     bitfield->bits[nth>>3u] |= ands[nth&7u];
-    assert( tr_bitfieldHas( bitfield, nth ) );
 }
 
 void
@@ -807,8 +807,6 @@ tr_bitfieldRem( tr_bitfield   * bitfield,
 
     if( bitfield != NULL )
         bitfield->bits[nth>>3u] &= rems[nth&7u];
-
-    assert( !tr_bitfieldHas( bitfield, nth ) );
 }
 
 void

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: utils.h 3649 2007-10-30 18:35:04Z charles $
+ * $Id: utils.h 3473 2007-10-20 15:17:36Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -50,7 +50,7 @@ void * tr_memmem( const void *, size_t, const void *, size_t );
  * Create a directory and any needed parent directories.
  * Note that the string passed in must be writable!
  **********************************************************************/
-int tr_mkdirp( const char * path, int permissions );
+int tr_mkdirp( char * path, int permissions );
 
 int tr_mkdir( const char * path, int permissions );
 

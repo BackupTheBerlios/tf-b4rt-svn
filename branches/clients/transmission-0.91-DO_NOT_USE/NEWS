@@ -1,19 +1,7 @@
 NEWS file for Transmission <http://transmission.m0k.org/>
 
-0.92 (2007/xx/yy)
-- All Platforms:
-   + Fix 0.90 data corruption bugs.
-   + Fix 0.90 small memory leaks.
-- OS X:
-   + Leopard: Fix bug with typing values in Inspector->Options
-   + Leopard: Fix bug with toggling Minimal View
-- GTK
-   + Better support for large files on some Linux systems
-   + Fix localization error in torrent inspector's dates
-   
-
 0.91 (2007/10/28)
-- All Platforms:
+- libtransmission (all platforms):
    + Fix 0.90 speed limits
    + Fix 0.90 problems announcing to some trackers
    + Fix 0.90 socket connection leak

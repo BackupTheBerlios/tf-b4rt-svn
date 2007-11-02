@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: TorrentTableView.m 3639 2007-10-29 18:18:18Z livings124 $
+ * $Id: TorrentTableView.m 3485 2007-10-20 21:27:46Z livings124 $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -397,7 +397,7 @@
     
     [fMenuTorrent setSpeedMode: mode upload: [sender menu] == fUploadMenu];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName: @"UpdateOptions" object: nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName: @"UpdateStats" object: nil];
 }
 
 - (void) setQuickLimit: (id) sender
@@ -406,7 +406,7 @@
     [fMenuTorrent setSpeedMode: TR_SPEEDLIMIT_SINGLE upload: upload];
     [fMenuTorrent setSpeedLimit: [[sender title] intValue] upload: upload];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName: @"UpdateOptions" object: nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName: @"UpdateStats" object: nil];
 }
 
 - (void) setQuickRatioMode: (id) sender
@@ -429,7 +429,7 @@
     
     [fMenuTorrent setRatioSetting: mode];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName: @"UpdateOptions" object: nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName: @"UpdateStats" object: nil];
 }
 
 - (void) setQuickRatio: (id) sender
@@ -437,7 +437,7 @@
     [fMenuTorrent setRatioSetting: NSOnState];
     [fMenuTorrent setRatioLimit: [[sender title] floatValue]];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName: @"UpdateOptions" object: nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName: @"UpdateStats" object: nil];
 }
 
 - (void) checkFile: (id) sender

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: StatusBarView.m 3672 2007-11-01 12:57:46Z livings124 $
+ * $Id: StatusBarView.m 3151 2007-09-23 16:23:52Z livings124 $
  * 
  * Copyright (c) 2006-2007 Transmission authors and contributors
  *
@@ -33,12 +33,12 @@
 
 - (BOOL) isOpaque
 {
-    return [[self window] isMainWindow];
+    return [[self window] isKeyWindow];
 }
 
 - (void) drawRect: (NSRect) rect
 {
-    if ([[self window] isMainWindow])
+    if ([[self window] isKeyWindow])
         [super drawRect: rect];
 }
 
