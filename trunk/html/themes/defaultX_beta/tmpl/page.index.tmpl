@@ -263,42 +263,42 @@
 			</thead>
 			<tbody>
 				<tr class="tablecontent">
-					<td colspan="2">
-					<tmpl_if name="drivespacebar_type" value="xfer">
-					    <tmpl_include name="inc.driveSpaceBar_xfer.tmpl">
-					<tmpl_else>
-					    <tmpl_include name="inc.driveSpaceBar_tf.tmpl">
-					</tmpl_if>
-					</td>
-					<tmpl_if name="xfer_realtime">
-						<tmpl_var name="xfer_day">
-						<tmpl_var name="xfer_week">
-						<tmpl_var name="xfer_month">
-						<tmpl_var name="xfer_total">
-					</tmpl_if>
-				</tr>
-				<tmpl_if name="ui_displaybandwidthbars">
-					<tr class="tablecontent">
-						<td colspan="2">
-							<tmpl_if name="bandwidthbars_type" value="xfer">
-							    <tmpl_include name="inc.bandwidthBars_xfer.tmpl">
+					<td>
+						<table style="width:100%;" cellspacing="0">
+						<tbody>
+							<tmpl_if name="drivespacebar_type" value="xfer">
+								<tmpl_include name="inc.driveSpaceBar_xfer.tmpl">
 							<tmpl_else>
-							    <tmpl_include name="inc.bandwidthBars_tf.tmpl">
+							    <tmpl_include name="inc.driveSpaceBar_tf.tmpl">
+							</tmpl_if>			
+							<tmpl_if name="ui_displaybandwidthbars">
+								<tmpl_if name="bandwidthbars_type" value="xfer">
+									<tmpl_include name="inc.bandwidthBars_xfer.tmpl">
+								<tmpl_else>
+									<tmpl_include name="inc.bandwidthBars_tf.tmpl">
+								</tmpl_if>
 							</tmpl_if>
-						</td>
-					</tr>
-				</tmpl_if>
-				<tmpl_if name="enable_bigboldwarning" value="1">
-					<tr class="tablecontent">
-						<td colspan="2" style="white-space:nowrap;">
-							<div align="center">
-								<span style="font-size:14px;color:#FF0000;font-weight:bold;">
-									Warning! <tmpl_var name="drivespace">% drivespace is used! You have <tmpl_var name="freeSpaceFormatted"> left!
-								</span>
-							</div>
-						</td>
-					</tr>
-				</tmpl_if>
+							<tmpl_if name="xfer_realtime">
+								<tmpl_var name="xfer_day">
+								<tmpl_var name="xfer_week">
+								<tmpl_var name="xfer_month">
+								<tmpl_var name="xfer_total">
+							</tmpl_if>
+						<tmpl_if name="enable_bigboldwarning" value="1">
+							<tr class="tablecontent">
+								<td colspan="2" style="white-space:nowrap;">
+									<div align="center">
+										<span style="font-size:14px;color:#FF0000;font-weight:bold;">
+											Warning! <tmpl_var name="drivespace">% drivespace is used! You have <tmpl_var name="freeSpaceFormatted"> left!
+										</span>
+									</div>
+								</td>
+							</tr>
+						</tmpl_if>
+						</tbody>
+						</table>
+					</td>
+				</tr>
 			</tbody>
 			</table>
 		<form action="dispatcher.php" method="post" onsubmit="return actionSubmit()">

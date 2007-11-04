@@ -5,11 +5,15 @@
 	</script>
 </tmpl_if>
 <tmpl_include name="inc.subhead.tmpl">
-<tmpl_if name="drivespacebar_type" value="xfer">
-    <tmpl_include name="inc.driveSpaceBar_xfer.tmpl">
-<tmpl_else>
-    <tmpl_include name="inc.driveSpaceBar_tf.tmpl">
-</tmpl_if>
+<table style="width:100%;" cellspacing="0">
+<tbody>
+	<tmpl_if name="drivespacebar_type" value="xfer">
+	    <tmpl_include name="inc.driveSpaceBar_xfer.tmpl">
+	<tmpl_else>
+	    <tmpl_include name="inc.driveSpaceBar_tf.tmpl">
+	</tmpl_if>
+</tbody>
+</table>
 <br />
 <form action="index.php?iid=dir&amp;dir=<tmpl_var name="dir">&amp;multidel=1" method="post" name="multidir">
 	<table cellspacing="0" style="width:100%;text-align:left;">

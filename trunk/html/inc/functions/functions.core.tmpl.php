@@ -242,22 +242,25 @@ function tmplSetBandwidthBars() {
  * @param $title
  * @return string
  */
-function tmplGetXferBar($total, $used, $title) {
+function tmplGetXferBar($total, $used, $title, $type='xfer') {
 	global $cfg;
 	// create template-instance
 	$tmpl = tmplGetInstance($cfg["theme"], "component.xferBar.tmpl");
-	$remaining = max(0, $total-$used / 1048576);
-	$percent = round($remaining / $total * 100,0);
-	$text = ' ('.formatFreeSpace($remaining).') '.$cfg['_REMAINING'];
-	$bgcolor = '#';
-	$bgcolor .= str_pad(dechex(255 - 255 * ($percent / 150)), 2 ,0, STR_PAD_LEFT);
-	$bgcolor .= str_pad(dechex(255 * ($percent / 150)), 2, 0, STR_PAD_LEFT);
-	$bgcolor .='00';
+	$percent = round((($total-$used) / $total) * 100,0);
+	$text = ' ('.formatFreeSpace($total-$used).') '.$cfg['_REMAINING'];
+	if($type=='xfer')
+	{
+		$bgcolor = '#';
+		$bgcolor .= str_pad(dechex(255 - 255 * ($percent / 150)), 2 ,0, STR_PAD_LEFT);
+		$bgcolor .= str_pad(dechex(255 * ($percent / 150)), 2, 0, STR_PAD_LEFT);
+		$bgcolor .='00';
+		$tmpl->setvar('bgcolor', $bgcolor);
+	}	
 	$tmpl->setvar('title', $title);
-	$tmpl->setvar('bgcolor', $bgcolor);
 	$tmpl->setvar('percent_1', ($percent+1));
 	$tmpl->setvar('percent', $percent);
 	$tmpl->setvar('text', $text);
+	$tmpl->setvar('type', $type);
 	$percent_100 = 100 - $percent;
 	$tmpl->setvar('percent_100', $percent_100);
 	// grab the template
