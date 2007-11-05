@@ -266,6 +266,14 @@ a:hover.tableheadlink
 	_width:  expression( document.body.scrollWidth  + 'px' );
 	/* --------------------- */
 }
+.logfont
+{
+	font-family:Monospace;
+	overflow:scroll;
+	white-space:pre;
+	height:325px;
+	padding:3px;
+}
 
 
 /*INPUT 		{BORDER-TOP-COLOR: #000000; BORDER-LEFT-COLOR: #000000; BORDER-RIGHT-COLOR: #000000; BORDER-BOTTOM-COLOR: #000000; BORDER-TOP-WIDTH: 1px; BORDER-LEFT-WIDTH: 1px; FONT-SIZE: 12px; BORDER-BOTTOM-WIDTH: 1px; FONT-FAMILY: Verdana,Helvetica; BORDER-RIGHT-WIDTH: 1px}
