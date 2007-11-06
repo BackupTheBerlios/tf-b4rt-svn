@@ -118,11 +118,11 @@ static int  parseCommandLine ( int argc, char ** argv );
 static void sigHandler       ( int signal );
 
 /* Torrentflux -START- */
-static int  TOF_processCommands(tr_handle_t *h);
-static int  TOF_execCommand(tr_handle_t *h, char *s);
+static int  TOF_processCommands(tr_handle *h);
+static int  TOF_execCommand(tr_handle *h, char *s);
 static void TOF_print ( char *printmsg );
 static int 	TOF_initStatus ( void );
-static void TOF_writeStatus ( const tr_stat_t *s, const tr_info_t *info, const int state, const char *status );
+static void TOF_writeStatus ( const tr_stat *s, const tr_info *info, const int state, const char *status );
 static int 	TOF_initCommand ( void );
 static int 	TOF_writePID ( void );
 static void TOF_deletePID ( void );
@@ -438,7 +438,7 @@ int main( int argc, char ** argv )
 				} 
 			}
 				
-            if ((s->seeders < -1) && (s->peersTotal == 0))
+            if ((s->seeders < -1) && (s->peersConnected == 0))
 				sprintf(TOF_eta, "Connecting to Peers");
 			
 			TOF_writeStatus(s, info, 1, TOF_eta );
@@ -720,7 +720,7 @@ static void TOF_deletePID( void )
 	remove(TOF_pidFile);
 }
 
-static void TOF_writeStatus( const tr_stat_t *s, const tr_info_t *info, const int state, const char *status )
+static void TOF_writeStatus( const tr_stat *s, const tr_info *info, const int state, const char *status )
 {
 	TOF_statFp = fopen(TOF_statFile, "w+");
 	if (TOF_statFp != NULL) 
@@ -750,8 +750,8 @@ static void TOF_writeStatus( const tr_stat_t *s, const tr_info_t *info, const in
 			s->peersGettingFromUs, TOF_leechers,  /* Leecher          */
 			100.0 * TOF_ratio,                   /* ratio            */
 			TOF_seedLimit,                      /* seedlimit        */
-			s->uploaded,                       /* uploaded bytes   */
-			s->downloaded,                    /* downloaded bytes */
+			s->uploadedEver,                   /* uploaded bytes   */
+			s->downloadedEver,                /* downloaded bytes */
 			info->totalSize                  /* global size      */
 		);               
 		fclose(TOF_statFp);
@@ -822,7 +822,7 @@ static int TOF_processCommands(tr_handle * h)
 	
 	fread(fileBuffer, fileLen, 1, TOF_cmdFp);
 	fclose(TOF_cmdFp);
-	remove(tf_cmd_file);
+	remove(TOF_cmdFile);
 	TOF_cmdFp = NULL;
 	totalChars = 0L;
 	fileCurrentPos = fileBuffer;
@@ -875,7 +875,7 @@ static int TOF_processCommands(tr_handle * h)
 		return 0;
 }
 
-static int TOF_execCommand(tr_handle_t *h, char *s) 
+static int TOF_execCommand(tr_handle *h, char *s) 
 {
 	int i;
 	int len = strlen(s);
