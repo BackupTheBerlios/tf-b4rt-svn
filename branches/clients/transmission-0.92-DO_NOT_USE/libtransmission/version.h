@@ -1,0 +1,5 @@
+#define PEERID_PREFIX         "-TR0920-"
+#define USERAGENT_PREFIX      "0.92"
+#define SVN_REVISION          "3727"
+#define SHORT_VERSION_STRING  "0.92"
+#define LONG_VERSION_STRING   "0.92 (3727)"
