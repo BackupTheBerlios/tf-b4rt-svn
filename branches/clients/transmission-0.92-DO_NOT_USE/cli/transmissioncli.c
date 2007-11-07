@@ -111,7 +111,7 @@ static char          * TOF_statFile = NULL;
 static FILE          * TOF_statFp   = NULL;
 static char          * TOF_cmdFile  = NULL;
 static FILE          * TOF_cmdFp    = NULL;
-static char          * TOF_message  = NULL;
+static char            TOF_message[512];
 /* -END- */
 
 static int  parseCommandLine ( int argc, char ** argv );
@@ -121,6 +121,7 @@ static void sigHandler       ( int signal );
 static int  TOF_processCommands(tr_handle *h);
 static int  TOF_execCommand(tr_handle *h, char *s);
 static void TOF_print ( char *printmsg );
+static void TOF_free ( void );
 static int 	TOF_initStatus ( void );
 static void TOF_writeStatus ( const tr_stat *s, const tr_info *info, const int state, const char *status );
 static int 	TOF_initCommand ( void );
@@ -290,12 +291,18 @@ int main( int argc, char ** argv )
 	{
 		sprintf( TOF_message, "No owner supplied, using 'n/a'.\n" );
         TOF_print( TOF_message );
-		
+		TOF_owner = malloc((4) * sizeof(char));
+		if (TOF_owner == NULL) 
+		{
+			sprintf( TOF_message, "Error : not enough mem for malloc\n" );
+			TOF_print( TOF_message );
+			goto failed;
+		}
 		strcpy(TOF_owner,"n/a");
 	}
 	
 	// Output for log
-	sprintf( TOF_message, "transmission starting up :\n" );
+	sprintf( TOF_message, "transmission %s starting up :\n", LONG_VERSION_STRING );
     TOF_print( TOF_message );
 	sprintf( TOF_message, " - torrent : %s\n", torrentPath );
     TOF_print( TOF_message );
@@ -503,12 +510,14 @@ int main( int argc, char ** argv )
 	TOF_print("Transmission exit.\n");
     
 cleanup:
+	TOF_free();
     tr_torrentClose( tor );
     tr_close( h );
 
     return EXIT_SUCCESS;
 
 failed:
+	TOF_free();
 	tr_torrentClose( tor );
     tr_close( h );
 
@@ -532,15 +541,15 @@ static int parseCommandLine( int argc, char ** argv )
             { "create",   required_argument, NULL, 'c' },
             { "comment",  required_argument, NULL, 'm' },
             { "announce", required_argument, NULL, 'a' },
-			{ "nat-traversal", no_argument,  NULL, 'n' },
             { "display-interval", required_argument, NULL, 'e' },
 			{ "seedlimit",        required_argument, NULL, 'l' },
 			{ "owner",            required_argument, NULL, 'o' },
 			{ "die-when-done",    required_argument, NULL, 'w' },
+			{ "nat-traversal", no_argument,  NULL, 'n' },
             { 0, 0, 0, 0} };
 
         int c, optind = 0;
-        c = getopt_long( argc, argv, "hisrv:p:u:d:f:c:m:a:n:e:l:o:w",
+        c = getopt_long( argc, argv, "hisrv:p:u:d:f:c:m:a:e:l:o:w:n",
                          long_options, &optind );
         if( c < 0 )
         {
@@ -590,13 +599,13 @@ static int parseCommandLine( int argc, char ** argv )
                 natTraversal = 1;
                 break;
 			case 'w':
-				TOF_dieWhenDone = atoi(optarg);
+				TOF_dieWhenDone = atoi( optarg );
 				break;
 			case 'l':
-				TOF_seedLimit = atoi(optarg);
+				TOF_seedLimit = atoi( optarg );
 				break;
 			case 'e':
-				TOF_displayInterval = atoi(optarg);
+				TOF_displayInterval = atoi( optarg );
 				break;
 			case 'o':
 				TOF_owner = optarg;
@@ -654,8 +663,14 @@ static void TOF_print( char *printmsg )
 
 static int TOF_initStatus( void ) 
 {
-	sprintf( TOF_statFile, "%s", torrentPath );
-	strcat( TOF_statFile, ".stat" );
+	int len = strlen(torrentPath) + 5;
+	TOF_statFile = malloc((len + 1) * sizeof(char));
+	if (TOF_statFile == NULL) {
+		TOF_print(  "Error : TOF_initStatus: not enough mem for malloc\n" );
+		return 0;
+	}
+
+	sprintf( TOF_statFile, "%s.stat", torrentPath );
 	
 	sprintf( TOF_message, "Initialized status-facility. (%s)\n", TOF_statFile );
     TOF_print( TOF_message );
@@ -664,8 +679,14 @@ static int TOF_initStatus( void )
 
 static int TOF_initCommand( void ) 
 {
-	TOF_cmdFile = torrentPath;
-	strcat( TOF_cmdFile, ".cmd" );
+	int len = strlen(torrentPath) + 4;
+	TOF_cmdFile = malloc((len + 1) * sizeof(char));
+	if (TOF_cmdFile == NULL) {
+		TOF_print(  "Error : TOF_initCommand: not enough mem for malloc\n" );
+		return 0;
+	}
+
+	sprintf( TOF_cmdFile, "%s.cmd", torrentPath );
 	
 	sprintf( TOF_message, "Initialized command-facility. (%s)\n", TOF_cmdFile );
     TOF_print( TOF_message );
@@ -963,6 +984,13 @@ static int TOF_execCommand(tr_handle *h, char *s)
 			TOF_print( TOF_message );
 	}
 	return 0;
+}
+
+static void TOF_free ( void )
+{
+	free(TOF_cmdFile);
+	free(TOF_statFile);
+	free(TOF_owner);
 }
 
 /* -END- */
