@@ -1160,12 +1160,12 @@ class FluxCLI
 		if (($delta == "total") || ($delta == "all")) {
 			// only do if a limit is set
 			if ($cfg["xfer_total"] > 0) {
-				if ($xfer_total['total']['total'] >= $cfg["xfer_total"]) {
+				if ($xfer_total['total']['total'] >= $cfg["xfer_total"] * 1048576) {
 					// limit met, stop all Transfers now.
-					$this->_outputMessage('Limit met for "total" : '.formatFreeSpace($xfer_total['total']['total'] / (1048576))." / ".formatFreeSpace($cfg["xfer_total"] / (1048576))."\n");
+					$this->_outputMessage('Limit met for "total" : '.formatFreeSpace($xfer_total['total']['total'] / (1048576))." / ".formatFreeSpace($cfg["xfer_total"])."\n");
 					return $this->_transfersStop();
 				} else {
-					$this->_outputMessage('Limit not met for "total" : '.formatFreeSpace($xfer_total['total']['total'] / (1048576))." / ".formatFreeSpace($cfg["xfer_total"] / (1048576))."\n");
+					$this->_outputMessage('Limit not met for "total" : '.formatFreeSpace($xfer_total['total']['total'] / (1048576))." / ".formatFreeSpace($cfg["xfer_total"])."\n");
 				}
 			} else {
 				$this->_outputMessage('no limit set for "total"'."\n");
@@ -1175,12 +1175,12 @@ class FluxCLI
 		if (($delta == "month") || ($delta == "all")) {
 			// only do if a limit is set
 			if ($cfg["xfer_month"] > 0) {
-				if ($xfer_total['month']['total'] >= $cfg["xfer_month"]) {
+				if ($xfer_total['month']['total'] >= $cfg["xfer_month"] * 1048576) {
 					// limit met, stop all Transfers now.
-					$this->_outputMessage('Limit met for "month" : '.formatFreeSpace($xfer_total['month']['total'] / (1048576))." / ".formatFreeSpace($cfg["xfer_month"] / (1048576))."\n");
+					$this->_outputMessage('Limit met for "month" : '.formatFreeSpace($xfer_total['month']['total'] / (1048576))." / ".formatFreeSpace($cfg["xfer_month"])."\n");
 					return $this->_transfersStop();
 				} else {
-					$this->_outputMessage('Limit not met for "month" : '.formatFreeSpace($xfer_total['month']['total'] / (1048576))." / ".formatFreeSpace($cfg["xfer_month"] / (1048576))."\n");
+					$this->_outputMessage('Limit not met for "month" : '.formatFreeSpace($xfer_total['month']['total'] / (1048576))." / ".formatFreeSpace($cfg["xfer_month"])."\n");
 				}
 			} else {
 				$this->_outputMessage('no limit set for "month"'."\n");
@@ -1190,12 +1190,12 @@ class FluxCLI
 		if (($delta == "week") || ($delta == "all")) {
 			// only do if a limit is set
 			if ($cfg["xfer_week"] > 0) {
-				if ($xfer_total['week']['total'] >= $cfg["xfer_week"]) {
+				if ($xfer_total['week']['total'] >= $cfg["xfer_week"] * 1048576) {
 					// limit met, stop all Transfers now.
-					$this->_outputMessage('Limit met for "week" : '.formatFreeSpace($xfer_total['week']['total'] / (1048576))." / ".formatFreeSpace($cfg["xfer_week"] / (1048576))."\n");
+					$this->_outputMessage('Limit met for "week" : '.formatFreeSpace($xfer_total['week']['total'] / (1048576))." / ".formatFreeSpace($cfg["xfer_week"])."\n");
 					return $this->_transfersStop();
 				} else {
-					$this->_outputMessage('Limit not met for "week" : '.formatFreeSpace($xfer_total['week']['total'] / (1048576))." / ".formatFreeSpace($cfg["xfer_week"] / (1048576))."\n");
+					$this->_outputMessage('Limit not met for "week" : '.formatFreeSpace($xfer_total['week']['total'] / (1048576))." / ".formatFreeSpace($cfg["xfer_week"])."\n");
 				}
 			} else {
 				$this->_outputMessage('no limit set for "week"'."\n");
@@ -1205,12 +1205,12 @@ class FluxCLI
 		if (($delta == "day") || ($delta == "all")) {
 			// only do if a limit is set
 			if ($cfg["xfer_day"] > 0) {
-				if ($xfer_total['day']['total'] >= $cfg["xfer_day"]) {
+				if ($xfer_total['day']['total'] >= $cfg["xfer_day"] * 1048576) {
 					// limit met, stop all Transfers now.
-					$this->_outputMessage('Limit met for "day" : '.formatFreeSpace($xfer_total['day']['total'] / (1048576))." / ".formatFreeSpace($cfg["xfer_day"] / (1048576))."\n");
+					$this->_outputMessage('Limit met for "day" : '.formatFreeSpace($xfer_total['day']['total'] / (1048576))." / ".formatFreeSpace($cfg["xfer_day"])."\n");
 					return $this->_transfersStop();
 				} else {
-					$this->_outputMessage('Limit not met for "day" : '.formatFreeSpace($xfer_total['day']['total'] / (1048576))." / ".formatFreeSpace($cfg["xfer_day"] / (1048576))."\n");
+					$this->_outputMessage('Limit not met for "day" : '.formatFreeSpace($xfer_total['day']['total'] / (1048576))." / ".formatFreeSpace($cfg["xfer_day"])."\n");
 				}
 			} else {
 				$this->_outputMessage('no limit set for "day"'."\n");
