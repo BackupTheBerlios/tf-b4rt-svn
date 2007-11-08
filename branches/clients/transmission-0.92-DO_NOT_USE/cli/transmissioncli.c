@@ -105,6 +105,7 @@ static char          * comment      = NULL;
 static int           TOF_dieWhenDone     = 0; 
 static int           TOF_seedLimit       = 0;
 static int           TOF_displayInterval = 5;
+static int           TOF_checkCmd        = 0;
 
 static char          * TOF_owner    = NULL;
 static char          * TOF_statFile = NULL;
@@ -127,9 +128,10 @@ static void TOF_writeStatus ( const tr_stat *s, const tr_info *info, const int s
 static int 	TOF_initCommand ( void );
 static int 	TOF_writePID ( void );
 static void TOF_deletePID ( void );
+static int  TOF_writeAllowed ( void );
 /* -END- */
 
-char * getStringRatio( float ratio )
+/* char * getStringRatio( float ratio )
 {
     static char string[20];
 
@@ -137,7 +139,7 @@ char * getStringRatio( float ratio )
         return "n/a";
     snprintf( string, sizeof string, "%.3f", ratio );
     return string;
-}
+} */
 
 #define LINEWIDTH 80
 
@@ -157,21 +159,21 @@ int main( int argc, char ** argv )
 	const tr_info    * info;
     tr_handle_status * hstat;
 
-	int TOF_checkCmd = 0;
-	char *TOF_eta = NULL;
+	char TOF_eta[50];
 	
-    printf( "Transmission %s - http://transmission.m0k.org/ - modified for Torrentflux-b4rt\n\n",
-            LONG_VERSION_STRING );
-
     /* Get options */
     if( parseCommandLine( argc, argv ) )
     {
+		printf( "Transmission %s - http://transmission.m0k.org/ - modified for Torrentflux-b4rt\n\n",
+            LONG_VERSION_STRING );
         printf( USAGE, argv[0], TR_DEFAULT_PORT, TOF_displayInterval, TOF_seedLimit, TOF_dieWhenDone );
         return EXIT_FAILURE;
     }
 
     if( showHelp )
     {
+		printf( "Transmission %s - http://transmission.m0k.org/ - modified for Torrentflux-b4rt\n\n",
+            LONG_VERSION_STRING );
         printf( USAGE, argv[0], TR_DEFAULT_PORT, TOF_displayInterval, TOF_seedLimit, TOF_dieWhenDone );
         return EXIT_SUCCESS;
     }
@@ -423,32 +425,36 @@ int main( int argc, char ** argv )
         }
         else if( s->status & TR_STATUS_DOWNLOAD )
         {
-			sprintf(TOF_eta, "-");
-			if ( s->eta > 0 ) 
+			if( TOF_writeAllowed() )
 			{
-				if ( s->eta < 604800 ) // 7 days
+				if ( s->eta > 0 ) 
 				{
-					if ( s->eta >= 86400 ) // 1 day
-						sprintf(TOF_eta, "%d:",
-							s->eta / 86400);
-					
-					if ( s->eta >= 3600 ) // 1 hour
-						sprintf(TOF_eta, "%s%02d:",
-							TOF_eta,((s->eta % 86400) / 3600));
-					
-					if ( s->eta >= 60 ) // 1 Minute
-						sprintf(TOF_eta, "%s%02d:",
-							TOF_eta,((s->eta % 3600) / 60));
-							
-					sprintf(TOF_eta, "%s%02d",
-						TOF_eta,(s->eta % 60));
-				} 
-			}
+					if ( s->eta < 604800 ) // 7 days
+					{
+						if ( s->eta >= 86400 ) // 1 day
+							sprintf(TOF_eta, "%d:",
+								s->eta / 86400);
+						
+						if ( s->eta >= 3600 ) // 1 hour
+							sprintf(TOF_eta, "%s%02d:",
+								TOF_eta,((s->eta % 86400) / 3600));
+						
+						if ( s->eta >= 60 ) // 1 Minute
+							sprintf(TOF_eta, "%s%02d:",
+								TOF_eta,((s->eta % 3600) / 60));
+								
+						sprintf(TOF_eta, "%s%02d",
+							TOF_eta,(s->eta % 60));
+					}
+					else
+						sprintf(TOF_eta, "-");
+				}
 				
-            if ((s->seeders < -1) && (s->peersConnected == 0))
-				sprintf(TOF_eta, "Connecting to Peers");
-			
-			TOF_writeStatus(s, info, 1, TOF_eta );
+	            if ((s->seeders < -1) && (s->peersConnected == 0))
+					sprintf(TOF_eta, "Connecting to Peers");
+				
+				TOF_writeStatus(s, info, 1, TOF_eta );
+			}
         }
         else if( s->status & TR_STATUS_SEED )
         {
@@ -743,6 +749,8 @@ static void TOF_deletePID( void )
 
 static void TOF_writeStatus( const tr_stat *s, const tr_info *info, const int state, const char *status )
 {
+	if( !TOF_writeAllowed() ) return;
+	
 	TOF_statFp = fopen(TOF_statFile, "w+");
 	if (TOF_statFp != NULL) 
 	{
@@ -986,11 +994,19 @@ static int TOF_execCommand(tr_handle *h, char *s)
 	return 0;
 }
 
+static int TOF_writeAllowed ( void )
+{
+	/* We want to write status every <TOF_displayInterval> seconds, 
+	   but we also want to start in the first round */
+	if( (TOF_displayInterval - TOF_checkCmd) == (TOF_displayInterval-1)) return 1;
+	return 0;
+}
+
 static void TOF_free ( void )
 {
 	free(TOF_cmdFile);
 	free(TOF_statFile);
-	free(TOF_owner);
+	if(strcmp(TOF_owner,"n/a") == 0) free(TOF_owner);
 }
 
 /* -END- */
