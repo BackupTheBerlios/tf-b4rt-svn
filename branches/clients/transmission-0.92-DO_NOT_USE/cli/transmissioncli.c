@@ -31,19 +31,7 @@
 
 #include <libtransmission/transmission.h>
 #include <libtransmission/makemeta.h>
-
-#ifdef __BEOS__
-    #include <kernel/OS.h>
-    #define wait_msecs(N)  snooze( (N) * 1000 )
-    #define wait_secs(N)   sleep( (N) )
-#elif defined(WIN32)
-    #include <windows.h>
-    #define wait_msecs(N)  Sleep( (N) )
-    #define wait_secs(N)   Sleep( (N) * 1000 )
-#else
-    #define wait_msecs(N)  usleep( (N) * 1000 )
-    #define wait_secs(N)   sleep( (N) )
-#endif
+#include <libtransmission/utils.h>
 
 /* macro to shut up "unused parameter" warnings */
 #ifdef __GNUC__
@@ -67,9 +55,7 @@ const char * USAGE =
 "  -i, --info           Print metainfo and exit\n"
 "  -n  --nat-traversal  Attempt NAT traversal using NAT-PMP or UPnP IGD\n"
 "  -p, --port <int>     Port we should listen on (default = %d)\n"
-#if 0
 "  -s, --scrape         Print counts of seeders/leechers and exit\n"
-#endif
 "  -u, --upload <int>   Maximum upload rate (-1 = no limit, default = 20)\n"
 "  -v, --verbose <int>  Verbose level (0 to 2, default = 0)\n"
 "\nTorrentflux Commands:\n"
@@ -81,9 +67,7 @@ const char * USAGE =
 
 static int           showHelp      = 0;
 static int           showInfo      = 0;
-#if 0
 static int           showScrape    = 0;
-#endif
 static int           isPrivate     = 0;
 static int           verboseLevel  = 0;
 static int           bindPort      = TR_DEFAULT_PORT;
@@ -210,7 +194,7 @@ int main( int argc, char ** argv )
         tr_metainfo_builder * builder = tr_metaInfoBuilderCreate( h, sourceFile );
         tr_makeMetaInfo( builder, torrentPath, announce, comment, isPrivate );
         while( !builder->isDone ) {
-            wait_msecs( 1 );
+            tr_wait( 1 );
             printf( "." );
         }
         ret = !builder->failed;
@@ -269,24 +253,30 @@ int main( int argc, char ** argv )
         goto cleanup;
     }
 
-#if 0
     if( showScrape )
     {
-        int seeders, leechers, downloaded;
-
-        if( tr_torrentScrape( tor, &seeders, &leechers, &downloaded ) )
+		//printf( "Scraping, Please wait...\n" ); 
+		const tr_stat * stats; 
+			
+		uint64_t start = tr_date();  
+		
+		do 
         {
-            printf( "Scrape failed.\n" );
+			stats = tr_torrentStat( tor ); 
+			if( stats == NULL || tr_date() - start > 20000 ) 
+			{ 
+				printf( "0 seeder(s), 0 leecher(s), 0 download(s).\n" );
+				goto cleanup; 
+			} 
+			tr_wait( 2 );
         }
-        else
-        {
-            printf( "%d seeder(s), %d leecher(s), %d download(s).\n",
-                    seeders, leechers, downloaded );
-        }
+		while( stats->completedFromTracker == -1 || stats->leechers == -1 || stats->seeders == -1 );
+		
+		printf( "%d seeder(s), %d leecher(s), %d download(s).\n", 
+				stats->seeders, stats->leechers, stats->completedFromTracker );
 
         goto cleanup;
     }
-#endif
 
 	//* Torrentflux -START- */
 	if (TOF_owner == NULL) 
@@ -393,7 +383,7 @@ int main( int argc, char ** argv )
 		}
 		/* -END- */
 
-        wait_secs( 1 );
+        tr_wait( 1000 );
 
         if( gotsig )
         {
@@ -503,7 +493,7 @@ int main( int argc, char ** argv )
             /* Port mappings were deleted */
             break;
         }
-        wait_msecs( 500 );
+        tr_wait( 500 );
     }
 	
 	if (s->percentDone >= 1)
@@ -514,9 +504,11 @@ int main( int argc, char ** argv )
 	TOF_deletePID();
 	
 	TOF_print("Transmission exit.\n");
-    
+	
+    TOF_free();
+	
 cleanup:
-	TOF_free();
+	
     tr_torrentClose( tor );
     tr_close( h );
 
@@ -569,11 +561,9 @@ static int parseCommandLine( int argc, char ** argv )
             case 'i':
                 showInfo = 1;
                 break;
-#if 0
             case 's':
                 showScrape = 1;
                 break;
-#endif
             case 'r':
                 isPrivate = 1;
                 break;
