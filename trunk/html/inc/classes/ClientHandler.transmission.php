@@ -37,7 +37,7 @@ class ClientHandlerTransmission extends ClientHandler
     	$this->type = "torrent";
         $this->client = "transmission";
         $this->binSystem = "transmissioncli";
-        $this->binSocket = "transmissionc";
+        $this->binSocket = "transmission";
         $this->binClient = "transmissioncli";
     }
 
