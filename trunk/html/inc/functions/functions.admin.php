@@ -852,11 +852,12 @@ function validatePhpCli($the_file) {
  * @return string
  */
 function validateTransmissionCli($the_file) {
+	global $cfg;
 	if (!isFile($the_file))
 		return validationMsg(false, 'Path is not valid');
 	if (!is_executable($the_file))
 		return validationMsg(false, 'File exists but is not executable');
-	$transmissionHelp = shell_exec($the_file.' --help');
+	$transmissionHelp = shell_exec("HOME=".tfb_shellencode($cfg["path"])."; export HOME; ".$the_file.' --help');
 	return (
 		stripos($transmissionHelp, 'transmission') === false ||
 		((stripos($transmissionHelp, 'tfcli') === false) &&

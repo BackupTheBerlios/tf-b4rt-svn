@@ -316,7 +316,7 @@ function getTorrentScrapeInfo($transfer) {
 	if (is_executable($cfg["btclient_transmission_bin"])) {
 		$hasClient = true;
 		$retVal = "";
-		$retVal = @shell_exec($cfg["btclient_transmission_bin"] . " -s ".tfb_shellencode($cfg["transfer_file_path"].$transfer));
+		$retVal = @shell_exec("HOME=".tfb_shellencode($cfg["path"])."; export HOME; ".$cfg["btclient_transmission_bin"] . " -s ".tfb_shellencode($cfg["transfer_file_path"].$transfer));
 		if ((isset($retVal)) && ($retVal != "") && (!preg_match('/.*failed.*/i', $retVal)))
 			return trim($retVal);
 	}

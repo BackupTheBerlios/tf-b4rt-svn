@@ -207,7 +207,7 @@ function getTorrentMetaInfo($transfer) {
 	global $cfg;
 	switch ($cfg["metainfoclient"]) {
 		case "transmissioncli":
-			return shell_exec($cfg["btclient_transmission_bin"]." -i ".tfb_shellencode($cfg["transfer_file_path"].$transfer));
+			return shell_exec("HOME=".tfb_shellencode($cfg["path"])."; export HOME; ".$cfg["btclient_transmission_bin"]." -i ".tfb_shellencode($cfg["transfer_file_path"].$transfer));
 		case "ttools.pl":
 			return shell_exec($cfg["perlCmd"].' -I '.tfb_shellencode($cfg["docroot"].'bin/ttools').' '.tfb_shellencode($cfg["docroot"].'bin/ttools/ttools.pl').' -i '.tfb_shellencode($cfg["transfer_file_path"].$transfer));
 		case "torrentinfo-console.py":
