@@ -48,6 +48,11 @@ should be almost usable in place of transmissioncli, with these exceptions
   it log a little info to get the same behavior as other tf-b4rt clients)
   in html/inc/classes/ClientHandler.transmission.php.
 
+- the -w param of the client-start command-line must be altered:
+  $this->command .= " -w ".tfb_shellencode(($this->runtime == "True") ? 1 : 0);
+  ->
+  if ($this->runtime == "True") $this->command .= " -w";
+
 - scrape is not supported. Don't click on the Scrape tab. Ever. Don't say
   you haven't been warned.
 
