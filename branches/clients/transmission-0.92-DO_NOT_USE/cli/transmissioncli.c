@@ -417,6 +417,7 @@ int main( int argc, char ** argv )
         {
 			if( TOF_writeAllowed() )
 			{
+				strcpy(TOF_eta,"");
 				if ( s->eta > 0 ) 
 				{
 					if ( s->eta < 604800 ) // 7 days
