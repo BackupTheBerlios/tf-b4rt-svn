@@ -36,9 +36,9 @@ class ClientHandlerTransmission extends ClientHandler
     function ClientHandlerTransmission() {
     	$this->type = "torrent";
         $this->client = "transmission";
-        $this->binSystem = "transmission-cli";
+        $this->binSystem = "transmission";
         $this->binSocket = "transmission";
-        $this->binClient = "transmission-cli";
+        $this->binClient = "transmission";
     }
 
 	// =========================================================================
