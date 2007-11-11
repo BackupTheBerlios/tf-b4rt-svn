@@ -988,7 +988,7 @@ static int TOF_writeAllowed ( void )
 {
 	/* We want to write status every <TOF_displayInterval> seconds, 
 	   but we also want to start in the first round */
-	if( (TOF_displayInterval - TOF_checkCmd) == (TOF_displayInterval-1)) return 1;
+	if( TOF_checkCmd == 1 ) return 1;
 	return 0;
 }
 
