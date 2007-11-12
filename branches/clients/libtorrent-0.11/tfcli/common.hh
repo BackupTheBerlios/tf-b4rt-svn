@@ -48,6 +48,7 @@ namespace t = torrent;
 string GetLogHeader();
 
 shared_ptr< t::Object > LoadTorrent(const char* path);
+void SaveTorrent(const char* path, const t::Object& obj);
 
 
 #endif

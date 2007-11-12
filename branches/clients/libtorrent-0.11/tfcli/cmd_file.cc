@@ -114,7 +114,9 @@ pair< CmdFile::Commands, bool > CmdFile::Perform(const r::timer& now)
 					cout << GetLogHeader() << "...cmd-file no longer exists, ignoring" << endl;
 			}
 			else
-				cerr << GetLogHeader() << "error: " << "Could not open cmd file: " << strerror(open_errno) << endl;
+				cerr << GetLogHeader() << "error: " <<
+						"Could not open cmd file (\"" << m_path << "\"): " <<
+						strerror(open_errno) << endl;
 
 			return make_pair(ret, present);
 		}
@@ -143,12 +145,14 @@ bool CmdFile::Exists() const
 		if (stat_errno == ENOENT)
 			return false;
 
-		cerr << GetLogHeader() << "error: " << "Could not stat cmd file: " << strerror(stat_errno) << endl;
+		cerr << GetLogHeader() << "error: " <<
+				"Could not stat cmd file (\"" << m_path << "\"): " <<
+				strerror(stat_errno) << endl;
 		return false;
 	}
 
 	if (!S_ISREG(buf.st_mode))
-		throw runtime_error("Cmd file is not a regular file, will not go on");
+		throw runtime_error("Cmd file is not a regular file, will not go on (\"" + m_path + "\")");
 
 	return true;
 }
@@ -165,7 +169,9 @@ void CmdFile::Delete()
 	{
 		const int unlink_errno(errno);
 		if (unlink_errno != ENOENT)
-			cerr << GetLogHeader() << "error: " << "Could not delete cmd file: " << strerror(unlink_errno) << endl;
+			cerr << GetLogHeader() << "error: " <<
+					"Could not delete cmd file (\"" << m_path << "\"): " <<
+					strerror(unlink_errno) << endl;
 	}
 }
 
@@ -196,7 +202,9 @@ CmdFile::Commands CmdFile::Read(int fd)
 		if (siz == -1)
 		{
 			const int read_errno(errno);
-			cerr << GetLogHeader() << "error: " << "Could not read cmd file: " << strerror(read_errno) << endl;
+			cerr << GetLogHeader() << "error: " <<
+					"Could not read cmd file (\"" << m_path << "\"): " <<
+					strerror(read_errno) << endl;
 			return Commands();
 		}
 		else if (siz == 0)
@@ -205,7 +213,9 @@ CmdFile::Commands CmdFile::Read(int fd)
 		len += siz;
 		if (len >= sizeof(buf))
 		{
-			cerr << GetLogHeader() << "error: " << "Could not read cmd file: " << "File is too large" << endl;
+			cerr << GetLogHeader() << "error: " <<
+					"Could not read cmd file (\"" << m_path << "\"): " <<
+					"File is too large" << endl;
 			return Commands();
 		}
 	}

@@ -17,8 +17,6 @@
 
 * .prio support
 
-* --create mode
-
 * test if .cmd open/unlink/.../read sequence works on NFS/Samba/...
     and if it doesn't, well... at least I'll be aware of it :p
 
@@ -77,3 +75,8 @@ Muted (even rakshasa doesn't seem to want to touch that code, so I certainly won
 	--encryption=require       <active> | encryption_require
 	--encryption=require-full  <require> | encryption_require_RC4
   default being <active>
+
+* --create mode
+
+* --create mode: add options for announce-list (multi-tracker), httpseeds
+    (tornado web-seeding) and url-list (GetRight web-seeding)

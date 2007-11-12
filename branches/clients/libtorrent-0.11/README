@@ -8,8 +8,6 @@ it handles a few auxiliary files for communication with the webapp).
 The command-line interface is 100% compatible with transmissioncli, except
 for the following 3 options which are not supported: --scrape (-s),
 --nat-traversal (-n) and --finish (-f).
-[FIXME] actually that'll be true when I rename -s (--skip-hash-check)
-        to not conflict with transmissioncli's -s (--scrape)
 Additional options are supported, run the client with no args to see them.
 
 See TODO file for features status.
@@ -55,8 +53,6 @@ should be almost usable in place of transmissioncli, with these exceptions
 
 - scrape is not supported. Don't click on the Scrape tab. Ever. Don't say
   you haven't been warned.
-
-- torrent creation is not supported yet.
 
 
 

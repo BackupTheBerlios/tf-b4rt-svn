@@ -92,13 +92,13 @@ void PIDFile::Save()
 #if 0
 	ofstream strm(m_path.c_str(), ios_base::out | ios_base::trunc);
 	if (strm.fail())
-		throw runtime_error("Could not save PID file: " + m_path);
+		throw runtime_error("Could not save PID file (\"" + m_path + "\")");
 
 	strm << pid << endl << flush;
 
 	strm.close();
 	if (strm.fail())
-		throw runtime_error("Could not write PID file: " + m_path);
+		throw runtime_error("Could not write PID file (\"" + m_path + "\")");
 #else
 	static const int flags(O_CREAT | O_WRONLY | O_TRUNC);
 	static const mode_t mode(S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
@@ -115,18 +115,18 @@ void PIDFile::Save()
 		if (stat(m_path.c_str(), &buf) == -1)
 		{
 			const int stat_errno(errno);
-			throw runtime_error("Could not stat existing PID file: " + string(strerror(stat_errno)));
+			throw runtime_error("Could not stat existing PID file (\"" + m_path + "\"): " + string(strerror(stat_errno)));
 		}
 
 		if (!S_ISREG(buf.st_mode))
-			throw runtime_error("Existing PID file is not a regular file, will not overwrite it");
+			throw runtime_error("Existing PID file is not a regular file, will not overwrite it (\"" + m_path + "\")");
 
 		fd = open(m_path.c_str(), flags, mode);
 	}
 	if (fd == -1)
 	{
 		const int open_errno(errno);
-		throw runtime_error("Could not create PID file: " + string(strerror(open_errno)));
+		throw runtime_error("Could not create PID file (\"" + m_path + "\"): " + string(strerror(open_errno)));
 	}
 
 	try
@@ -140,7 +140,7 @@ void PIDFile::Save()
 		if (write(fd, s.c_str(), s.size()) != ssize_t(s.size()))
 		{
 			const int write_errno(errno);
-			throw runtime_error("Could not write PID file: " + string(strerror(write_errno)));
+			throw runtime_error("Could not write PID file (\"" + m_path + "\"): " + string(strerror(write_errno)));
 		}
 	}
 	catch (...)
@@ -152,7 +152,7 @@ void PIDFile::Save()
 	if (close(fd) == -1)
 	{
 		const int close_errno(errno);
-		throw runtime_error("Could not save PID file: " + string(strerror(close_errno)));
+		throw runtime_error("Could not save PID file (\"" + m_path + "\"): " + string(strerror(close_errno)));
 	}
 #endif
 
@@ -196,17 +196,17 @@ void PIDFile::Delete(bool force)
 			}
 			return;
 		}
-		throw runtime_error("Could not stat PID file: " + string(strerror(stat_errno)));
+		throw runtime_error("Could not stat PID file (\"" + m_path + "\"): " + string(strerror(stat_errno)));
 	}
 
 	if (!S_ISREG(buf.st_mode))
-		throw runtime_error("PID file is not a regular file, will not delete it");
+		throw runtime_error("PID file is not a regular file, will not delete it (\"" + m_path + "\")");
 
 	if (unlink(m_path.c_str()) == -1)
 	{
 		const int unlink_errno(errno);
 		if (unlink_errno != ENOENT)
-			throw runtime_error("Could not delete PID file: " + string(strerror(unlink_errno)));
+			throw runtime_error("Could not delete PID file (\"" + m_path + "\"): " + string(strerror(unlink_errno)));
 	}
 }
 

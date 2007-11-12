@@ -84,7 +84,7 @@ $(if $(shell pkg-config --libs sigc++-2.0 2>/dev/null),,$(error sigc++-2.0 not f
 
 
 # Compile/link flags.
-CLICFLAGS  := $(CFLAGS) -Wall -Werror -D"LIBSIGC_DISABLE_DEPRECATED" -I"$(CLI_ROOT)" $(addprefix -I,$(LT_INC)) `pkg-config --cflags sigc++-2.0` `curl-config --cflags`
+CLICFLAGS  := $(CFLAGS) -Wall -Werror -D"_FILE_OFFSET_BITS=64" -D"LIBSIGC_DISABLE_DEPRECATED" -I"$(CLI_ROOT)" $(addprefix -I,$(LT_INC)) `pkg-config --cflags sigc++-2.0` `curl-config --cflags`
 CLILDFLAGS := $(LDFLAGS)
 CLILIBS    := `pkg-config --libs sigc++-2.0` `curl-config --libs`
 

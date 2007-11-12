@@ -329,8 +329,8 @@ uint32_t GetEncryptionFlags()
 	case opts::EM_NONE:        return E(none);
 	case opts::EM_ACCEPT:      return E(allow_incoming) | E(prefer_plaintext);
 	case opts::EM_ACTIVE:      return E(allow_incoming) | E(try_outgoing) | E(enable_retry);
-	case opts::EM_REQUIRE:     return E(allow_incoming) | E(try_outgoing) | E(enable_retry) | E(require);
-	case opts::EM_REQUIREFULL: return E(allow_incoming) | E(try_outgoing) | E(enable_retry) | E(require) | E(require_RC4);
+	case opts::EM_REQUIRE:     return E(allow_incoming) | E(try_outgoing) | E(require);
+	case opts::EM_REQUIREFULL: return E(allow_incoming) | E(try_outgoing) | E(require) | E(require_RC4);
 	default:                   assert(false); throw runtime_error("Invalid encryption value"); return 0;
 	}
 #undef E

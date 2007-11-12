@@ -92,14 +92,13 @@ string StatFile::DoSave()
 
 	ofstream strm(m_path.c_str(), ios_base::out | ios_base::trunc);
 	if (strm.fail())
-		return "Could not save stat file: " + m_path;
+		return "Could not save stat file (\"" + m_path + "\")";
 
 	strm << ss.str() << flush;
-//cerr << endl << "-------------" << endl << ss.str() << "-------------" << endl;
 
 	strm.close();
 	if (strm.fail())
-		return "Could not write stat file: " + m_path;
+		return "Could not write stat file (\"" + m_path + "\")";
 
 	return string();
 }

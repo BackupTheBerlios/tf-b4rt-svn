@@ -54,6 +54,9 @@ namespace t = torrent;
 #include <rak/string_manip.h>
 namespace r = rak;
 
+#include <sstream>
+#include <iomanip>
+
 #include "cli.hh"
 #include "opts.hh"
 #include "info.hh"
@@ -69,7 +72,7 @@ namespace
 
 
 /******************************************************************************
- * Fake implementations, see comment in Main.
+ * Fake implementations, see comment in Main_Default.
  ******************************************************************************/
 
 void not_impl()
@@ -112,11 +115,15 @@ public:
 
 
 
+namespace
+{
+
+
 /******************************************************************************
  * Dump torrent file info.
  ******************************************************************************/
 
-int Main()
+int Main_Default()
 {
 	// Initialize library.
 		// Needed since unfortunately the only exposed way to
@@ -172,18 +179,24 @@ int Main()
 				cout << "private:    yes" << endl;
 
 			const t::TrackerList tracker_list(torrent.tracker_list());
-			const bool multi_tracker(tracker_list.size() > 1);
+			const uint32_t trackers(tracker_list.size());
+			const bool multi_tracker(trackers > 1);
 			if (multi_tracker)
 			{
-				cout << "trackers (" << tracker_list.size() << "):" << endl;
+				cout << "trackers (" << trackers << "):" << endl;
 				pfx = "    ";
 			}
-			else
+			else if (trackers == 1)
 			{
 				cout << "tracker:    ";
 				pfx = "";
 			}
-			for (uint32_t i = 0; i < tracker_list.size(); i++)
+			else
+			{
+				cout << "no tracker" << endl;
+				pfx = "";
+			}
+			for (uint32_t i = 0; i < trackers; i++)
 			{
 				cout << pfx;
 				if (multi_tracker)	// No need to output group if only one tracker.
@@ -250,6 +263,181 @@ int Main()
 	t::cleanup();
 
 	return EXIT_SUCCESS;
+}
+
+
+/******************************************************************************
+ * Dump object raw contents.
+ ******************************************************************************/
+
+struct IsPrimitive
+{
+	typedef t::Object argument_type;
+	typedef bool result_type;
+
+	result_type operator()(const argument_type& obj) const
+	{
+		const t::Object::type_type type(obj.type());
+		return
+			type == t::Object::TYPE_NONE   ||
+			type == t::Object::TYPE_VALUE  || 
+			type == t::Object::TYPE_STRING;
+	}
+};
+
+void Dump(const t::Object& obj, int off = 0)
+{
+	switch (obj.type())
+	{
+
+#if 0
+	case t::Object::TYPE_NONE:
+		{
+			cout << "???";
+			break;
+		}
+#endif
+
+	case t::Object::TYPE_VALUE:
+		{
+			cout << obj.as_value();
+			break;
+		}
+
+	case t::Object::TYPE_STRING:
+		{
+			const t::Object::string_type& cnt(obj.as_string());
+			bool bin = false;
+			for (t::Object::string_type::const_iterator it = cnt.begin(); !bin && it != cnt.end(); ++it)
+				if (!isalnum((int)*it) && !ispunct((int)*it) && !isspace((int)*it))
+					bin = true;
+			if (!bin)
+				cout << '"' << cnt << '"';
+			else
+			{
+				const bool multiline(opts::Verbose() >= 1 && cnt.length() > 20);
+
+				ostringstream ss;
+				ss.exceptions(ios_base::badbit | ios_base::failbit);
+
+				ss << hex << uppercase << setfill('0');
+
+				ss << "<";
+				if (!cnt.empty())
+				{
+					if (multiline)
+						ss << endl << string(off + 2, ' ');
+					unsigned int i = 0;
+					for (t::Object::string_type::const_iterator it = cnt.begin(); ; )
+					{
+						ss << setw(2) << (uint16_t)(uint8_t)*it++;
+						if (it == cnt.end())
+							break;
+						if (!(++i % 20))
+						{
+							if (multiline)
+								ss << endl << string(off + 2, ' ');
+							else
+							{
+								ss << "...";
+								break;
+							}
+						}
+					}
+					if (multiline)
+						ss << endl << string(off, ' ');
+				}
+				ss << '>';
+
+				cout << ss.str();
+			}
+			break;
+		}
+
+	case t::Object::TYPE_LIST:
+		{
+			const t::Object::list_type& cnt(obj.as_list());
+			if (cnt.empty())
+				cout << '(';
+			else
+			{
+				const bool primitive(
+					find_if(cnt.begin(), cnt.end(), not1(IsPrimitive())) == cnt.end()
+				);
+				for (t::Object::list_type::const_iterator it = cnt.begin(); it != cnt.end(); ++it)
+				{
+					if (primitive)
+						cout << (it == cnt.begin() ? "( " : ", ");
+					else
+						cout << (it == cnt.begin() ? '(' : ',') << endl << string(off + 2, ' ');
+					Dump(*it, off + 2);
+				}
+				if (primitive)
+					cout << ' ';
+				else
+					cout << endl << string(off, ' ');
+			}
+			cout << ')';
+			break;
+		}
+
+	case t::Object::TYPE_MAP:
+		{
+			const t::Object::map_type& cnt(obj.as_map());
+			if (cnt.empty())
+				cout << '{';
+			else
+			{
+				for (t::Object::map_type::const_iterator it = cnt.begin(); it != cnt.end(); ++it)
+				{
+					cout << (it == cnt.begin() ? '{' : ',') << endl << string(off + 2, ' ') << '[';
+					Dump(it->first, off + 2);
+					cout << "] => ";
+					Dump(it->second, off + 2);
+				}
+				cout << endl << string(off, ' ');
+			}
+			cout << '}';
+			break;
+		}
+
+	default:
+		throw runtime_error("Invalid object type");
+
+	}
+}
+
+
+/******************************************************************************
+ * Dump torrent file raw contents.
+ ******************************************************************************/
+
+int Main_Dump()
+{
+	// Load torrent metafile.
+	shared_ptr< t::Object > metafile(
+		LoadTorrent(opts::Torrent())
+	);
+
+	// Dump contents.
+	Dump(*metafile);
+	cout << endl;
+
+	return EXIT_SUCCESS;
+}
+
+
+}
+
+
+
+/******************************************************************************
+ * Display torrent file info.
+ ******************************************************************************/
+
+int Main()
+{
+	return opts::Dump() ? Main_Dump() : Main_Default();
 }
 
 

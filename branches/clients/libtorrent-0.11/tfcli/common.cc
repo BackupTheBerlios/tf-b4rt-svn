@@ -81,7 +81,7 @@ shared_ptr< t::Object > LoadTorrent(const char* path)
 {
 	ifstream strm(path, ios_base::in | ios_base::binary);
 	if (strm.fail())
-		throw runtime_error("Could not load torrent file: " + string(path));
+		throw runtime_error("Could not load torrent file (\"" + string(path) + "\")");
 
 	const shared_ptr< t::Object > ret(
 		new t::Object()
@@ -89,7 +89,24 @@ shared_ptr< t::Object > LoadTorrent(const char* path)
 	strm >> *ret;
 
 	if (strm.fail())
-		throw runtime_error("Could not read torrent file: " + string(path));
+		throw runtime_error("Could not read torrent file (\"" + string(path) + "\")");
 
 	return ret;
+}
+
+
+/******************************************************************************
+ * Save torrent metafile.
+ ******************************************************************************/
+
+void SaveTorrent(const char* path, const t::Object& obj)
+{
+	ofstream strm(path, ios_base::out | ios_base::trunc | ios_base::binary);
+	if (strm.fail())
+		throw runtime_error("Could not save torrent file (\"" + string(path) + "\")");
+
+	strm << obj;
+
+	if (strm.fail())
+		throw runtime_error("Could not write torrent file (\"" + string(path) + "\")");
 }

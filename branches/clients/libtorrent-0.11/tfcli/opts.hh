@@ -78,6 +78,18 @@ const char*              Source();
 const char*              Torrent();
 unsigned int             Verbose();
 
+// Create mode.
+const char*              Announce();
+const char*              AnnounceList();
+const char*              Comment();
+const char*              HTTPSeeds();
+const char*              HTTPSeedsGR();
+uint32_t                 PieceSize();
+bool                     Private();
+
+// Info mode.
+bool                     Dump();
+
 // Transfer mode.
 const r::socket_address& BindIP();
 const r::socket_address& ReportIP();
@@ -88,7 +100,7 @@ uint64_t                 Up();
 unsigned long            MaxConnections();
 unsigned long            MaxUploads();
 EncryptionMode           Encryption();
-const char*              EncryptionTxt();
+const char*              EncryptionTxt(EncryptionMode val = opts::Encryption());
 bool                     SkipHashCheck();
 bool                     AutoDie();
 long                     ShareKill();

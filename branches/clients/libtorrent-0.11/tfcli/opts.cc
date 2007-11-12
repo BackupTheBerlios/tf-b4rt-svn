@@ -46,6 +46,7 @@ namespace r = rak;
 #include <getopt.h>
 #include <unistd.h>
 #include <sstream>
+#include <iomanip>
 #include <cerrno>
 #include <cstdio>
 #include <map>
@@ -77,11 +78,16 @@ OPT (CREATE,          'c',     "create");
 OPT (COMMENT,         'C',     "comment");
 OPT (CMD,             'C'+128, "command-file");
 OPT (DOWN,            'd',     "download-limit");
+OPT (DUMP,            'D',     "dump");
 OPT (DISPLAYINTERVAL, 'e',     "display-interval");
 OPT (ENCRYPTION,      'E',     "encryption");
+OPT (HTTPSEEDSGR,     'G',     "http-seeds-gr");
 OPT (HELP,            'h',     "help");
+OPT (HTTPSEEDS,       'H',     "http-seeds");
 OPT (INFO,            'i',     "info");
+OPT (SKIPHASHCHECK,   'k',     "skip-hash-check");
 OPT (SHAREKILL,       'l',     "seed-limit");
+OPT (ANNOUNCELIST,    'L',     "announce-list");
 OPTs(COMMENT2,        'm');
 OPT (MAXCONNECTIONS,  'N',     "max-connections");
 OPT (OWNER,           'o',     "owner");
@@ -90,7 +96,7 @@ OPT (PRIVATE,         'P',     "private");
 OPT (PID,             'P'+128, "pid-file");
 OPTs(PRIVATE2,        'r');
 OPT (REPORTIP,        'R',     "report-ip");
-OPT (SKIPHASHCHECK,   's',     "skip-hash-check");
+//OPT (SCRAPE,          's',     "scrape");		// Reserved.
 OPT (PIECESIZE,       'S',     "piece-size");
 OPT (STAT,            'S'+128, "stat-file");
 OPT (TRANSFER,        't',     "transfer");
@@ -108,10 +114,10 @@ OPT (AUTODIE,         'w',     "die-when-done");
  * Options variables.
  ******************************************************************************/
 
-static const unsigned int   c_max_verbose         = 4;
-static const uint16_t       c_def_port            = 9099;
+static const unsigned int   c_max_verbose         = 4U;
+static const uint16_t       c_def_port            = 9099U;
 static const EncryptionMode c_def_encryption      = EM_ACTIVE;
-static const unsigned int   c_def_displayinterval = 5;
+static const unsigned int   c_def_displayinterval = 5U;
 static const char* const    c_def_owner           = "n/a";
 
 //[CARE] ParseEncryption relies on the contents of those.
@@ -137,7 +143,17 @@ static const struct EncryptionEntry
 AppMode           p_mode            = NONE;
 const char*       p_source          = NULL;
 const char*       p_torrent         = NULL;
-unsigned int      p_verbose         = 0;
+unsigned int      p_verbose         = 0U;
+
+const char*       p_announce        = NULL;
+const char*       p_announcelist    = NULL;
+const char*       p_comment         = NULL;
+const char*       p_httpseeds       = NULL;
+const char*       p_httpseedsgr     = NULL;
+uint32_t          p_piecesize       = 0U;
+bool              p_private         = false;
+
+bool              p_dump            = false;
 
 r::socket_address p_bindip;
 r::socket_address p_reportip;
@@ -173,6 +189,16 @@ const char*              Source()          { return p_source;          }
 const char*              Torrent()         { return p_torrent;         }
 unsigned int             Verbose()         { return p_verbose;         }
 
+const char*              Announce()        { return p_announce;        }
+const char*              AnnounceList()    { return p_announcelist;    }
+const char*              Comment()         { return p_comment;         }
+const char*              HTTPSeeds()       { return p_httpseeds;       }
+const char*              HTTPSeedsGR()     { return p_httpseedsgr;     }
+uint32_t                 PieceSize()       { return p_piecesize;       }
+bool                     Private()         { return p_private;         }
+
+bool                     Dump()            { return p_dump;            }
+
 const r::socket_address& BindIP()          { return p_bindip;          }
 const r::socket_address& ReportIP()        { return p_reportip;        }
 uint16_t                 PortMin()         { return p_portmin;         }
@@ -187,13 +213,13 @@ bool                     AutoDie()         { return p_autodie;         }
 long                     ShareKill()       { return p_sharekill;       }
 bool                     TFBMode()         { return p_tfbmode;         }
 
-const char* EncryptionTxt()
+const char* EncryptionTxt(EncryptionMode val)
 {
 	const EncryptionEntry* const p(
 		find_if(
 			c_encryption_entries,
 			c_encryption_entries + countof(c_encryption_entries),
-			r::equal(p_encryption, r::const_mem_ref(&EncryptionEntry::val))
+			r::equal(val, r::const_mem_ref(&EncryptionEntry::val))
 		)
 	);
 	assert(p != c_encryption_entries + countof(c_encryption_entries));
@@ -425,21 +451,29 @@ int ParseCommandLine(int argc, char** argv)
 
 
 	static const option opts_long[] = {
+		{ OS_ANNOUNCE,        required_argument, NULL, OC_ANNOUNCE        },
 		{ OS_BINDIP,          required_argument, NULL, OC_BINDIP          },
 		{ OS_CREATE,          required_argument, NULL, OC_CREATE          },
+		{ OS_COMMENT,         required_argument, NULL, OC_COMMENT         },
 		{ OS_CMD,             required_argument, NULL, OC_CMD             },
 		{ OS_DOWN,            required_argument, NULL, OC_DOWN            },
+		{ OS_DUMP,            optional_argument, NULL, OC_DUMP            },
 		{ OS_DISPLAYINTERVAL, required_argument, NULL, OC_DISPLAYINTERVAL },
 		{ OS_ENCRYPTION,      optional_argument, NULL, OC_ENCRYPTION      },
+		{ OS_HTTPSEEDSGR,     required_argument, NULL, OC_HTTPSEEDSGR     },
 		{ OS_HELP,            no_argument,       NULL, OC_HELP            },
+		{ OS_HTTPSEEDS,       required_argument, NULL, OC_HTTPSEEDS       },
 		{ OS_INFO,            no_argument,       NULL, OC_INFO            },
+		{ OS_SKIPHASHCHECK,   optional_argument, NULL, OC_SKIPHASHCHECK   },
 		{ OS_SHAREKILL,       required_argument, NULL, OC_SHAREKILL       },
+		{ OS_ANNOUNCELIST,    required_argument, NULL, OC_ANNOUNCELIST    },
 		{ OS_MAXCONNECTIONS,  required_argument, NULL, OC_MAXCONNECTIONS  },
 		{ OS_OWNER,           required_argument, NULL, OC_OWNER           },
-		{ OS_PID,             required_argument, NULL, OC_PID             },
 		{ OS_PORT,            required_argument, NULL, OC_PORT            },
+		{ OS_PRIVATE,         optional_argument, NULL, OC_PRIVATE         },
+		{ OS_PID,             required_argument, NULL, OC_PID             },
 		{ OS_REPORTIP,        required_argument, NULL, OC_REPORTIP        },
-		{ OS_SKIPHASHCHECK,   optional_argument, NULL, OC_SKIPHASHCHECK   },
+		{ OS_PIECESIZE,       required_argument, NULL, OC_PIECESIZE       },
 		{ OS_STAT,            required_argument, NULL, OC_STAT            },
 		{ OS_TRANSFER,        no_argument,       NULL, OC_TRANSFER        },
 		{ OS_TFBMODE,         optional_argument, NULL, OC_TFBMODE         },
@@ -451,19 +485,27 @@ int ParseCommandLine(int argc, char** argv)
 	};
 
 	static const char opts[] = {
+		OC_ANNOUNCE,        ':',
 		OC_BINDIP,          ':',
 		OC_CREATE,          ':',
+		OC_COMMENT,         ':',
 		OC_DOWN,            ':',
+		OC_DUMP,
 		OC_DISPLAYINTERVAL, ':',
 		OC_ENCRYPTION,      ':',
+		OC_HTTPSEEDSGR,     ':',
 		OC_HELP,
+		OC_HTTPSEEDS,       ':',
 		OC_INFO,
+		OC_SKIPHASHCHECK,
 		OC_SHAREKILL,       ':',
+		OC_ANNOUNCELIST,    ':',
 		OC_MAXCONNECTIONS,  ':',
 		OC_OWNER,           ':',
 		OC_PORT,            ':',
+		OC_PRIVATE,
 		OC_REPORTIP,        ':',
-		OC_SKIPHASHCHECK,
+		OC_PIECESIZE,       ':',
 		OC_TRANSFER,
 		OC_TFBMODE,
 		OC_UP,              ':',
@@ -557,6 +599,78 @@ int ParseCommandLine(int argc, char** argv)
 				ARGCHECK(OS_VERBOSE, "level",
 						 optarg[0] >= '0' && optarg[0] <= '0' + (char)c_max_verbose && optarg[1] == '\0');
 				p_verbose = *optarg - '0';
+			}
+			break;
+
+
+		//
+		// Create-mode stuff.
+		//
+
+		case OC_ANNOUNCE:
+		case OC_ANNOUNCE2:
+			ARGCHECK(OS_ANNOUNCE, "url", optarg != NULL && *optarg != '\0');
+			p_announce = optarg;
+			break;
+
+		case OC_ANNOUNCELIST:
+			ARGCHECK(OS_ANNOUNCELIST, "list", optarg != NULL && *optarg != '\0');
+			p_announcelist = optarg;
+			break;
+
+		case OC_COMMENT:
+		case OC_COMMENT2:
+#if 0
+			ARGCHECK(OS_COMMENT, "text", optarg != NULL && *optarg != '\0');
+			p_comment = optarg;
+#else
+			p_comment = optarg;
+#endif
+			break;
+
+		case OC_HTTPSEEDS:
+			ARGCHECK(OS_HTTPSEEDS, "list", optarg != NULL && *optarg != '\0');
+			p_httpseeds = optarg;
+			break;
+
+		case OC_HTTPSEEDSGR:
+			ARGCHECK(OS_HTTPSEEDSGR, "list", optarg != NULL && *optarg != '\0');
+			p_httpseedsgr = optarg;
+			break;
+
+		case OC_PIECESIZE:
+			{
+				const pair< unsigned long, bool > ret(ParseUNumber(optarg));
+				ARGCHECK(OS_PIECESIZE, "size", ret.second && ret.first >= 0UL && ret.first <= (1UL << 30));
+				p_piecesize = ret.first;
+			}
+			break;
+
+		case OC_PRIVATE:
+		case OC_PRIVATE2:
+			if (optarg == NULL)
+				p_private = true;
+			else
+			{
+				const pair< bool, bool > ret(ParseBool(optarg));
+				ARGCHECK(OS_PRIVATE, "boolean", ret.second);
+				p_private = ret.first;
+			}
+			break;
+
+
+		//
+		// Info-mode stuff.
+		//
+
+		case OC_DUMP:
+			if (optarg == NULL)
+				p_dump = true;
+			else
+			{
+				const pair< bool, bool > ret(ParseBool(optarg));
+				ARGCHECK(OS_DUMP, "boolean", ret.second);
+				p_dump = ret.first;
 			}
 			break;
 
@@ -775,7 +889,7 @@ void ShowHelp(const char* program)
 #define OPT(o,w,a,t)	"  " << B('-' << string(1, OC_##o)) << (adv ? ",     " : ", ") << OPTc(o,w,a,t)
 #define OPTl(o,w,a,t)	(adv ? "          " : "      ") << OPTc(o,w,a,t)
 #define P				string(adv ? 33 : 29, ' ')
-		<< "tfcli-libtorrent v" << TFCLILT_VER_STR << " - http://tf-b4rt.berlios.de/" << endl
+		<< "tfcli-libtorrent v" TFCLILT_VER_STR " - http://tf-b4rt.berlios.de/" << endl
 		<< "libtorrent v" << t::version() << " - http://libtorrent.rakshasa.no/" << endl
 		<< "TorrentFlux-b4rt command-line libtorrent client" << endl
 		<< endl
@@ -797,12 +911,25 @@ void ShowHelp(const char* program)
 	OPT_ADV
 		<< "Options for create (" << B("--" << OS_CREATE) << ") mode:" << endl
 		<< OPT2(ANNOUNCE,         8, U("url"),
-				"Set " << U("url") << " as announce")
+				"Set announce " << U("url"))
 		<< OPT2(COMMENT,          8, U("text"),
-				"Set " << U("text") << " as comment")
+				"Set comment " << U("text"))
+		<< OPT (HTTPSEEDSGR,      2, U("list"),
+				"Set " << U("list") << " of HTTP seeds (GetRight protocol)")
+		<< P << "  (" << U("list") << " format: " << U("url1") << "," << U("url2") << ",...)" << endl
+		<< OPT (HTTPSEEDS,        5, U("list"),
+				"Set " << U("list") << " of HTTP seeds")
+		<< P << "  (" << U("list") << " format: " << U("url1") << "," << U("url2") << ",...)" << endl
+		<< OPT (ANNOUNCELIST,     2, U("list"),
+				"Set " << U("list") << " of announce URLs")
+		<< P << "  (" << U("list") << " format: " << U("tier1url1") << "," << U("tier1url2")
+													<< ",...|" << U("tier2url") << "|...)" << endl
 		<< OPT2(PRIVATE,         12, "", "Set private flag")
 		<< OPT (PIECESIZE,        5, U("size"),
 				"Use " << U("size") << " bytes as piece size (default: 0 = auto-detect)")
+		<< endl
+		<< "Options for info (" << B("--" << OS_INFO) << ") mode:" << endl
+		<< OPT (DUMP,            15, "", "Dump raw torrent contents")
 		<< endl
 	OPT_NORM
 		<< "Options for transfer (" << B("--" << OS_TRANSFER) << ") mode:" << endl
@@ -814,12 +941,16 @@ void ShowHelp(const char* program)
 				"Limit download speed to " << U("rate") << " kB/s (default: 0 = unlimited)")
 	OPT_ADV
 		<< OPT (ENCRYPTION,       5, U("mode"),
-				"Set encryption mode to " << U("mode") << " (default: 2 / active)")
-		<< P << "  0 / none         = disabled" << endl
-		<< P << "  1 / accept       = allow encrypted in" << endl
-		<< P << "  2 / active       = <accept> + try encrypted out" << endl
-		<< P << "  3 / require      = require encrypted both ways" << endl
-		<< P << "  4 / require-full = require RC4-encrypted both ways" << endl
+				"Set encryption mode to " << U("mode") << " (default: "
+					<< c_def_encryption << " / " << EncryptionTxt(c_def_encryption) << ")")
+#define EM(v)	"  " << EM_##v << " / " << setw(13) << left << EncryptionTxt(EM_##v) << "= "
+		<< P << EM(NONE)        "disabled" << endl
+		<< P << EM(ACCEPT)      "allow encrypted in" << endl
+		<< P << EM(ACTIVE)      "<" << EncryptionTxt(EM_ACCEPT) << "> + try encrypted out" << endl
+		<< P << EM(REQUIRE)     "require encrypted both ways" << endl
+		<< P << EM(REQUIREFULL) "require RC4-encrypted both ways" << endl
+#undef EM
+		<< OPT (SKIPHASHCHECK,    4, "", "Skip initial hash check")
 	OPT_NORM
 		<< OPT (SHAREKILL,        4, U("ratio"),
 				"Auto-shutdown when " << U("ratio") << " (percent) is reached (default: 0)")
@@ -837,7 +968,6 @@ void ShowHelp(const char* program)
 		<< OPT (REPORTIP,         8, U("ip"),
 				"Report " << U("ip") << " to tracker")
 	OPT_NORM
-		<< OPT (SKIPHASHCHECK,    4, "", "Skip initial hash check")
 		<< OPT (UP,               3, U("rate"),
 				"Limit upload speed to " << U("rate") << " kB/s (default: 0 = unlimited)")
 	OPT_ADV
