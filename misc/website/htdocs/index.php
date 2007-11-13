@@ -504,7 +504,7 @@ function printPageChangelog() {
 ?>
 	<div class="subcontent">
 		<h1 id="changelog">Changelog</h1>
-		<pre class="changelog"><?php echo trim(getDataFromFile(_FILE_CHANGELOG)); ?></pre>
+		<pre class="changelog"><?php echo htmlentities(trim(getDataFromFile(_FILE_CHANGELOG)), ENT_QUOTES); ?></pre>
 	</div>
 <?php
 }
