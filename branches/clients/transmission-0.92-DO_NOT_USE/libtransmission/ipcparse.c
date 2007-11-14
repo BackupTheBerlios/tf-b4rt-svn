@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: ipcparse.c 3665 2007-10-31 18:10:54Z charles $
+ * $Id: ipcparse.c 3808 2007-11-12 15:04:02Z charles $
  *
  * Copyright (c) 2007 Joshua Elsasser
  *
@@ -774,7 +774,7 @@ ipc_addstat( benc_val_t * list, int tor,
                 error = st->error;
                 if( TR_OK == error )
                 {
-                    tr_bencInitStr( item, NULL, 0, 1 );
+                    tr_bencInitStr( item, "other", -1, 1 );
                 }
                 else if( TR_ERROR_ISSET( TR_ERROR_ASSERT, error ) )
                 {
@@ -816,7 +816,7 @@ ipc_addstat( benc_val_t * list, int tor,
             case IPC_ST_ERRMSG:
                 if( '\0' == st->errorString[0] )
                 {
-                    tr_bencInitStr( item, NULL, 0, 1 );
+                    tr_bencInitStr( item, "other", -1, 1 );
                 }
                 else if( tr_bencInitStrDup( item, st->errorString ) )
                 {

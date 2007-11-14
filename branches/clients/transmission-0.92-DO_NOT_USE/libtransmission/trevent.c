@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  *
- * $Id: trevent.c 3457 2007-10-18 18:32:58Z charles $
+ * $Id: trevent.c 3797 2007-11-11 20:37:49Z charles $
  */
 
 #include <assert.h>
@@ -228,7 +228,7 @@ tr_eventInit( tr_handle * handle )
     eh = tr_new0( tr_event_handle, 1 );
     eh->lock = tr_lockNew( );
     eh->h = handle;
-    eh->pulseInterval = timevalMsec( 50 );
+    eh->pulseInterval = timevalMsec( 100 );
     eh->thread = tr_threadNew( libeventThreadFunc, eh, "libeventThreadFunc" );
 }
 

@@ -1,12 +1,12 @@
 #! /bin/sh
 #
-# $Id: version.sh 3723 2007-11-05 21:40:46Z livings124 $
+# $Id: version.sh 3801 2007-11-12 02:48:50Z charles $
 
 # convention: -TR MAJOR MINOR MAINT BETA - (each a single char)
 # BETA: "Z" for beta, "0" for stable 
 # these should be the only two lines you need to change
-PEERID_PREFIX="-TR0920-"
-USERAGENT_PREFIX="0.92"
+PEERID_PREFIX="-TR0930-"
+USERAGENT_PREFIX="0.93"
 
 
 SVN_REVISION=`find ./ -name "*\.[ch]" -o -name "*\.cpp" -o -name "*\.po" | \

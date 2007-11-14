@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: shared.c 3265 2007-10-02 00:05:40Z charles $
+ * $Id: shared.c 3797 2007-11-11 20:37:49Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -79,7 +79,7 @@ tr_shared * tr_sharedInit( tr_handle * h )
     s->bindSocket = -1;
     s->natpmp     = tr_natpmpInit();
     s->upnp       = tr_upnpInit();
-    s->pulseTimer   = tr_timerNew( h, SharedLoop, s, 250 );
+    s->pulseTimer   = tr_timerNew( h, SharedLoop, s, 500 );
 
     return s;
 }

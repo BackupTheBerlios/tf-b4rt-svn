@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  *
- * $Id: peer-mgr.c 3662 2007-10-31 04:23:50Z charles $
+ * $Id: peer-mgr.c 3807 2007-11-12 13:02:55Z charles $
  */
 
 #include <assert.h>
@@ -17,9 +17,10 @@
 #include <limits.h> /* INT_MAX */
 
 #include <libgen.h> /* basename */
-#include <sys/types.h> /* event.h needs this */
 #include <arpa/inet.h> /* inet_ntoa */
 
+#include <sys/queue.h> /* libevent needs this */
+#include <sys/types.h> /* libevent needs this */
 #include <event.h>
 
 #include "transmission.h"
@@ -72,7 +73,7 @@ enum
 
     /* set this too high and there will be a lot of churn.
      * set it too low and you'll get peers too slowly */
-    MAX_RECONNECTIONS_PER_PULSE = 10,
+    MAX_RECONNECTIONS_PER_PULSE = 5,
 
     /* corresponds to ut_pex's added.f flags */
     ADDED_F_ENCRYPTION_FLAG = 1,
@@ -915,6 +916,12 @@ myHandshakeDoneCB( tr_handshake    * handshake,
 
     if( !ok || !t || !t->isRunning )
     {
+        if( t ) {
+            struct peer_atom * atom = getExistingAtom( t, addr );
+            if( atom )
+                ++atom->numFails;
+        }
+
         tr_peerIoFree( io );
     }
     else /* looking good */
@@ -933,6 +940,10 @@ myHandshakeDoneCB( tr_handshake    * handshake,
             tr_peer * peer = getExistingPeer( t, addr );
 
             if( peer != NULL ) /* we already have this peer */
+            {
+                tr_peerIoFree( io );
+            }
+            else if( tr_ptrArraySize( t->peers ) >= MAX_CONNECTED_PEERS_PER_TORRENT )
             {
                 tr_peerIoFree( io );
             }
@@ -1585,12 +1596,18 @@ getPeersToClose( Torrent * t, int * setmeSize )
 }
 
 static int
-compareAtomByTime( const void * va, const void * vb )
+compareCandidates( const void * va, const void * vb )
 {
     const struct peer_atom * a = * (const struct peer_atom**) va;
     const struct peer_atom * b = * (const struct peer_atom**) vb;
-    if( a->time < b->time ) return -1;
-    if( a->time > b->time ) return 1;
+    int i;
+
+    if(( i = tr_compareUint16( a->numFails, b->numFails )))
+        return i;
+
+    if( a->time != b->time )
+        return a->time < b->time ? -1 : 1;
+
     return 0;
 }
 
@@ -1634,10 +1651,17 @@ getPeerCandidates( Torrent * t, int * setmeSize )
             continue;
         }
 
+        /* we're wasting our time trying to connect to this bozo. */
+        if( atom->numFails > 10 ) {
+            tordbg( t, "RECONNECT peer %d (%s) gives us nothing but failure.",
+                    i, tr_peerIoAddrStr(&atom->addr,atom->port) );
+            continue;
+        }
+
         /* if we used this peer recently, give someone else a turn */
-        minWait = 60; /* one minute */
-        maxWait = (60 * 10); /* ten minutes */
-        wait = atom->numFails * 15; /* add 15 secs to the wait interval for each consecutive failure*/
+        minWait = 10; /* ten seconds */
+        maxWait = (60 * 20); /* twenty minutes */
+        wait = atom->numFails * 30; /* add 15 secs to the wait interval for each consecutive failure*/
         if( wait < minWait ) wait = minWait;
         if( wait > maxWait ) wait = maxWait;
         if( ( now - atom->time ) < wait ) {
@@ -1649,7 +1673,7 @@ getPeerCandidates( Torrent * t, int * setmeSize )
         ret[retCount++] = atom;
     }
 
-    qsort( ret, retCount, sizeof(struct peer_atom*), compareAtomByTime );
+    qsort( ret, retCount, sizeof(struct peer_atom*), compareCandidates );
     *setmeSize = retCount;
     return ret;
 }
@@ -1694,7 +1718,8 @@ reconnectPulse( void * vtorrent )
         }
 
         /* add some new ones */
-        nAdd = MAX_CONNECTED_PEERS_PER_TORRENT - peerCount;
+        nAdd = !peerCount ? MAX_CONNECTED_PEERS_PER_TORRENT
+                          : MAX_RECONNECTIONS_PER_PULSE;
         for( i=0; i<nAdd && i<nCandidates && i<MAX_RECONNECTIONS_PER_PULSE; ++i )
         {
             tr_peerMgr * mgr = t->manager;

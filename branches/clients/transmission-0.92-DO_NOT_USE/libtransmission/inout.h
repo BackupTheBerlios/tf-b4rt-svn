@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: inout.h 3649 2007-10-30 18:35:04Z charles $
+ * $Id: inout.h 3780 2007-11-10 14:59:14Z charles $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -38,7 +38,7 @@ typedef struct tr_io tr_io;
  * TR_ERROR_IO_* otherwise.
  **********************************************************************/
 int tr_ioRead  ( struct tr_torrent*, int index, int begin, int len, uint8_t * );
-int tr_ioWrite ( struct tr_torrent *, int index, int begin, int len, uint8_t * );
+int tr_ioWrite ( struct tr_torrent *, int index, int begin, int len, const uint8_t * );
 
 /* hashes the specified piece and updates the completion accordingly. */
 int tr_ioHash ( tr_torrent*, int piece );

@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  *
- * $Id: inout.c 3673 2007-11-01 13:47:30Z charles $
+ * $Id: inout.c 3780 2007-11-10 14:59:14Z charles $
  */
 
 #include <assert.h>
@@ -201,13 +201,13 @@ tr_ioRead( tr_torrent  * tor,
 }
 
 int
-tr_ioWrite( tr_torrent  * tor,
-            int           pieceIndex,
-            int           begin,
-            int           len,
-            uint8_t     * buf )
+tr_ioWrite( tr_torrent     * tor,
+            int              pieceIndex,
+            int              begin,
+            int              len,
+            const uint8_t  * buf )
 {
-    return readOrWritePiece( tor, TR_IO_WRITE, pieceIndex, begin, buf, len );
+    return readOrWritePiece( tor, TR_IO_WRITE, pieceIndex, begin, (void*)buf, len );
 }
 
 /****
