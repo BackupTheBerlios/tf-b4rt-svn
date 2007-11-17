@@ -76,6 +76,13 @@ Muted (even rakshasa doesn't seem to want to touch that code, so I certainly won
 	--encryption=require-full  <require> | encryption_require_RC4
   default being <active>
 
+* fix Makefile in -j1 mode (from a fresh tree "make -j2" works fine, but
+    "make" fails the 1st time with error below, has to be run a 2nd time)
+    make: *** No rule to make target `tfcli/.build/cmd_file.o', needed by `tfcli/.build/tfcli-libtorrent.full'.  Stop.
+
+gmake doesn't seem to like deps on dirs when written with a final '/' (???),
+which was the case for deps on '.build/' dir, removed it
+
 * --create mode
 
 * --create mode: add options for announce-list (multi-tracker), httpseeds

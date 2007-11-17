@@ -91,7 +91,7 @@ CLILIBS    := `pkg-config --libs sigc++-2.0` `curl-config --libs`
 
 # Internals.
 DEPFILE:=.depends
-BUILDDIR:=.build/
+BUILDDIR:=.build
 OBJECTS:=cli.o cmd_file.o common.o create.o curl_get.o curl_stack.o info.o opts.o pid_file.o poller.o signals.o stat_file.o transfer.o transfer_context.o
 
 
@@ -107,12 +107,12 @@ all: $(CLI_NAME)
 #########
 
 # Final executable.
-cli $(CLI_NAME): $(CLI_ROOT)$(BUILDDIR)$(CLI_NAME).stripped
+cli $(CLI_NAME): $(CLI_ROOT)$(BUILDDIR)/$(CLI_NAME).stripped
 	@echo "    CP      $(notdir $@)"
 	@$(CP) -f "$<" "$(CLI_NAME)"
 
 # Stripped executable (only if not in debug).
-$(CLI_ROOT)$(BUILDDIR)$(CLI_NAME).stripped: $(CLI_ROOT)$(BUILDDIR)$(CLI_NAME).full
+$(CLI_ROOT)$(BUILDDIR)/$(CLI_NAME).stripped: $(CLI_ROOT)$(BUILDDIR)/$(CLI_NAME).full
 ifeq ($(DEBUG),)
 	@echo "    STRIP   $(CLI_NAME).stripped"
 	@$(STRIP) --strip-unneeded -o "$@" "$<"
@@ -122,32 +122,32 @@ else
 endif
 
 # Executable.
-$(CLI_ROOT)$(BUILDDIR)$(CLI_NAME).full: $(addprefix $(CLI_ROOT)$(BUILDDIR),$(OBJECTS)) $(LT_LIB)$(LT_NAME)
+$(CLI_ROOT)$(BUILDDIR)/$(CLI_NAME).full: $(addprefix $(CLI_ROOT)$(BUILDDIR)/,$(OBJECTS)) $(LT_LIB)$(LT_NAME)
 	@echo "    LD      $(CLI_NAME).full"
 # Detect whether openssl is needed, check pkg-config knows about it and add it to linker flags
 # (actually only -lcrypto is needed, for DH / RC4 / SHA1). Do this inline and not in variables
 # above because it depends on lt's config.h which is not necessarily present when make starts.
-	@$(CXX) $(CLICFLAGS) $(CLILDFLAGS) $(CLILIBS)$(if $(shell grep '^\#define[[:space:]]\+USE_OPENSSL[[:space:]]\+1' "$(LT_ROOT)/config.h" >/dev/null && echo needed),$(if $(shell pkg-config --libs-only-L --libs-only-other openssl >/dev/null 2>&1 || echo notfound),$(error openssl not found), `pkg-config --libs-only-L --libs-only-other openssl` -lcrypto)) -o "$@" $(addprefix $(CLI_ROOT)$(BUILDDIR),$(OBJECTS)) $(LT_LIB)$(LT_NAME)
+	@$(CXX) $(CLICFLAGS) $(CLILDFLAGS) $(CLILIBS)$(if $(shell grep '^\#define[[:space:]]\+USE_OPENSSL[[:space:]]\+1' "$(LT_ROOT)/config.h" >/dev/null && echo needed),$(if $(shell pkg-config --libs-only-L --libs-only-other openssl >/dev/null 2>&1 || echo notfound),$(error openssl not found), `pkg-config --libs-only-L --libs-only-other openssl` -lcrypto)) -o "$@" $(addprefix $(CLI_ROOT)$(BUILDDIR)/,$(OBJECTS)) $(LT_LIB)$(LT_NAME)
 
 # Build directory rule.
-$(CLI_ROOT)$(BUILDDIR):
-	@echo "    MKDIR   $(BUILDDIR:/=)"
-	@-mkdir -p "$(CLI_ROOT)$(BUILDDIR)"
+$(CLI_ROOT)$(BUILDDIR)/:
+	@echo "    MKDIR   $(BUILDDIR)"
+	@-mkdir -p "$(CLI_ROOT)$(BUILDDIR)/"
 
 # Generic C++ rule.
-$(CLI_ROOT)$(BUILDDIR)%.o: $(CLI_ROOT)%.cc $(LT_ROOT)config.h | $(CLI_ROOT)$(BUILDDIR) $(CLI_ROOT)$(BUILDDIR)$(DEPFILE)
+$(CLI_ROOT)$(BUILDDIR)/%.o: $(CLI_ROOT)%.cc $(LT_ROOT)config.h | $(CLI_ROOT)$(BUILDDIR) $(CLI_ROOT)$(BUILDDIR)/$(DEPFILE)
 	@echo "    CXX     $(notdir $<)"
 	@$(CXX) $(CLICFLAGS) $(CXXFLAGS) -o "$@" -c "$<"
 
 # Dependencies.
-depends $(CLI_ROOT)$(BUILDDIR)$(DEPFILE): $(LT_ROOT)config.h | $(CLI_ROOT)$(BUILDDIR)
+depends $(CLI_ROOT)$(BUILDDIR)/$(DEPFILE): $(LT_ROOT)config.h | $(CLI_ROOT)$(BUILDDIR)
 	@echo "    DEPS"
-	@$(CXX) $(CLICFLAGS) $(CXXFLAGS) -MM $(addprefix $(CLI_ROOT),$(OBJECTS:%.o=%.cc)) | $(SED) 's#^[^ .:/][^ .:/]*.o:#$(CLI_ROOT)$(BUILDDIR)&#' > $(CLI_ROOT)$(BUILDDIR)$(DEPFILE)
+	@$(CXX) $(CLICFLAGS) $(CXXFLAGS) -MM $(addprefix $(CLI_ROOT),$(OBJECTS:%.o=%.cc)) | $(SED) 's#^[^ .:/][^ .:/]*.o:#$(CLI_ROOT)$(BUILDDIR)/&#' > $(CLI_ROOT)$(BUILDDIR)/$(DEPFILE)
 
 # Include dependencies sub-Makefile without adding a dependency
 # on it if it doesn't exist (e.g. make clean).
-ifneq ($(wildcard $(CLI_ROOT)$(BUILDDIR)$(DEPFILE)),)
--include $(CLI_ROOT)$(BUILDDIR)$(DEPFILE)
+ifneq ($(wildcard $(CLI_ROOT)$(BUILDDIR)/$(DEPFILE)),)
+-include $(CLI_ROOT)$(BUILDDIR)/$(DEPFILE)
 endif
 
 
@@ -180,7 +180,7 @@ $(LT_FILENAME):
 clean:
 	@echo "    RM"
 	@-$(RM) -f "$(CLI_NAME)" "$(CLI_ROOT)"*~
-	@-$(RM) -Rf "$(CLI_ROOT)$(BUILDDIR)"
+	@-$(RM) -Rf "$(CLI_ROOT)$(BUILDDIR)/"
 
 cleaner: clean
 	@echo "    RM      $(LT_BASENAME)"
