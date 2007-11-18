@@ -20,12 +20,12 @@ from bisect import insort
 
 class NodeWrap(object):
     def __init__(self, node, target):
-        self.num = target
+        self.target = target
         self.node = node
 
     def __cmp__(self, o):
         """ this function is for sorting nodes relative to the ID we are looking for """
-        x, y = self.num ^ o.num, self.num ^ self.node.num
+        y, x = self.target ^ o.node.num, self.target ^ self.node.num
         if x > y:
             return 1
         elif x < y:

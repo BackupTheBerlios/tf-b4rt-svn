@@ -10,6 +10,7 @@
 
 # by David Harrison
 
+import errno
 import os
 import sys
 import errno
@@ -51,7 +52,8 @@ def daemon(
     capture_stdout_name = 'stdout',
     log_level = DEBUG,
     log_twisted = True,
-    pidfile = None):
+    pidfile = None,
+    use_localtime=False):
     """When this function returns, you are a daemon.
 
        If use_syslog or a log_file is specified then this installs a logger.
@@ -130,7 +132,8 @@ def daemon(
                          twisted_info_log_level = twisted_info_log_level,
                          twisted_error_log_level = twisted_error_log_level,
                          capture_stdout_log_level = capture_stdout_log_level,
-                         capture_stderr_log_level = capture_stderr_log_level )
+                         capture_stderr_log_level = capture_stderr_log_level,
+                         use_localtime = use_localtime )
         elif use_syslog:
             injectLogger(use_syslog=True, log_level = log_level, verbose = verbose,
                          capture_output = capture_output,
@@ -185,7 +188,7 @@ def checkPID(pidfile):
         except OSError, why:
             if why[0] == errno.ESRCH:
                 # The pid doesnt exists.
-                log.info('Removing stale pidfile %s' % pidfile, isError=True)
+                log.warning('Removing stale pidfile %s' % pidfile)
                 os.remove(pidfile)
             else:
                 sys.exit("Can't check status of PID %s from pidfile %s: %s" %

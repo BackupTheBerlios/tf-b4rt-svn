@@ -634,8 +634,6 @@ class Connector(Handler):
                 # this is not critical enough to disconnect. some clients have
                 # an option to do this on purpose
                 #return
-        self.complete = True
-        self.parent.connection_handshake_completed(self)
 
         if self.uses_utorrent_extension:
             response = {'m': {'ut_pex': ord(UTORRENT_MSG_PEX)},
@@ -646,6 +644,9 @@ class Connector(Handler):
             response = bencode(response)
             self._send_message(UTORRENT_MSG,
                                UTORRENT_MSG_INFO, response)
+
+        self.complete = True
+        self.parent.connection_handshake_completed(self)
 
         message_count = 0
         while True:

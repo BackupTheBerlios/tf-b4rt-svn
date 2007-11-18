@@ -25,10 +25,21 @@ SYSLOG_PORT                 = 514
 
 class BTLFormatter(logging.Formatter):
 
+    def __init__(self, *a, **k):
+        self.use_localtime = False
+        if k.has_key('use_localtime'):
+            self.use_localtime = k['use_localtime']
+            del k['use_localtime']
+        logging.Formatter.__init__(self, *a, **k)
+
+
     def formatTime(self, record, datefmt=None):
         ct = self.converter(record.created)
         try:
-            dt = datetime.datetime.utcfromtimestamp(record.created)
+            if self.use_localtime:
+                dt = datetime.datetime.fromtimestamp(record.created)
+            else:
+                dt = datetime.datetime.utcfromtimestamp(record.created)
             if datefmt:
                 s = dt.strftime(datefmt)
             else:
@@ -237,7 +248,8 @@ def injectLogger(use_syslog = True, log_file = None, verbose = False,
                  capture_stderr_name = 'stderr',
                  capture_stdout_name = 'stdout',
                  log_level = DEBUG,
-                 log_twisted = True ):
+                 log_twisted = True,
+                 use_localtime = False ):
     """
        Installs logging.
 
@@ -267,7 +279,7 @@ def injectLogger(use_syslog = True, log_file = None, verbose = False,
     logger.setLevel(DEBUG)  # we use log handler levels to control output level.
 
     formatter = BTLFormatter("%(asctime)s - %(name)s - %(process)d - "
-                             "%(levelname)s - %(message)s")
+                             "%(levelname)s - %(message)s", use_localtime=use_localtime)
 
     if log_file is not None:
         lf_handler = logging.handlers.RotatingFileHandler(filename=log_file,

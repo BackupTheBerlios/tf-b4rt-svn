@@ -181,6 +181,7 @@ class Download(object):
     def got_choke(self):
         if not self.choked:
             self.choked = True
+            # ugly. instead, it should move all the requests to expecting_reject
             if not self.connector.uses_fast_extension:
                 self._letgo()
         
