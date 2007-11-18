@@ -31,7 +31,7 @@
 
 #include <libtransmission/transmission.h>
 #include <libtransmission/makemeta.h>
-#include <libtransmission/utils.h>
+#include <libtransmission/utils.h> /* tr_wait */
 
 /* macro to shut up "unused parameter" warnings */
 #ifdef __GNUC__
@@ -194,7 +194,7 @@ int main( int argc, char ** argv )
         tr_metainfo_builder * builder = tr_metaInfoBuilderCreate( h, sourceFile );
         tr_makeMetaInfo( builder, torrentPath, announce, comment, isPrivate );
         while( !builder->isDone ) {
-            tr_wait( 1 );
+            tr_wait( 1000 );
             printf( "." );
         }
         ret = !builder->failed;
@@ -268,7 +268,7 @@ int main( int argc, char ** argv )
 				printf( "0 seeder(s), 0 leecher(s), 0 download(s).\n" );
 				goto cleanup; 
 			} 
-			tr_wait( 2 );
+			tr_wait( 2000 );
         }
 		while( stats->completedFromTracker == -1 || stats->leechers == -1 || stats->seeders == -1 );
 		
