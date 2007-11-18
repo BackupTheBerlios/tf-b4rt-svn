@@ -25,10 +25,11 @@
 */
 
 /*
-    v 1.01 - Changed Main Categories. (removed TV, changed Movies to Video)
-    v 1.02 - Mar 19, 06 - Updated pageing.
-    v 1.03 - May 16, 06 - They changed there URL for Searching back to their domain.
-    v 1.04 - Sep 21, 06 - Fix for Bug found by batmark
+    v 1.01  - Changed Main Categories. (removed TV, changed Movies to Video)
+    v 1.02  - Mar 19, 06 - Updated pageing.
+    v 1.03  - May 16, 06 - They changed there URL for Searching back to their domain.
+    v 1.04  - Sep 21, 06 - Fix for Bug found by batmark
+    v 1.04a - Nov 18, 07 - Quick fix for 'download.asp?id=' URLs not working anymore.
 */
 
 class SearchEngine extends SearchEngineBase
@@ -424,7 +425,7 @@ class tSpy
                 $this->torrentDisplayName = $this->cleanLine($tmpListArr["0"]);  // TorrentName
 
                 $tmpStr = substr($tmpListArr["0"],strpos($tmpListArr["0"],"/torrent/")+strlen("/torrent/")); // Download Link
-                $this->torrentFile = "http://www.torrentspy.com/download.asp?id=" . substr($tmpStr,0,strpos($tmpStr,"/"));
+                $this->torrentFile = "http://www.torrentspy.com/torrent/" . substr($tmpStr,0,strpos($tmpStr,"/")) . "/";
 
                 $tmpStatus = substr($tmpStr,strpos($tmpStr,"title=\"")+strlen("title=\""));
                 $tmpStatus = substr($tmpStatus,0,strpos($tmpStatus,">"));
