@@ -134,7 +134,7 @@ TrOpenFile( int i, const char * filename, int write )
     /* create subfolders, if any */
     if( write ) {
         char * tmp = tr_strdup( filename );
-        const int val = tr_mkdirp( dirname(tmp), 0700 );
+        const int val = tr_mkdirp( dirname(tmp), 0777 );
         tr_free( tmp );
         if( val )
             return tr_ioErrorFromErrno( );
@@ -149,7 +149,7 @@ TrOpenFile( int i, const char * filename, int write )
     flags |= O_BINARY;
 #endif
     errno = 0;
-    file->fd = open( filename, flags, 0600 );
+    file->fd = open( filename, flags, 0666 );
     if( file->fd < 0 ) {
         if( errno ) {
             tr_err( "Couldn't open '%s': %s", filename, strerror(errno) );
