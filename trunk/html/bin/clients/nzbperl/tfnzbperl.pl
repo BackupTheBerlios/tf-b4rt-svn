@@ -813,7 +813,7 @@ sub doBodyRequests {
 			if($conn->{'segnum'} >= scalar @{$file->{'segments'}}){ # All segments for this file exhausted.
 
 				cursorPos(5, 6+(3*($i-1)));
-				my $len = pc("File finished! Sending details to decoder queue...", 'bold white');
+				my $len = pc("File finished! Sending details to decoder queue...\n", 'bold white');
 				#print ' ' x ($wchar-$len-6);
 				statMsg("Conn. $i: Finished downloading " . $conn->{'file'}->{'name'});
 
