@@ -337,10 +337,6 @@ while (1) {
 		# done
 		printMessage("all downloads complete.\n");
 		last;
-	} else {
-		# wait a bit then next
-		select undef, undef, undef, 0.25;
-		next;
 	}
 }
 
