@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: ratecontrol.h 3614 2007-10-28 15:20:23Z charles $
+ * $Id: ratecontrol.h 3899 2007-11-20 03:01:59Z charles $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -30,7 +30,6 @@ typedef struct tr_ratecontrol tr_ratecontrol;
 tr_ratecontrol * tr_rcInit( void );
 void             tr_rcSetLimit( tr_ratecontrol *, int );
 int              tr_rcGetLimit( const tr_ratecontrol * );
-int              tr_rcCanTransfer( const tr_ratecontrol * );
 size_t           tr_rcBytesLeft( const tr_ratecontrol * );
 void             tr_rcTransferred( tr_ratecontrol *, size_t byteCount );
 float            tr_rcRate( const tr_ratecontrol * );

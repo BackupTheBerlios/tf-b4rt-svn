@@ -208,34 +208,31 @@ epoll_dispatch(struct event_base *base, void *arg, struct timeval *tv)
 	event_debug(("%s: epoll_wait reports %d", __func__, res));
 
 	for (i = 0; i < res; i++) {
-		int which = 0;
 		int what = events[i].events;
 		struct event *evread = NULL, *evwrite = NULL;
 
 		evep = (struct evepoll *)events[i].data.ptr;
-   
-                if (what & EPOLLHUP)
-                        what |= EPOLLIN | EPOLLOUT;
-                else if (what & EPOLLERR)
-                        what |= EPOLLIN | EPOLLOUT;
 
-		if (what & EPOLLIN) {
+		if (what & (EPOLLHUP|EPOLLERR)) {
 			evread = evep->evread;
-			which |= EV_READ;
-		}
-
-		if (what & EPOLLOUT) {
 			evwrite = evep->evwrite;
-			which |= EV_WRITE;
+		} else {
+			if (what & EPOLLIN) {
+				evread = evep->evread;
+			}
+
+			if (what & EPOLLOUT) {
+				evwrite = evep->evwrite;
+			}
 		}
 
-		if (!which)
+		if (!(evread||evwrite))
 			continue;
 
 		if (evread != NULL && !(evread->ev_events & EV_PERSIST))
 			event_del(evread);
 		if (evwrite != NULL && evwrite != evread &&
-		    !(evwrite->ev_events & EV_PERSIST))
+			!(evwrite->ev_events & EV_PERSIST))
 			event_del(evwrite);
 
 		if (evread != NULL)

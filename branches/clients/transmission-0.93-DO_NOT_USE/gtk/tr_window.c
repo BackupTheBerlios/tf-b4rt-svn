@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: tr_window.c 3449 2007-10-17 18:31:12Z charles $
+ * $Id: tr_window.c 3899 2007-11-20 03:01:59Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -119,18 +119,18 @@ formatprog( GtkTreeViewColumn * col UNUSED, GtkCellRenderer * rend,
             GtkTreeModel * model, GtkTreeIter * iter, gpointer data UNUSED )
 {
     char  * dlstr, * ulstr, * str, * marked;
-    gfloat  prog, dl, ul;
+    gfloat  prog, dl, ul, ratio;
     guint64 down, up;
 
     gtk_tree_model_get( model, iter, MC_PROG_D, &prog, MC_DRATE, &dl,
-                        MC_URATE, &ul, MC_DOWN, &down, MC_UP, &up, -1 );
+                        MC_URATE, &ul, MC_DOWN, &down, MC_UP, &up, MC_RATIO, &ratio, -1 );
     prog = MAX( prog, 0.0 );
     prog = MIN( prog, 1.0 );
 
     ulstr = readablespeed (ul);
     if( 1.0 == prog )
     {
-        dlstr = ratiostr( down, up );
+        dlstr = g_strdup_printf( "%.1f", ratio );
         str = g_strdup_printf( _("Ratio: %s\nUL: %s"), dlstr, ulstr );
     }
     else

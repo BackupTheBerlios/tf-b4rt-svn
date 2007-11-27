@@ -178,10 +178,10 @@ timeout_cb(int fd, short event, void *arg)
 	int diff;
 
 	gettimeofday(&tcalled, NULL);
-	if (timercmp(&tcalled, &tset, >))
-		timersub(&tcalled, &tset, &tv);
+	if (evutil_timercmp(&tcalled, &tset, >))
+		evutil_timersub(&tcalled, &tset, &tv);
 	else
-		timersub(&tset, &tcalled, &tv);
+		evutil_timersub(&tset, &tcalled, &tv);
 
 	diff = tv.tv_sec*1000 + tv.tv_usec/1000 - SECONDS * 1000;
 	if (diff < 0)
@@ -189,6 +189,11 @@ timeout_cb(int fd, short event, void *arg)
 
 	if (diff < 100)
 		test_ok = 1;
+}
+
+void signal_cb_sa(int sig)
+{
+	test_ok = 2;
 }
 
 void
@@ -289,7 +294,7 @@ cleanup_test(void)
 		fprintf(stdout, "FAILED\n");
 		exit(1);
 	}
-
+        test_ok = 0;
 	return (0);
 }
 
@@ -469,6 +474,7 @@ test_immediatesignal(void)
 {
 	struct event ev;
 
+	test_ok = 0;
 	printf("Immediate signal: ");
 	signal_set(&ev, SIGUSR1, signal_cb, &ev);
 	signal_add(&ev, NULL);
@@ -489,6 +495,8 @@ test_signal_dealloc(void)
 	signal_add(&ev, NULL);
 	signal_del(&ev);
 	event_base_free(base);
+        /* If we got here without asserting, we're fine. */
+        test_ok = 1;
 	cleanup_test();
 }
 
@@ -498,6 +506,7 @@ test_signal_pipeloss(void)
 	/* make sure that the base1 pipe is closed correctly. */
 	struct event_base *base1, *base2;
 	int pipe1;
+	test_ok = 0;
 	printf("Signal pipeloss: ");
 	base1 = event_init();
 	pipe1 = base1->sig.ev_signal_pair[0];
@@ -517,17 +526,19 @@ test_signal_pipeloss(void)
 /*
  * make two bases to catch signals, use both of them.  this only works
  * for event mechanisms that use our signal pipe trick.  kqueue handles
- * signals internally, and it looks like the first kqueue always gets the
- * signal.
+ * signals internally, and all interested kqueues get all the signals.
  */
 void
 test_signal_switchbase(void)
 {
 	struct event ev1, ev2;
 	struct event_base *base1, *base2;
+        int is_kqueue;
+	test_ok = 0;
 	printf("Signal switchbase: ");
 	base1 = event_init();
 	base2 = event_init();
+        is_kqueue = !strcmp(event_get_method(),"kqueue");
 	signal_set(&ev1, SIGUSR1, signal_cb, &ev1);
 	signal_set(&ev2, SIGUSR1, signal_cb, &ev2);
 	if (event_base_set(base1, &ev1) ||
@@ -542,20 +553,135 @@ test_signal_switchbase(void)
 	/* can handle signal before loop is called */
 	raise(SIGUSR1);
 	event_base_loop(base2, EVLOOP_NONBLOCK);
+        if (is_kqueue) {
+                if (!test_ok)
+                        goto done;
+                test_ok = 0;
+        }
 	event_base_loop(base1, EVLOOP_NONBLOCK);
-	if (test_ok) {
+	if (test_ok && !is_kqueue) {
 		test_ok = 0;
+
 		/* set base1 to handle signals */
 		event_base_loop(base1, EVLOOP_NONBLOCK);
 		raise(SIGUSR1);
 		event_base_loop(base1, EVLOOP_NONBLOCK);
 		event_base_loop(base2, EVLOOP_NONBLOCK);
 	}
+ done:
 	event_base_free(base1);
 	event_base_free(base2);
 	cleanup_test();
 }
+
+/*
+ * assert that a signal event removed from the event queue really is
+ * removed - with no possibility of it's parent handler being fired.
+ */
+void
+test_signal_assert()
+{
+	struct event ev;
+	struct event_base *base = event_init();
+	test_ok = 0;
+	printf("Signal handler assert: ");
+	/* use SIGCONT so we don't kill ourselves when we signal to nowhere */
+	signal_set(&ev, SIGCONT, signal_cb, &ev);
+	signal_add(&ev, NULL);
+	/*
+	 * if signal_del() fails to reset the handler, it's current handler
+	 * will still point to evsignal_handler().
+	 */
+	signal_del(&ev);
+
+	raise(SIGCONT);
+	/* only way to verify we were in evsignal_handler() */
+	if (base->sig.evsignal_caught)
+		test_ok = 0;
+	else
+		test_ok = 1;
+
+	event_base_free(base);
+	cleanup_test();
+	return;
+}
+
+/*
+ * assert that we restore our previous signal handler properly.
+ */
+void
+test_signal_restore()
+{
+	struct event ev;
+	struct event_base *base = event_init();
+#ifdef HAVE_SIGACTION
+	struct sigaction sa;
 #endif
+
+	test_ok = 0;
+	printf("Signal handler restore: ");
+#ifdef HAVE_SIGACTION
+	sa.sa_handler = signal_cb_sa;
+	sa.sa_flags = 0x0;
+	sigemptyset(&sa.sa_mask);
+	if (sigaction(SIGUSR1, &sa, NULL) == -1)
+		goto out;
+#else
+	if (signal(SIGUSR1, signal_cb_sa) == SIG_ERR)
+		goto out;
+#endif
+	signal_set(&ev, SIGUSR1, signal_cb, &ev);
+	signal_add(&ev, NULL);
+	signal_del(&ev);
+
+	raise(SIGUSR1);
+	/* 1 == signal_cb, 2 == signal_cb_sa, we want our previous handler */
+	if (test_ok != 2)
+		test_ok = 0;
+out:
+	event_base_free(base);
+	cleanup_test();
+	return;
+}
+#endif
+
+void
+test_free_active_base(void)
+{
+	struct event_base *base1;
+	struct event ev1;
+	setup_test("Free active base: ");
+	base1 = event_init();
+	event_set(&ev1, pair[1], EV_READ, simple_read_cb, &ev1);
+	event_base_set(base1, &ev1);
+	event_add(&ev1, NULL);
+	/* event_del(&ev1); */
+	event_base_free(base1);
+	test_ok = 1;
+	cleanup_test();
+}
+
+void
+test_event_base_new(void)
+{
+	struct event_base *base;
+	struct event ev1;
+	setup_test("Event base new: ");
+
+	write(pair[0], TEST1, strlen(TEST1)+1);
+	shutdown(pair[0], SHUT_WR);
+
+	base = event_base_new();
+	event_set(&ev1, pair[1], EV_READ, simple_read_cb, &ev1);
+	event_base_set(base, &ev1);
+	event_add(&ev1, NULL);
+
+	event_base_dispatch(base);
+
+	event_base_free(base);
+	test_ok = 1;
+	cleanup_test();
+}
 
 void
 test_loopexit(void)
@@ -577,7 +703,7 @@ test_loopexit(void)
 	gettimeofday(&tv_start, NULL);
 	event_dispatch();
 	gettimeofday(&tv_end, NULL);
-	timersub(&tv_end, &tv_start, &tv_end);
+	evutil_timersub(&tv_end, &tv_start, &tv_end);
 
 	evtimer_del(&ev);
 
@@ -730,7 +856,7 @@ test_priorities_cb(int fd, short what, void *arg)
 
 	pri->count++;
 
-	timerclear(&tv);
+	evutil_timerclear(&tv);
 	event_add(&pri->ev, &tv);
 }
 
@@ -761,7 +887,7 @@ test_priorities(int npriorities)
 		exit(1);
 	}
 
-	timerclear(&tv);
+	evutil_timerclear(&tv);
 
 	if (event_add(&one.ev, &tv) == -1)
 		exit(1);
@@ -853,7 +979,7 @@ test_want_only_once(void)
 	write(pair[0], TEST1, strlen(TEST1)+1);
 
 	/* Setup the loop termination */
-	timerclear(&tv);
+	evutil_timerclear(&tv);
 	tv.tv_sec = 1;
 	event_loopexit(&tv);
 	
@@ -934,7 +1060,7 @@ evtag_fuzz(void)
 
 	/* Now insert some corruption into the tag length field */
 	evbuffer_drain(tmp, -1);
-	timerclear(&tv);
+	evutil_timerclear(&tv);
 	tv.tv_sec = 1;
 	evtag_marshal_timeval(tmp, 0, &tv);
 	evbuffer_add(tmp, buffer, sizeof(buffer));
@@ -1010,7 +1136,7 @@ rpc_test(void)
 	}
 
 	gettimeofday(&tv_end, NULL);
-	timersub(&tv_end, &tv_start, &tv_end);
+	evutil_timersub(&tv_end, &tv_start, &tv_end);
 	fprintf(stderr, "(%.1f us/add) ",
 	    (float)tv_end.tv_sec/(float)i * 1000000.0 +
 	    tv_end.tv_usec / (float)i);
@@ -1063,6 +1189,10 @@ main (int argc, char **argv)
 	
 	test_bufferevent();
 
+	test_free_active_base();
+
+	test_event_base_new();
+
 	http_suite();
 
 	rpc_suite();
@@ -1098,6 +1228,8 @@ main (int argc, char **argv)
 	test_signal_dealloc();
 	test_signal_pipeloss();
 	test_signal_switchbase();
+	test_signal_restore();
+	test_signal_assert();
 #endif
 	
 	return (0);

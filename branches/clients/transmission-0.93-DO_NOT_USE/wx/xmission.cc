@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * $Id: xmission.cc 3426 2007-10-15 20:58:39Z charles $
+ * $Id: xmission.cc 3925 2007-11-22 04:15:21Z charles $
  */
 
 #include <ctype.h>
@@ -511,7 +511,7 @@ MyFrame :: MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size
 
     long port;
     wxString key = _T("port");
-    if( !myConfig->Read( key, &port, 9090 ) )
+    if( !myConfig->Read( key, &port, TR_DEFAULT_PORT ) )
         myConfig->Write( key, port );
     tr_setBindPort( handle, port );
 

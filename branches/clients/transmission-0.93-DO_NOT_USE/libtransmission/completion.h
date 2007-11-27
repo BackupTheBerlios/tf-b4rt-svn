@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: completion.h 3178 2007-09-26 01:55:04Z charles $
+ * $Id: completion.h 3897 2007-11-20 02:28:11Z charles $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -31,7 +31,6 @@ typedef struct tr_completion tr_completion;
 
 tr_completion  * tr_cpInit( tr_torrent * );
 void             tr_cpClose( tr_completion * );
-void             tr_cpReset( tr_completion * );
 
 /* General */
 

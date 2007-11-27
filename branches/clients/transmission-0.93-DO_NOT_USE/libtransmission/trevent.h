@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  *
- * $Id: trevent.h 3457 2007-10-18 18:32:58Z charles $
+ * $Id: trevent.h 3897 2007-11-20 02:28:11Z charles $
  */
 
 #ifndef TR_EVENT_H
@@ -37,17 +37,6 @@ void tr_evhttp_make_request (struct tr_handle          * tr_handle,
                              enum evhttp_cmd_type        type,
                              char                      * uri);
 
-void tr_bufferevent_write( struct tr_handle    * tr_handle,
-                           struct bufferevent  * bufferEvent,
-                           const void          * buf,
-                           size_t                buflen );
-
-
-void tr_setBufferEventMode( struct tr_handle   * tr_handle,
-                            struct bufferevent * bufferEvent,
-                            short                mode_enable,
-                            short                mode_disable );
-
 /**
 ***
 **/
@@ -68,6 +57,9 @@ tr_timer* tr_timerNew( struct tr_handle  * handle,
  * Frees a timer and sets the timer pointer to NULL.
  */
 void tr_timerFree( tr_timer ** timer );
+
+
+int tr_amInEventThread( struct tr_handle * handle );
 
 void tr_runInEventThread( struct tr_handle * handle,
                           void               func( void* ),

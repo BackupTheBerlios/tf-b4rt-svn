@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: tr_core.c 3573 2007-10-26 03:02:35Z charles $
+ * $Id: tr_core.c 3943 2007-11-23 15:36:32Z charles $
  *
  * Copyright (c) 2007 Transmission authors and contributors
  *
@@ -122,39 +122,12 @@ tr_core_dispose( GObject * obj )
 {
     TrCore       * self = (TrCore *) obj;
     GObjectClass * parent;
-    GtkTreeIter    iter;
-    TrTorrent    * tor;
 
     if( self->disposed )
-    {
         return;
-    }
+
     self->disposed = TRUE;
-
     pref_save( NULL );
-
-#ifdef REFDBG
-    fprintf( stderr, "core    %p dispose\n", self );
-#endif
-
-    /* sever all remaining torrents in the model */
-    if( gtk_tree_model_get_iter_first( self->model, &iter ) ) do
-    {
-        gtk_tree_model_get( self->model, &iter, MC_TORRENT, &tor, -1 );
-        tr_torrent_sever( tor );
-        g_object_unref( tor );
-    }
-    while( gtk_tree_model_iter_next( self->model, &iter ) );
-    g_object_unref( self->model );
-
-#ifdef REFDBG
-    fprintf( stderr, "core    %p dead\n", self );
-#endif
-
-    /* close the libtransmission instance */
-    tr_close( self->handle );
-
-    /* Chain up to the parent class */
     parent = g_type_class_peek( g_type_parent( TR_CORE_TYPE ) );
     parent->dispose( obj );
 }
@@ -296,8 +269,8 @@ tr_core_init( GTypeInstance * instance, gpointer g_class SHUTUP )
         G_TYPE_INT, G_TYPE_INT,     G_TYPE_INT,     G_TYPE_INT,       G_TYPE_INT,
         /* leechers, completedFromTracker, downloaded,    uploaded */
         G_TYPE_INT,  G_TYPE_INT,           G_TYPE_UINT64, G_TYPE_UINT64,
-        /* left,       TrTorrent object, ID for IPC */
-        G_TYPE_UINT64, TR_TORRENT_TYPE,  G_TYPE_INT,
+        /* ratio,      left,          TrTorrent object, ID for IPC */
+        G_TYPE_FLOAT,  G_TYPE_UINT64, TR_TORRENT_TYPE,  G_TYPE_INT,
     };
 
 #ifdef REFDBG
@@ -371,49 +344,6 @@ tr_core_handle( TrCore * self )
     g_return_val_if_fail (TR_IS_CORE(self), NULL);
 
     return self->disposed ? NULL : self->handle;
-}
-
-void
-tr_core_shutdown( TrCore * self )
-{
-    GtkTreeIter iter;
-
-    TR_IS_CORE( self );
-
-    if( self->disposed )
-        return;
-
-    g_assert( !self->quitting );
-    self->quitting = TRUE;
-
-    /* try to stop all the torrents nicely */
-    if ( gtk_tree_model_get_iter_first( self->model, &iter) ) do {
-        TrTorrent * tor;
-        gtk_tree_model_get( self->model, &iter, MC_TORRENT, &tor, -1 );
-        tr_torrent_sever( tor );
-        g_object_unref( tor );
-    } while( gtk_list_store_remove( GTK_LIST_STORE(self->model), &iter ) );
-
-    /* shut down nat traversal */
-    tr_natTraversalEnable( self->handle, 0 );
-}
-
-gboolean
-tr_core_quiescent( TrCore * self )
-{
-    const tr_handle_status * hstat;
-
-    TR_IS_CORE( self );
-    g_assert( self->quitting );
-
-    if( self->disposed )
-        return TRUE;
-
-    if ( tr_torrentCount( self->handle ) != 0 )
-        return FALSE;
-
-    hstat = tr_handleStatus( self->handle );
-    return TR_NAT_TRAVERSAL_DISABLED == hstat->natTraversalStatus;
 }
 
 static void
@@ -598,44 +528,61 @@ tr_core_delete_torrent( TrCore * self, GtkTreeIter * iter )
     tr_torrent_sever( tor );
 }
 
-void
-tr_core_update( TrCore * self )
+static gboolean
+update_foreach( GtkTreeModel * model,
+                GtkTreePath  * path UNUSED,
+                GtkTreeIter  * iter,
+                gpointer       data UNUSED)
 {
-    GtkTreeIter iter;
     TrTorrent * tor;
     const tr_stat * st;
 
-    TR_IS_CORE( self );
+    gtk_tree_model_get( model, iter, MC_TORRENT, &tor, -1 );
+    st = tr_torrent_stat( tor );
+    tr_torrent_check_seeding_cap ( tor );
+    g_object_unref( tor );
 
-    if( gtk_tree_model_get_iter_first( self->model, &iter ) ) do
-    {
-        gtk_tree_model_get( self->model, &iter, MC_TORRENT, &tor, -1 );
-        st = tr_torrent_stat( tor );
-        g_object_unref( tor );
-        tr_torrent_check_seeding_cap ( tor );
+    gtk_list_store_set( GTK_LIST_STORE( model ), iter,
+                        MC_STAT,        st->status,
+                        MC_ERR,         st->error,
+                        MC_TERR,        st->errorString,
+                        MC_PROG_C,      st->percentComplete,
+                        MC_PROG_D,      st->percentDone,
+                        MC_DRATE,       st->rateDownload,
+                        MC_URATE,       st->rateUpload,
+                        MC_ETA,         st->eta,
+                        MC_PEERS,       st->peersConnected,
+                        MC_UPEERS,      st->peersGettingFromUs,
+                        MC_DPEERS,      st->peersSendingToUs,
+                        MC_SEED,        st->seeders,
+                        MC_LEECH,       st->leechers,
+                        MC_DONE,        st->completedFromTracker,
+                        MC_DOWN,        st->downloadedEver,
+                        MC_UP,          st->uploadedEver,
+                        MC_RATIO,       st->ratio,
+                        MC_LEFT,        st->leftUntilDone,
+                        -1 );
 
-        /* XXX find out if setting the same data emits changed signal */
-        gtk_list_store_set( GTK_LIST_STORE( self->model ), &iter,
-                            MC_STAT,        st->status,
-                            MC_ERR,         st->error,
-                            MC_TERR,        st->errorString,
-                            MC_PROG_C,      st->percentComplete,
-                            MC_PROG_D,      st->percentDone,
-                            MC_DRATE,       st->rateDownload,
-                            MC_URATE,       st->rateUpload,
-                            MC_ETA,         st->eta,
-                            MC_PEERS,       st->peersConnected,
-                            MC_UPEERS,      st->peersGettingFromUs,
-                            MC_DPEERS,      st->peersSendingToUs,
-                            MC_SEED,        st->seeders,
-                            MC_LEECH,       st->leechers,
-                            MC_DONE,        st->completedFromTracker,
-                            MC_DOWN,        st->downloadedEver,
-                            MC_UP,          st->uploadedEver,
-                            MC_LEFT,        st->leftUntilDone,
-                            -1 );
-    }
-    while( gtk_tree_model_iter_next( self->model, &iter ) );
+    return FALSE;
+}
+
+void
+tr_core_update( TrCore * self )
+{
+    int column;
+    GtkSortType order;
+    GtkTreeSortable * sortable;
+
+    /* pause sorting */
+    sortable = GTK_TREE_SORTABLE( self->model );
+    gtk_tree_sortable_get_sort_column_id( sortable, &column, &order );
+    gtk_tree_sortable_set_sort_column_id( sortable, GTK_TREE_SORTABLE_UNSORTED_SORT_COLUMN_ID, order );
+
+    /* refresh the model */
+    gtk_tree_model_foreach( self->model, update_foreach, NULL );
+
+    /* resume sorting */
+    gtk_tree_sortable_set_sort_column_id( sortable, column, order );
 }
 
 void

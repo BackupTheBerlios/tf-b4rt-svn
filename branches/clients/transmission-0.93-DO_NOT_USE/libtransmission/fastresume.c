@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: fastresume.c 3618 2007-10-28 19:42:46Z charles $
+ * $Id: fastresume.c 3931 2007-11-22 20:42:18Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -788,7 +788,6 @@ fastResumeLoadImpl ( tr_torrent   * tor,
         }
 
         /* if we didn't read the data, seek past it */
-        tr_inf( "Skipping resume data type %02x, %u bytes", id, len );
         fseek( file, len, SEEK_CUR );
     }
 

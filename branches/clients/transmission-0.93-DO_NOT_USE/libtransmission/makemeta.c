@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  *
- * $Id: makemeta.c 3657 2007-10-30 20:11:23Z charles $
+ * $Id: makemeta.c 3897 2007-11-20 02:28:11Z charles $
  */
 
 #include <assert.h>
@@ -385,7 +385,7 @@ static void tr_realMakeMetaInfo ( tr_metainfo_builder * builder )
     /* save the file */
     if ( !builder->abortFlag ) {
         size_t nmemb;
-        char * pch = tr_bencSaveMalloc( &top, &n );
+        char * pch = tr_bencSave( &top, &n );
         FILE * fp = fopen( builder->outputFile, "wb+" );
         nmemb = n;
         if( fp == NULL )

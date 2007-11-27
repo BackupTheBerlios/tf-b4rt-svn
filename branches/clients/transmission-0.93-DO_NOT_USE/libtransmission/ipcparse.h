@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: ipcparse.h 3566 2007-10-26 01:09:47Z charles $
+ * $Id: ipcparse.h 3897 2007-11-20 02:28:11Z charles $
  *
  * Copyright (c) 2007 Joshua Elsasser
  *
@@ -42,11 +42,13 @@ enum ipc_msg
     IPC_MSG_AUTOMAP,
     IPC_MSG_AUTOSTART,
     IPC_MSG_BAD,
+    IPC_MSG_CRYPTO,
     IPC_MSG_DIR,
     IPC_MSG_DOWNLIMIT,
     IPC_MSG_FAIL,
     IPC_MSG_GETAUTOMAP,
     IPC_MSG_GETAUTOSTART,
+    IPC_MSG_GETCRYPTO,
     IPC_MSG_GETDIR,
     IPC_MSG_GETDOWNLIMIT,
     IPC_MSG_GETINFO,

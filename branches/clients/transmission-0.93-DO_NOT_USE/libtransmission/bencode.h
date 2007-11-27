@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: bencode.h 3105 2007-09-20 16:32:01Z livings124 $
+ * $Id: bencode.h 3897 2007-11-20 02:28:11Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -86,9 +86,7 @@ benc_val_t * tr_bencListAdd( benc_val_t * list );
 /* note: key must not be freed or modified while val is in use */
 benc_val_t * tr_bencDictAdd( benc_val_t * dict, const char * key );
 
-char * tr_bencSaveMalloc( benc_val_t * val, int * len );
-int    tr_bencSave( benc_val_t * val, char ** buf,
-                          int * used, int * max );
+char*  tr_bencSave( const benc_val_t * val, int * len );
 
 int    tr_bencIsStr   ( const benc_val_t * val );
 int    tr_bencIsInt   ( const benc_val_t * val );

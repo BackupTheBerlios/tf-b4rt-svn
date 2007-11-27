@@ -164,7 +164,8 @@
 extern "C" {
 #endif
 
-#include <stdint.h>
+/* For integer types. */
+#include <evutil.h>
 
 /** Error codes 0-5 are as described in RFC 1035. */
 #define DNS_ERR_NONE 0
@@ -397,7 +398,7 @@ int evdns_set_option(const char *option, const char *val, int flags);
           occurred (see above)
   @see resolv.conf(3), evdns_config_windows_nameservers()
  */
-int evdns_resolv_conf_parse(int flags, const char *filename);
+int evdns_resolv_conf_parse(int flags, const char *const filename);
 
 
 /**
@@ -461,7 +462,7 @@ void evdns_set_log_fn(evdns_debug_log_fn_type fn);
 
    @param fn the new callback, or NULL to use the default.
  */
-void evdns_set_transaction_id_fn(uint16_t (*fn)(void));
+void evdns_set_transaction_id_fn(ev_uint16_t (*fn)(void));
 
 #define DNS_NO_SEARCH 1
 
@@ -476,7 +477,15 @@ struct evdns_server_request {
 };
 struct evdns_server_question {
 	int type;
+#ifdef __cplusplus
+	int dns_question_class;
+#else
+	/* You should refer to this field as "dns_question_class".  The
+	 * name "class" works in C for backward compatibility, and will be
+	 * removed in a future version. (1.5 or later). */
 	int class;
+#define dns_question_class class
+#endif
 	char name[1];
 };
 typedef void (*evdns_request_callback_fn_type)(struct evdns_server_request *, void *);
@@ -501,7 +510,7 @@ typedef void (*evdns_request_callback_fn_type)(struct evdns_server_request *, vo
 struct evdns_server_port *evdns_add_server_port(int socket, int is_tcp, evdns_request_callback_fn_type callback, void *user_data);
 void evdns_close_server_port(struct evdns_server_port *port);
 
-int evdns_server_request_add_reply(struct evdns_server_request *req, int section, const char *name, int type, int class, int ttl, int datalen, int is_name, const char *data);
+int evdns_server_request_add_reply(struct evdns_server_request *req, int section, const char *name, int type, int dns_class, int ttl, int datalen, int is_name, const char *data);
 int evdns_server_request_add_a_reply(struct evdns_server_request *req, const char *name, int n, void *addrs, int ttl);
 int evdns_server_request_add_aaaa_reply(struct evdns_server_request *req, const char *name, int n, void *addrs, int ttl);
 int evdns_server_request_add_ptr_reply(struct evdns_server_request *req, struct in_addr *in, const char *inaddr_name, const char *hostname, int ttl);

@@ -479,7 +479,7 @@ regress.gen.c regress.gen.h: regress.rpc
 test: test-init test-eof test-weof test-time regress
 
 verify: test
-	@./test.sh
+	@$(srcdir)/test.sh
 
 bench test-init test-eof test-weof test-time: ../libevent.la
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

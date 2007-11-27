@@ -64,15 +64,24 @@
 #include "log.h"
 
 static int dns_ok = 0;
+static int dns_err = 0;
 
 void
 dns_gethostbyname_cb(int result, char type, int count, int ttl,
     void *addresses, void *arg)
 {
-	dns_ok = 0;
+	dns_ok = dns_err = 0;
 
-	if (result != DNS_ERR_NONE)
+	if (result == DNS_ERR_TIMEOUT) {
+		fprintf(stdout, "[Timed out] ");
+		dns_err = result;
 		goto out;
+	}
+
+	if (result != DNS_ERR_NONE) {
+		fprintf(stdout, "[Error code %d] ", result);
+		goto out;
+	}
 
 	fprintf(stderr, "type: %d, count: %d, ttl: %d: ", type, count, ttl);
 
@@ -148,8 +157,10 @@ dns_gethostbyname6(void)
 
 	if (dns_ok == DNS_IPv6_AAAA) {
 		fprintf(stdout, "OK\n");
+	} else if (!dns_ok && dns_err == DNS_ERR_TIMEOUT) {
+		fprintf(stdout, "SKIPPED\n");
 	} else {
-		fprintf(stdout, "FAILED\n");
+		fprintf(stdout, "FAILED (%d)\n", dns_ok);
 		exit(1);
 	}
 }
@@ -183,14 +194,14 @@ dns_server_request_cb(struct evdns_server_request *req, void *data)
 		struct in_addr ans;
 		ans.s_addr = htonl(0xc0a80b0bUL); /* 192.168.11.11 */
 		if (req->questions[i]->type == EVDNS_TYPE_A &&
-			req->questions[i]->class == EVDNS_CLASS_INET &&
+			req->questions[i]->dns_question_class == EVDNS_CLASS_INET &&
 			!strcmp(req->questions[i]->name, "zz.example.com")) {
 			r = evdns_server_request_add_a_reply(req, "zz.example.com",
 												 1, &ans.s_addr, 12345);
 			if (r<0)
 				dns_ok = 0;
 		} else if (req->questions[i]->type == EVDNS_TYPE_AAAA &&
-				   req->questions[i]->class == EVDNS_CLASS_INET &&
+				   req->questions[i]->dns_question_class == EVDNS_CLASS_INET &&
 				   !strcmp(req->questions[i]->name, "zz.example.com")) {
 			char addr6[17] = "abcdefghijklmnop";
 			r = evdns_server_request_add_aaaa_reply(req, "zz.example.com",
@@ -198,7 +209,7 @@ dns_server_request_cb(struct evdns_server_request *req, void *data)
 			if (r<0)
 				dns_ok = 0;
 		} else if (req->questions[i]->type == EVDNS_TYPE_PTR &&
-				   req->questions[i]->class == EVDNS_CLASS_INET &&
+				   req->questions[i]->dns_question_class == EVDNS_CLASS_INET &&
 				   !strcmp(req->questions[i]->name, TEST_ARPA)) {
 			r = evdns_server_request_add_ptr_reply(req, NULL, TEST_ARPA,
 					   "ZZ.EXAMPLE.COM", 54321);
@@ -207,7 +218,7 @@ dns_server_request_cb(struct evdns_server_request *req, void *data)
 		} else {
 			fprintf(stdout, "Unexpected question %d %d \"%s\" ",
 					req->questions[i]->type,
-					req->questions[i]->class,
+					req->questions[i]->dns_question_class,
 					req->questions[i]->name);
 			dns_ok = 0;
 		}

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: util.h 3380 2007-10-12 19:53:30Z charles $
+ * $Id: util.h 3899 2007-11-20 03:01:59Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -62,11 +62,6 @@ readabletime(int secs);
 
 char *
 rfc822date (guint64 epoch_msec);
-
-/* returns a string representing the download ratio.
-   the string must be g_free()d */
-char *
-ratiostr(guint64 down, guint64 up);
 
 /* create a directory and any missing parent directories */
 gboolean

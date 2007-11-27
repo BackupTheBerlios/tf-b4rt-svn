@@ -30,8 +30,8 @@
 #endif
 
 #ifdef WIN32
-#include <windows.h>
 #include <winsock2.h>
+#include <windows.h>
 #endif
 
 #ifdef HAVE_VASPRINTF
@@ -62,6 +62,7 @@
 #endif
 
 #include "event.h"
+#include "config.h"
 
 struct evbuffer *
 evbuffer_new(void)
@@ -392,7 +393,6 @@ evbuffer_read(struct evbuffer *buf, int fd, int howmuch)
 #ifndef WIN32
 	n = read(fd, p, howmuch);
 #else
-	//n = ReadFile((HANDLE)fd, p, howmuch, &dwBytesRead, NULL);
 	n = recv(fd, p, howmuch, 0);
 #endif
 	if (n == -1)

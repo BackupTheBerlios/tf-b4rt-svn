@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  * 
- * $Id: actions.c 3392 2007-10-13 13:51:38Z charles $
+ * $Id: actions.c 3899 2007-11-20 03:01:59Z charles $
  */
 
 #include <string.h>
@@ -57,8 +57,8 @@ static GtkToggleActionEntry show_toggle_entries[] =
 {
   { "toggle-main-window", NULL, 
     N_("Show _Main Window"), NULL, NULL, G_CALLBACK(action_cb), TRUE }, 
-  { "toggle-debug-window", NULL,
-    N_("Show _Debug Window"), NULL, NULL, G_CALLBACK(action_cb), FALSE }
+  { "toggle-message-log", NULL,
+    N_("Show Message _Log"), NULL, NULL, G_CALLBACK(action_cb), FALSE }
 };
 
 static GtkActionEntry entries[] =
@@ -71,7 +71,7 @@ static GtkActionEntry entries[] =
   { "start-torrent", GTK_STOCK_MEDIA_PLAY,
     N_("_Start"), "<control>S", NULL, G_CALLBACK(action_cb) },
   { "verify-torrent", NULL,
-    N_("_Verify Local Files"), NULL, NULL, G_CALLBACK(action_cb) },
+    N_("_Verify Local Data"), NULL, NULL, G_CALLBACK(action_cb) },
   { "pause-torrent", GTK_STOCK_MEDIA_PAUSE,
     N_("_Pause"), "<control>P", NULL, G_CALLBACK(action_cb) },
   { "remove-torrent", GTK_STOCK_REMOVE,

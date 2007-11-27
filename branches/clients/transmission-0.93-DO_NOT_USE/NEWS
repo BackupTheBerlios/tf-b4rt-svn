@@ -1,5 +1,16 @@
 NEWS file for Transmission <http://transmission.m0k.org/>
 
+0.94 (2007/11/25)
+- All Platforms:
+   + Faster average download speeds
+   + Automatically ban peers that send us too many corrupt pieces
+   + Fix a crash that occurred if a peer sent us an incomplete message
+   + Fix portmapping crash
+   + Fix bug that left files open after their torrents were stopped
+   + Fix 0.93 file permissions bug
+   + Fix tracker redirect error
+   + Fix LTEP PEX bug
+
 0.93 (2007/11/12)
 - All Platforms:
    + Fix "router death" bug that impaired internet connectivity

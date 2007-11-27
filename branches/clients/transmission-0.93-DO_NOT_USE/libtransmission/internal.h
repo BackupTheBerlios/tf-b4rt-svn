@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: internal.h 3492 2007-10-21 15:47:26Z charles $
+ * $Id: internal.h 3941 2007-11-23 04:04:43Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -192,9 +192,6 @@ struct tr_handle
     int                        statCur;
 
     uint8_t                    isClosed;
-
-#define TR_AZ_ID_LEN 20
-    uint8_t                    azId[TR_AZ_ID_LEN];
 };
 
 void tr_globalLock       ( struct tr_handle * );

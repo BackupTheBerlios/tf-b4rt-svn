@@ -57,9 +57,8 @@ am_libtransmission_a_OBJECTS = bencode.$(OBJEXT) clients.$(OBJEXT) \
 	net.$(OBJEXT) peer-io.$(OBJEXT) peer-mgr.$(OBJEXT) \
 	peer-msgs.$(OBJEXT) platform.$(OBJEXT) ptrarray.$(OBJEXT) \
 	publish.$(OBJEXT) ratecontrol.$(OBJEXT) shared.$(OBJEXT) \
-	strlcat.$(OBJEXT) strlcpy.$(OBJEXT) torrent.$(OBJEXT) \
-	tracker.$(OBJEXT) transmission.$(OBJEXT) trevent.$(OBJEXT) \
-	upnp.$(OBJEXT) utils.$(OBJEXT) xml.$(OBJEXT)
+	torrent.$(OBJEXT) tracker.$(OBJEXT) transmission.$(OBJEXT) \
+	trevent.$(OBJEXT) upnp.$(OBJEXT) utils.$(OBJEXT) xml.$(OBJEXT)
 libtransmission_a_OBJECTS = $(am_libtransmission_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -285,8 +284,6 @@ libtransmission_a_SOURCES = \
     publish.c \
     ratecontrol.c \
     shared.c \
-    strlcat.c \
-    strlcpy.c \
     torrent.c \
     tracker.c \
     transmission.c \
@@ -407,8 +404,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/publish.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ratecontrol.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/shared.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strlcat.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strlcpy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/torrent.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tracker.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/transmission.Po@am__quote@

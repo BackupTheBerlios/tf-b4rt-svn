@@ -54,6 +54,7 @@
 
 #include "event.h"
 #include "event-internal.h"
+#include "evutil.h"
 #include "log.h"
 
 #ifdef HAVE_EVENT_PORTS
@@ -64,9 +65,6 @@ extern const struct eventop selectops;
 #endif
 #ifdef HAVE_POLL
 extern const struct eventop pollops;
-#endif
-#ifdef HAVE_RTSIG
-extern const struct eventop rtsigops;
 #endif
 #ifdef HAVE_EPOLL
 extern const struct eventop epollops;
@@ -94,9 +92,6 @@ const struct eventop *eventops[] = {
 #endif
 #ifdef HAVE_DEVPOLL
 	&devpollops,
-#endif
-#ifdef HAVE_RTSIG
-	&rtsigops,
 #endif
 #ifdef HAVE_POLL
 	&pollops,
@@ -160,8 +155,19 @@ gettime(struct timeval *tp)
 	return (gettimeofday(tp, NULL));
 }
 
-void *
+struct event_base *
 event_init(void)
+{
+	struct event_base *base = event_base_new();
+
+	if (base != NULL)
+		current_base = base;
+
+	return (base);
+}
+
+struct event_base *
+event_base_new(void)
 {
 	int i;
 	struct event_base *base;
@@ -198,27 +204,42 @@ event_init(void)
 	/* allocate a single active event queue */
 	event_base_priority_init(base, 1);
 
-	current_base = base;
 	return (base);
 }
 
 void
 event_base_free(struct event_base *base)
 {
-	int i;
+	int i, n_deleted=0;
+	struct event *ev;
 
 	if (base == NULL && current_base)
 		base = current_base;
-        if (base == current_base)
+	if (base == current_base)
 		current_base = NULL;
 
 	/* XXX(niels) - check for internal events first */
 	assert(base);
+	/* Delete all non-internal events. */
+	for (ev = TAILQ_FIRST(&base->eventqueue); ev; ) {
+		struct event *next = TAILQ_NEXT(ev, ev_next);
+		if (!(ev->ev_flags & EVLIST_INTERNAL)) {
+			event_del(ev);
+			++n_deleted;
+		}
+		ev = next;
+	}
+	if (n_deleted)
+		event_debug(("%s: %d events were still set in base",
+					 __func__, n_deleted));
+
 	if (base->evsel->dealloc != NULL)
 		base->evsel->dealloc(base, base->evbase);
+
 	for (i=0; i < base->nactivequeues; ++i)
 		assert(TAILQ_EMPTY(base->activequeues[i]));
 	assert(min_heap_empty(&base->timeheap));
+	min_heap_dtor(&base->timeheap);
 
 	for (i = 0; i < base->nactivequeues; ++i)
 		free(base->activequeues[i]);
@@ -406,7 +427,7 @@ event_base_loop(struct event_base *base, int flags)
 			 * if we have active events, we just poll new events
 			 * without waiting.
 			 */
-			timerclear(&tv);
+			evutil_timerclear(&tv);
 		}
 		
 		/* If we have no events, we just exit */
@@ -484,7 +505,7 @@ event_base_once(struct event_base *base, int fd, short events,
 
 	if (events == EV_TIMEOUT) {
 		if (tv == NULL) {
-			timerclear(&etv);
+			evutil_timerclear(&etv);
 			tv = &etv;
 		}
 
@@ -588,10 +609,10 @@ event_pending(struct event *ev, short event, struct timeval *tv)
 	/* See if there is a timeout that we should report */
 	if (tv != NULL && (flags & event & EV_TIMEOUT)) {
 		gettime(&now);
-		timersub(&ev->ev_timeout, &now, &res);
+		evutil_timersub(&ev->ev_timeout, &now, &res);
 		/* correctly remap to real time */
 		gettimeofday(&now, NULL);
-		timeradd(&now, &res, tv);
+		evutil_timeradd(&now, &res, tv);
 	}
 
 	return (flags & event);
@@ -640,7 +661,7 @@ event_add(struct event *ev, struct timeval *tv)
 		}
 
 		gettime(&now);
-		timeradd(&now, tv, &ev->ev_timeout);
+		evutil_timeradd(&now, tv, &ev->ev_timeout);
 
 		event_debug((
 			 "event_add: timeout in %d seconds, call %p",
@@ -738,12 +759,12 @@ timeout_next(struct event_base *base, struct timeval **tv_p)
 	if (gettime(&now) == -1)
 		return (-1);
 
-	if (timercmp(&ev->ev_timeout, &now, <=)) {
-		timerclear(tv);
+	if (evutil_timercmp(&ev->ev_timeout, &now, <=)) {
+		evutil_timerclear(tv);
 		return (0);
 	}
 
-	timersub(&ev->ev_timeout, &now, tv);
+	evutil_timersub(&ev->ev_timeout, &now, tv);
 
 	assert(tv->tv_sec >= 0);
 	assert(tv->tv_usec >= 0);
@@ -770,14 +791,14 @@ timeout_correct(struct event_base *base, struct timeval *tv)
 
 	/* Check if time is running backwards */
 	gettime(tv);
-	if (timercmp(tv, &base->event_tv, >=)) {
+	if (evutil_timercmp(tv, &base->event_tv, >=)) {
 		base->event_tv = *tv;
 		return;
 	}
 
 	event_debug(("%s: time is running backwards, corrected",
 		    __func__));
-	timersub(&base->event_tv, tv, &off);
+	evutil_timersub(&base->event_tv, tv, &off);
 
 	/*
 	 * We can modify the key element of the node without destroying
@@ -786,8 +807,8 @@ timeout_correct(struct event_base *base, struct timeval *tv)
 	pev = base->timeheap.p;
 	size = base->timeheap.n;
 	for (; size-- > 0; ++pev) {
-		struct timeval *tv = &(**pev).ev_timeout;
-		timersub(tv, &off, tv);
+		struct timeval *ev_tv = &(**pev).ev_timeout;
+		evutil_timersub(ev_tv, &off, ev_tv);
 	}
 }
 
@@ -803,9 +824,8 @@ timeout_process(struct event_base *base)
 	gettime(&now);
 
 	while ((ev = min_heap_top(&base->timeheap))) {
-		if (timercmp(&ev->ev_timeout, &now, >))
+		if (evutil_timercmp(&ev->ev_timeout, &now, >))
 			break;
-		event_queue_remove(base, ev, EVLIST_TIMEOUT);
 
 		/* delete this event from the I/O queues */
 		event_del(ev);
@@ -819,23 +839,17 @@ timeout_process(struct event_base *base)
 void
 event_queue_remove(struct event_base *base, struct event *ev, int queue)
 {
-	int docount = 1;
-
 	if (!(ev->ev_flags & queue))
 		event_errx(1, "%s: %p(fd %d) not on queue %x", __func__,
 			   ev, ev->ev_fd, queue);
 
-	if (ev->ev_flags & EVLIST_INTERNAL)
-		docount = 0;
-
-	if (docount)
+	if (~ev->ev_flags & EVLIST_INTERNAL)
 		base->event_count--;
 
 	ev->ev_flags &= ~queue;
 	switch (queue) {
 	case EVLIST_ACTIVE:
-		if (docount)
-			base->event_count_active--;
+		base->event_count_active--;
 		TAILQ_REMOVE(base->activequeues[ev->ev_pri],
 		    ev, ev_active_next);
 		break;
@@ -856,8 +870,6 @@ event_queue_remove(struct event_base *base, struct event *ev, int queue)
 void
 event_queue_insert(struct event_base *base, struct event *ev, int queue)
 {
-	int docount = 1;
-
 	if (ev->ev_flags & queue) {
 		/* Double insertion is possible for active events */
 		if (queue & EVLIST_ACTIVE)
@@ -867,17 +879,13 @@ event_queue_insert(struct event_base *base, struct event *ev, int queue)
 			   ev, ev->ev_fd, queue);
 	}
 
-	if (ev->ev_flags & EVLIST_INTERNAL)
-		docount = 0;
-
-	if (docount)
+	if (~ev->ev_flags & EVLIST_INTERNAL)
 		base->event_count++;
 
 	ev->ev_flags |= queue;
 	switch (queue) {
 	case EVLIST_ACTIVE:
-		if (docount)
-			base->event_count_active++;
+		base->event_count_active++;
 		TAILQ_INSERT_TAIL(base->activequeues[ev->ev_pri],
 		    ev,ev_active_next);
 		break;

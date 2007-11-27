@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: clients.c 3463 2007-10-19 00:19:16Z charles $
+ * $Id: clients.c 3916 2007-11-21 15:20:13Z livings124 $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -61,7 +61,7 @@ char * tr_clientForId( const uint8_t * id )
             {
                 asprintf( &ret, "Transmission %d.%c%c%s",
                         charToInt( id[3] ), id[4], id[5],
-                        id[6] == 'Z' ? "+" : "" );
+                        id[6] == 'Z' || id[6] == 'X' ? "+" : "" );
             }
         }
         else if( !memcmp( &id[1], "AZ", 2 ) )

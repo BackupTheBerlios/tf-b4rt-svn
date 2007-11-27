@@ -1,20 +1,20 @@
 #! /bin/sh
 #
-# $Id: version.sh 3801 2007-11-12 02:48:50Z charles $
+# $Id: version.sh 3966 2007-11-26 00:04:30Z livings124 $
 
 # convention: -TR MAJOR MINOR MAINT BETA - (each a single char)
-# BETA: "Z" for beta, "0" for stable 
+# BETA: "Z" for developmental, "X" for beta, "0" for stable 
 # these should be the only two lines you need to change
-PEERID_PREFIX="-TR0930-"
-USERAGENT_PREFIX="0.93"
+PEERID_PREFIX="-TR0940-"
+USERAGENT_PREFIX="0.94"
 
 
-SVN_REVISION=`find ./ -name "*\.[ch]" -o -name "*\.cpp" -o -name "*\.po" | \
+SVN_REVISION=`find ./ -name "*\.[chmp]" -o -name "*\.cpp" -o -name "*\.po" -o -name "*\.sh" | \
               xargs grep "\$Id:" | \
               grep -v third-party | \
               cut -d"$Id:" -f3 | cut -d" " -f3 | sort -n | tail -n 1`
 
-if test "x${PEERID_PREFIX//Z/}" = "x$PEERID_PREFIX";
+if [[ "x${PEERID_PREFIX//0-/}" != "x$PEERID_PREFIX" ]]
 then
     STABLE_RELEASE=yes
 else

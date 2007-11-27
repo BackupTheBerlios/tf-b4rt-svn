@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: torrents.h 3111 2007-09-20 20:14:13Z charles $
+ * $Id: torrents.h 3899 2007-11-20 03:01:59Z charles $
  *
  * Copyright (c) 2007 Joshua Elsasser
  *
@@ -57,5 +57,7 @@ void         torrent_set_downlimit       ( int );
 int          torrent_get_downlimit       ( void );
 void         torrent_set_directory       ( const char * );
 const char * torrent_get_directory       ( void );
+void         torrent_set_encryption      ( tr_encryption_mode );
+tr_encryption_mode torrent_get_encryption      ( void );
 
 #endif /* TR_DAEMON_TORRENTS_H */

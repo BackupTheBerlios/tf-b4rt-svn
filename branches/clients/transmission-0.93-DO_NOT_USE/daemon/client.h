@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: client.h 1708 2007-04-12 14:41:19Z joshe $
+ * $Id: client.h 3899 2007-11-20 03:01:59Z charles $
  *
  * Copyright (c) 2007 Joshua Elsasser
  *
@@ -64,6 +64,7 @@ int  client_pex      ( int );
 int  client_downlimit( int );
 int  client_uplimit  ( int );
 int  client_dir      ( const char * );
+int  client_crypto   ( const char * );
 int  client_start    ( size_t, const int * );
 int  client_stop     ( size_t, const int * );
 int  client_remove   ( size_t, const int * );

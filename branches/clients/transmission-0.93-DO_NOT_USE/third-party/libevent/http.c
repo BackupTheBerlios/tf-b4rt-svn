@@ -25,11 +25,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <sys/param.h>
-#include <sys/types.h>
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
+#endif
+
+#ifdef HAVE_SYS_PARAM_H
+#include <sys/param.h>
+#endif
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
 #endif
 
 #ifdef HAVE_SYS_TIME_H
@@ -53,6 +57,10 @@
 #include <netdb.h>
 #endif
 
+#ifdef WIN32
+#include <winsock2.h>
+#endif
+
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
@@ -64,8 +72,12 @@
 #endif
 #include <signal.h>
 #include <time.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
+#ifdef HAVE_FCNTL_H
 #include <fcntl.h>
+#endif
 
 #undef timeout_pending
 #undef timeout_initialized
@@ -76,6 +88,13 @@
 #include "evutil.h"
 #include "log.h"
 #include "http-internal.h"
+
+#ifdef WIN32
+#define snprintf _snprintf
+#define strcasecmp _stricmp
+#define strncasecmp _strnicmp
+#define strdup _strdup
+#endif
 
 #ifndef HAVE_GETADDRINFO
 struct addrinfo {
@@ -226,7 +245,7 @@ evhttp_htmlescape(const char *html)
 	return (escaped_html);
 }
 
-const char *
+static const char *
 evhttp_method(enum evhttp_cmd_type type)
 {
 	const char *method;
@@ -255,7 +274,7 @@ evhttp_add_event(struct event *ev, int timeout, int default_timeout)
 	if (timeout != 0) {
 		struct timeval tv;
 		
-		timerclear(&tv);
+		evutil_timerclear(&tv);
 		tv.tv_sec = timeout != -1 ? timeout : default_timeout;
 		event_add(ev, &tv);
 	} else {
@@ -422,6 +441,8 @@ evhttp_make_header(struct evhttp_connection *evcon, struct evhttp_request *req)
 	}
 	evbuffer_add(evcon->output_buffer, "\r\n", 2);
 
+	/* XXX EVBUFFER_LENGTH returns an unsigned value, so this test
+	 *      is always true. What is the intent of this test? -NM */
 	if (EVBUFFER_LENGTH(req->output_buffer) >= 0) {
 		/*
 		 * For a request, we add the POST data, for a reply, this
@@ -438,7 +459,8 @@ evhttp_hostportfile(char *url, char **phost, u_short *pport, char **pfile)
 {
 	static char host[1024];
 	static char file[1024];
-	char *p, *p2;
+	char *p;
+	const char *p2;
 	int len;
 	u_short port;
 
@@ -597,12 +619,12 @@ evhttp_write(int fd, short what, void *arg)
 		(*evcon->cb)(evcon, evcon->cb_arg);
 }
 
-void
+static void
 evhttp_connection_done(struct evhttp_connection *evcon)
 {
 	struct evhttp_request *req = TAILQ_FIRST(&evcon->requests);
 	int con_outgoing = evcon->flags & EVHTTP_CON_OUTGOING;
-    
+
 	/*
 	 * if this is an incoming connection, we need to leave the request
 	 * on the connection, so that we can reply to it.
@@ -706,7 +728,7 @@ evhttp_handle_chunked_read(struct evhttp_request *req, struct evbuffer *buf)
 	return (0);
 }
 
-void
+static void
 evhttp_read_body(struct evhttp_connection *evcon, struct evhttp_request *req)
 {
 	struct evbuffer *buf = evcon->input_buffer;
@@ -776,7 +798,7 @@ evhttp_read(int fd, short what, void *arg)
 	evhttp_read_body(evcon, req);
 }
 
-void
+static void
 evhttp_write_connectioncb(struct evhttp_connection *evcon, void *arg)
 {
 	/* This is after writing the request to the server */
@@ -1000,7 +1022,7 @@ evhttp_connectioncb(int fd, short what, void *arg)
  * Check if we got a valid response code.
  */
 
-int
+static int
 evhttp_valid_response_code(int code)
 {
 	if (code == 0)
@@ -1011,7 +1033,7 @@ evhttp_valid_response_code(int code)
 
 /* Parses the status line of a web server */
 
-int
+static int
 evhttp_parse_response_line(struct evhttp_request *req, char *line)
 {
 	char *protocol;
@@ -1053,7 +1075,7 @@ evhttp_parse_response_line(struct evhttp_request *req, char *line)
 
 /* Parse the first line of a HTTP request */
 
-int
+static int
 evhttp_parse_request_line(struct evhttp_request *req, char *line)
 {
 	char *method;
@@ -1581,7 +1603,7 @@ evhttp_start_read(struct evhttp_connection *evcon)
 	evhttp_add_event(&evcon->ev, evcon->timeout, HTTP_READ_TIMEOUT);
 }
 
-void
+static void
 evhttp_send_done(struct evhttp_connection *evcon, void *arg)
 {
 	int need_close;
@@ -1617,7 +1639,7 @@ evhttp_send_done(struct evhttp_connection *evcon, void *arg)
 void
 evhttp_send_error(struct evhttp_request *req, int error, const char *reason)
 {
-	char *fmt = "<HTML><HEAD>\n"
+	const char *fmt = "<HTML><HEAD>\n"
 	    "<TITLE>%d %s</TITLE>\n"
 	    "</HEAD><BODY>\n"
 	    "<H1>Method Not Implemented</H1>\n"
@@ -1893,7 +1915,7 @@ evhttp_dispatch_callback(struct httpcbq *callbacks, struct evhttp_request *req)
 	return (NULL);
 }
 
-void
+static void
 evhttp_handle_request(struct evhttp_request *req, void *arg)
 {
 	struct evhttp *http = arg;
@@ -1915,7 +1937,7 @@ evhttp_handle_request(struct evhttp_request *req, void *arg)
 		return;
 	} else {
 		/* We need to send a 404 here */
-		char *fmt = "<html><head>"
+		const char *fmt = "<html><head>"
 		    "<title>404 Not Found</title>"
 		    "</head><body>"
 		    "<h1>Not Found</h1>"
@@ -1981,7 +2003,7 @@ evhttp_bind_socket(struct evhttp *http, const char *address, u_short port)
 }
 
 static struct evhttp*
-evhttp_new_object()
+evhttp_new_object(void)
 {
 	struct evhttp *http = NULL;
 
@@ -2301,7 +2323,7 @@ addr_from_name(char *address)
 	return (aitop);
 #else
 	assert(0);
-	return NULL; // XXXXX Use gethostbyname, if this function is ever used.
+	return NULL; /* XXXXX Use gethostbyname, if this function is ever used. */
 #endif
 }
 #endif
@@ -2327,7 +2349,7 @@ name_from_addr(struct sockaddr *sa, socklen_t salen,
 	*phost = ntop;
 	*pport = strport;
 #else
-	// XXXX
+	/* XXXX */
 #endif
 }
 

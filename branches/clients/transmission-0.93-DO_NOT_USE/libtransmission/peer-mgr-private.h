@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  *
- * $Id: peer-mgr-private.h 3553 2007-10-25 14:00:05Z charles $
+ * $Id: peer-mgr-private.h 3949 2007-11-24 04:53:44Z charles $
  */
 
 #ifndef TR_PEER_MGR_PRIVATE_H
@@ -28,6 +28,27 @@ enum
     ENCRYPTION_PREFERENCE_NO
 };
 
+/**
+*** The "SWIFT" system is described by Karthik Tamilmani,
+*** Vinay Pai, and Alexander Mohr of Stony Brook University
+*** in their paper "SWIFT: A System With Incentives For Trading"
+*** http://citeseer.ist.psu.edu/tamilmani04swift.html
+***
+*** More SWIFT constants are defined in peer-mgr.c
+**/
+
+/**
+ * Use SWIFT?
+ */
+static const int SWIFT_ENABLED = 1;
+
+/**
+ * For every byte the peer uploads to us,
+ * allow them to download this many bytes from us
+ */
+static const double SWIFT_REPAYMENT_RATIO = 1.33;
+
+
 typedef struct tr_peer
 {
     unsigned int  peerIsChoked : 1;
@@ -36,6 +57,7 @@ typedef struct tr_peer
     unsigned int  clientIsInterested : 1;
     unsigned int  doPurge : 1;
 
+    tr_peer_status status;
 
     /* number of bad pieces they've contributed to */
     uint8_t strikes;
@@ -65,6 +87,8 @@ typedef struct tr_peer
 
     double rateToClient;
     double rateToPeer;
+
+    int64_t credit;
 }
 tr_peer;
 

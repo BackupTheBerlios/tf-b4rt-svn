@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: client.c 3175 2007-09-25 23:59:50Z charles $
+ * $Id: client.c 3899 2007-11-20 03:01:59Z charles $
  *
  * Copyright (c) 2007 Joshua Elsasser
  *
@@ -496,6 +496,31 @@ client_dir( const char * dir )
 }
 
 int
+client_crypto( const char * mode )
+{
+    struct req * req;
+    char       * modecpy;
+
+    modecpy = strdup( mode );
+    if( NULL == modecpy )
+    {
+        mallocmsg( strlen( mode ) );
+        return -1;
+    }
+
+    req = addreq( IPC_MSG_CRYPTO, -1, NULL );
+    if( NULL == req )
+    {
+        free( modecpy );
+        return -1;
+    }
+
+    req->str = modecpy;
+
+    return 0;
+}
+
+int
 addintlistreq( enum ipc_msg which, size_t len, const int * list )
 {
     struct req * req;
@@ -800,6 +825,7 @@ flushreqs( struct con * con )
             case IPC_MSG_PEX:
                 buf = ipc_mkint( con->ipc, &buflen, req->id, -1, req->num );
                 break;
+            case IPC_MSG_CRYPTO:
             case IPC_MSG_DIR:
                 buf = ipc_mkstr( con->ipc, &buflen, req->id, -1, req->str );
                 SAFEFREE( req->str );

@@ -2,7 +2,7 @@ dnl configure.in for libevent
 dnl Dug Song <dugsong@monkey.org>
 AC_INIT(event.c)
 
-AM_INIT_AUTOMAKE(libevent,1.3.99-trunk)
+AM_INIT_AUTOMAKE(libevent,1.4.0-beta)
 AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
 
@@ -29,11 +29,6 @@ dnl   the command line with --enable-shared and --disable-shared.
 dnl AC_DISABLE_SHARED
 AC_SUBST(LIBTOOL_DEPS)
 
-dnl Check for optional stuff
-AC_ARG_WITH(rtsig,
-  [  --with-rtsig		compile with support for real time signals (experimental)],
-  [usertsig=yes], [usertsig=no])
-
 dnl Checks for libraries.
 AC_CHECK_LIB(socket, socket)
 AC_CHECK_LIB(resolv, inet_aton)
@@ -42,7 +37,7 @@ AC_CHECK_LIB(nsl, inet_ntoa)
 
 dnl Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS(fcntl.h stdarg.h inttypes.h stdint.h poll.h signal.h unistd.h sys/epoll.h sys/time.h sys/queue.h sys/event.h sys/ioctl.h sys/select.h sys/devpoll.h port.h netinet/in6.h sys/socket.h)
+AC_CHECK_HEADERS(fcntl.h stdarg.h inttypes.h stdint.h poll.h signal.h unistd.h sys/epoll.h sys/time.h sys/queue.h sys/event.h sys/param.h sys/ioctl.h sys/select.h sys/devpoll.h port.h netinet/in6.h sys/socket.h)
 if test "x$ac_cv_header_sys_queue_h" = "xyes"; then
 	AC_MSG_CHECKING(for TAILQ_FOREACH in sys/queue.h)
 	AC_EGREP_CPP(yes,
@@ -164,58 +159,10 @@ if test "x$haveselect" = "xyes" ; then
 fi
 
 havepoll=no
-havertsig=no
 AC_CHECK_FUNCS(poll, [havepoll=yes], )
 if test "x$havepoll" = "xyes" ; then
 	AC_LIBOBJ(poll)
 	needsignal=yes
-
-	if test "x$usertsig" = "xyes" ; then
-		AC_CHECK_FUNCS(sigtimedwait, [havertsig=yes], )
-	fi
-fi
-if test "x$havertsig" = "xyes" ; then
-	AC_MSG_CHECKING(for F_SETSIG in fcntl.h)
-	AC_EGREP_CPP(yes,
-[
-#define _GNU_SOURCE
-#include <fcntl.h>
-#ifdef F_SETSIG
-yes
-#endif
-],	[ AC_MSG_RESULT(yes) ], [ AC_MSG_RESULT(no); havertsig=no])
-fi
-if test "x$havertsig" = "xyes" ; then
-	AC_DEFINE(HAVE_RTSIG, 1, [Define if your system supports POSIX realtime signals])
-	AC_LIBOBJ(rtsig)
-	AC_MSG_CHECKING(for working rtsig on pipes)
-	AC_TRY_RUN(
-[
-#define _GNU_SOURCE
-#include <fcntl.h>
-#include <signal.h>
-#include <unistd.h>
-
-int sigio()
-{
-	exit(0);
-}
-
-int main()
-{
-	int fd[2];
-
-	pipe(fd);
-	signal(SIGIO, sigio);
-	fcntl(fd[0], F_SETOWN, getpid());
-	fcntl(fd[0], F_SETSIG, SIGIO);
-	fcntl(fd[0], F_SETFL, fcntl(fd[0], F_GETFL) | O_ASYNC);
-	write(fd[1], "", 1);
-	return 1;
-}
-],	[ AC_MSG_RESULT(yes)
-	  AC_DEFINE(HAVE_WORKING_RTSIG, 1, [Define if realtime signals work on pipes])],
-	AC_MSG_RESULT(no))
 fi
 
 haveepoll=no

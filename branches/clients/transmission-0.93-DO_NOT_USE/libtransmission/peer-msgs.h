@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  *
- * $Id: peer-msgs.h 3447 2007-10-17 18:23:59Z charles $
+ * $Id: peer-msgs.h 3897 2007-11-20 02:28:11Z charles $
  */
 
 #ifndef TR_PEER_MSGS_H
@@ -65,6 +65,7 @@ typedef enum
     TR_PEERMSG_CLIENT_BLOCK,
     TR_PEERMSG_PEER_PROGRESS,
     TR_PEERMSG_GOT_ERROR,
+    TR_PEERMSG_GOT_ASSERT_ERROR,
     TR_PEERMSG_CANCEL,
     TR_PEERMSG_NEED_REQ
 }
@@ -87,7 +88,10 @@ tr_publisher_tag  tr_peerMsgsSubscribe   ( tr_peermsgs       * peer,
 void              tr_peerMsgsUnsubscribe ( tr_peermsgs       * peer,
                                            tr_publisher_tag    tag );
 
-int               tr_peerMsgIsPieceFastAllowed( const tr_peermsgs * peer,
-                                                uint32_t            index );
+int               tr_peerMsgsIsPieceFastAllowed( const tr_peermsgs * peer,
+                                                 uint32_t            index );
+
+int               tr_peerMsgsIsPieceSuggested( const tr_peermsgs * peer,
+                                              uint32_t            index );
 
 #endif

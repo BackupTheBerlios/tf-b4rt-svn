@@ -55,8 +55,8 @@
 
   Every program that uses libevent must include the <event.h> header, and pass
   the -levent flag to the linker.  Before using any of the functions in the
-  library, you must call event_init() to perform one-time initialization of
-  the libevent library.
+  library, you must call event_init() or event_base_new() to perform one-time
+  initialization of the libevent library.
 
   @section event Event notification
 
@@ -159,9 +159,20 @@
 extern "C" {
 #endif
 
+#include <event-config.h>
+#ifdef _EVENT_HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+#ifdef _EVENT_HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
+#ifdef _EVENT_HAVE_STDINT_H
 #include <stdint.h>
+#endif
 #include <stdarg.h>
+
+/* For int types. */
+#include <evutil.h>
 
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
@@ -247,7 +258,7 @@ TAILQ_HEAD (evkeyvalq, evkeyval);
 #endif /* _EVENT_DEFINED_TQENTRY */
 
 struct eventop {
-	char *name;
+	const char *name;
 	void *(*init)(struct event_base *);
 	int (*add)(void *, struct event *);
 	int (*del)(void *, struct event *);
@@ -259,10 +270,24 @@ struct eventop {
 /**
   Initialize the event API.
 
-  The event API needs to be initialized with event_init() before it can be
-  used.
+  Use event_base_new() to initialize a new event base, but does not set
+  the current_base global.   If using only event_base_new(), each event
+  added must have an event base set with event_base_set()
+
+  @see event_base_set(), event_base_free(), event_init()
  */
-void *event_init(void);
+struct event_base *event_base_new(void);
+
+/**
+  Initialize the event API.
+
+  The event API needs to be initialized with event_init() before it can be
+  used.  Sets the current_base global representing the default base for
+  events that have no base associated with them.
+
+  @see event_base_set(), event_base_new()
+ */
+struct event_base *event_init(void);
 
 
 /**
@@ -287,7 +312,10 @@ int event_base_dispatch(struct event_base *);
 
 
 /**
-  Deallocate all memory associated with an event_base.
+  Deallocate all memory associated with an event_base, and free the base.
+
+  Note that this function will not close any fds or free any memory passed
+  to event_set as the argument to callback.
 
   @param eb an event_base to be freed
  */
@@ -299,6 +327,13 @@ void event_base_free(struct event_base *);
 #define _EVENT_LOG_WARN  2
 #define _EVENT_LOG_ERR   3
 typedef void (*event_log_cb)(int severity, const char *msg);
+/**
+  Redirect libevent's log messages.
+
+  @param cb a function taking two arguments: an integer severity between
+     _EVENT_LOG_DEBUG and _EVENT_LOG_ERR, and a string.  If cb is NULL,
+	 then the default log is used.
+  */
 void event_set_log_callback(event_log_cb cb);
 
 /**
@@ -309,17 +344,18 @@ void event_set_log_callback(event_log_cb cb);
  */
 int event_base_set(struct event_base *, struct event *);
 
-/** A flag for event_loop() to indicate ... (FIXME) */
-#define EVLOOP_ONCE	0x01
-
-/** A flag for event_loop() to indicate ... (FIXME) */
-#define EVLOOP_NONBLOCK	0x02
+/**
+ event_loop() flags
+ */
+/*@{*/
+#define EVLOOP_ONCE	0x01	/**< Block at most once. */
+#define EVLOOP_NONBLOCK	0x02	/**< Do not block. */
+/*@}*/
 
 /**
-  Execute a single event.
+  Handle events.
 
-  The event_loop() function provides an interface for single pass execution of
-  pending events.
+  This is a more flexible version of event_dispatch().
 
   @param flags any combination of EVLOOP_ONCE | EVLOOP_NONBLOCK
   @return 0 if successful, or -1 if an error occurred
@@ -328,10 +364,9 @@ int event_base_set(struct event_base *, struct event *);
 int event_loop(int);
 
 /**
-  Execute a single event (threadsafe variant).
+  Handle events (threadsafe version).
 
-  The event_base_loop() function provides an interface for single pass
-  execution of pending events.
+  This is a more flexible version of event_base_dispatch().
 
   @param eb the event_base structure returned by event_init()
   @param flags any combination of EVLOOP_ONCE | EVLOOP_NONBLOCK
@@ -341,10 +376,13 @@ int event_loop(int);
 int event_base_loop(struct event_base *, int);
 
 /**
-  Execute a single event, with a timeout.
+  Exit the event loop after the specified time.
 
-  The event_loopexit() function is similar to event_loop(), but allows the
-  loop to be terminated after some amount of time has passed.
+  The next event_loop() iteration after the given timer expires will
+  complete normally (handling all queued events) then exit without
+  blocking for events again.
+
+  Subsequent invocations of event_loop() will proceed normally.
 
   @param tv the amount of time after which the loop should terminate.
   @return 0 if successful, or -1 if an error occurred
@@ -354,7 +392,13 @@ int event_loopexit(struct timeval *);
 
 
 /**
-  Execute a single event, with a timeout (threadsafe variant).
+  Exit the event loop after the specified time (threadsafe variant).
+
+  The next event_base_loop() iteration after the given timer expires will
+  complete normally (handling all queued events) then exit without
+  blocking for events again.
+
+  Subsequent invocations of event_base_loop() will proceed normally.
 
   @param eb the event_base structure returned by event_init()
   @param tv the amount of time after which the loop should terminate.
@@ -761,11 +805,13 @@ void bufferevent_free(struct bufferevent *bufev);
   @return 0 if successful, or -1 if an error occurred
   @see bufferevent_write_buffer()
   */
-int bufferevent_write(struct bufferevent *bufev, void *data, size_t size);
+int bufferevent_write(struct bufferevent *bufev,
+    const void *data, size_t size);
 
 
 /**
-  Write data from an evbuffer to a bufferevent buffer.
+  Write data from an evbuffer to a bufferevent buffer.  The evbuffer is
+  being drained as a result.
 
   @param bufev the bufferevent to be written to
   @param buf the evbuffer to be written
@@ -986,8 +1032,8 @@ void evbuffer_setcb(struct evbuffer *, void (*)(struct evbuffer *, size_t, size_
 
 void evtag_init(void);
 
-void evtag_marshal(struct evbuffer *evbuf, uint8_t tag, const void *data,
-    uint32_t len);
+void evtag_marshal(struct evbuffer *evbuf, ev_uint8_t tag, const void *data,
+    ev_uint32_t len);
 
 /**
   Encode an integer and store it in an evbuffer.
@@ -999,34 +1045,34 @@ void evtag_marshal(struct evbuffer *evbuf, uint8_t tag, const void *data,
   @param evbuf evbuffer to store the encoded number
   @param number a 32-bit integer
  */
-void encode_int(struct evbuffer *evbuf, uint32_t number);
+void encode_int(struct evbuffer *evbuf, ev_uint32_t number);
 
-void evtag_marshal_int(struct evbuffer *evbuf, uint8_t tag, uint32_t integer);
+void evtag_marshal_int(struct evbuffer *evbuf, ev_uint8_t tag, ev_uint32_t integer);
 
-void evtag_marshal_string(struct evbuffer *buf, uint8_t tag,
+void evtag_marshal_string(struct evbuffer *buf, ev_uint8_t tag,
     const char *string);
 
-void evtag_marshal_timeval(struct evbuffer *evbuf, uint8_t tag,
+void evtag_marshal_timeval(struct evbuffer *evbuf, ev_uint8_t tag,
     struct timeval *tv);
 
 void evtag_test(void);
 
-int evtag_unmarshal(struct evbuffer *src, uint8_t *ptag, struct evbuffer *dst);
-int evtag_peek(struct evbuffer *evbuf, uint8_t *ptag);
-int evtag_peek_length(struct evbuffer *evbuf, uint32_t *plength);
-int evtag_payload_length(struct evbuffer *evbuf, uint32_t *plength);
+int evtag_unmarshal(struct evbuffer *src, ev_uint8_t *ptag, struct evbuffer *dst);
+int evtag_peek(struct evbuffer *evbuf, ev_uint8_t *ptag);
+int evtag_peek_length(struct evbuffer *evbuf, ev_uint32_t *plength);
+int evtag_payload_length(struct evbuffer *evbuf, ev_uint32_t *plength);
 int evtag_consume(struct evbuffer *evbuf);
 
-int evtag_unmarshal_int(struct evbuffer *evbuf, uint8_t need_tag,
-    uint32_t *pinteger);
+int evtag_unmarshal_int(struct evbuffer *evbuf, ev_uint8_t need_tag,
+    ev_uint32_t *pinteger);
 
-int evtag_unmarshal_fixed(struct evbuffer *src, uint8_t need_tag, void *data,
+int evtag_unmarshal_fixed(struct evbuffer *src, ev_uint8_t need_tag, void *data,
     size_t len);
 
-int evtag_unmarshal_string(struct evbuffer *evbuf, uint8_t need_tag,
+int evtag_unmarshal_string(struct evbuffer *evbuf, ev_uint8_t need_tag,
     char **pstring);
 
-int evtag_unmarshal_timeval(struct evbuffer *evbuf, uint8_t need_tag,
+int evtag_unmarshal_timeval(struct evbuffer *evbuf, ev_uint8_t need_tag,
     struct timeval *ptv);
 
 #ifdef __cplusplus

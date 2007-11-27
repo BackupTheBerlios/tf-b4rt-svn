@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  *
- * $Id: inout.c 3780 2007-11-10 14:59:14Z charles $
+ * $Id: inout.c 3917 2007-11-21 16:16:57Z charles $
  */
 
 #include <assert.h>
@@ -25,15 +25,9 @@
 #include "fdlimit.h"
 #include "inout.h"
 #include "list.h"
-#include "net.h"
 #include "platform.h"
 #include "peer-mgr.h"
 #include "utils.h"
-
-struct tr_io
-{
-    tr_torrent * tor;
-};
 
 /****
 *****  Low-level IO functions
@@ -72,17 +66,17 @@ readOrWriteBytes( const tr_torrent  * tor,
         return 0;
     else if ((ioMode==TR_IO_READ) && stat( path, &sb ) ) /* does file exist? */
         ret = tr_ioErrorFromErrno ();
-    else if ((fd = tr_fdFileOpen ( path, ioMode==TR_IO_WRITE )) < 0)
+    else if ((fd = tr_fdFileCheckout ( path, ioMode==TR_IO_WRITE )) < 0)
         ret = fd;
     else if( lseek( fd, (off_t)fileOffset, SEEK_SET ) == ((off_t)-1) )
         ret = TR_ERROR_IO_OTHER;
     else if( func( fd, buf, buflen ) != buflen )
-        ret = tr_ioErrorFromErrno ();
+        ret = tr_ioErrorFromErrno( );
     else
         ret = TR_OK;
  
     if( fd >= 0 )
-        tr_fdFileRelease( fd );
+        tr_fdFileReturn( fd );
 
     return ret;
 }
@@ -131,7 +125,7 @@ ensureMinimumFileSize( const tr_torrent  * tor,
 
     tr_buildPath( path, sizeof(path), tor->destination, file->name, NULL );
 
-    fd = tr_fdFileOpen( path, TRUE );
+    fd = tr_fdFileCheckout( path, TRUE );
     if( fd < 0 ) /* bad fd */
         ret = fd;
     else if (fstat (fd, &sb) ) /* how big is the file? */
@@ -144,7 +138,7 @@ ensureMinimumFileSize( const tr_torrent  * tor,
         ret = tr_ioErrorFromErrno ();
 
     if( fd >= 0 )
-        tr_fdFileRelease( fd );
+        tr_fdFileReturn( fd );
 
     return ret;
 }

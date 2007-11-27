@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: platform.h 3254 2007-10-01 15:17:15Z charles $
+ * $Id: platform.h 3897 2007-11-20 02:28:11Z charles $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -38,7 +38,6 @@ int          tr_amInThread ( const tr_thread * );
 
 tr_lock *    tr_lockNew        ( void );
 void         tr_lockFree       ( tr_lock * );
-int          tr_lockTryLock    ( tr_lock * );
 void         tr_lockLock       ( tr_lock * );
 void         tr_lockUnlock     ( tr_lock * );
 int          tr_lockHave       ( const tr_lock * );

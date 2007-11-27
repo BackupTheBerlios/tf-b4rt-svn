@@ -42,8 +42,6 @@
 #endif
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
-#else
-#include <sys/_time.h>
 #endif
 #include <sys/queue.h>
 #include <stdio.h>
@@ -60,6 +58,7 @@
 #include "evrpc.h"
 #include "evrpc-internal.h"
 #include "evhttp.h"
+#include "evutil.h"
 #include "log.h"
 
 struct evrpc_base *
@@ -189,7 +188,7 @@ void evrpc_request_done(struct evrpc_req_generic*);
  * calls this function.
  */
 
-char *
+static char *
 evrpc_construct_uri(const char *uri)
 {
 	char *constructed_uri;
@@ -533,7 +532,7 @@ evrpc_schedule_request(struct evhttp_connection *connection,
 		 * a timeout after which the whole rpc is going to be aborted.
 		 */
 		struct timeval tv;
-		timerclear(&tv);
+		evutil_timerclear(&tv);
 		tv.tv_sec = pool->timeout;
 		evtimer_add(&ctx->ev_timeout, &tv);
 	}

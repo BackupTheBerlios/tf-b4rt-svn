@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: fdlimit.c 3811 2007-11-12 15:22:20Z charles $
+ * $Id: fdlimit.c 3917 2007-11-21 16:16:57Z charles $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -35,10 +35,7 @@
 #include <libgen.h> /* basename, dirname */
 #include <fcntl.h> /* O_LARGEFILE */
 
-#include <sys/queue.h> /* libevent needs this */
-#include <sys/types.h> /* libevent needs this */
 #include <event.h>
-#include <evhttp.h>
 #include <evutil.h>
 
 #include "transmission.h"
@@ -89,17 +86,18 @@ myDebug( const char * file, int line, const char * fmt, ... )
 
 enum
 {
-    TR_MAX_SOCKETS = 512,
+    TR_MAX_SOCKETS = 320,
 
-    TR_MAX_OPEN_FILES = 16, /* real files, not sockets */
+    TR_MAX_OPEN_FILES = 8, /* real files, not sockets */
 
-    TR_RESERVED_FDS   = 16 /* sockets reserved for tracker connections */
+    TR_RESERVED_FDS = 16 /* sockets reserved for tracker connections */
 };
 
 struct tr_openfile
 {
     unsigned int  isCheckedOut : 1;
     unsigned int  isWritable : 1;
+    unsigned int  closeWhenDone : 1;
     char          filename[MAX_PATH_LENGTH];
     int           fd;
     uint64_t      date;
@@ -192,7 +190,7 @@ fileIsCheckedOut( const struct tr_openfile * o )
 }
 
 int
-tr_fdFileOpen( const char * filename, int write )
+tr_fdFileCheckout( const char * filename, int write )
 {
     int i, winner;
     struct tr_openfile * o;
@@ -285,24 +283,55 @@ done:
 
     dbgmsg( "checking out '%s' in slot %d", filename, winner );
     o->isCheckedOut = 1;
+    o->closeWhenDone = 0;
     o->date = tr_date( );
     tr_lockUnlock( gFd->lock );
     return o->fd;
 }
 
 void
-tr_fdFileRelease( int file )
+tr_fdFileReturn( int fd )
 {
     int i;
     tr_lockLock( gFd->lock );
 
-    for( i=0; i<TR_MAX_OPEN_FILES; ++i ) {
+    for( i=0; i<TR_MAX_OPEN_FILES; ++i )
+    {
         struct tr_openfile * o = &gFd->open[i];
-        if( o->fd == file ) {
-            dbgmsg( "releasing file '%s' in slot #%d", o->filename, i );
-            /* fsync( o->fd ); */
-            o->isCheckedOut = 0;
-            break;
+        if( o->fd != fd )
+            continue;
+
+        dbgmsg( "releasing file '%s' in slot #%d", o->filename, i );
+        o->isCheckedOut = 0;
+        if( o->closeWhenDone )
+            TrCloseFile( i );
+        
+        break;
+    }
+    
+    tr_condSignal( gFd->cond );
+    tr_lockUnlock( gFd->lock );
+}
+
+void
+tr_fdFileClose( const char * filename )
+{
+    int i;
+    tr_lockLock( gFd->lock );
+    dbgmsg( "tr_fdFileClose closing '%s'", filename );
+
+    for( i=0; i<TR_MAX_OPEN_FILES; ++i )
+    {
+        struct tr_openfile * o = &gFd->open[i];
+        if( !fileIsOpen(o) || strcmp(filename,o->filename) )
+            continue;
+
+        if( !o->isCheckedOut ) {
+            dbgmsg( "not checked out, so closing it now... '%s'", filename );
+            TrCloseFile( i );
+        } else {
+            dbgmsg( "flagging file '%s', slot #%d to be closed when checked in", gFd->open[i].filename, i );
+            o->closeWhenDone = 1;
         }
     }
     

@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  *
- * $Id: tracker.c 3581 2007-10-26 16:39:02Z charles $
+ * $Id: tracker.c 3938 2007-11-23 03:01:17Z charles $
  */
 
 #include <assert.h>
@@ -17,8 +17,7 @@
 #include <string.h> /* strcmp, strchr */
 #include <libgen.h> /* basename */
 
-#include <sys/queue.h> /* libevent needs this */
-#include <sys/types.h> /* libevent needs this */
+#include <sys/queue.h> /* evhttp.h needs this */
 #include <event.h>
 #include <evhttp.h>
 
@@ -428,7 +427,8 @@ getCurrentAddress( const tr_tracker * t )
     assert( t->addressIndex >= 0 );
     assert( t->addressIndex < t->addressCount );
 
-    return &t->addresses[t->addressIndex];
+    return t->redirect ? t->redirect
+                       : t->addresses + t->addressIndex;
 }
 static int
 trackerSupportsScrape( const tr_tracker * t )
@@ -624,7 +624,7 @@ buildTrackerRequestURI( const tr_tracker  * t,
     char * ann = getCurrentAddress(t)->announce;
     
     evbuffer_add_printf( buf, "%s"
-                              "%sinfo_hash=%s"
+                              "%cinfo_hash=%s"
                               "&peer_id=%s"
                               "&port=%d"
                               "&uploaded=%"PRIu64
@@ -639,7 +639,7 @@ buildTrackerRequestURI( const tr_tracker  * t,
                               "%s%s"
                               "%s%s",
         ann,
-        ( strchr(ann, '?') == NULL ? "?" : "&" ),
+        strchr(ann, '?') ? '&' : '?',
         t->escaped,
         t->peer_id,
         tr_sharedGetPublicPort( t->handle->shared ),
@@ -713,7 +713,6 @@ onTrackerResponse( struct evhttp_request * req, void * torrent_hash )
 {
     const char * warning;
     tr_tracker * t;
-    int err = 0;
     int responseCode;
 
     t = findTrackerFromHash( torrent_hash );
@@ -797,14 +796,6 @@ onTrackerResponse( struct evhttp_request * req, void * torrent_hash )
         if( bencLoaded )
             tr_bencFree( &benc );
     }
-    else
-    {
-        tr_inf( "Bad response for torrent '%s' on request '%s' "
-                "... trying again in 30 seconds",
-                t->name, t->lastRequest );
-
-        err = 1;
-    }
 
     if (( warning = updateAddresses( t, req ) )) {
         publishWarning( t, warning );
@@ -849,7 +840,7 @@ onTrackerResponse( struct evhttp_request * req, void * torrent_hash )
     }
     else if( 500<=responseCode && responseCode<=599 )
     {
-        dbgmsg( t, "got a 5xx error... retrying in 15 seconds." );
+        dbgmsg( t, "Got a 5xx error... retrying in 15 seconds." );
 
         /* Response status codes beginning with the digit "5" indicate
          * cases in which the server is aware that it has erred or is
@@ -862,7 +853,7 @@ onTrackerResponse( struct evhttp_request * req, void * torrent_hash )
     }
     else
     {
-        dbgmsg( t, "unhandled condition... retrying in 120 seconds." );
+        dbgmsg( t, "Invalid response from tracker... retrying in 120 seconds." );
 
         /* WTF did we get?? */
         if( req && req->response_code_line )
@@ -904,8 +895,10 @@ sendTrackerRequest( void * vt, const char * eventName )
         tr_free( uri );
     } else {
         struct evhttp_request * req;
-        tr_free( t->lastRequest );
-        t->lastRequest = tr_strdup( eventName );
+        if( eventName != t->lastRequest ) {
+            tr_free( t->lastRequest );
+            t->lastRequest = tr_strdup( eventName );
+        }
         if( isStopping ) {
             evhttp_connection_set_timeout( evcon, STOP_TIMEOUT_INTERVAL_SEC );
             req = evhttp_request_new( onStoppedResponse, t->handle );
@@ -993,6 +986,29 @@ tr_trackerGetCounts( const tr_tracker  * t,
        *setme_seederCount = t->seederCount;
 }
 
+struct request_data
+{
+    tr_tracker * t;
+    const char * command;
+};
+
+static void
+sendRequestFromEventThreadImpl( void * vdata )
+{
+    struct request_data * data = vdata;
+    sendTrackerRequest( data->t, data->command );
+    tr_free( data );
+}
+
+static void
+sendRequestFromEventThread( tr_tracker * t, const char * command )
+{
+    struct request_data * data = tr_new( struct request_data, 1 );
+    data->t = t;
+    data->command = command;
+    tr_runInEventThread( t->handle, sendRequestFromEventThreadImpl, data );
+}
+
 void
 tr_trackerStart( tr_tracker * t )
 {
@@ -1001,20 +1017,20 @@ tr_trackerStart( tr_tracker * t )
     if( !t->reannounceTimer && !t->isRunning )
     {
         t->isRunning = 1;
-        sendTrackerRequest( t, "started" );
+        sendRequestFromEventThread( t, "started" );
     }
 }
 
 void
 tr_trackerReannounce( tr_tracker * t )
 {
-    sendTrackerRequest( t, "started" );
+    sendRequestFromEventThread( t, "started" );
 }
 
 void
 tr_trackerCompleted( tr_tracker * t )
 {
-    sendTrackerRequest( t, "completed" );
+    sendRequestFromEventThread( t, "completed" );
 }
 
 void
@@ -1023,7 +1039,7 @@ tr_trackerStop( tr_tracker * t )
     if( t->isRunning )
     {
         t->isRunning = 0;
-        sendTrackerRequest( t, "stopped" );
+        sendRequestFromEventThread( t, "stopped" );
     }
 }
 
