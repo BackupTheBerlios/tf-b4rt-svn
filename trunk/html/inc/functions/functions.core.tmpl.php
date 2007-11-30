@@ -45,6 +45,7 @@ function tmplInitializeInstance($theme, $template) {
     $tmpl->setvar('table_data_bg', @ $cfg["table_data_bg"]);
     $tmpl->setvar('body_data_bg', @ $cfg["body_data_bg"]);
     $tmpl->setvar('isAdmin', @ $cfg['isAdmin']);
+    $tmpl->setvar('_CHARSET', @ $cfg['_CHARSET']);
 }
 
 /**
@@ -73,6 +74,7 @@ function tmplGetInstance($theme, $template) {
     $_tmpl->setvar('table_data_bg', @ $cfg["table_data_bg"]);
     $_tmpl->setvar('body_data_bg', @ $cfg["body_data_bg"]);
     $_tmpl->setvar('isAdmin', @ $cfg['isAdmin']);
+    $_tmpl->setvar('_CHARSET', @ $cfg['_CHARSET']);
     // return template-instance
     return $_tmpl;
 }
