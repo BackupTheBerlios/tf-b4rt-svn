@@ -791,13 +791,7 @@ sub checkConnections {
 				$char = getc($socket);
 			}
 			$return = processRequest($buf);
-			# not sure if starhawk's fix breaks linux, so be safe
-			# it certainly works on fbsd! thanks :)
-			if ($^O eq "freebsd") {
-				$socket->send($return,0,$socket);
-			} else {
-				$socket->send($return);
-			}
+			$socket->send($return,0,$socket);
 			$select->remove($socket);
 			close($socket);
 		}
