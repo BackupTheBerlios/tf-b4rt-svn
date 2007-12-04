@@ -112,7 +112,7 @@ class ClientHandlerNzbperl extends ClientHandler
 		$this->command .= " --conn ".tfb_shellencode($cfg['nzbperl_conn']);
 		$this->command .= " --uudeview ".tfb_shellencode($cfg["bin_uudeview"]);
 		$this->command .= ($cfg['nzbperl_badAction'])
-			? " --insane"
+			? " --insane --keepbrokenbin"
 			: " --dropbad";
 		switch ($cfg['nzbperl_create']) {
 			case 1:
