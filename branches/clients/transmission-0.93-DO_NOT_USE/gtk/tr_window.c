@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: tr_window.c 3899 2007-11-20 03:01:59Z charles $
+ * $Id: tr_window.c 4037 2007-12-02 01:27:14Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -92,8 +92,8 @@ formatname( GtkTreeViewColumn * col UNUSED, GtkCellRenderer * rend,
     }
     else if( TR_STATUS_DOWNLOAD & status )
     {
-        bottom = g_strdup_printf( ngettext( "Downloading from %i of %i peer",
-                                            "Downloading from %i of %i peers",
+        bottom = g_strdup_printf( ngettext( "Downloading from %i of %i connections",
+                                            "Downloading from %i of %i connections",
                                             tpeers ), dpeers, tpeers );
     }
     else

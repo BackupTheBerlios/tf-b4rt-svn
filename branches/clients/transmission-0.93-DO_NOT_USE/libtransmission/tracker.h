@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  *
- * $Id: tracker.h 3451 2007-10-17 18:59:58Z charles $
+ * $Id: tracker.h 4037 2007-12-02 01:27:14Z charles $
  */
 
 #ifndef _TR_TRACKER_H_
@@ -26,6 +26,8 @@ typedef struct tr_tracker tr_tracker;
 tr_tracker * tr_trackerNew( const tr_torrent * );
 
 void  tr_trackerFree ( tr_tracker * );
+
+void  tr_trackerShuttingDown( tr_handle * );
 
 /**
 ***  Tracker Publish / Subscribe

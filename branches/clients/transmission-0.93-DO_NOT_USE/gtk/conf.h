@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: conf.h 3381 2007-10-12 20:50:03Z charles $
+ * $Id: conf.h 4037 2007-12-02 01:27:14Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -55,5 +55,7 @@ gboolean
 cf_lock(char **errstr);
 char *
 cf_sockname(void);
+void
+cf_check_older_configs(void);
 
 #endif /* TG_CONF_H */

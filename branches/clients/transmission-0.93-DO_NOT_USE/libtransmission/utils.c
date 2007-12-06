@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: utils.c 3899 2007-11-20 03:01:59Z charles $
+ * $Id: utils.c 3972 2007-11-26 05:03:34Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -678,7 +678,11 @@ tr_strndup( const char * in, int len )
 {
     char * out = NULL;
 
-    if( in != NULL )
+    if( len < 0 )
+    {
+        out = tr_strdup( in );
+    }
+    else if( in != NULL )
     {
         out = tr_malloc( len+1 );
         memcpy( out, in, len );

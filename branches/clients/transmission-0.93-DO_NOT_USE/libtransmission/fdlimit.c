@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: fdlimit.c 3917 2007-11-21 16:16:57Z charles $
+ * $Id: fdlimit.c 4047 2007-12-03 16:53:24Z charles $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -109,7 +109,6 @@ struct tr_fd_s
     int                  normal;
     int                  normalMax;
     tr_lock            * lock;
-    tr_cond            * cond;
     struct tr_openfile   open[TR_MAX_OPEN_FILES];
 };
 
@@ -180,7 +179,6 @@ TrCloseFile( int i )
     close( o->fd );
     o->fd = -1;
     o->isCheckedOut = 0;
-    tr_condSignal( gFd->cond );
 }
 
 static int
@@ -192,7 +190,7 @@ fileIsCheckedOut( const struct tr_openfile * o )
 int
 tr_fdFileCheckout( const char * filename, int write )
 {
-    int i, winner;
+    int i, winner = -1;
     struct tr_openfile * o;
 
     assert( filename && *filename );
@@ -215,7 +213,9 @@ tr_fdFileCheckout( const char * filename, int write )
 
         if( fileIsCheckedOut( o ) ) {
             dbgmsg( "found it!  it's open, but checked out.  waiting..." );
-            tr_condWait( gFd->cond, gFd->lock );
+            tr_lockUnlock( gFd->lock );
+            tr_wait( 200 );
+            tr_lockLock( gFd->lock );
             i = -1; /* reloop */
             continue;
         }
@@ -228,16 +228,15 @@ tr_fdFileCheckout( const char * filename, int write )
 
         dbgmsg( "found it!  it's ready for use!" );
         winner = i;
-        goto done;
+        break;
     }
 
-
     dbgmsg( "it's not already open.  looking for an open slot or an old file." );
-    for( ;; )
+    while( winner < 0 )
     {
         uint64_t date = tr_date( ) + 1;
-        winner = -1;
 
+        /* look for the file that's been open longest */
         for( i=0; i<TR_MAX_OPEN_FILES; ++i )
         {
             o = &gFd->open[i];
@@ -245,7 +244,7 @@ tr_fdFileCheckout( const char * filename, int write )
             if( !fileIsOpen( o ) ) {
                 winner = i;
                 dbgmsg( "found an empty slot in %d", winner );
-                goto done;
+                break;
             }
 
             if( date > o->date ) {
@@ -255,18 +254,19 @@ tr_fdFileCheckout( const char * filename, int write )
         }
 
         if( winner >= 0 ) {
-            dbgmsg( "closing file '%s', slot #%d", gFd->open[winner].filename, winner );
-            TrCloseFile( winner );
-            goto done;
+            if( fileIsOpen( &gFd->open[i] ) ) {
+                dbgmsg( "closing file '%s', slot #%d", gFd->open[winner].filename, winner );
+                TrCloseFile( winner );
+            }
+        } else { 
+            dbgmsg( "everything's full!  waiting for someone else to finish something" );
+            tr_lockUnlock( gFd->lock );
+            tr_wait( 200 );
+            tr_lockLock( gFd->lock );
         }
-
-        /* All used! Wait a bit and try again */
-        dbgmsg( "everything's full!  waiting for someone else to finish something" );
-        tr_condWait( gFd->cond, gFd->lock );
     }
 
-done:
-
+    assert( winner >= 0 );
     o = &gFd->open[winner];
     if( !fileIsOpen( o ) )
     {
@@ -309,7 +309,6 @@ tr_fdFileReturn( int fd )
         break;
     }
     
-    tr_condSignal( gFd->cond );
     tr_lockUnlock( gFd->lock );
 }
 
@@ -335,7 +334,6 @@ tr_fdFileClose( const char * filename )
         }
     }
     
-    tr_condSignal( gFd->cond );
     tr_lockUnlock( gFd->lock );
 }
 
@@ -462,7 +460,6 @@ tr_fdInit( void )
 
     gFd = tr_new0( struct tr_fd_s, 1 );
     gFd->lock = tr_lockNew( );
-    gFd->cond = tr_condNew( );
 
     /* count the max number of sockets we can use */
     for( i=0; i<TR_MAX_SOCKETS; ++i )
@@ -490,7 +487,6 @@ tr_fdClose( void )
             TrCloseFile( i );
 
     tr_lockFree( gFd->lock );
-    tr_condFree( gFd->cond );
 
     tr_list_free( &reservedSockets, NULL );
     tr_free( gFd );

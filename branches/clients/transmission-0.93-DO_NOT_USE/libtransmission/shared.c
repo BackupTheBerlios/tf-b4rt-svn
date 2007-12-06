@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: shared.c 3797 2007-11-11 20:37:49Z charles $
+ * $Id: shared.c 4037 2007-12-02 01:27:14Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -52,7 +52,7 @@ struct tr_shared
     int bindSocket;
 
     /* NAT-PMP/UPnP */
-    tr_natpmp_t  * natpmp;
+    tr_natpmp    * natpmp;
     tr_upnp_t    * upnp;
 };
 

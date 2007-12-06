@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  * 
- * $Id: tr_prefs.c 3548 2007-10-24 22:59:48Z charles $
+ * $Id: tr_prefs.c 4037 2007-12-02 01:27:14Z charles $
  */
 
 #include <glib/gi18n.h>
@@ -26,6 +26,8 @@
 void
 tr_prefs_init_global( void )
 {
+    cf_check_older_configs( );
+
     pref_flag_set_default   ( PREF_KEY_DL_LIMIT_ENABLED, FALSE );
     pref_int_set_default    ( PREF_KEY_DL_LIMIT, 100 );
     pref_flag_set_default   ( PREF_KEY_UL_LIMIT_ENABLED, FALSE );

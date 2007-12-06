@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.c 3927 2007-11-22 06:13:56Z charles $
+ * $Id: transmission.c 4037 2007-12-02 01:27:14Z charles $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -41,6 +41,7 @@
 #include "platform.h"
 #include "ratecontrol.h"
 #include "shared.h"
+#include "tracker.h"
 #include "trevent.h"
 #include "utils.h"
 
@@ -320,6 +321,8 @@ tr_closeImpl( void * vh )
     tr_handle * h = vh;
     tr_torrent * t;
 
+    tr_trackerShuttingDown( h );
+
     for( t=h->torrentList; t!=NULL; t=t->next )
         tr_torrentClose( t );
 
@@ -344,10 +347,12 @@ deadlineReached( const uint64_t deadline )
     return tr_date( ) >= deadline;
 }
 
+#define SHUTDOWN_MAX_SECONDS 30
+
 void
 tr_close( tr_handle * h )
 {
-    const int maxwait_msec = 6 * 1000;
+    const int maxwait_msec = SHUTDOWN_MAX_SECONDS * 1000;
     const uint64_t deadline = tr_date( ) + maxwait_msec;
 
     tr_runInEventThread( h, tr_closeImpl, h );
@@ -361,31 +366,6 @@ tr_close( tr_handle * h )
     tr_lockFree( h->lock );
     free( h->tag );
     free( h );
-}
-
-void
-tr_getSessionStats( const tr_handle   * handle,
-                    tr_session_stats  * setme )
-{
-    assert( handle != NULL );
-    assert( setme != NULL );
-
-    /* FIXME */
-    setme->downloadedGigs   = 4;
-    setme->downloadedBytes  = 8;
-    setme->uploadedGigs     = 15;
-    setme->uploadedBytes    = 16;
-    setme->ratio            = 23;
-    setme->filesAdded       = 42;
-    setme->sessionCount     = 666;
-    setme->secondsActive    = 2112;
-}
-
-void
-tr_getCumulativeSessionStats( const tr_handle   * handle,
-                              tr_session_stats  * setme )
-{
-    tr_getSessionStats( handle, setme );
 }
 
 tr_torrent **

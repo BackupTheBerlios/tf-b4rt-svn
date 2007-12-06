@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  * 
- * $Id: makemeta-ui.c 3466 2007-10-19 21:49:18Z charles $
+ * $Id: makemeta-ui.c 4037 2007-12-02 01:27:14Z charles $
  */
 
 #include <string.h>
@@ -76,7 +76,7 @@ refresh_cb ( gpointer user_data )
     denom = ui->builder->pieceCount ? ui->builder->pieceCount : 1;
     fraction = (double)ui->builder->pieceIndex / denom;
     gtk_progress_bar_set_fraction( p, fraction );
-    g_snprintf( buf, sizeof(buf), "%s (%d%%)", ui->torrent_name, (int)(fraction*100 + 0.5));
+    g_snprintf( buf, sizeof(buf), "%s (%d%%)", ui->torrent_name, (int)(fraction*100));
     gtk_progress_bar_set_text( p, buf );
 
     if( ui->builder->isDone )

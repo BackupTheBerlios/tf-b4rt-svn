@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: ratecontrol.c 3899 2007-11-20 03:01:59Z charles $
+ * $Id: ratecontrol.c 3998 2007-11-27 04:27:14Z charles $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -141,9 +141,6 @@ tr_rcTransferred( tr_ratecontrol * r, size_t size )
 {
     uint64_t now;
 
-    if( size < 100 ) /* don't count small messages */
-        return;
-    
     tr_lockLock( (tr_lock*)r->lock );
 
     now = tr_date ();
