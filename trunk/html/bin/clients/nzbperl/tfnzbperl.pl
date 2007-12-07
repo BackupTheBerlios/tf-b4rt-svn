@@ -583,7 +583,7 @@ sub spoolOutConnBuffData {
 						# to indicate that the file already exists and should be skipped...
 						# This is perhaps a bit silly -- we have to finish slurping in the
 						# BODY part before we can start working on the next file...
-						statMsg("Conn $i: File already exists on disk (skipping after segment completes)");
+						statMsg("Conn. $i: File already exists on disk (skipping after segment completes)");
 						$conn->{'skipping'} = 1;
 					}
 				}
@@ -681,7 +681,7 @@ sub startSegmentOnConnection {
 	}
 	else{ # This is an error condition -- often when the server can't find a segment
 		$line =~ s/\r\n$//;
-		statMsg( sprintf("Conn. %d FAILED to fetch part #%d (%s)", $i,
+		statMsg( sprintf("Conn. %d: FAILED to fetch part #%d (%s)", $i,
 						$conn->{'segnum'}+1, $line));
 		drawStatusMsgs();
 		$conn->{'bstatus'} = 'finished';  # Flag BODY segment as finished
@@ -701,7 +701,7 @@ sub startSegmentOnConnection {
 			$conn->{'file'}->{'totalsize'} -= $failedsegsize;
 		}
 		else{
-			statMsg(sprintf("Conn. %d aborting file (failed to fetch segment #%d)",
+			statMsg(sprintf("Conn. %d: Aborting file (failed to fetch segment #%d)",
 					$i, $conn->{'segnum'}+1));
 
 			# Adjust totals due to skipping failed file
@@ -991,7 +991,7 @@ sub doFileAssignments {
 		my $file = shift @queuefileset;
 		last unless $file;
 
-		statMsg(sprintf("Conn. %d starting file: %s", $i, $file->{'name'}));
+		statMsg(sprintf("Conn. %d: Starting file: %s", $i, $file->{'name'}));
 		$conn->{'file'} = $file;
 		$conn->{'segnum'} = -1;
 		$conn->{'filebytes'} = 0;
@@ -1020,7 +1020,7 @@ sub doFileAssignments {
 
 		open $conn->{'tmpfile'}, ">$tmpfile" or
 			(statMsg("*** ERROR opening $tmpfile (critical!)") and next);
-		statMsg("Opened temp file $tmpfile");
+		statMsg("Conn. $i: Opened temp file $tmpfile");
 		binmode $conn->{'tmpfile'};
 	}
 }
