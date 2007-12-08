@@ -3,6 +3,151 @@ $Id$
 ================================================================================
 
 
+
+***** changes *****
+
+- Transmission-Transfer-Client updates
+
+- documentation updates (work in progress)
+
+- defaultX theme updates
+
+- icon updates
+
+- ajax update now uses %-value for updating the bar (3239)
+
+- index: modify run/seed tooltips to be different between advanced & quick
+  modes (3234)
+
+- torrent search: small tweak to display mininova results sorted by seed (3231)
+
+- MaintenanceAndRepair: added fluazu-maintenance (analog fluxd, delete leftovers
+  if found but no daemon running) (3214)
+
+- index: make "processing request"-div work on IE (3171)
+
+- admin/server:
+  * split code/html in file validation (3212, 3208)
+  * extend validation-check for transmissioncli, to check if file is really
+    tfb-specific version (3210, 3206)
+  * for incoming path, allow subdirs (3169)
+
+- formatBytestokBMBGBTB now also returns filessize in Bytes if
+  size < 1024 (3154)
+
+- admin/stats: move 'Use Compression' option directly before
+  'Compression Level' (3145)
+
+- SimpleHTTP:
+  * don't send empty cookie line (3250)
+  * added torrentspy support (3194)
+  * added demonoid support and fixed isohunt support (3172)
+  * handle https (requires php with openssl module) (3123)
+
+
+
+***** fixes *****
+
+- various theme-related bugfixes
+
+- bandwidth-bar: fixed style-issue if up or download is above 100% (3295)
+
+- ui: emit appropriate charset depending on selected language (3293)
+
+- nzbperl:
+  * fix status messages (3301)
+  * add --keepbrokenbin when "Bad File Action" is "Download Anyway" (3298)
+  * fix 150 kB/s speed limit (3288)
+  * fix missing newline in output (3287)
+
+- xfer-display:
+  * fix B/MB mismatch when calculating % (3286)
+  * fix bar width in themes other than defaultX (3286)
+
+- fluxcli.php: fix xfer command (amounts in MB were handled as B) (3260)
+
+- wget-Transfer-Client: ps --pid switch does not exist on FreeBSD, use -p
+  instead (3237)
+
+- fluxd:
+  * fix "cannot determine peer address" on FreeBSD (3290, 3291, 3292, 3296)
+  * small fix in sub "set" (3233)
+
+- SimpleHTTP: accept URLs containing '+' (pass them thru, don't re-encode
+  them) (3232)
+
+- transfer-control: avoid pid file access if not needed (3222)
+
+- setup.php: small fix to detect sqlite correctly (3221)
+
+- admin/server: fix php-cli checks freezing if php binary path is a cgi/fcgi
+  php (3213)
+
+- fluazu/dopal: make it work even with -OO flag on all Python versions (3205)
+
+- prevent tf_log table from growing too much and loadavg from increasing
+  insanely (3193)
+
+- fluxd/fluxcli: maintenance with torrent-restart did not work (3179)
+
+- inserting empty cookie id (cid) value caused errors on PostgreSQL (3178)
+
+- dir view:
+  * support php-version without unicode- and/or xml-support (3225)
+  * convert UTF-8 names to ISO-8859-1 (3170)
+
+- torrent search:
+  * TorrentSpy: switch to a download URL that works for now (3282)
+  * fix parsing of mininova results so the number of comments isn't displayed
+    as part of the torrent name (3231)
+  * broken if Transfer File Download was disabled (3166)
+
+- unified use of HTTP no-cache headers (pragma & cache-control) (3164)
+
+- added a line to allow for .prio files -- people were getting massive amounts
+  of "Invalid Transfer" errors without this line (3162)
+
+- index: new injected torrents now have &nbsp; again in columns t.up,
+  t.down (3160)
+
+- some php-versions report ini_get() as "on" or "off" (3159)
+
+- the size of a dir returned by dirsize() is now returned as float instead of
+  string (3158)
+
+- index: new torrents were showing "B" for total up/down (3157)
+
+- fluxd/fluxinet: stop warnings about undefined vbls in fluxinet.pm (3151)
+
+- index: in estimated time '00' fields were skipped even if not at front (3149)
+
+- stats.php: display usage when called with no _GET args and autologin cookie is
+  being used (3139)
+
+- fluxd/rssad:
+  * in admin pages, modify rssad filter templates so the correct page title is
+    displayed when adding/editing/saving/deleting filters (3150)
+  * links containing html entities were not handled properly (3134, 3130)
+
+- transmissioncli: use progress to indicate if torrent is finished or not (3128)
+
+- missing HTML-encoding: torrent comment (3125), superadmin changelog (3122)
+
+
+
+***** updates *****
+
+- Torrent Transfer-Clients:
+  * Transmission v0.95 -- modified for tf-b4rt
+  * Mainline (BitTorrent) v5.2.0
+
+- ADOdb V4.96a
+
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+
   torrentflux-b4rt 1.0 beta1
   http://svn.berlios.de/wsvn/tf-b4rt/trunk/?op=log&rev=3116
 
