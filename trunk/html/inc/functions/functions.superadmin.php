@@ -1868,9 +1868,9 @@ function getAdoConnection() {
 	// create ado-object
     $db = &ADONewConnection($cfg["db_type"]);
     // connect
-    @ $db->Connect($cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
+    $result = @ $db->Connect($cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
     // check for error
-    if ($db->ErrorNo() != 0)
+    if ($db->ErrorNo() != 0 || !$result)
     	return false;
     // return db-connection
 	return $db;

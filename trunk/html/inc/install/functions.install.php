@@ -147,9 +147,9 @@ function getAdoConnection($type, $host, $user, $pass, $name = "") {
 	// create ado-object
     $db = &ADONewConnection($type);
     // connect
-    @ $db->Connect($host, $user, $pass, $name);
+    $result = @ $db->Connect($host, $user, $pass, $name);
     // check for error
-    if ($db->ErrorNo() != 0)
+    if ($db->ErrorNo() != 0 || !$result)
     	return false;
     // return db-connection
 	return $db;

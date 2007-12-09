@@ -34,13 +34,13 @@ function dbInitialize() {
     $db = ADONewConnection($cfg["db_type"]);
     // connect
     if ($cfg["db_pcon"])
-    	@ $db->PConnect($cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
+    	$result = @ $db->PConnect($cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
     else
-    	@ $db->Connect($cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
+    	$result = @ $db->Connect($cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
     // register shutdown-function
     @register_shutdown_function("dbDispose");
     // check for error
-    if ($db->ErrorNo() != 0)
+    if ($db->ErrorNo() != 0 || !$result)
     	@error("Database Connection Problems", "", "", array("Check your database-config-file. (inc/config/config.db.php)"));
 }
 
