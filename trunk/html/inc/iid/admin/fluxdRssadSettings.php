@@ -130,14 +130,14 @@ switch ($pageop) {
 				if (FluxdRssad::filterExists($filtername) === true) {
 					$tmpl->setvar('filtername', $filtername);
 					$content = trim(FluxdRssad::filterGetContent($filtername));
-					$tmpl->setvar('rssad_filtercontent', $content);
+					$tmpl->setvar('rssad_filtercontent', tfb_htmlencode($content));
 					$filterlines = explode("\n", $content);
 					if (count($filterlines) > 0) {
 						$filterlist = array();
 						foreach ($filterlines as $filterline) {
 							$filt = trim($filterline);
 							if (strlen($filt) > 0)
-								array_push($filterlist, array("filter" => $filt));
+								array_push($filterlist, array("filter" => tfb_htmlencodekeepspaces($filt)));
 						}
 						$tmpl->setloop('rssad_filter_list', $filterlist);
 					}
@@ -156,7 +156,7 @@ switch ($pageop) {
 
 	case "saveFilter":
 		$filtername = tfb_getRequestVar('filtername');
-		$filtercontent = tfb_getRequestVar('rssad_filtercontent');
+		$filtercontent = tfb_getRequestVarRaw('rssad_filtercontent');
 		$new = tfb_getRequestVar('new');
 		if (empty($filtername)) {
 			$tmpl->setvar('new_msg', 1);
@@ -175,7 +175,7 @@ switch ($pageop) {
 				$tmpl->setvar('filtername', $filtername);
 				if ((FluxdRssad::filterSave($filtername, $filtercontent)) === true) {
 					$tmpl->setvar('filter_saved', 1);
-					$tmpl->setvar('filtercontent', $filtercontent);
+					$tmpl->setvar('filtercontent', tfb_htmlencode($filtercontent));
 				} else {
 					$tmpl->setvar('filter_saved', 0);
 					$messages = array();
