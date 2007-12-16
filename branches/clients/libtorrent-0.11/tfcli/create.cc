@@ -265,7 +265,7 @@ void FillAnnounceList(t::Object& obj_announcelist, const string& announcelist)
 {
 	// Split into tiers.
 	const string::size_type allength(announcelist.length());
-	for (string::size_type pos_tier = -1; pos_tier != allength; )
+	for (string::size_type pos_tier = string::size_type(-1); pos_tier != allength; )
 	{
 		const string::size_type start_tier(++pos_tier);
 		pos_tier = announcelist.find_first_of(c_announcetier_delims, pos_tier);
@@ -280,7 +280,7 @@ void FillAnnounceList(t::Object& obj_announcelist, const string& announcelist)
 
 		// Split into urls.
 		const string::size_type tlength(tier.length());
-		for (string::size_type pos_url = -1; pos_url != tlength; )
+		for (string::size_type pos_url = string::size_type(-1); pos_url != tlength; )
 		{
 			const string::size_type start_url(++pos_url);
 			pos_url = tier.find_first_of(c_announceurl_delims, pos_url);
@@ -312,7 +312,7 @@ void FillWebSeeds(t::Object& obj_webseeds, const string& urllist)
 {
 	// Split into urls.
 	const string::size_type length(urllist.length());
-	for (string::size_type pos = -1; pos != length; )
+	for (string::size_type pos = string::size_type(-1); pos != length; )
 	{
 		const string::size_type start(++pos);
 		pos = urllist.find_first_of(c_announceurl_delims, pos);
