@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: natpmp.h 4037 2007-12-02 01:27:14Z charles $
+ * $Id: natpmp.h 4115 2007-12-09 22:46:36Z charles $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -35,7 +35,5 @@ void        tr_natpmpForwardPort( tr_natpmp *, int );
 void        tr_natpmpRemoveForwarding( tr_natpmp * );
 void        tr_natpmpPulse( tr_natpmp *, int * );
 void        tr_natpmpClose( tr_natpmp * );
-
-#define PMP_MCAST_ADDR "224.0.0.1"
 
 #endif

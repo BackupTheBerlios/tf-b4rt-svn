@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: fdlimit.c 4047 2007-12-03 16:53:24Z charles $
+ * $Id: fdlimit.c 4110 2007-12-09 16:53:20Z charles $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -254,7 +254,7 @@ tr_fdFileCheckout( const char * filename, int write )
         }
 
         if( winner >= 0 ) {
-            if( fileIsOpen( &gFd->open[i] ) ) {
+            if( fileIsOpen( &gFd->open[winner] ) ) {
                 dbgmsg( "closing file '%s', slot #%d", gFd->open[winner].filename, winner );
                 TrCloseFile( winner );
             }

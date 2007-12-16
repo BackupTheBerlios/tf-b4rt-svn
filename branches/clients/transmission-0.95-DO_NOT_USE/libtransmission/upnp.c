@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: upnp.c 3706 2007-11-05 03:56:52Z charles $
+ * $Id: upnp.c 4115 2007-12-09 22:46:36Z charles $
  *
  * Copyright (c) 2006-2007 Transmission authors and contributors
  *
@@ -373,7 +373,9 @@ sendSSDP( int fd )
 
     if( 0 > fd )
     {
-        fd = tr_netBindUDP( 0 );
+        struct in_addr addr;
+        addr.s_addr = inet_addr( SSDP_ADDR );
+        fd = tr_netBindUDP( 0, &addr );
         if( 0 > fd )
         {
             return -1;

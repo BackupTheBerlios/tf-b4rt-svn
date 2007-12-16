@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: net.h 3706 2007-11-05 03:56:52Z charles $
+ * $Id: net.h 4115 2007-12-09 22:46:36Z charles $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -71,7 +71,7 @@ int  tr_netOpenTCP  ( const struct in_addr * addr, tr_port_t port, int priority 
 int  tr_netOpenUDP  ( const struct in_addr * addr, tr_port_t port, int priority );
 int  tr_netMcastOpen( int port, const struct in_addr * addr );
 int  tr_netBindTCP  ( int port );
-int  tr_netBindUDP  ( int port );
+int  tr_netBindUDP  ( int port, const struct in_addr * addr );
 int  tr_netAccept   ( int s, struct in_addr *, tr_port_t * );
 void tr_netClose    ( int s );
 

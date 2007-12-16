@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: DragOverlayView.h 3083 2007-09-16 01:02:06Z livings124 $
+ * $Id: DragOverlayView.h 4113 2007-12-09 22:18:22Z livings124 $
  *
  * Copyright (c) 2007 Transmission authors and contributors
  *
@@ -26,7 +26,7 @@
 
 @interface DragOverlayView : NSView
 {
-    NSImage * fBadge, * fBackBadge, * fAppIcon;
+    NSImage * fBadge, * fBackBadge;
     
     NSDictionary * fMainLineAttributes, * fSubLineAttributes;
 }
