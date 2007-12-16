@@ -347,7 +347,7 @@ class SimpleHTTP
 	    $this->getcmd .= (!empty($domain["query"])) ? "?" . $domain["query"] : "";
 
 		// Check to see if cookie required for this domain:
-		$sql = "SELECT c.data FROM tf_cookies AS c LEFT JOIN tf_users AS u ON ( u.uid = c.uid ) WHERE u.user_id = ".$db->qstr($cfg["user"])." AND c.host = ".$db->qstr($domain['host']);
+		$sql = "SELECT c.data AS data FROM tf_cookies AS c LEFT JOIN tf_users AS u ON ( u.uid = c.uid ) WHERE u.user_id = ".$db->qstr($cfg["user"])." AND c.host = ".$db->qstr($domain['host']);
 		$this->cookie = $db->GetOne($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
 

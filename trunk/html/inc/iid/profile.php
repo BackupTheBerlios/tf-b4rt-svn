@@ -207,7 +207,7 @@ switch ($op) {
 		} else {
 			$tmpl->setvar('empty_cid', 0);
 			// Output the list of cookies in the database
-			$sql = "SELECT c.cid, c.host, c.data FROM tf_cookies AS c, tf_users AS u WHERE u.uid=c.uid AND u.user_id=".$db->qstr($cfg["user"]);
+			$sql = "SELECT c.cid AS cid, c.host AS host, c.data AS data FROM tf_cookies AS c, tf_users AS u WHERE u.uid=c.uid AND u.user_id=".$db->qstr($cfg["user"]);
 			$dat = $db->GetAll( $sql );
 			if (empty($dat)) {
 				$tmpl->setvar('empty_dat', 1);

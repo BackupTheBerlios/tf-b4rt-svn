@@ -55,7 +55,7 @@ function GetProfiles($uid, $profile) {
 function GetProfilesByUserName($user, $profile) {
 	global $cfg, $db;
 	$profiles_array = array();
-	$sql = "SELECT p.name FROM tf_users AS u LEFT JOIN tf_trprofiles AS p ON (u.uid = p.owner) WHERE u.user_id=".$db->qstr($user)." AND p.public='0'";
+	$sql = "SELECT p.name AS name FROM tf_users AS u LEFT JOIN tf_trprofiles AS p ON (u.uid = p.owner) WHERE u.user_id=".$db->qstr($user)." AND p.public='0'";
 	$rs = $db->GetCol($sql);
 	if ($rs) {
 		foreach($rs as $arr) {
