@@ -134,7 +134,6 @@ class SearchEngine extends SearchEngineBase
             $end = strrpos($thing, "»");
         }
 
-        $thing = substr($thing, 0, $end);
         $tmpList = $thing;
         //echo $tmpList;
 
