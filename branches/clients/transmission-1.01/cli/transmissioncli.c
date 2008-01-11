@@ -40,6 +40,8 @@
 #define UNUSED
 #endif
 
+#define TOF_CMDFILE_MAXLEN 65536
+
 const char * USAGE =
 "Usage: %s [-car[-m]] [-dfinpsuvELOW] [-h] file.torrent [output-dir]\n\n"
 "Options:\n"
@@ -57,7 +59,7 @@ const char * USAGE =
 "  -u, --upload <int>   Maximum upload rate (-1 = no limit, default = 20)\n"
 "  -v, --verbose <int>  Verbose level (0 to 2, default = 0)\n"
 "  -V, --version        Print the version number and exit\n"
-"  -y, --recheck        Force a recheck of the torrent data\n";
+"  -y, --recheck        Force a recheck of the torrent data\n"
 "\nTorrentflux Commands:\n"
 "  -E, --display-interval <int> Time between updates of stat-file (default = %d)\n"
 "  -L, --seedlimit <int> Seed-Limit (Percent) to reach before shutdown\n"
