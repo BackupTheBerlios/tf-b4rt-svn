@@ -1061,15 +1061,15 @@ static int parseCommandLine(int argc, char ** argv) {
 		  { "upload",             required_argument, NULL, 'u' },
 		  { "download",           required_argument, NULL, 'd' },
 		  { "finish",             required_argument, NULL, 'f' },
-		  { "die-when-done",      required_argument, NULL, 'w' },
-		  { "seedlimit",          required_argument, NULL, 'l' },
-		  { "display-interval",   required_argument, NULL, 'e' },
-		  { "owner",              required_argument, NULL, 'o' },
+		  { "die-when-done",      required_argument, NULL, 'W' },
+		  { "seedlimit",          required_argument, NULL, 'L' },
+		  { "display-interval",   required_argument, NULL, 'E' },
+		  { "owner",              required_argument, NULL, 'O' },
 		  { "nat-traversal",      no_argument,       NULL, 'n' },
 		  { 0, 0, 0, 0} };
 		int c, optind = 0;
 		c = getopt_long(argc, argv,
-			"hisv:p:u:d:f:w:l:e:o:n", long_options, &optind);
+			"hisv:p:u:d:f:W:L:E:O:n", long_options, &optind);
 		if (c < 0)
 			break;
 		switch (c) {
@@ -1100,16 +1100,16 @@ static int parseCommandLine(int argc, char ** argv) {
 			case 'n':
 				natTraversal = 1;
 				break;
-			case 'w':
+			case 'W':
 				tf_dieWhenDone = atoi(optarg);
 				break;
-			case 'l':
+			case 'L':
 				tf_seedLimit = atoi(optarg);
 				break;
-			case 'e':
+			case 'E':
 				tf_displayInterval = atoi(optarg);
 				break;
-			case 'o':
+			case 'O':
 				tf_owner = optarg;
 				break;
 			default:

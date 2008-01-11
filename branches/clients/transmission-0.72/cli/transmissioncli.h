@@ -61,11 +61,11 @@
 "                                 (-1|0 = no limit, -2 = null, default = %d)\n" \
 "  -f, --finish <shell script>    Command you wish to run on completion (default = none)\n" \
 "\nTorrentflux Commands:\n" \
-"  -w, --die-when-done            Auto-Shutdown when done (0 = False, 1 = True, default = %d)\n" \
-"  -l, --seedlimit <int>          Seed-Limit (Percent) to reach before shutdown\n" \
+"  -W, --die-when-done            Auto-Shutdown when done (0 = False, 1 = True, default = %d)\n" \
+"  -L, --seedlimit <int>          Seed-Limit (Percent) to reach before shutdown\n" \
 "                                 (0 = seed forever, -1 = no seeding, default = %d)\n" \
-"  -e, --display-interval <int>   Time between updates of stat-file (default = %d)\n" \
-"  -o, --owner <string>           Name of the owner (default = 'n/a')\n" \
+"  -E, --display-interval <int>   Time between updates of stat-file (default = %d)\n" \
+"  -O, --owner <string>           Name of the owner (default = 'n/a')\n" \
 "\n"
 
 #define TF_CMDFILE_MAXLEN 65536

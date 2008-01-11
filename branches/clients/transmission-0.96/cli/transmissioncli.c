@@ -59,11 +59,11 @@ const char * USAGE =
 "  -u, --upload <int>   Maximum upload rate (-1 = no limit, default = 20)\n"
 "  -v, --verbose <int>  Verbose level (0 to 2, default = 0)\n"
 "\nTorrentflux Commands:\n"
-"  -e, --display-interval <int> Time between updates of stat-file (default = %d)\n"
-"  -l, --seedlimit <int> Seed-Limit (Percent) to reach before shutdown\n"
+"  -E, --display-interval <int> Time between updates of stat-file (default = %d)\n"
+"  -L, --seedlimit <int> Seed-Limit (Percent) to reach before shutdown\n"
 "                        (0 = seed forever, -1 = no seeding, default = %d)\n"
-"  -o, --owner <string> Name of the owner (default = 'n/a')\n"
-"  -w, --die-when-done  Auto-Shutdown when done (0 = Off, 1 = On, default = %d)\n";
+"  -O, --owner <string> Name of the owner (default = 'n/a')\n"
+"  -W, --die-when-done  Auto-Shutdown when done (0 = Off, 1 = On, default = %d)\n";
 
 static int           showHelp      = 0;
 static int           showInfo      = 0;
@@ -540,15 +540,15 @@ static int parseCommandLine( int argc, char ** argv )
             { "create",   required_argument, NULL, 'c' },
             { "comment",  required_argument, NULL, 'm' },
             { "announce", required_argument, NULL, 'a' },
-            { "display-interval", required_argument, NULL, 'e' },
-			{ "seedlimit",        required_argument, NULL, 'l' },
-			{ "owner",            required_argument, NULL, 'o' },
-			{ "die-when-done",    required_argument, NULL, 'w' },
+            { "display-interval", required_argument, NULL, 'E' },
+			{ "seedlimit",        required_argument, NULL, 'L' },
+			{ "owner",            required_argument, NULL, 'O' },
+			{ "die-when-done",    required_argument, NULL, 'W' },
 			{ "nat-traversal", no_argument,  NULL, 'n' },
             { 0, 0, 0, 0} };
 
         int c, optind = 0;
-        c = getopt_long( argc, argv, "hisrv:p:u:d:f:c:m:a:e:l:o:w:n",
+        c = getopt_long( argc, argv, "hisrv:p:u:d:f:c:m:a:E:L:O:W:n",
                          long_options, &optind );
         if( c < 0 )
         {
@@ -595,16 +595,16 @@ static int parseCommandLine( int argc, char ** argv )
             case 'n':
                 natTraversal = 1;
                 break;
-			case 'w':
+			case 'W':
 				TOF_dieWhenDone = atoi( optarg );
 				break;
-			case 'l':
+			case 'L':
 				TOF_seedLimit = atoi( optarg );
 				break;
-			case 'e':
+			case 'E':
 				TOF_displayInterval = atoi( optarg );
 				break;
-			case 'o':
+			case 'O':
 				TOF_owner = optarg;
 				break;
             default:

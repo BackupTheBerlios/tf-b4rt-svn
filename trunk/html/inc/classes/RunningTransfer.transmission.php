@@ -43,7 +43,7 @@ class RunningTransferTransmission extends RunningTransfer
             $this->transferFile = str_replace($cfg['transfer_file_path'],'',$arr[(count($arr) - 1)]);
             $this->filePath = substr($this->transferFile,0,strrpos($this->transferFile,"/")+1);
             foreach ($arr as $key =>$value) {
-                if ($value == '-o')
+                if ($value == '-O')
                     $this->transferowner = $arr[$key+1];
             }
             $this->args = str_replace("-","",$this->args);

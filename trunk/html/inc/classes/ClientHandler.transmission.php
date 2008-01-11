@@ -110,10 +110,10 @@ class ClientHandlerTransmission extends ClientHandler
         $this->command .= " -d ".tfb_shellencode($this->drate);
         $this->command .= " -u ".tfb_shellencode($this->rate);
         $this->command .= " -p ".tfb_shellencode($this->port);
-		$this->command .= " -w ".tfb_shellencode(($this->runtime == "True") ? 1 : 0);
-        $this->command .= " -l ".tfb_shellencode($this->sharekill_param);
-        $this->command .= " -e 5";
-        $this->command .= " -o ".tfb_shellencode($this->owner);
+		$this->command .= " -W ".tfb_shellencode(($this->runtime == "True") ? 1 : 0);
+        $this->command .= " -L ".tfb_shellencode($this->sharekill_param);
+        $this->command .= " -E 6";
+        $this->command .= " -O ".tfb_shellencode($this->owner);
         if (strlen($cfg["btclient_transmission_options"]) > 0)
         	$this->command .= " ".$cfg["btclient_transmission_options"];
         $this->command .= " ".tfb_shellencode($this->transferFilePath);
