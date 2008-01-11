@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: torrent-inspector.c 4459 2008-01-04 00:09:17Z charles $
+ * $Id: torrent-inspector.c 4602 2008-01-10 20:46:22Z charles $
  *
  * Copyright (c) 2005-2008 Transmission authors and contributors
  *
@@ -316,9 +316,9 @@ peer_model_new (tr_torrent * tor)
                                          G_TYPE_STRING,  /* client */
                                          G_TYPE_INT,     /* progress [0..100] */
                                          G_TYPE_BOOLEAN, /* isEncrypted */
-                                         G_TYPE_BOOLEAN, /* isDownloading */
+                                         G_TYPE_BOOLEAN, /* isDownloadingFrom */
                                          G_TYPE_FLOAT,   /* downloadFromRate */
-                                         G_TYPE_BOOLEAN, /* isUploading */
+                                         G_TYPE_BOOLEAN, /* isUploadingTo */
                                          G_TYPE_FLOAT,   /* uploadToRate */
                                          G_TYPE_INT );   /* tr_peer_status */
 

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: PrefsController.m 4435 2008-01-03 06:36:38Z livings124 $
+ * $Id: PrefsController.m 4521 2008-01-06 17:52:34Z livings124 $
  *
  * Copyright (c) 2005-2008 Transmission authors and contributors
  *
@@ -62,6 +62,11 @@
         {
             [fDefaults setInteger: 20 forKey: @"UploadLimit"];
             [fDefaults setBool: NO forKey: @"CheckUpload"];
+        }
+        if ([fDefaults integerForKey: @"DownloadLimit"] < 0)
+        {
+            [fDefaults setInteger: 20 forKey: @"DownloadLimit"];
+            [fDefaults setBool: NO forKey: @"CheckDownload"];
         }
         
         //set check for update to right value

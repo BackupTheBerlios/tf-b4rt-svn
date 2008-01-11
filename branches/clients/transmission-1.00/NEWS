@@ -1,5 +1,21 @@
 NEWS file for Transmission <http://transmission.m0k.org/>
 
+1.01 (2008/01/11)
+- All Platforms:
+   + Fix 1.00 freezing issue
+   + Fix 1.00 assertion failure
+   + Improve initial connection speed
+   + Added connection throttle to avoid router overload
+   + Improve reconnection to peers with imperfect network connections
+   + Fix crashes on architectures that require strict alignment
+- OS X:
+   + Leopard: Double-click icon to reveal in Finder, progress string to toggle selected and total, and anywhere else to toggle the inspector
+   + Leopard: Better behavior with Time Machine
+   + Fix bugs with Clutch support
+- GTK+:
+   + New Brazilian Portuguese, Chinese, Dutch, and Turkish translations
+   + Fix 1.00 desktop internationalization error
+
 1.00 (2008/01/04)
 - All Platforms:
    + Port forwarding now performed by MiniUPnP and libnatpmp

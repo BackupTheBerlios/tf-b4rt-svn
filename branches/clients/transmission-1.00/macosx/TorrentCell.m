@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: TorrentCell.m 4423 2008-01-02 16:55:05Z livings124 $
+ * $Id: TorrentCell.m 4512 2008-01-05 23:36:32Z livings124 $
  *
  * Copyright (c) 2006-2008 Transmission authors and contributors
  *
@@ -346,7 +346,8 @@
         
         if (rightWidth > 0)
         {
-            if ([torrent isActive] && ![torrent allDownloaded] && [fDefaults boolForKey: @"DisplayProgressBarAvailable"])
+            if ([torrent isActive] && ![torrent allDownloaded] && ![torrent isChecking]
+                && [fDefaults boolForKey: @"DisplayProgressBarAvailable"])
             {
                 int notAvailableWidth = MIN(ceil(barRect.size.width * [torrent notAvailableDesired]), rightWidth);
                 rightWidth -= notAvailableWidth;

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.h 4404 2008-01-01 17:20:20Z charles $
+ * $Id: transmission.h 4589 2008-01-10 04:01:41Z charles $
  *
  * Copyright (c) 2005-2008 Transmission authors and contributors
  *

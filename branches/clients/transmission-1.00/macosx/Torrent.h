@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: Torrent.h 4423 2008-01-02 16:55:05Z livings124 $
+ * $Id: Torrent.h 4500 2008-01-05 18:27:19Z livings124 $
  *
  * Copyright (c) 2006-2008 Transmission authors and contributors
  *
@@ -71,8 +71,6 @@ typedef enum
     int fOrderValue, fGroupValue;
     
     NSDictionary * fQuickPauseDict;
-    
-    BOOL fNeedSetTimeMachine;
 }
 
 - (id) initWithPath: (NSString *) path location: (NSString *) location deleteTorrentFile: (torrentFileState) torrentDelete

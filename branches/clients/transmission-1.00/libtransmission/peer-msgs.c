@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  *
- * $Id: peer-msgs.c 4442 2008-01-03 20:17:01Z charles $
+ * $Id: peer-msgs.c 4589 2008-01-10 04:01:41Z charles $
  */
 
 #include <assert.h>
@@ -332,6 +332,14 @@ fireGotBlock( tr_peermsgs * msgs, const struct peer_request * req )
 }
 
 static void
+firePieceData( tr_peermsgs * msgs )
+{
+    tr_peermsgs_event e = blankEvent;
+    e.eventType = TR_PEERMSG_PIECE_DATA;
+    publish( msgs, &e );
+}
+
+static void
 fireCancelledReq( tr_peermsgs * msgs, const struct peer_request * req )
 {
     tr_peermsgs_event e = blankEvent;
@@ -505,6 +513,21 @@ sendFastReject( tr_peermsgs * msgs,
     }
 }
 
+static tr_bitfield*
+getPeerAllowedPieces( tr_peermsgs * msgs )
+{
+    if( !msgs->peerAllowedPieces && tr_peerIoSupportsFEXT( msgs->io ) )
+    {
+        msgs->peerAllowedPieces = tr_peerMgrGenerateAllowedSet(
+            MAX_FAST_ALLOWED_COUNT,
+            msgs->torrent->info.pieceCount,
+            msgs->torrent->info.hash,
+            tr_peerIoGetAddress( msgs->io, NULL ) );
+    }
+
+    return msgs->peerAllowedPieces;
+}
+
 static void
 sendFastAllowed( tr_peermsgs * msgs,
                  uint32_t      pieceIndex)
@@ -519,18 +542,24 @@ sendFastAllowed( tr_peermsgs * msgs,
     }
 }
 
-
-
 static void
 sendFastAllowedSet( tr_peermsgs * msgs )
 {
     int i = 0;
+
     while (i <= msgs->torrent->info.pieceCount )
     {
-        if ( tr_bitfieldHas( msgs->peerAllowedPieces, i) )
+        if ( tr_bitfieldHas( getPeerAllowedPieces( msgs ), i) )
             sendFastAllowed( msgs, i );
         i++;
     }
+}
+
+static void
+maybeSendFastAllowedSet( tr_peermsgs * msgs )
+{
+    if( tr_bitfieldCountTrueBits( msgs->info->have ) <= MAX_FAST_ALLOWED_THRESHOLD )
+        sendFastAllowedSet( msgs );
 }
 
 
@@ -990,7 +1019,7 @@ peerMadeRequest( tr_peermsgs * msgs, const struct peer_request * req )
     const int clientHasPiece = reqIsValid && tr_cpPieceIsComplete( msgs->torrent->completion, req->index );
     const int peerIsChoked = msgs->info->peerIsChoked;
     const int peerIsFast = tr_peerIoSupportsFEXT( msgs->io );
-    const int pieceIsFast = reqIsValid && tr_bitfieldHas( msgs->peerAllowedPieces, req->index );
+    const int pieceIsFast = reqIsValid && tr_bitfieldHas( getPeerAllowedPieces( msgs ), req->index );
     const int canSendFast = clientCanSendFastBlock( msgs );
 
     if( !reqIsValid ) /* bad request */
@@ -1079,6 +1108,7 @@ clientGotBytes( tr_peermsgs * msgs, uint32_t byteCount )
     tr_rcTransferred( tor->download, byteCount );
     tr_rcTransferred( tor->handle->download, byteCount );
     tr_statsAddDownloaded( msgs->handle, byteCount );
+    firePieceData( msgs );
 }
 
 static int
@@ -1199,6 +1229,7 @@ readBtMessage( tr_peermsgs * msgs, struct evbuffer * inbuf, size_t inlen )
             msgs->peerSentBitfield = 1;
             tr_peerIoReadBytes( msgs->io, inbuf, msgs->info->have->bits, msglen );
             updatePeerProgress( msgs );
+            maybeSendFastAllowedSet( msgs );
             tr_peerMsgsSetChoke( msgs, !clientIsSeed || (msgs->info->progress<1.0) );
             fireNeedReq( msgs );
             break;
@@ -1247,6 +1278,7 @@ readBtMessage( tr_peermsgs * msgs, struct evbuffer * inbuf, size_t inlen )
             dbgmsg( msgs, "Got a BT_HAVE_ALL" );
             tr_bitfieldAddRange( msgs->info->have, 0, msgs->torrent->info.pieceCount );
             updatePeerProgress( msgs );
+            maybeSendFastAllowedSet( msgs );
             break;
         
         
@@ -1254,6 +1286,7 @@ readBtMessage( tr_peermsgs * msgs, struct evbuffer * inbuf, size_t inlen )
             dbgmsg( msgs, "Got a BT_HAVE_NONE" );
             tr_bitfieldClear( msgs->info->have );
             updatePeerProgress( msgs );
+            maybeSendFastAllowedSet( msgs );
             break;
         
         case BT_REJECT: {
@@ -1304,6 +1337,7 @@ peerGotBytes( tr_peermsgs * msgs, uint32_t byteCount )
     tr_rcTransferred( tor->upload, byteCount );
     tr_rcTransferred( tor->handle->upload, byteCount );
     tr_statsAddUploaded( msgs->handle, byteCount );
+    firePieceData( msgs );
 }
 
 static size_t
@@ -1868,20 +1902,8 @@ tr_peerMsgsNew( struct tr_torrent * torrent,
     m->clientSuggestedPieces = NULL;
     *setme = tr_publisherSubscribe( m->publisher, func, userData );
     
-    if ( tr_peerIoSupportsFEXT( m->io ) )
-    {
-        /* This peer is fastpeer-enabled, generate its allowed set
-         * (before registering our callbacks) */
-        if ( !m->peerAllowedPieces ) {
-            const struct in_addr *peerAddr = tr_peerIoGetAddress( m->io, NULL );
-            
-            m->peerAllowedPieces = tr_peerMgrGenerateAllowedSet( MAX_FAST_ALLOWED_COUNT,
-                                                                 m->torrent->info.pieceCount,
-                                                                 m->torrent->info.hash,
-                                                                 peerAddr );
-        }
+    if ( tr_peerIoSupportsFEXT( m->io ) ) {
         m->clientAllowedPieces = tr_bitfieldNew( m->torrent->info.pieceCount );
-        
         m->clientSuggestedPieces = tr_bitfieldNew( m->torrent->info.pieceCount );
     }
     
@@ -1896,7 +1918,6 @@ tr_peerMsgsNew( struct tr_torrent * torrent,
         sendBitfield( m );
     else {
         /* This peer is fastpeer-enabled, send it have-all or have-none if appropriate */
-        uint32_t peerProgress;
         float completion = tr_cpPercentComplete( m->torrent->completion );
         if ( completion == 0.0f ) {
             sendFastHave( m, 0 );
@@ -1905,10 +1926,6 @@ tr_peerMsgsNew( struct tr_torrent * torrent,
         } else {
             sendBitfield( m );
         }
-        peerProgress = m->torrent->info.pieceCount * m->info->progress;
-        
-        if ( peerProgress < MAX_FAST_ALLOWED_COUNT )
-            sendFastAllowedSet( m );
     }
 
     return m;

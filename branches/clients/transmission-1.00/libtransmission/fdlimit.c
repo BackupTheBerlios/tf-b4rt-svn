@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: fdlimit.c 4438 2008-01-03 16:36:20Z charles $
+ * $Id: fdlimit.c 4571 2008-01-08 20:08:46Z charles $
  *
  * Copyright (c) 2005-2008 Transmission authors and contributors
  *
@@ -315,13 +315,14 @@ tr_fdFileClose( const char * filename )
 {
     int i;
     tr_lockLock( gFd->lock );
-    dbgmsg( "tr_fdFileClose closing '%s'", filename );
 
     for( i=0; i<TR_MAX_OPEN_FILES; ++i )
     {
         struct tr_openfile * o = &gFd->open[i];
         if( !fileIsOpen(o) || strcmp(filename,o->filename) )
             continue;
+
+        dbgmsg( "tr_fdFileClose closing '%s'", filename );
 
         if( !o->isCheckedOut ) {
             dbgmsg( "not checked out, so closing it now... '%s'", filename );

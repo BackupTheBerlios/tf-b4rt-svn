@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: Controller.m 4423 2008-01-02 16:55:05Z livings124 $
+ * $Id: Controller.m 4560 2008-01-08 02:38:12Z livings124 $
  * 
  * Copyright (c) 2005-2008 Transmission authors and contributors
  *
@@ -132,7 +132,7 @@ typedef enum
 #define SUPPORT_FOLDER  @"/Library/Application Support/Transmission/Transfers.plist"
 
 #define WEBSITE_URL @"http://www.transmissionbt.com/"
-#define FORUM_URL   @"http://www.transmissionbt.com/forum/"
+#define FORUM_URL   @"http://forum.transmissionbt.com/"
 #define DONATE_URL  @"http://www.transmissionbt.com/donate.php"
 
 void sleepCallBack(void * controller, io_service_t y, natural_t messageType, void * messageArgument)
@@ -258,6 +258,8 @@ void sleepCallBack(void * controller, io_service_t y, natural_t messageType, voi
     {
         [fWindow setContentBorderThickness: [[fTableView enclosingScrollView] frame].origin.y forEdge: NSMinYEdge];
         [[fTotalTorrentsField cell] setBackgroundStyle: NSBackgroundStyleRaised];
+        
+        [[[fActionButton menu] itemAtIndex: 0] setImage: [NSImage imageNamed: NSImageNameActionTemplate]];
     }
     else
     {
@@ -3956,6 +3958,7 @@ void sleepCallBack(void * controller, io_service_t y, natural_t messageType, voi
 {
     if (!torrents)
         torrents = [NSArray arrayWithArray: fTorrents];
+    [torrents retain];
 
     [self confirmRemoveTorrents: torrents deleteData: NO deleteTorrent: NO];
 

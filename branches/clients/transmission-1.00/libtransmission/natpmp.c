@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  *
- * $Id: natpmp.c 4404 2008-01-01 17:20:20Z charles $
+ * $Id: natpmp.c 4547 2008-01-07 19:17:41Z charles $
  */
 
 #include <assert.h>
@@ -16,6 +16,7 @@
 #include <inttypes.h>
 #include <string.h> /* strerror */
 
+#include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>

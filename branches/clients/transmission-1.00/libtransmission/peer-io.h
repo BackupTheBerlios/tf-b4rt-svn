@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  *
- * $Id: peer-io.h 4404 2008-01-01 17:20:20Z charles $
+ * $Id: peer-io.h 4607 2008-01-11 02:08:47Z charles $
  */
 
 #ifndef TR_PEER_IO_H
@@ -80,7 +80,9 @@ int   tr_peerIoReconnect( tr_peerIo * io );
 
 int   tr_peerIoIsIncoming( const tr_peerIo * io );
 
-void tr_peerIoSetTimeoutSecs( tr_peerIo * io, int secs );
+void  tr_peerIoSetTimeoutSecs( tr_peerIo * io, int secs );
+
+int   tr_peerIoGetAge( const tr_peerIo * io );
 
 
 /**

@@ -70,6 +70,28 @@ noinst_HEADERS = \
     upnp.h \
     utils.h
 
+
+
+noinst_PROGRAMS = \
+    test-fastset \
+    test-peer-id
+
+TESTS = $(noinst_PROGRAMS)
+
+TEST_LDADD = \
+    ./libtransmission.a  \
+    $(top_builddir)/third-party/miniupnp/libminiupnp.a \
+    $(top_builddir)/third-party/libnatpmp/libnatpmp.a \
+    $(top_builddir)/third-party/libevent/libevent.la \
+    $(OPENSSL_LIBS) $(PTHREAD_LIBS) -lm
+
+test_fastset_SOURCES = test-fastset.c
+test_fastset_LDADD = $(TEST_LDADD)
+test_peer_id_SOURCES = test-peer-id.c
+test_peer_id_LDADD = $(TEST_LDADD)
+
+
+
 EXTRA_libtransmission_a_SOURCES = \
     version.h
 

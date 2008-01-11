@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  * 
- * $Id: actions.c 4404 2008-01-01 17:20:20Z charles $
+ * $Id: actions.c 4518 2008-01-06 17:36:46Z charles $
  */
 
 #include <string.h>
@@ -178,8 +178,7 @@ const BuiltinIconInfo my_builtin_icons [] =
     { tr_icon_lock, "transmission-lock" },
     { tr_arrow_down, "tr-arrow-down" },
     { tr_arrow_up, "tr-arrow-up" },
-    { tr_yin_yang, "tr-yin-yang" },
-    { tr_search_pulldown, "tr-search-pulldown" }
+    { tr_yin_yang, "tr-yin-yang" }
 };
 
 static void

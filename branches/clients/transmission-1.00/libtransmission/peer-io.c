@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  *
- * $Id: peer-io.c 4404 2008-01-01 17:20:20Z charles $
+ * $Id: peer-io.c 4610 2008-01-11 02:43:47Z charles $
  */
 
 #include <assert.h>
@@ -53,6 +53,7 @@ struct tr_peerIo
     int timeout;
     struct bufferevent * bufev;
     uint8_t peerId[20];
+    time_t timeCreated;
 
     tr_extensions extensions;
 
@@ -141,6 +142,7 @@ tr_peerIoNew( struct tr_handle     * handle,
     c->socket = socket;
     c->isIncoming = isIncoming ? 1 : 0;
     c->timeout = IO_TIMEOUT_SECS;
+    c->timeCreated = time( NULL );
     c->bufev = bufferevent_new( c->socket,
                                 canReadWrapper,
                                 didWriteWrapper,
@@ -576,4 +578,10 @@ tr_peerIoDrain( tr_peerIo        * io,
     uint8_t * tmp = tr_new( uint8_t, byteCount );
     tr_peerIoReadBytes( io, inbuf, tmp, byteCount );
     tr_free( tmp );
+}
+
+int
+tr_peerIoGetAge( const tr_peerIo * io )
+{
+    return time( NULL ) - io->timeCreated;
 }

@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  *
- * $Id: inout.c 4426 2008-01-02 20:34:20Z charles $
+ * $Id: inout.c 4562 2008-01-08 03:08:37Z charles $
  */
 
 #include <assert.h>
@@ -266,7 +266,7 @@ checkFile( tr_torrent   * tor,
     tr_buildPath ( path, sizeof(path), tor->destination, file->name, NULL );
     nofile = stat( path, &sb ) || !S_ISREG( sb.st_mode );
 
-    for( i=file->firstPiece; i<=file->lastPiece && (!*abortFlag); ++i )
+    for( i=file->firstPiece; i<=file->lastPiece && i<tor->info.pieceCount && (!*abortFlag); ++i )
     {
         if( nofile )
         {

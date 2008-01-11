@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: torrent.c 4427 2008-01-02 20:37:22Z charles $
+ * $Id: torrent.c 4562 2008-01-08 03:08:37Z charles $
  *
  * Copyright (c) 2005-2008 Transmission authors and contributors
  *
@@ -360,8 +360,6 @@ torrentRealInit( tr_handle     * h,
     tr_torrentUncheck( tor );
     loaded = tr_fastResumeLoad( tor, ~0, ctor );
     
-    assert( tor->destination != NULL );
-
     doStart = tor->isRunning;
     tor->isRunning = 0;
 
@@ -813,6 +811,10 @@ void
 tr_torrentSetHasPiece( tr_torrent * tor, int pieceIndex, int has )
 {
     tr_torrentLock( tor );
+
+    assert( tor != NULL );
+    assert( pieceIndex >= 0 );
+    assert( pieceIndex < tor->info.pieceCount );
 
     if( has )
         tr_cpPieceAdd( tor->completion, pieceIndex );

@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  *
- * $Id: peer-mgr.h 4404 2008-01-01 17:20:20Z charles $
+ * $Id: peer-mgr.h 4555 2008-01-08 01:57:48Z charles $
  */
 
 #ifndef TR_PEER_MGR_H
@@ -50,8 +50,7 @@ void tr_peerMgrAddPeers( tr_peerMgr     * manager,
 void tr_peerMgrAddPex( tr_peerMgr     * manager,
                        const uint8_t  * torrentHash,
                        uint8_t          from,
-                       const tr_pex   * pex,
-                       int              pexCount );
+                       const tr_pex   * pex );
 
 void tr_peerMgrSetBlame( tr_peerMgr     * manager,
                          const uint8_t  * torrentHash,

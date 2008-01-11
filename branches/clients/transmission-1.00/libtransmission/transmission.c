@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.c 4404 2008-01-01 17:20:20Z charles $
+ * $Id: transmission.c 4544 2008-01-07 17:52:51Z charles $
  *
  * Copyright (c) 2005-2008 Transmission authors and contributors
  *
@@ -51,30 +51,39 @@
    characters, where x is the major version number, y is the
    minor version number, z is the maintenance number, and b
    designates beta (Azureus-style) */
-void
-tr_peerIdNew ( char * buf, int buflen )
+uint8_t*
+tr_peerIdNew( void )
 {
     int i;
-    assert( buflen == TR_ID_LEN + 1 );
+    int val;
+    int total = 0;
+    uint8_t * buf = tr_new( uint8_t, 21 );
+    const char * pool = "0123456789abcdefghijklmnopqrstuvwxyz";
+    const int base = 36;
 
-    snprintf( buf, TR_ID_LEN, "%s", PEERID_PREFIX );
-    assert( strlen(buf) == 8 );
-    for( i=8; i<TR_ID_LEN; ++i ) {
-        const int r = tr_rand( 36 );
-        buf[i] = ( r < 26 ) ? ( 'a' + r ) : ( '0' + r - 26 ) ;
+    memcpy( buf, PEERID_PREFIX, 8 );
+
+    for( i=8; i<19; ++i ) {
+        val = tr_rand( base );
+        total += val;
+        buf[i] = pool[val];
     }
-    buf[TR_ID_LEN] = '\0';
+
+    val = total % base ? base - (total % base) : 0;
+    total += val;
+    buf[19] = pool[val];
+    buf[20] = '\0';
+
+    return buf;
 }
 
-const char*
-getPeerId( void )
+const uint8_t*
+tr_getPeerId( void )
 {
-    static char * peerId = NULL;
-    if( !peerId ) {
-        peerId = tr_new0( char, TR_ID_LEN + 1 );
-        tr_peerIdNew( peerId, TR_ID_LEN + 1 );
-    }
-    return peerId;
+    static uint8_t * id = NULL;
+    if( id == NULL )
+        id = tr_peerIdNew( );
+    return id;
 }
 
 /***

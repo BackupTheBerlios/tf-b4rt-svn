@@ -1,14 +1,14 @@
 #! /bin/sh
 #
-# $Id: version.sh 4443 2008-01-03 20:32:36Z livings124 $
+# $Id: version.sh 4628 2008-01-11 20:35:59Z livings124 $
 
 # convention: -TR MAJOR MINOR MAINT STATUS - (each a single char)
 # STATUS: "X" for prerelease test builds,
 #         "Z" for unsupported trunk builds,
 #         "0" for stable, supported releases
 # these should be the only two lines you need to change
-PEERID_PREFIX="-TR1000-"
-USERAGENT_PREFIX="1.00"
+PEERID_PREFIX="-TR1010-"
+USERAGENT_PREFIX="1.01"
 
 
 SVN_REVISION=`find ./ -name "*\.[chmp]" -o -name "*\.cpp" -o -name "*\.po" -o -name "*\.sh" | \

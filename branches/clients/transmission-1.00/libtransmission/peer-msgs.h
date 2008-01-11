@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  *
- * $Id: peer-msgs.h 4404 2008-01-01 17:20:20Z charles $
+ * $Id: peer-msgs.h 4497 2008-01-05 18:18:33Z charles $
  */
 
 #ifndef TR_PEER_MSGS_H
@@ -63,6 +63,7 @@ typedef enum
 {
     TR_PEERMSG_CLIENT_HAVE,
     TR_PEERMSG_CLIENT_BLOCK,
+    TR_PEERMSG_PIECE_DATA,
     TR_PEERMSG_PEER_PROGRESS,
     TR_PEERMSG_GOT_ERROR,
     TR_PEERMSG_GOT_ASSERT_ERROR,

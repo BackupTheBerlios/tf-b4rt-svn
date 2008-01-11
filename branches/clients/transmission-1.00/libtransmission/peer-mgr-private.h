@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  *
- * $Id: peer-mgr-private.h 4404 2008-01-01 17:20:20Z charles $
+ * $Id: peer-mgr-private.h 4589 2008-01-10 04:01:41Z charles $
  */
 
 #ifndef TR_PEER_MGR_PRIVATE_H

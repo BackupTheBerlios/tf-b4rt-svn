@@ -14,6 +14,7 @@
 
 @SET_MAKE@
 
+
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
@@ -32,9 +33,10 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = Xmission$(EXEEXT)
+bin_PROGRAMS = xmission$(EXEEXT)
 subdir = wx
-DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
+DIST_COMMON = $(noinst_HEADERS) $(srcdir)/Makefile.am \
+	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/acintltool.m4 \
 	$(top_srcdir)/m4/acx-pthread.m4 \
@@ -42,20 +44,21 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acintltool.m4 \
 	$(top_srcdir)/m4/wxwin.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
-am_Xmission_OBJECTS = speed-stats.$(OBJEXT) filter.$(OBJEXT) \
+am_xmission_OBJECTS = speed-stats.$(OBJEXT) filter.$(OBJEXT) \
 	torrent-list.$(OBJEXT) torrent-stats.$(OBJEXT) \
 	xmission.$(OBJEXT)
-Xmission_OBJECTS = $(am_Xmission_OBJECTS)
+xmission_OBJECTS = $(am_xmission_OBJECTS)
 am__DEPENDENCIES_1 =
-Xmission_DEPENDENCIES =  \
+xmission_DEPENDENCIES =  \
 	$(top_builddir)/libtransmission/libtransmission.a \
 	$(top_builddir)/third-party/libevent/libevent.la \
 	$(top_builddir)/third-party/miniupnp/libminiupnp.a \
+	$(top_builddir)/third-party/libnatpmp/libnatpmp.a \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I.@am__isrc@
@@ -70,8 +73,8 @@ CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(Xmission_SOURCES)
-DIST_SOURCES = $(Xmission_SOURCES)
+SOURCES = $(xmission_SOURCES)
+DIST_SOURCES = $(xmission_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	html-recursive info-recursive install-data-recursive \
 	install-dvi-recursive install-exec-recursive \
@@ -79,6 +82,7 @@ RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	install-pdf-recursive install-ps-recursive install-recursive \
 	installcheck-recursive installdirs-recursive pdf-recursive \
 	ps-recursive uninstall-recursive
+HEADERS = $(noinst_HEADERS)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 ETAGS = etags
@@ -266,18 +270,26 @@ AM_CPPFLAGS = -I$(top_srcdir) $(WX_CPPFLAGS) $(LIBEVENT_CPPFLAGS)
 AM_CFLAGS = $(PTHREAD_CFLAGS) $(OPENSSL_CFLAGS)
 AM_CXXFLAGS = $(WX_CXXFLAGS)
 SUBDIRS = images
-Xmission_SOURCES = \
-  speed-stats.cc \
-  filter.cc \
-  torrent-list.cc \
-  torrent-stats.cc \
-  xmission.cc
+noinst_HEADERS = \
+    filter.h \
+    foreach.h \
+    speed-stats.h \
+    torrent-list.h \
+    torrent-stats.h
 
-Xmission_LDADD = \
-  $(top_builddir)/libtransmission/libtransmission.a \
-  $(top_builddir)/third-party/libevent/libevent.la \
-  $(top_builddir)/third-party/miniupnp/libminiupnp.a \
-  $(WX_LIBS) $(OPENSSL_LIBS) $(PTHREAD_LIBS) -lm
+xmission_SOURCES = \
+    speed-stats.cc \
+    filter.cc \
+    torrent-list.cc \
+    torrent-stats.cc \
+    xmission.cc
+
+xmission_LDADD = \
+    $(top_builddir)/libtransmission/libtransmission.a \
+    $(top_builddir)/third-party/libevent/libevent.la \
+    $(top_builddir)/third-party/miniupnp/libminiupnp.a \
+    $(top_builddir)/third-party/libnatpmp/libnatpmp.a \
+    $(WX_LIBS) $(OPENSSL_LIBS) $(PTHREAD_LIBS) -lm
 
 all: all-recursive
 
@@ -340,9 +352,9 @@ clean-binPROGRAMS:
 	  echo " rm -f $$p $$f"; \
 	  rm -f $$p $$f ; \
 	done
-Xmission$(EXEEXT): $(Xmission_OBJECTS) $(Xmission_DEPENDENCIES) 
-	@rm -f Xmission$(EXEEXT)
-	$(CXXLINK) $(Xmission_OBJECTS) $(Xmission_LDADD) $(LIBS)
+xmission$(EXEEXT): $(xmission_OBJECTS) $(xmission_DEPENDENCIES) 
+	@rm -f xmission$(EXEEXT)
+	$(CXXLINK) $(xmission_OBJECTS) $(xmission_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -559,7 +571,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-recursive
-all-am: Makefile $(PROGRAMS)
+all-am: Makefile $(PROGRAMS) $(HEADERS)
 installdirs: installdirs-recursive
 installdirs-am:
 	for dir in "$(DESTDIR)$(bindir)"; do \

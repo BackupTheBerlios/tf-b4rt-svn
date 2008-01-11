@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: ipcparse.c 4404 2008-01-01 17:20:20Z charles $
+ * $Id: ipcparse.c 4538 2008-01-07 04:28:41Z livings124 $
  *
  * Copyright (c) 2007-2008 Joshua Elsasser
  *
@@ -761,7 +761,7 @@ ipc_addstat( benc_val_t * list, int tor,
                 error = st->error;
                 if( TR_OK == error )
                 {
-                    tr_bencInitStr( item, "other", -1, 1 );
+                    tr_bencInitStr( item, "", -1, 1 );
                 }
                 else if( TR_ERROR_ISSET( TR_ERROR_ASSERT, error ) )
                 {
@@ -801,7 +801,11 @@ ipc_addstat( benc_val_t * list, int tor,
                 }
                 break;
             case IPC_ST_ERRMSG:
-                if( '\0' == st->errorString[0] )
+                if( TR_OK == st->error )
+                {
+                    tr_bencInitStr( item, "", -1, 1 );
+                }
+                else if( '\0' == st->errorString[0] )
                 {
                     tr_bencInitStr( item, "other", -1, 1 );
                 }
@@ -835,7 +839,7 @@ ipc_addstat( benc_val_t * list, int tor,
                                 st->peersFrom[TR_PEER_FROM_PEX] );
                 break;
             case IPC_ST_PEERTOTAL:
-                tr_bencInitInt( item, st->peersKnown );
+                tr_bencInitInt( item, st->peersConnected );
                 break;
             case IPC_ST_PEERUP:
                 tr_bencInitInt( item, st->peersGettingFromUs );
