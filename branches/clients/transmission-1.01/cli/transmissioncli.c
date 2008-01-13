@@ -468,15 +468,19 @@ int main( int argc, char ** argv )
 				} 
 				else if ( ( TOF_seedLimit > 0 ) && ( ( s->ratio * 100.0 ) > (float)TOF_seedLimit ) ) 
 				{
-					sprintf( TOF_message, "Seed-limit %d reached, setting shutdown-flag...\n", TOF_seedLimit );
+					sprintf( TOF_message, "Seed-limit %d%% reached, setting shutdown-flag...\n", TOF_seedLimit );
 					TOF_print( TOF_message );
 					gotsig = 1;
 				}
 			}
-            TOF_writeStatus(s, info, 1, "Download Succeeded!" );
+            TOF_writeStatus(s, info, 1, "Download Succeeded" );
         }
         else if( s->status & TR_STATUS_STOPPED )
         {
+			if (s->percentDone >= 1)
+				TOF_writeStatus(s, info, 0, "Download Succeeded" );
+			else 
+				TOF_writeStatus(s, info, 0, "Torrent Stopped" );
             break;
         }
 
@@ -501,11 +505,6 @@ int main( int argc, char ** argv )
         }
         tr_wait( 500 );
     }
-	
-	if (s->percentDone >= 1)
-		TOF_writeStatus(s, info, 0, "Download Succeeded" );
-	else 
-		TOF_writeStatus(s, info, 0, "Torrent Stopped" );
 
 	TOF_deletePID();
 	
