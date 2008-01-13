@@ -477,11 +477,7 @@ int main( int argc, char ** argv )
         }
         else if( s->status & TR_STATUS_STOPPED )
         {
-			if (s->percentDone >= 1)
-				TOF_writeStatus(s, info, 0, "Download Succeeded" );
-			else 
-				TOF_writeStatus(s, info, 0, "Torrent Stopped" );
-            break;
+			break;
         }
 
         if( s->error )
@@ -506,6 +502,11 @@ int main( int argc, char ** argv )
         tr_wait( 500 );
     }
 
+	if (s->percentDone >= 1)
+		TOF_writeStatus(s, info, 0, "Download Succeeded" );
+	else 
+		TOF_writeStatus(s, info, 0, "Torrent Stopped" );
+            
 	TOF_deletePID();
 	
 	TOF_print("Transmission exit.\n");
@@ -755,7 +756,7 @@ static void TOF_deletePID( void )
 
 static void TOF_writeStatus( const tr_stat *s, const tr_info *info, const int state, const char *status )
 {
-	if( !TOF_writeAllowed() ) return;
+	if( !TOF_writeAllowed() && state != 0 ) return;
 	
 	TOF_statFp = fopen(TOF_statFile, "w+");
 	if (TOF_statFp != NULL) 
