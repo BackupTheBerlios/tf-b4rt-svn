@@ -33,7 +33,7 @@ function netstatConnectionsSum() {
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
-			return intval(trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -cE '".$webserverUser.".+(python|transmission|wget|nzbperl|java).+tcp.+[[:digit:]]:[[:digit:]].+\*:\*|".$webserverUser.".+wget.+tcp.+[[:digit:]]:[[:digit:]].+[[:digit:]]:(21|80)'")));
+			return intval(trim(shell_exec($cfg['bin_sockstat']." -c -4 -P tcp | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." -cE '".$webserverUser.".+(python|transmissi|wget|nzbperl|java)'")));
 	}
 	return 0;
 }
@@ -62,8 +62,7 @@ function netstatConnectionsByPid($transferPid) {
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
-			$netcon = intval(trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -cE ".$webserverUser.".+".$transferPid.".+tcp.+[[:digit:]]:[[:digit:]]")));
-			return $netcon;
+			return intval(trim(shell_exec($cfg['bin_sockstat']." -P tcp -c | ".$cfg['bin_grep']." -cE ".$webserverUser.".+".$transferPid)));
 	}
 }
 
@@ -90,7 +89,7 @@ function netstatPortList() {
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
-			$retStr .= shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_awk']." '/(python|transmis|wget|nzbperl|java).+tcp.+([[:digit:]]|\*):[[:digit:]]/ {split(\$6, a, \":\");print a[2]}'");
+			$retStr .= shell_exec($cfg['bin_sockstat']." -4 -c -P tcp | ".$cfg['bin_awk']." '/(python|transmissi|wget|nzbperl|java)/ {split(\$6, a, \":\");print a[2]}'");
 			break;
 	}
 	return $retStr;
@@ -147,7 +146,7 @@ function netstatHostList() {
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
-			$retStr .= shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -E \"".$webserverUser.".+(python|transmis|wget|nzbperl|java).+tcp.+[[:digit:]]:[[:digit:]].+[[:digit:]]:[[:digit:]]\"");
+			$retStr .= shell_exec($cfg['bin_sockstat']." -4 -P tcp -c | ".$cfg['bin_awk']." '/".$webserverUser.".+(python|transmissi|nzbperl|wget|java)/ {split(\$7, a, \":\"); print a[1]}'");
 			break;
 	}
 	return $retStr;
@@ -178,7 +177,7 @@ function netstatHostsByPid($transferPid) {
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
-			$hostList = shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_awk']." '/".$webserverUser.".+".$transferPid.".+tcp.+[0-9]:[0-9].+[0-9]:[0-9]/ {print \$7}'");
+			$hostList = shell_exec($cfg['bin_sockstat']." -P tcp -4 -c | ".$cfg['bin_awk']." '/".$webserverUser.".+".$transferPid."/ {print \$7}'");
 			break;
 	}
 	$retVal = array();
