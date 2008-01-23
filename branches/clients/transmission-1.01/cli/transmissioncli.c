@@ -149,6 +149,7 @@ main( int argc, char ** argv )
     tr_handle  * h;
 	const tr_info  *information;
     tr_ctor * ctor;
+	const tr_stat * s;
 	tr_torrent * tor = NULL;
 
 	char TOF_eta[50];
@@ -378,7 +379,6 @@ main( int argc, char ** argv )
     for( ;; )
     {
 		/* Torrentflux -START */
-		const tr_stat * s;
 		
 		TOF_checkCmd++;
 		
