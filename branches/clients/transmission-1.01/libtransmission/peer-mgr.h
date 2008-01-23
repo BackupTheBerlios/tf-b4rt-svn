@@ -7,14 +7,19 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  *
- * $Id: peer-mgr.h 4555 2008-01-08 01:57:48Z charles $
+ * $Id: peer-mgr.h 4773 2008-01-21 01:54:54Z charles $
  */
 
 #ifndef TR_PEER_MGR_H
 #define TR_PEER_MGR_H
 
 #include <inttypes.h> /* uint16_t */
+
+#ifdef WIN32
+#include <winsock2.h> /* struct in_addr */
+#else
 #include <netinet/in.h> /* struct in_addr */
+#endif
 
 struct in_addr;
 struct tr_handle;

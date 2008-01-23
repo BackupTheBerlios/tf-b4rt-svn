@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: Torrent.h 4500 2008-01-05 18:27:19Z livings124 $
+ * $Id: Torrent.h 4785 2008-01-21 19:35:00Z livings124 $
  *
  * Copyright (c) 2006-2008 Transmission authors and contributors
  *
@@ -75,6 +75,7 @@ typedef enum
 
 - (id) initWithPath: (NSString *) path location: (NSString *) location deleteTorrentFile: (torrentFileState) torrentDelete
         lib: (tr_handle *) lib;
+- (id) initWithData: (NSData *) data location: (NSString *) location lib: (tr_handle *) lib;
 - (id) initWithHistory: (NSDictionary *) history lib: (tr_handle *) lib;
 
 - (NSDictionary *) history;

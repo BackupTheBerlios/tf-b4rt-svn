@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: dialogs.c 4404 2008-01-01 17:20:20Z charles $
+ * $Id: dialogs.c 4781 2008-01-21 15:51:50Z charles $
  *
  * Copyright (c) 2005-2008 Transmission authors and contributors
  *
@@ -366,8 +366,14 @@ askquit( TrCore          * core,
     GtkWidget * wind;
     GtkWidget * dontask;
 
-    if( !pref_flag_get( PREF_KEY_ASKQUIT ) )
-    {
+    /* if the user doesn't want to be asked, don't ask */
+    if( !pref_flag_get( PREF_KEY_ASKQUIT ) ) {
+        func( cbdata );
+        return;
+    }
+
+    /* if there aren't any torrents, don't ask */
+    if( !tr_torrentCount( tr_core_handle( core ) ) ) {
         func( cbdata );
         return;
     }

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: util.h 4404 2008-01-01 17:20:20Z charles $
+ * $Id: util.h 4676 2008-01-15 17:55:10Z charles $
  *
  * Copyright (c) 2005-2008 Transmission authors and contributors
  *
@@ -129,6 +129,8 @@ gboolean
 on_tree_view_button_pressed (GtkWidget       * view,
                              GdkEventButton  * event,
                              gpointer          unused);
+
+gpointer tr_object_ref_sink (gpointer object);
 
 #endif /* GTK_MAJOR_VERSION */
 

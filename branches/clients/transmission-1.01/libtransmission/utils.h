@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: utils.h 4404 2008-01-01 17:20:20Z charles $
+ * $Id: utils.h 4778 2008-01-21 03:01:24Z charles $
  *
  * Copyright (c) 2005-2008 Transmission authors and contributors
  *
@@ -40,11 +40,26 @@ FILE* tr_getLog( void );
 
 char* tr_getLogTimeStr( char * buf, int buflen );
 
-int tr_rand ( int );
+/** Returns a random number in the range of [0...n) */
+int tr_rand ( int n );
 
+/**
+ * a portability wrapper around mkdir().
+ * On WIN32, the `permissions' argument is unused.
+ *
+ * @return zero on success, or -1 if an error occurred
+ * (in which case errno is set appropriately).
+ */
+int tr_mkdir( const char * path, int permissions );
+
+/**
+ * Like mkdir, but makes parent directories as needed.
+ *
+ * @return zero on success, or -1 if an error occurred
+ * (in which case errno is set appropriately).
+ */
 int tr_mkdirp( const char * path, int permissions );
 
-int tr_mkdir( const char * path, int permissions );
 
 uint8_t* tr_loadFile( const char * filename, size_t * size );
 
@@ -61,9 +76,9 @@ void tr_buildPath( char* buf, size_t buflen,
 struct timeval timevalMsec( uint64_t milliseconds );
 
 
-int    tr_ioErrorFromErrno( void );
+int tr_ioErrorFromErrno( void );
 
-char * tr_errorString( int code );
+const char * tr_errorString( int code );
 
 /* return the current date in milliseconds */
 uint64_t tr_date( void );
@@ -149,5 +164,7 @@ int    tr_bitfieldIsEmpty( const tr_bitfield* );
 size_t tr_bitfieldCountTrueBits( const tr_bitfield* );
 
 tr_bitfield* tr_bitfieldOr( tr_bitfield*, const tr_bitfield* );
+
+double tr_getRatio( double numerator, double denominator );
 
 #endif

@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  *
- * $Id: trevent.c 4404 2008-01-01 17:20:20Z charles $
+ * $Id: trevent.c 4790 2008-01-22 00:20:48Z charles $
  */
 
 #include <assert.h>
@@ -17,11 +17,8 @@
 #include <stdio.h>
 
 #include <signal.h>
-#include <sys/queue.h> /* for evhttp */
-#include <sys/types.h> /* for evhttp */
 
 #include <event.h>
-#include <evdns.h>
 #include <evhttp.h>
 
 #include "transmission.h"
@@ -145,7 +142,6 @@ pumpList( int i UNUSED, short s UNUSED, void * veh )
         timeout_add( &eh->pulse, &eh->pulseInterval );
     else {
         assert( eh->timerCount ==  0 );
-        evdns_shutdown( FALSE );
         event_del( &eh->pulse );
     }
 }
@@ -179,7 +175,6 @@ libeventThreadFunc( void * veh )
 #endif
 
     eh->base = event_init( );
-    evdns_init( );
     timeout_set( &eh->pulse, pumpList, veh );
     timeout_add( &eh->pulse, &eh->pulseInterval );
     eh->h->events = eh;

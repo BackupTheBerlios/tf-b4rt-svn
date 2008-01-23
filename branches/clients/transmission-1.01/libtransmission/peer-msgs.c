@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  *
- * $Id: peer-msgs.c 4589 2008-01-10 04:01:41Z charles $
+ * $Id: peer-msgs.c 4776 2008-01-21 02:07:55Z charles $
  */
 
 #include <assert.h>
@@ -16,8 +16,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <libgen.h> /* basename */
-
-#include <netinet/in.h> /* struct in_addr */
 
 #include <event.h>
 
@@ -72,13 +70,7 @@ enum
     PEER_PULSE_INTERVAL     = (100),       /* msec between calls to pulse() */
     RATE_PULSE_INTERVAL     = (250),       /* msec between calls to ratePulse() */
 
-    /* 13 is the size of the BitTorrent overhead of a BT_PIECE message...
-     * since all (or nearly all) piece requests are 16 K, this typically
-     * means we'd fill a 4096 K outbuf 5 times (4096, 4096, 4096, 4096, 13)
-     * but by adding the 13 here we can shorten it to 4 refills... not sure
-     * if this actually makes any difference since the libevent layer smooths
-     * things out anyway, but it doesn't hurt either... */
-    MAX_OUTBUF_SIZE         = (4096 + 13),
+    MAX_OUTBUF_SIZE         = (1024),
      
     /* Fast Peers Extension constants */
     MAX_FAST_ALLOWED_COUNT   = 10,          /* max. number of pieces we fast-allow to another peer */
@@ -290,7 +282,7 @@ static void
 fireGotError( tr_peermsgs * msgs )
 {
     tr_peermsgs_event e = blankEvent;
-    e.eventType = TR_PEERMSG_GOT_ERROR;
+    e.eventType = TR_PEERMSG_ERROR;
     publish( msgs, &e );
 }
 
@@ -600,29 +592,29 @@ expireOldRequests( tr_peermsgs * msgs )
     tr_list * prune = NULL;
     const time_t now = time( NULL );
 
-    // find queued requests that are too old
-    // "time_requested" here is when the request was queued
+    /* find queued requests that are too old
+       "time_requested" here is when the request was queued */
     for( l=msgs->clientWillAskFor; l!=NULL; l=l->next ) {
         struct peer_request * req = l->data;
         if( req->time_requested + REQUEST_TTL_SECS < now )
             tr_list_prepend( &prune, req );
     }
 
-    // find sent requests that are too old
-    // "time_requested" here is when the request was sent
+    /* find sent requests that are too old
+       "time_requested" here is when the request was sent */
     for( l=msgs->clientAskedFor; l!=NULL; l=l->next ) {
         struct peer_request * req = l->data;
         if( req->time_requested + REQUEST_TTL_SECS < now )
             tr_list_prepend( &prune, req );
     }
 
-    // expire the old requests
+    /* expire the old requests */
     for( l=prune; l!=NULL; l=l->next ) {
         struct peer_request * req = l->data;
         tr_peerMsgsCancel( msgs, req->index, req->offset, req->length );
     }
 
-    // cleanup
+    /* cleanup */
     tr_list_free( &prune, NULL );
 }
 
@@ -1172,7 +1164,7 @@ readBtMessage( tr_peermsgs * msgs, struct evbuffer * inbuf, size_t inlen )
     const uint8_t id = msgs->incoming.id;
     const size_t startBufLen = EVBUFFER_LENGTH( inbuf );
 
-    --msglen; // id length
+    --msglen; /* id length */
 
     if( inlen < msglen )
         return READ_MORE;
@@ -1399,7 +1391,7 @@ clientGotBlock( tr_peermsgs                * msgs,
                 const uint8_t              * data,
                 const struct peer_request  * req )
 {
-    int i;
+    int err;
     tr_torrent * tor = msgs->torrent;
     const int block = _tr_block( tor, req->index, req->offset );
     struct peer_request *myreq;
@@ -1452,9 +1444,8 @@ clientGotBlock( tr_peermsgs                * msgs,
     **/
 
     msgs->info->peerSentPieceDataAt = time( NULL );
-    i = tr_ioWrite( tor, req->index, req->offset, req->length, data );
-    if( i )
-        return 0;
+    if(( err = tr_ioWrite( tor, req->index, req->offset, req->length, data )))
+        return err;
 
     tr_cpBlockAdd( tor->completion, block );
 
@@ -1695,12 +1686,10 @@ gotError( struct bufferevent * evbuf UNUSED, short what, void * vmsgs )
 {
     if( what & EVBUFFER_TIMEOUT )
         dbgmsg( vmsgs, "libevent got a timeout, what=%hd", what );
-
-    if( what & ( EVBUFFER_EOF | EVBUFFER_ERROR ) ) {
+    if( what & ( EVBUFFER_EOF | EVBUFFER_ERROR ) )
         dbgmsg( vmsgs, "libevent got an error! what=%hd, errno=%d (%s)",
                 what, errno, strerror(errno) );
-        fireGotError( vmsgs );
-    }
+    fireGotError( vmsgs );
 }
 
 static void
@@ -1898,14 +1887,9 @@ tr_peerMsgsNew( struct tr_torrent * torrent,
     m->incoming.block = evbuffer_new( );
     m->outBlock = evbuffer_new( );
     m->peerAllowedPieces = NULL;
-    m->clientAllowedPieces = NULL;
-    m->clientSuggestedPieces = NULL;
+    m->clientAllowedPieces = tr_bitfieldNew( m->torrent->info.pieceCount );
+    m->clientSuggestedPieces = tr_bitfieldNew( m->torrent->info.pieceCount );
     *setme = tr_publisherSubscribe( m->publisher, func, userData );
-    
-    if ( tr_peerIoSupportsFEXT( m->io ) ) {
-        m->clientAllowedPieces = tr_bitfieldNew( m->torrent->info.pieceCount );
-        m->clientSuggestedPieces = tr_bitfieldNew( m->torrent->info.pieceCount );
-    }
     
     tr_peerIoSetTimeoutSecs( m->io, 150 ); /* timeout after N seconds of inactivity */
     tr_peerIoSetIOFuncs( m->io, canRead, didWrite, gotError, m );

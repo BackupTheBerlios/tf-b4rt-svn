@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: util.c 4404 2008-01-01 17:20:20Z charles $
+ * $Id: util.c 4749 2008-01-20 03:25:12Z charles $
  *
  * Copyright (c) 2005-2008 Transmission authors and contributors
  *
@@ -81,7 +81,7 @@ tr_strlspeed( char * buf, double KiBps, size_t buflen )
     else {
         char bbuf[64];
         tr_strlsize( bbuf, (guint64)(KiBps*1024), sizeof(bbuf) );
-        g_snprintf( buf, buflen, "%s/s", bbuf );
+        g_snprintf( buf, buflen, _("%s/s"), bbuf );
     }
     return buf;
 }
@@ -437,3 +437,14 @@ on_tree_view_button_pressed (GtkWidget       * view,
   return FALSE;
 }
 
+gpointer
+tr_object_ref_sink( gpointer object )
+{
+#if GLIB_CHECK_VERSION(2,10,0)
+    g_object_ref_sink( object );
+#else
+    g_object_ref( object );
+    gtk_object_sink( GTK_OBJECT( object ) );
+#endif
+    return object;
+}

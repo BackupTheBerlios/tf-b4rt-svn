@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: PrefsController.m 4521 2008-01-06 17:52:34Z livings124 $
+ * $Id: PrefsController.m 4753 2008-01-20 04:50:52Z livings124 $
  *
  * Copyright (c) 2005-2008 Transmission authors and contributors
  *
@@ -143,7 +143,7 @@
                         selector: @selector(updatePortStatus) userInfo: nil repeats: YES];
     
     //set peer connections
-    [fPeersGlobalField setIntValue: [fDefaults integerForKey: @"PeersGlobal"]];
+    [fPeersGlobalField setIntValue: [fDefaults integerForKey: @"PeersTotal"]];
     [fPeersTorrentField setIntValue: [fDefaults integerForKey: @"PeersTorrent"]];
     
     //set queue values
@@ -330,7 +330,7 @@
 - (void) setPeersGlobal: (id) sender
 {
     int count = [sender intValue];
-    [fDefaults setInteger: count forKey: @"PeersGlobal"];
+    [fDefaults setInteger: count forKey: @"PeersTotal"];
     tr_setGlobalPeerLimit(fHandle, count);
 }
 

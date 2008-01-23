@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  *
- * $Id: peer-mgr.c 4627 2008-01-11 20:14:49Z charles $
+ * $Id: peer-mgr.c 4776 2008-01-21 02:07:55Z charles $
  */
 
 #include <assert.h>
@@ -17,7 +17,6 @@
 #include <limits.h> /* INT_MAX */
 
 #include <libgen.h> /* basename */
-#include <arpa/inet.h> /* inet_ntoa */
 
 #include <event.h>
 
@@ -91,11 +90,11 @@ enum
     RECONNECT_PERIOD_MSEC = (2 * 1000),
 
     /* max # of peers to ask fer per torrent per reconnect pulse */
-    MAX_RECONNECTIONS_PER_PULSE = 8,
+    MAX_RECONNECTIONS_PER_PULSE = 1,
 
     /* max number of peers to ask for per second overall.
      * this throttle is to avoid overloading the router */
-    MAX_CONNECTIONS_PER_SECOND = 48,
+    MAX_CONNECTIONS_PER_SECOND = 8,
 
     /* corresponds to ut_pex's added.f flags */
     ADDED_F_ENCRYPTION_FLAG = 1,
@@ -747,7 +746,7 @@ getPreferredBlocks( Torrent * t, uint64_t * setmeCount )
         memcpy( walk, req[s], sizeof(uint64_t) * reqCount[s] );
         walk += reqCount[s];
     }
-    assert( ( walk - ret ) == blockCount );
+    assert( ( walk - ret ) == ( int )blockCount );
     *setmeCount = blockCount;
 
     /* cleanup */
@@ -925,7 +924,7 @@ msgsCallbackFunc( void * vpeer, void * vevent, void * vt )
             peer->doPurge = 1;
             break;
 
-        case TR_PEERMSG_GOT_ERROR:
+        case TR_PEERMSG_ERROR:
             peer->doPurge = 1;
             break;
 
@@ -950,6 +949,16 @@ ensureAtomExists( Torrent * t, const struct in_addr * addr, uint16_t port, uint8
         tordbg( t, "got a new atom: %s", tr_peerIoAddrStr(&a->addr,a->port) );
         tr_ptrArrayInsertSorted( t->pool, a, comparePeerAtoms );
     }
+}
+
+static int
+getMaxPeerCount( const tr_torrent * tor UNUSED )
+{
+#if 0
+    return t->tor->maxConnectedPeers;
+#else
+    return 50;
+#endif
 }
 
 /* FIXME: this is kind of a mess. */
@@ -1012,7 +1021,7 @@ myHandshakeDoneCB( tr_handshake    * handshake,
             tordbg( t, "banned peer %s tried to reconnect", tr_peerIoAddrStr(&atom->addr,atom->port) );
             tr_peerIoFree( io );
         }
-        else if( tr_ptrArraySize( t->peers ) >= t->tor->maxConnectedPeers )
+        else if( tr_ptrArraySize( t->peers ) >= getMaxPeerCount( t->tor ) )
         {
             tr_peerIoFree( io );
         }
@@ -1397,6 +1406,18 @@ tr_peerMgrHasConnections( const tr_peerMgr * manager,
     return ret;
 }
 
+static int
+clientIsDownloadingFrom( const tr_peer * peer )
+{
+    return peer->clientIsInterested && !peer->clientIsChoked;
+}
+
+static int
+clientIsUploadingTo( const tr_peer * peer )
+{
+    return peer->peerIsInterested && !peer->peerIsChoked;
+}
+
 void
 tr_peerMgrTorrentStats( const tr_peerMgr * manager,
                         const uint8_t    * torrentHash,
@@ -1435,10 +1456,10 @@ tr_peerMgrTorrentStats( const tr_peerMgr * manager,
 
         ++setmePeersFrom[atom->from];
 
-        if( peer->rateToPeer > 0.01 )
+        if( clientIsUploadingTo( peer ) )
             ++*setmePeersGettingFromUs;
 
-        if( peer->rateToClient > 0.01 )
+        if( clientIsDownloadingFrom( peer ) )
             ++*setmePeersSendingToUs;
     }
 
@@ -1476,8 +1497,8 @@ tr_peerMgrPeerStats( const tr_peerMgr  * manager,
         stat->isEncrypted      = tr_peerIoIsEncrypted( peer->io ) ? 1 : 0;
         stat->uploadToRate     = peer->rateToPeer;
         stat->downloadFromRate = peer->rateToClient;
-        stat->isDownloading    = stat->uploadToRate > 0.01;
-        stat->isUploading      = stat->downloadFromRate > 0.01;
+        stat->isDownloading    = clientIsDownloadingFrom( peer );
+        stat->isUploading      = clientIsUploadingTo( peer );
         stat->status           = peer->status;
     }
 
@@ -1597,7 +1618,7 @@ rechoke( Torrent * t )
         i = tr_rand( tr_ptrArraySize( randPool ) );
         c = ( struct ChokeData* )tr_ptrArrayNth( randPool, i);
         c->doUnchoke = 1;
-        t->optimistic =  c->peer;
+        t->optimistic = c->peer;
         tr_ptrArrayFree( randPool, NULL );
     }
 
@@ -1700,7 +1721,7 @@ shouldPeerBeClosed( const Torrent * t, const tr_peer * peer, int peerCount )
     /* disconnect if it's been too long since piece data has been transferred.
      * this is on a sliding scale based on number of available peers... */
     if( 1 ) {
-        const int relaxStrictnessIfFewerThanN = (int)((tor->maxConnectedPeers * 0.9) + 0.5);
+        const int relaxStrictnessIfFewerThanN = (int)((getMaxPeerCount(tor) * 0.9) + 0.5);
         /* if we have >= relaxIfFewerThan, strictness is 100%.
          * if we have zero connections, strictness is 0% */
         const double strictness = peerCount >= relaxStrictnessIfFewerThanN
@@ -1794,7 +1815,7 @@ getPeerCandidates( Torrent * t, int * setmeSize )
             continue;
 
         /* we're wasting our time trying to connect to this bozo. */
-        if( atom->numFails > 5 )
+        if( atom->numFails > 3 )
             continue;
 
         /* If we were connected to this peer recently and transferring
@@ -1803,9 +1824,9 @@ getPeerCandidates( Torrent * t, int * setmeSize )
          * hold off on this peer to give another one a try instead */
         if( ( now - atom->piece_data_time ) > 30 )
         {
-            int minWait = (60 * 2); /* two minutes */
-            int maxWait = (60 * 20); /* twenty minutes */
-            int wait = atom->numFails * 30; /* add 30 secs to the wait interval for each consecutive failure*/
+            int minWait = (60 * 10); /* ten minutes */
+            int maxWait = (60 * 30); /* thirty minutes */
+            int wait = atom->numFails * minWait;
             if( wait < minWait ) wait = minWait;
             if( wait > maxWait ) wait = maxWait;
             if( ( now - atom->time ) < wait ) {

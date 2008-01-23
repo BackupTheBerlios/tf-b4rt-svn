@@ -31,7 +31,9 @@
 
 #include <libtransmission/transmission.h>
 #include <libtransmission/makemeta.h>
+#include <libtransmission/metainfo.h> /* tr_metainfoFree */
 #include <libtransmission/utils.h> /* tr_wait */
+
 
 /* macro to shut up "unused parameter" warnings */
 #ifdef __GNUC__
@@ -82,7 +84,6 @@ static int           natTraversal  = 0;
 static int           recheckData   = 0;
 static sig_atomic_t  gotsig        = 0;
 static sig_atomic_t  manualUpdate  = 0;
-static tr_torrent    * tor;
 
 static char          * finishCall   = NULL;
 static char          * announce     = NULL;
@@ -120,7 +121,8 @@ static void TOF_deletePID ( void );
 static int  TOF_writeAllowed ( void );
 /* -END- */
 
-/* char * getStringRatio( float ratio )
+/*static char *
+getStringRatio( float ratio )
 {
     static char string[20];
 
@@ -140,14 +142,14 @@ torrentStateChanged( tr_torrent   * torrent UNUSED,
     system( finishCall );
 }
 
-int main( int argc, char ** argv )
+int 
+main( int argc, char ** argv )
 {
     int i, error;
     tr_handle  * h;
-    const tr_stat    * s;
-	const tr_info    * info;
-    tr_handle_status * hstat;
+	tr_info    info;
     tr_ctor * ctor;
+	tr_torrent * tor = NULL;
 
 	char TOF_eta[50];
 	
@@ -184,9 +186,9 @@ int main( int argc, char ** argv )
                      natTraversal,            /* nat enabled */
                      bindPort,                /* public port */
                      TR_ENCRYPTION_PREFERRED, /* encryption mode */
-                     uploadLimit > 0,         /* use upload speed limit? */
+                     uploadLimit >= 0,         /* use upload speed limit? */
                      uploadLimit,             /* upload speed limit */
-                     downloadLimit > 0,       /* use download speed limit? */
+                     downloadLimit >= 0,       /* use download speed limit? */
                      downloadLimit,           /* download speed limit */
                      512,                     /* globalPeerLimit */
                      verboseLevel + 1,        /* messageLevel */
@@ -210,55 +212,61 @@ int main( int argc, char ** argv )
     tr_ctorSetMetainfoFromFile( ctor, torrentPath );
     tr_ctorSetPaused( ctor, TR_FORCE, 0 );
     tr_ctorSetDestination( ctor, TR_FORCE, savePath );
-    tor = tr_torrentNew( h, ctor, &error );
-    tr_ctorFree( ctor );
-    if( tor == NULL )
-    {
-        sprintf( TOF_message, "Failed opening torrent file '%s'\n", torrentPath );
-        TOF_print( TOF_message );
-        tr_close( h );
-        return EXIT_FAILURE;
-    }
 
     if( showInfo )
     {
         info = tr_torrentInfo( tor );
 
-        s = tr_torrentStat( tor );
+        if( !tr_torrentParse( h, ctor, &info ) )
+        {
+            printf( "hash:\t" );
+            for( i=0; i<SHA_DIGEST_LENGTH; ++i )
+                printf( "%02x", info.hash[i] );
+            printf( "\n" );
 
-        /* Print torrent info (quite à la btshowmetainfo) */
-        printf( "hash:     " );
-        for( i = 0; i < SHA_DIGEST_LENGTH; i++ )
-        {
-            printf( "%02x", info->hash[i] );
-        }
-        printf( "\n" );
-        printf( "tracker:  %s:%d\n",
-                s->tracker->address, s->tracker->port );
-        printf( "announce: %s\n", s->tracker->announce );
-        printf( "size:     %"PRIu64" (%"PRIu64" * %d + %"PRIu64")\n",
-                info->totalSize, info->totalSize / info->pieceSize,
-                info->pieceSize, info->totalSize % info->pieceSize );
-        if( info->comment[0] )
-        {
-            printf( "comment:  %s\n", info->comment );
-        }
-        if( info->creator[0] )
-        {
-            printf( "creator:  %s\n", info->creator );
-        }
-        if( info->isPrivate )
-        {
-            printf( "private flag set\n" );
-        }
-        printf( "file(s):\n" );
-        for( i = 0; i < info->fileCount; i++ )
-        {
-            printf( " %s (%"PRIu64")\n", info->files[i].name,
-                    info->files[i].length );
+            printf( "name:\t%s\n", info.name );
+
+            for( i=0; i<info.trackerTiers; ++i ) {
+                int j;
+                printf( "tracker tier #%d:\n", ( i+1 ) );
+                for( j=0; j<info.trackerList[i].count; ++j ) {
+                    const tr_tracker_info * tracker = &info.trackerList[i].list[j];
+                    printf( "\taddress:\t%s:%d\n", tracker->address, tracker->port );
+                    printf( "\tannounce:\t%s\n", tracker->announce );
+                    printf( "\n" );
+                }
+            }
+
+            printf( "size:\t%"PRIu64" (%"PRIu64" * %d + %"PRIu64")\n",
+                    info.totalSize, info.totalSize / info.pieceSize,
+                    info.pieceSize, info.totalSize % info.pieceSize );
+
+            if( info.comment[0] )
+                printf( "comment:\t%s\n", info.comment );
+            if( info.creator[0] )
+                printf( "creator:\t%s\n", info.creator );
+            if( info.isPrivate )
+                printf( "private flag set\n" );
+
+            printf( "file(s):\n" );
+            for( i=0; i<info.fileCount; ++i )
+                printf( "\t%s (%"PRIu64")\n", info.files[i].name, info.files[i].length );
+
+            tr_metainfoFree( &info );
         }
 
+        tr_ctorFree( ctor );
         goto cleanup;
+    }
+	
+	tor = tr_torrentNew( h, ctor, &error );
+    tr_ctorFree( ctor );
+    if( tor == NULL )
+    {
+		sprintf( TOF_message, "Failed opening torrent file `%s'\n", torrentPath );
+        TOF_print( TOF_message );
+        tr_close( h );
+        return EXIT_FAILURE;
     }
     
     if( showScrape )
@@ -370,6 +378,7 @@ int main( int argc, char ** argv )
     for( ;; )
     {
 		/* Torrentflux -START */
+		const tr_stat * s;
 		
 		TOF_checkCmd++;
 		
@@ -493,7 +502,7 @@ int main( int argc, char ** argv )
     tr_natTraversalEnable( h, 0 );
     for( i = 0; i < 10; i++ )
     {
-        hstat = tr_handleStatus( h );
+        const tr_handle_status * hstat = tr_handleStatus( h );
         if( TR_NAT_TRAVERSAL_UNMAPPED == hstat->natTraversalStatus )
         {
             /* Port mappings were deleted */
@@ -754,7 +763,7 @@ static void TOF_deletePID( void )
 	remove(TOF_pidFile);
 }
 
-static void TOF_writeStatus( const tr_stat *s, const tr_info *info, const int state, const char *status )
+static void TOF_writeStatus( const tr_stat *s, tr_info info, const int state, const char *status )
 {
 	if( !TOF_writeAllowed() && state != 0 ) return;
 	

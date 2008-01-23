@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.c 4544 2008-01-07 17:52:51Z charles $
+ * $Id: transmission.c 4776 2008-01-21 02:07:55Z charles $
  *
  * Copyright (c) 2005-2008 Transmission authors and contributors
  *
@@ -189,7 +189,7 @@ tr_handle * tr_init( const char * tag )
                         -1, /* upload speed limit */
                         FALSE, /* use download speed limit? */
                         -1, /* download speed limit */
-                        512, /* globalPeerLimit */
+                        200, /* globalPeerLimit */
                         TR_MSG_INF, /* message level */
                         FALSE ); /* is message queueing enabled? */
 }
@@ -353,7 +353,7 @@ tr_torrentRates( tr_handle * h, float * toClient, float * toPeer )
 }
 
 int
-tr_torrentCount( tr_handle * h )
+tr_torrentCount( const tr_handle * h )
 {
     return h->torrentCount;
 }

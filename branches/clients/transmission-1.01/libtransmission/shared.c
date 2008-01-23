@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: shared.c 4431 2008-01-03 05:29:31Z charles $
+ * $Id: shared.c 4647 2008-01-13 01:14:36Z charles $
  *
  * Copyright (c) 2005-2008 Transmission authors and contributors
  *
@@ -22,6 +22,7 @@
  * DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
 
+#include <errno.h>
 #include <string.h>
 #include <stdio.h>
 

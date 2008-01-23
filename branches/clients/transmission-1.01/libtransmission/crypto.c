@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  *
- * $Id: crypto.c 4404 2008-01-01 17:20:20Z charles $
+ * $Id: crypto.c 4647 2008-01-13 01:14:36Z charles $
  */
 
 #include <sys/types.h> /* for event.h, as well as netinet/in.h on some platforms */
@@ -15,7 +15,6 @@
 #include <inttypes.h> /* uint8_t */
 #include <string.h> /* memcpy */
 #include <stdarg.h>
-#include <netinet/in.h> /* struct in_addr */
 
 #include <openssl/bn.h>
 #include <openssl/dh.h>

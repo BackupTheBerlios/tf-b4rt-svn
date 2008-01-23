@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: net.c 4404 2008-01-01 17:20:20Z charles $
+ * $Id: net.c 4772 2008-01-21 01:51:31Z charles $
  *
  * Copyright (c) 2005-2008 Transmission authors and contributors
  *
@@ -29,9 +29,10 @@
 
 #include <sys/types.h>
 
+#ifdef WIN32
+#include <winsock2.h> /* inet_addr */
+#else
 #include <arpa/inet.h> /* inet_addr */
-
-#ifndef WIN32
 #include <netdb.h>
 #include <fcntl.h>
 #endif

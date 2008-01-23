@@ -7,7 +7,7 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  * 
- * $Id: actions.c 4518 2008-01-06 17:36:46Z charles $
+ * $Id: actions.c 4727 2008-01-17 17:17:50Z charles $
  */
 
 #include <string.h>
@@ -20,7 +20,6 @@
 #include "tr_prefs.h"
 #include "lock.h"
 #include "logo.h"
-#include "status-bar-icons.h"
 
 #define UNUSED G_GNUC_UNUSED
 
@@ -129,7 +128,7 @@ static GtkActionEntry entries[] =
   { "pause-torrent", GTK_STOCK_MEDIA_PAUSE,
     N_("_Pause"), "<control>P", NULL, G_CALLBACK(action_cb) },
   { "remove-torrent", GTK_STOCK_REMOVE,
-    N_("_Remove"), "<control>R", NULL, G_CALLBACK(action_cb) },
+    N_("_Remove"), "<control>Delete", NULL, G_CALLBACK(action_cb) },
   { "create-torrent", GTK_STOCK_NEW,
     N_("Create _New Torrent"), NULL, NULL, G_CALLBACK(action_cb) },
   { "close", GTK_STOCK_CLOSE,
@@ -175,10 +174,7 @@ BuiltinIconInfo;
 const BuiltinIconInfo my_builtin_icons [] =
 {
     { tr_icon_logo, "transmission-logo" },
-    { tr_icon_lock, "transmission-lock" },
-    { tr_arrow_down, "tr-arrow-down" },
-    { tr_arrow_up, "tr-arrow-up" },
-    { tr_yin_yang, "tr-yin-yang" }
+    { tr_icon_lock, "transmission-lock" }
 };
 
 static void

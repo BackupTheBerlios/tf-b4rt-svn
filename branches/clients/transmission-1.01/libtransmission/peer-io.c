@@ -7,15 +7,20 @@
  * This exemption does not extend to derived works not owned by
  * the Transmission project.
  *
- * $Id: peer-io.c 4610 2008-01-11 02:43:47Z charles $
+ * $Id: peer-io.c 4772 2008-01-21 01:51:31Z charles $
  */
 
 #include <assert.h>
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
+
+#ifdef WIN32
+#include <winsock2.h>
+#else
 #include <netinet/in.h> /* struct in_addr */
 #include <arpa/inet.h> /* inet_ntoa */
+#endif
 
 #include <event.h>
 
@@ -237,7 +242,7 @@ const char*
 tr_peerIoAddrStr( const struct in_addr * addr, uint16_t port )
 {
     static char buf[512];
-    snprintf( buf, sizeof(buf), "%s:%u", inet_ntoa( *addr ), (unsigned int)port );
+    snprintf( buf, sizeof(buf), "%s:%u", inet_ntoa( *addr ), ntohs( port ) );
     return buf;
 }
 

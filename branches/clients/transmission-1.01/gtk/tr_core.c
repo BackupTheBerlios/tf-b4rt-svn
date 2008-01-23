@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: tr_core.c 4404 2008-01-01 17:20:20Z charles $
+ * $Id: tr_core.c 4643 2008-01-12 16:45:30Z charles $
  *
  * Copyright (c) 2007-2008 Transmission authors and contributors
  *
@@ -638,7 +638,7 @@ tr_core_delete_torrent( TrCore * self, GtkTreeIter * iter )
     gtk_list_store_remove( GTK_LIST_STORE( self->model ), iter );
     tr_torrentRemoveSaved( tr_torrent_handle( tor ) );
 
-    tr_torrent_sever( tor );
+    g_object_unref( G_OBJECT( tor ) );
 }
 
 static gboolean

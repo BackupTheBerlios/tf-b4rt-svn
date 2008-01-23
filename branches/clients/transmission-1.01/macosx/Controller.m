@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: Controller.m 4560 2008-01-08 02:38:12Z livings124 $
+ * $Id: Controller.m 4788 2008-01-21 22:02:05Z livings124 $
  * 
  * Copyright (c) 2005-2008 Transmission authors and contributors
  *
@@ -203,7 +203,7 @@ void sleepCallBack(void * controller, io_service_t y, natural_t messageType, voi
                         -1, /* reset in prefs */
                         FALSE, /* reset in prefs */
                         -1, /* reset in prefs */
-                        [fDefaults integerForKey: @"PeersGlobal"],
+                        [fDefaults integerForKey: @"PeersTotal"],
                         [fDefaults integerForKey: @"MessageLevel"],
                         YES);
         
@@ -3918,20 +3918,27 @@ void sleepCallBack(void * controller, io_service_t y, natural_t messageType, voi
 
 - (BOOL) ipcAddTorrentData: (NSData *) data directory: (NSString *) directory
 {
-    /* 'data' is the contents of a torrent file, 'directory' is the
-       directory it should download it's files to and may be nil,
-       should return NO if torrent fails to load */
-    return NO;
+    return [self ipcAddTorrentDataAutostart: data directory: directory autostart: [fDefaults boolForKey: @"AutoStartDownload"]];
 }
 
-- (BOOL) ipcAddTorrentDataAutostart: (NSData *) path directory: (NSString *) directory autostart: (BOOL) autostart
+- (BOOL) ipcAddTorrentDataAutostart: (NSData *) data directory: (NSString *) directory autostart: (BOOL) autostart
 {
-    /* 'data' is the contents of a torrent file, 'directory' is the
-       directory it should download it's files to and may be nil,
-       'autostart' is a boolean indicating if the torrent should be
-       automatically started (or queued to start, I guess), should
-       return NO if torrent fails to load */
-    return NO;
+    Torrent * torrent;
+    if ((torrent = [[Torrent alloc] initWithData: data location: directory lib: fLib]))
+    {
+        [torrent update];
+        [fTorrents addObject: torrent];
+        
+        if (autostart)
+            [torrent startTransfer];
+        
+        [torrent release];
+        
+        [self updateTorrentsInQueue];
+        return YES;
+    }
+    else
+        return NO;
 }
 
 - (BOOL) ipcStartTorrents: (NSArray *) torrents

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.h 4589 2008-01-10 04:01:41Z charles $
+ * $Id: transmission.h 4778 2008-01-21 03:01:24Z charles $
  *
  * Copyright (c) 2005-2008 Transmission authors and contributors
  *
@@ -133,7 +133,7 @@ typedef struct tr_session_stats
 {
     uint64_t uploadedBytes;   /* total up */
     uint64_t downloadedBytes; /* total down */
-    double ratio;             /* total up / total down */
+    double ratio;             /* TR_RATIO_INF, TR_RATIO_NA, or total up/down */
     uint64_t filesAdded;      /* number of files added */
     uint64_t sessionCount;    /* program started N times */
     uint64_t secondsActive;   /* how long Transmisson's been running */
@@ -232,7 +232,7 @@ tr_handle_status * tr_handleStatus( tr_handle * );
  ***********************************************************************
  * Returns the count of open torrents
  **********************************************************************/
-int tr_torrentCount( tr_handle * h );
+int tr_torrentCount( const tr_handle * h );
 
 
 typedef struct tr_torrent tr_torrent;
@@ -764,6 +764,7 @@ struct tr_stat
 
 #define TR_RATIO_NA  -1
 #define TR_RATIO_INF -2
+    /* TR_RATIO_INF, TR_RATIO_NA, or a regular ratio */
     float               ratio;
     
     uint64_t            startDate;

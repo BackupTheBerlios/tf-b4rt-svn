@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: torrent.c 4562 2008-01-08 03:08:37Z charles $
+ * $Id: torrent.c 4778 2008-01-21 03:01:24Z charles $
  *
  * Copyright (c) 2005-2008 Transmission authors and contributors
  *
@@ -659,10 +659,8 @@ tr_torrentStat( tr_torrent * tor )
 
         tr_bitfieldFree( availablePieces );
     }
-   
-    s->ratio = ( s->downloadedEver || s->haveValid )
-      ? s->uploadedEver / (float)(MAX(s->downloadedEver,s->haveValid))
-      : TR_RATIO_NA;
+
+    s->ratio = tr_getRatio( s->uploadedEver, MAX( s->downloadedEver, s->haveValid ) );
     
     tr_torrentUnlock( tor );
 
@@ -996,12 +994,15 @@ closeTorrent( void * vtor )
 void
 tr_torrentClose( tr_torrent * tor )
 {
-    tr_globalLock( tor->handle );
+    if( tor != NULL )
+    {
+        tr_globalLock( tor->handle );
 
-    tr_torrentClearStatusCallback( tor );
-    tr_runInEventThread( tor->handle, closeTorrent, tor );
+        tr_torrentClearStatusCallback( tor );
+        tr_runInEventThread( tor->handle, closeTorrent, tor );
 
-    tr_globalUnlock( tor->handle );
+        tr_globalUnlock( tor->handle );
+    }
 }
 
 /**

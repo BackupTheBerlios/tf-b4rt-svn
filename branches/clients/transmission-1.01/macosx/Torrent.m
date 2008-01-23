@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: Torrent.m 4611 2008-01-11 04:06:18Z livings124 $
+ * $Id: Torrent.m 4785 2008-01-21 19:35:00Z livings124 $
  *
  * Copyright (c) 2006-2008 Transmission authors and contributors
  *
@@ -31,7 +31,7 @@ static int static_lastid = 0;
 
 @interface Torrent (Private)
 
-- (id) initWithHash: (NSString *) hashString path: (NSString *) path lib: (tr_handle *) lib
+- (id) initWithHash: (NSString *) hashString path: (NSString *) path data: (NSData *) data lib: (tr_handle *) lib
         publicTorrent: (NSNumber *) publicTorrent
         downloadFolder: (NSString *) downloadFolder
         useIncompleteFolder: (NSNumber *) useIncompleteFolder incompleteFolder: (NSString *) incompleteFolder
@@ -70,7 +70,7 @@ void completenessChangeCallback(tr_torrent * torrent, cp_status_t status, void *
 - (id) initWithPath: (NSString *) path location: (NSString *) location deleteTorrentFile: (torrentFileState) torrentDelete
         lib: (tr_handle *) lib
 {
-    self = [self initWithHash: nil path: path lib: lib
+    self = [self initWithHash: nil path: path data: nil lib: lib
             publicTorrent: torrentDelete != TORRENT_FILE_DEFAULT
                             ? [NSNumber numberWithBool: torrentDelete == TORRENT_FILE_SAVE] : nil
             downloadFolder: location
@@ -88,10 +88,24 @@ void completenessChangeCallback(tr_torrent * torrent, cp_status_t status, void *
     return self;
 }
 
+- (id) initWithData: (NSData *) data location: (NSString *) location lib: (tr_handle *) lib
+{
+    self = [self initWithHash: nil path: nil data: data lib: lib
+            publicTorrent: nil
+            downloadFolder: location
+            useIncompleteFolder: nil incompleteFolder: nil
+            dateAdded: nil dateCompleted: nil
+            dateActivity: nil
+            ratioSetting: nil ratioLimit: nil
+            waitToStart: nil orderValue: nil groupValue: nil];
+    
+    return self;
+}
+
 - (id) initWithHistory: (NSDictionary *) history lib: (tr_handle *) lib
 {
     self = [self initWithHash: [history objectForKey: @"TorrentHash"]
-                path: [history objectForKey: @"TorrentPath"] lib: lib
+                path: [history objectForKey: @"TorrentPath"] data: nil lib: lib
                 publicTorrent: [history objectForKey: @"PublicCopy"]
                 downloadFolder: [history objectForKey: @"DownloadFolder"]
                 useIncompleteFolder: [history objectForKey: @"UseIncompleteFolder"]
@@ -870,9 +884,9 @@ void completenessChangeCallback(tr_torrent * torrent, cp_status_t status, void *
             [NSString stringWithCString: (char *)peer->client encoding: NSUTF8StringEncoding], @"Client",
             [NSNumber numberWithInt: peer->status], @"Status", nil];
         
-        if (peer->isDownloading)
-            [dic setObject: [NSNumber numberWithFloat: peer->uploadToRate] forKey: @"UL To Rate"];
         if (peer->isUploading)
+            [dic setObject: [NSNumber numberWithFloat: peer->uploadToRate] forKey: @"UL To Rate"];
+        if (peer->isDownloading)
             [dic setObject: [NSNumber numberWithFloat: peer->downloadFromRate] forKey: @"DL From Rate"];
         
         [peerDics addObject: dic];
@@ -1454,7 +1468,7 @@ void completenessChangeCallback(tr_torrent * torrent, cp_status_t status, void *
 @implementation Torrent (Private)
 
 //if a hash is given, attempt to load that; otherwise, attempt to open file at path
-- (id) initWithHash: (NSString *) hashString path: (NSString *) path lib: (tr_handle *) lib
+- (id) initWithHash: (NSString *) hashString path: (NSString *) path data: (NSData *) data lib: (tr_handle *) lib
         publicTorrent: (NSNumber *) publicTorrent
         downloadFolder: (NSString *) downloadFolder
         useIncompleteFolder: (NSNumber *) useIncompleteFolder incompleteFolder: (NSString *) incompleteFolder
@@ -1511,6 +1525,19 @@ void completenessChangeCallback(tr_torrent * torrent, cp_status_t status, void *
     if (!fHandle && path)
     {
         tr_ctorSetMetainfoFromFile(ctor, [path UTF8String]);
+        if (tr_torrentParse(fLib, ctor, &info) == TR_OK)
+        {
+            NSString * currentDownloadFolder = [self shouldUseIncompleteFolderForName: [NSString stringWithUTF8String: info.name]]
+                                                ? fIncompleteFolder : fDownloadFolder;
+            tr_ctorSetDestination(ctor, TR_FORCE, [currentDownloadFolder UTF8String]);
+            
+            fHandle = tr_torrentNew(fLib, ctor, &error);
+        }
+        tr_metainfoFree(&info);
+    }
+    if (!fHandle && data)
+    {
+        tr_ctorSetMetainfo(ctor, [data bytes], [data length]);
         if (tr_torrentParse(fLib, ctor, &info) == TR_OK)
         {
             NSString * currentDownloadFolder = [self shouldUseIncompleteFolderForName: [NSString stringWithUTF8String: info.name]]
