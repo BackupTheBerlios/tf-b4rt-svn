@@ -89,7 +89,7 @@ function netstatPortList() {
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
-			$retStr .= shell_exec($cfg['bin_sockstat']." -4 -c -P tcp | ".$cfg['bin_awk']." '/(python|transmissi|wget|nzbperl|java)/ {split(\$6, a, \":\");print a[2]}'");
+			$retStr .= shell_exec($cfg['bin_sockstat']." -4 -l -P tcp | ".$cfg['bin_awk']." '/(python|transmissi|wget|nzbperl|java).+\*:[0-9]/ {split(\$6, a, \":\");print a[2]}'");
 			break;
 	}
 	return $retStr;
