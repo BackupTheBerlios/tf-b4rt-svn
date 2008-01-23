@@ -857,11 +857,11 @@ function validateTransmissionCli($the_file) {
 		return validationMsg(false, 'Path is not valid');
 	if (!is_executable($the_file))
 		return validationMsg(false, 'File exists but is not executable');
-	$transmissionHelp = shell_exec("HOME=".tfb_shellencode($cfg["path"])."; export HOME; ".$the_file.' --help');
+	$transmissionHelp = strtolower(shell_exec("HOME=".tfb_shellencode($cfg["path"])."; export HOME; ".$the_file.' --help'));
 	return (
-		stripos($transmissionHelp, 'transmission') === false ||
-		((stripos($transmissionHelp, 'tfcli') === false) &&
-		 (stripos($transmissionHelp, 'torrentflux') === false))
+		strpos($transmissionHelp, 'transmission') === false ||
+		((strpos($transmissionHelp, 'tfcli') === false) &&
+		 (strpos($transmissionHelp, 'torrentflux') === false))
 	)
 		? validationMsg(false, 'Executable is not TorrentFlux-bundled transmissioncli')
 		: validationMsg(true);
