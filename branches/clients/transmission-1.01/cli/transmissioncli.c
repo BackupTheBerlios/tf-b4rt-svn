@@ -147,7 +147,7 @@ main( int argc, char ** argv )
 {
     int i, error;
     tr_handle  * h;
-	tr_info    info;
+	const tr_info  *information;
     tr_ctor * ctor;
 	tr_torrent * tor = NULL;
 
@@ -215,7 +215,7 @@ main( int argc, char ** argv )
 
     if( showInfo )
     {
-        info = tr_torrentInfo( tor );
+        tr_info info;
 
         if( !tr_torrentParse( h, ctor, &info ) )
         {
@@ -372,7 +372,7 @@ main( int argc, char ** argv )
 	sprintf( TOF_message, "Transmission up and running.\n" );
     TOF_print( TOF_message );
 	
-	info = tr_torrentInfo( tor );
+	information = tr_torrentInfo( tor );
 	/* -END- */
 
     for( ;; )
@@ -421,11 +421,11 @@ main( int argc, char ** argv )
 
         if( s->status & TR_STATUS_CHECK_WAIT )
         {
-			TOF_writeStatus(s, info, 1, "Waitung to verify local files" );
+			TOF_writeStatus(s, information, 1, "Waitung to verify local files" );
         }
         else if( s->status & TR_STATUS_CHECK )
         {
-			TOF_writeStatus(s, info, 1, "Verifying local files" );
+			TOF_writeStatus(s, information, 1, "Verifying local files" );
         }
         else if( s->status & TR_STATUS_DOWNLOAD )
         {
@@ -458,7 +458,7 @@ main( int argc, char ** argv )
 	            if ((s->seeders < -1) && (s->peersConnected == 0))
 					sprintf(TOF_eta, "Connecting to Peers");
 				
-				TOF_writeStatus(s, info, 1, TOF_eta );
+				TOF_writeStatus(s, information, 1, TOF_eta );
 			}
         }
         else if( s->status & TR_STATUS_SEED )
@@ -482,7 +482,7 @@ main( int argc, char ** argv )
 					gotsig = 1;
 				}
 			}
-            TOF_writeStatus(s, info, 1, "Download Succeeded" );
+            TOF_writeStatus(s, information, 1, "Download Succeeded" );
         }
         else if( s->status & TR_STATUS_STOPPED )
         {
@@ -512,9 +512,9 @@ main( int argc, char ** argv )
     }
 
 	if (s->percentDone >= 1)
-		TOF_writeStatus(s, info, 0, "Download Succeeded" );
+		TOF_writeStatus(s, information, 0, "Download Succeeded" );
 	else 
-		TOF_writeStatus(s, info, 0, "Torrent Stopped" );
+		TOF_writeStatus(s, information, 0, "Torrent Stopped" );
             
 	TOF_deletePID();
 	
@@ -763,7 +763,7 @@ static void TOF_deletePID( void )
 	remove(TOF_pidFile);
 }
 
-static void TOF_writeStatus( const tr_stat *s, tr_info info, const int state, const char *status )
+static void TOF_writeStatus( const tr_stat *s,const tr_info *info, const int state, const char *status )
 {
 	if( !TOF_writeAllowed() && state != 0 ) return;
 	
