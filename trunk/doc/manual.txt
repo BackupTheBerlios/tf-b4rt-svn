@@ -5262,14 +5262,14 @@ Introduction
                         Useful for matching anything from season
                         07 of the 'foobar' show.
 
-                    *   Pattern: foobar.*s0\[1-3\].*
+                    *   Pattern: foobar.*s0[1-3].*
 
                         Matches: foobarS01E01 foobarS02E01 foobarS03E01
 
                         Note: Useful for matching anything from seasons
                         01 through 03 of the 'foobar' show.
 
-                    *   Pattern: foobar.*s01e0\[1-9\].*
+                    *   Pattern: foobar.*s01e0[1-9].*
 
                         Matches: foobarS01E01 foobarS01E02 foobarS01E09
 
