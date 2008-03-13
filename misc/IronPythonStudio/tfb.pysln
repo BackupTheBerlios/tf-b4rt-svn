@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# IronPython Studio Solution File, Format Version 10.00
+Project("{57B76CF8-F148-40C5-BE9B-5C5EFB1ACA14}") = "socket-test", "..\..\branches\socket-test\socket-test.pyproj", "{174BD2F2-90F0-4CF2-81AF-F3534F0FA862}"
+EndProject
+Project("{57B76CF8-F148-40C5-BE9B-5C5EFB1ACA14}") = "fluxd2", "..\..\branches\fluxd2\fluxd2.pyproj", "{2B45B60F-65AC-41E6-BF0A-5E68682040D6}"
+EndProject
+Project("{57B76CF8-F148-40C5-BE9B-5C5EFB1ACA14}") = "fluazu", "..\..\trunk\html\bin\clients\fluazu\fluazu.pyproj", "{8FF9D2CB-E98C-4140-8EE4-BF05788BADC6}"
+EndProject
+Project("{57B76CF8-F148-40C5-BE9B-5C5EFB1ACA14}") = "tornado", "..\..\trunk\html\bin\clients\tornado\tornado.pyproj", "{A53B05FB-DA45-4016-86BE-D12BD23663E2}"
+EndProject
+Project("{57B76CF8-F148-40C5-BE9B-5C5EFB1ACA14}") = "mainline", "..\..\trunk\html\bin\clients\mainline\mainline.pyproj", "{99CFE73D-E28A-4D82-A41B-4CD9DF74B8FD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{174BD2F2-90F0-4CF2-81AF-F3534F0FA862}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{174BD2F2-90F0-4CF2-81AF-F3534F0FA862}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{174BD2F2-90F0-4CF2-81AF-F3534F0FA862}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{174BD2F2-90F0-4CF2-81AF-F3534F0FA862}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B45B60F-65AC-41E6-BF0A-5E68682040D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B45B60F-65AC-41E6-BF0A-5E68682040D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B45B60F-65AC-41E6-BF0A-5E68682040D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B45B60F-65AC-41E6-BF0A-5E68682040D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FF9D2CB-E98C-4140-8EE4-BF05788BADC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FF9D2CB-E98C-4140-8EE4-BF05788BADC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FF9D2CB-E98C-4140-8EE4-BF05788BADC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FF9D2CB-E98C-4140-8EE4-BF05788BADC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A53B05FB-DA45-4016-86BE-D12BD23663E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A53B05FB-DA45-4016-86BE-D12BD23663E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A53B05FB-DA45-4016-86BE-D12BD23663E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A53B05FB-DA45-4016-86BE-D12BD23663E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99CFE73D-E28A-4D82-A41B-4CD9DF74B8FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99CFE73D-E28A-4D82-A41B-4CD9DF74B8FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99CFE73D-E28A-4D82-A41B-4CD9DF74B8FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99CFE73D-E28A-4D82-A41B-4CD9DF74B8FD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

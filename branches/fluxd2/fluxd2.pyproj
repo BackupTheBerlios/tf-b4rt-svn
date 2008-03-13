@@ -1,0 +1,245 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2b45b60f-65ac-41e6-bf0a-5e68682040d6}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>fluxd2</RootNamespace>
+    <AssemblyName>fluxd2</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{229B3E77-97E9-4f6d-9151-E6D103EA4D4A};{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{57B76CF8-F148-40c5-BE9B-5C5EFB1ACA14}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <PublishUrl>Publish\</PublishUrl>
+    <Name>fluxd2</Name>
+    <MainFile>Program.py</MainFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="IronPython" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="fluxd" />
+    <Folder Include="fluxd\activator" />
+    <Folder Include="fluxd\classes" />
+    <Folder Include="fluxd\daemon" />
+    <Folder Include="fluxd\database" />
+    <Folder Include="fluxd\database\DataAdapter" />
+    <Folder Include="fluxd\decorators" />
+    <Folder Include="fluxd\dispatcher" />
+    <Folder Include="fluxd\fluxcli" />
+    <Folder Include="fluxd\functions" />
+    <Folder Include="fluxd\interfaces" />
+    <Folder Include="fluxd\logging" />
+    <Folder Include="fluxd\logging\LoggerFactory" />
+    <Folder Include="fluxd\modules" />
+    <Folder Include="fluxd\modules\Modules" />
+    <Folder Include="fluxd\server" />
+    <Folder Include="fluxd\server\Server" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="fluxd.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\activator\activate.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\activator\Activator.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\activator\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\classes\Request.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\classes\Result.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\classes\StatFile.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\classes\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\Config.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\daemon\Daemon.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\daemon\functions.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\daemon\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\database\DataAdapter\DataAdapterFluxcli.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\database\DataAdapter\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\database\DatabaseManager.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\database\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\decorators\synchronized.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\decorators\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\defaultConfig.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\dispatcher\Dispatcher.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\dispatcher\RequestHandler.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\dispatcher\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\fluxcli\Fluxcli.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\fluxcli\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\functions\generic.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\functions\psutils.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\functions\string.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\functions\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\interfaces\IActivator.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\interfaces\IDataAdapter.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\interfaces\ILoggerFactory.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\interfaces\IModule.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\interfaces\IServer.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\interfaces\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\logging\LoggerFactory\LoggerFactoryFile.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\logging\LoggerFactory\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\logging\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\ModuleManager.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\BasicModule.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\Dummy.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\Maintenance.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\Rssad.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\Trigger.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\Watch.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\server\ServerManager.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\server\Server\ServerGenericSocket.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\server\Server\ServerInetSocket.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\server\Server\ServerUnixSocket.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\server\Server\SocketRequestDispatcher.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\server\Server\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\server\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="fluxd.cfg">
+      <SubType>Content</SubType>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\IronPython Studio\1.0\IronPython.targets" />
+</Project>
