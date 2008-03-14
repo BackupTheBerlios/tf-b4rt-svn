@@ -84,7 +84,7 @@ def defaultConfig():
 
 	# Dummy
 	configParser.add_section('Dummy')
-	configParser.set('Dummy', 'enabled', 'False')
+	configParser.set('Dummy', 'enabled', 'True')
 	configParser.set('Dummy', 'module', 'fluxd.modules.Modules.Dummy')
 	configParser.set('Dummy', 'class', 'Dummy')
 
@@ -114,7 +114,7 @@ def defaultConfig():
 
 	# Trigger
 	configParser.add_section('Trigger')
-	configParser.set('Trigger', 'enabled', 'False')
+	configParser.set('Trigger', 'enabled', 'True')
 	configParser.set('Trigger', 'module', 'fluxd.modules.Modules.Trigger')
 	configParser.set('Trigger', 'class', 'Trigger')
 	configParser.set('Trigger', 'interval', 'DB:fluxd_Trigger_interval')

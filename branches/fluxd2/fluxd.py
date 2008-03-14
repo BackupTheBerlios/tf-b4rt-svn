@@ -50,7 +50,7 @@ def printUsage():
 	print "stop  : stop fluxd"
 	print "\nDefault-Config-Settings:"
 	print Config().defaultConfigAsArgString()
-	print "\nExamples:"
+	print "Examples:"
 	print "fluxd.py start --dir.docroot='/var/www' --dir.pathTf='/usr/local/torrentflux' --dir.pathFluxd='/usr/local/torrentflux/.fluxd' --file.php='/usr/bin/php'"
 	print "fluxd.py start --file.cfg='/var/www/bin/fluxd/fluxd.cfg'"
 	print "fluxd.py stop --file.cfg='/var/www/bin/fluxd/fluxd.cfg'"
@@ -61,6 +61,11 @@ def printUsage():
 """ ------------------------------------------------------------------------ """
 if __name__ == "__main__":
 
+	# check if any args provided
+	if len(sys.argv) <= 1:
+		printUsage()
+		sys.exit(0)
+ 
 	# version + help
 	if sys.argv[1:] == ['--version']:
 		printVersion()
