@@ -175,11 +175,12 @@ class RequestHandler(object):
         moduleManager = Activator().getInstance('ModuleManager')
 
         # get module-list
-        modules = moduleManager.runningModules()
+        modules = Config().get('modules', 'Modules').strip().split(',')
 
         # build list
         data = ''
         for module in modules:
+            module = module.strip()
             mstate = '0'
             if moduleManager.isModuleRunning(module):
                 mstate = '1'
