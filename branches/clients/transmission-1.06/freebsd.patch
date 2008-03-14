@@ -1,25 +1,6 @@
-# $Id$
-#
-################################################################################
-#
-# LICENSE
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License (GPL)
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
-#
-# To read the license please visit http://www.gnu.org/copyleft/gpl.html
-#
-################################################################################
 Index: configure
 ===================================================================
---- configure	(revision 3337)
+--- configure	(revision 3340)
 +++ configure	(working copy)
 @@ -880,11 +880,9 @@
  PTHREAD_CC
@@ -727,7 +708,7 @@ Index: configure
      { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5
 Index: gtk/Makefile.in
 ===================================================================
---- gtk/Makefile.in	(revision 3337)
+--- gtk/Makefile.in	(revision 3340)
 +++ gtk/Makefile.in	(working copy)
 @@ -292,7 +292,7 @@
  
@@ -749,7 +730,7 @@ Index: gtk/Makefile.in
  DESKTOP_IN_FILES = transmission.desktop.in
 Index: wx/Makefile.in
 ===================================================================
---- wx/Makefile.in	(revision 3337)
+--- wx/Makefile.in	(revision 3340)
 +++ wx/Makefile.in	(working copy)
 @@ -267,7 +267,7 @@
  top_srcdir = @top_srcdir@
@@ -771,7 +752,7 @@ Index: wx/Makefile.in
  
 Index: configure.ac
 ===================================================================
---- configure.ac	(revision 3337)
+--- configure.ac	(revision 3340)
 +++ configure.ac	(working copy)
 @@ -34,7 +34,8 @@
  
@@ -785,7 +766,7 @@ Index: configure.ac
  
 Index: libtransmission/Makefile.in
 ===================================================================
---- libtransmission/Makefile.in	(revision 3337)
+--- libtransmission/Makefile.in	(revision 3340)
 +++ libtransmission/Makefile.in	(working copy)
 @@ -280,7 +280,7 @@
  top_srcdir = @top_srcdir@
@@ -807,7 +788,7 @@ Index: libtransmission/Makefile.in
  bencode_test_LDADD = $(TEST_LDADD)
 Index: daemon/Makefile.in
 ===================================================================
---- daemon/Makefile.in	(revision 3337)
+--- daemon/Makefile.in	(revision 3340)
 +++ daemon/Makefile.in	(working copy)
 @@ -275,7 +275,7 @@
  top_srcdir = @top_srcdir@
@@ -829,7 +810,7 @@ Index: daemon/Makefile.in
  transmission_daemon_LDADD = $(COMMON_LDADD)
 Index: cli/Makefile.in
 ===================================================================
---- cli/Makefile.in	(revision 3337)
+--- cli/Makefile.in	(revision 3340)
 +++ cli/Makefile.in	(working copy)
 @@ -255,7 +255,7 @@
  top_srcdir = @top_srcdir@
