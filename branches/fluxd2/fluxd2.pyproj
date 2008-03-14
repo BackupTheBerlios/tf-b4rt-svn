@@ -69,6 +69,8 @@
     <Folder Include="fluxd\logging\LoggerFactory" />
     <Folder Include="fluxd\modules" />
     <Folder Include="fluxd\modules\Modules" />
+    <Folder Include="fluxd\modules\Modules\fluazu" />
+    <Folder Include="fluxd\modules\Modules\fluazu\dopal" />
     <Folder Include="fluxd\server" />
     <Folder Include="fluxd\server\Server" />
   </ItemGroup>
@@ -193,7 +195,76 @@
     <Compile Include="fluxd\modules\Modules\Dummy.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="fluxd\modules\Modules\Fluazu.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\fluazu\dopal\aztypes.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\fluazu\dopal\classes.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\fluazu\dopal\class_defs.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\fluazu\dopal\convert.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\fluazu\dopal\core.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\fluazu\dopal\debug.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\fluazu\dopal\errors.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\fluazu\dopal\interact.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\fluazu\dopal\logutils.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\fluazu\dopal\main.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\fluazu\dopal\objects.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\fluazu\dopal\obj_impl.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\fluazu\dopal\persistency.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\fluazu\dopal\scripting.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\fluazu\dopal\utils.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\fluazu\dopal\xmlutils.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\fluazu\dopal\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\fluazu\FluAzuD.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\fluazu\Transfer.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\fluazu\TransferFile.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\fluazu\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="fluxd\modules\Modules\Maintenance.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\Qmgr.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="fluxd\modules\Modules\Rssad.py">

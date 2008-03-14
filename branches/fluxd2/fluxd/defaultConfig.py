@@ -80,7 +80,7 @@ def defaultConfig():
 
 	# modules
 	configParser.add_section('modules')
-	configParser.set('modules', 'Modules', 'Dummy, Maintenance, Rssad, Watch, Trigger')
+	configParser.set('modules', 'Modules', 'Dummy, Maintenance, Rssad, Watch, Trigger, Qmgr, Fluazu')
 
 	# Dummy
 	configParser.add_section('Dummy')
@@ -120,6 +120,26 @@ def defaultConfig():
 	configParser.set('Trigger', 'interval', 'DB:fluxd_Trigger_interval')
 	configParser.set('Trigger', 'cmd-OnDownloadCompleted', 'echo "[${TFB_CURDATE}]" Transfer "${TFB_TRANSFER}" completed for user "${TFB_OWNER}" >> "${TFB_FLUXD}transfers.log"')
 	configParser.set('Trigger', 'cmd-OnSeedingStopped', 'echo "[${TFB_CURDATE}]" Transfer "${TFB_TRANSFER}" stopped for user "${TFB_OWNER}" >> "${TFB_FLUXD}transfers.log"')
+
+	# Qmgr
+	configParser.add_section('Qmgr')
+	configParser.set('Qmgr', 'enabled', 'True')
+	configParser.set('Qmgr', 'module', 'fluxd.modules.Modules.Qmgr')
+	configParser.set('Qmgr', 'class', 'Qmgr')
+	configParser.set('Qmgr', 'interval', 'DB:fluxd_Qmgr_interval')
+	configParser.set('Qmgr', 'maxTotalTransfers', 'DB:fluxd_Qmgr_maxTotalTransfers')
+	configParser.set('Qmgr', 'maxUserTransfers', 'DB:fluxd_Qmgr_maxUserTransfers')
+
+	# Fluazu
+	configParser.add_section('Fluazu')
+	configParser.set('Fluazu', 'enabled', 'True')
+	configParser.set('Fluazu', 'module', 'fluxd.modules.Modules.Fluazu')
+	configParser.set('Fluazu', 'class', 'Fluazu')
+	configParser.set('Fluazu', 'host', 'DB:fluazu_host')
+	configParser.set('Fluazu', 'port', 'DB:fluazu_port')
+	configParser.set('Fluazu', 'secure', 'DB:fluazu_secure')
+	configParser.set('Fluazu', 'username', 'DB:fluazu_user')
+	configParser.set('Fluazu', 'password', 'DB:fluazu_pw')
 
 	# return
 	return configParser
