@@ -62,6 +62,7 @@ class Fluazu(BasicModule):
         self.secure = Config().getExt(name, 'secure').strip()
         self.username = Config().getExt(name, 'username').strip()
         self.password = Config().getExt(name, 'password').strip()
+        self.maxReconnectTries = int(Config().get(name, 'maxReconnectTries').strip())
         
         # fluazu-daemon
         self.fluazud = FluAzuD(self.logger)
@@ -117,7 +118,7 @@ class Fluazu(BasicModule):
         self.logger.debug('onStart')
         
         # run fluazud
-        self.fluazud.run(self.path_tf, self.path_fluxd, self.host, self.port, self.secure, self.username, self.password)
+        self.fluazud.run(self.path_tf, self.path_fluxd, self.host, self.port, self.secure, self.username, self.password, self.maxReconnectTries)
 
     """ -------------------------------------------------------------------- """
     """ main                                                                 """

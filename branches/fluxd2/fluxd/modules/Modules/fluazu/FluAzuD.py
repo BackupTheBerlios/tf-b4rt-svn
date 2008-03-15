@@ -38,9 +38,6 @@ import dopal.aztypes
 """ ------------------------------------------------------------------------ """
 class FluAzuD(object):
 
-    """ class-fields """
-    MAX_RECONNECT_TRIES = 20
-
     """ -------------------------------------------------------------------- """
     """ __init__                                                             """
     """ -------------------------------------------------------------------- """
@@ -68,6 +65,7 @@ class FluAzuD(object):
         self.flu_pathTransfersDel = ''
         self.flu_fileCommand = ''
         self.flu_fileStat = ''
+        self.maxReconnectTries = 10
 
         # azu-settings
         self.azu_host = '127.0.0.1'
@@ -85,7 +83,7 @@ class FluAzuD(object):
     """ -------------------------------------------------------------------- """
     """ run                                                                  """
     """ -------------------------------------------------------------------- """
-    def run(self, path_tf, path_fluxd, host, port, secure, username, password):
+    def run(self, path_tf, path_fluxd, host, port, secure, username, password, maxReconTries):
     
         # log
         self.logger.info("fluazu starting up:")
@@ -111,6 +109,7 @@ class FluAzuD(object):
         self.flu_pathTransfersDel = ''
         self.flu_fileCommand = ''
         self.flu_fileStat = ''
+        self.maxReconnectTries = 10
 
         # azu-settings
         self.azu_host = '127.0.0.1'
@@ -143,6 +142,7 @@ class FluAzuD(object):
             self.azu_secure = False
         self.azu_user = username
         self.azu_pass = password
+        self.maxReconnectTries = maxReconTries
 
         # more vars
         self.logger.info("flu-path: %s" % str(self.flu_path))
@@ -837,7 +837,7 @@ class FluAzuD(object):
             self.logger.info("connection to Azureus-server lost, reconnecting to %s:%d ..." % (self.azu_host, self.azu_port))
 
             # try to reconnect
-            for i in range(FluAzuD.MAX_RECONNECT_TRIES):
+            for i in range(self.maxReconnectTries):
 
                 # sleep
                 time.sleep(i << 2)
@@ -874,5 +874,5 @@ class FluAzuD(object):
                     continue
 
             # seems like azu is down. give up
-            self.logger.error("no connection after %d tries, i give up, azu is gone" % FluAzuD.MAX_RECONNECT_TRIES)
+            self.logger.error("no connection after %d tries, i give up, azu is gone" % self.maxReconnectTries)
             return False

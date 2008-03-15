@@ -90,7 +90,7 @@ def defaultConfig():
 
 	# Maintenance
 	configParser.add_section('Maintenance')
-	configParser.set('Maintenance', 'enabled', 'True')
+	configParser.set('Maintenance', 'enabled', 'DB:fluxd_Maintenance_enabled')
 	configParser.set('Maintenance', 'module', 'fluxd.modules.Modules.Maintenance')
 	configParser.set('Maintenance', 'class', 'Maintenance')
 	configParser.set('Maintenance', 'interval', 'DB:fluxd_Maintenance_interval')
@@ -98,7 +98,7 @@ def defaultConfig():
 
 	# Rssad
 	configParser.add_section('Rssad')
-	configParser.set('Rssad', 'enabled', 'True')
+	configParser.set('Rssad', 'enabled', 'DB:fluxd_Rssad_enabled')
 	configParser.set('Rssad', 'module', 'fluxd.modules.Modules.Rssad')
 	configParser.set('Rssad', 'class', 'Rssad')
 	configParser.set('Rssad', 'interval', 'DB:fluxd_Rssad_interval')
@@ -106,7 +106,7 @@ def defaultConfig():
 
 	# Watch
 	configParser.add_section('Watch')
-	configParser.set('Watch', 'enabled', 'True')
+	configParser.set('Watch', 'enabled', 'DB:fluxd_Watch_enabled')
 	configParser.set('Watch', 'module', 'fluxd.modules.Modules.Watch')
 	configParser.set('Watch', 'class', 'Watch')
 	configParser.set('Watch', 'interval', 'DB:fluxd_Watch_interval')
@@ -114,7 +114,7 @@ def defaultConfig():
 
 	# Trigger
 	configParser.add_section('Trigger')
-	configParser.set('Trigger', 'enabled', 'True')
+	configParser.set('Trigger', 'enabled', 'DB:fluxd_Trigger_enabled')
 	configParser.set('Trigger', 'module', 'fluxd.modules.Modules.Trigger')
 	configParser.set('Trigger', 'class', 'Trigger')
 	configParser.set('Trigger', 'interval', 'DB:fluxd_Trigger_interval')
@@ -123,7 +123,7 @@ def defaultConfig():
 
 	# Qmgr
 	configParser.add_section('Qmgr')
-	configParser.set('Qmgr', 'enabled', 'True')
+	configParser.set('Qmgr', 'enabled', 'DB:fluxd_Qmgr_enabled')
 	configParser.set('Qmgr', 'module', 'fluxd.modules.Modules.Qmgr')
 	configParser.set('Qmgr', 'class', 'Qmgr')
 	configParser.set('Qmgr', 'interval', 'DB:fluxd_Qmgr_interval')
@@ -140,6 +140,7 @@ def defaultConfig():
 	configParser.set('Fluazu', 'secure', 'DB:fluazu_secure')
 	configParser.set('Fluazu', 'username', 'DB:fluazu_user')
 	configParser.set('Fluazu', 'password', 'DB:fluazu_pw')
+	configParser.set('Fluazu', 'maxReconnectTries', '15')
 
 	# return
 	return configParser
