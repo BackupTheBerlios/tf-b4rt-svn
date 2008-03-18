@@ -161,9 +161,7 @@ class Maintenance(BasicModule):
             fluxcli = Activator().getInstance('Fluxcli')
             
             # invoke
-            # TODO: not used as current fluxcli.php deletes our socket
-            #result = fluxcli.invoke(['maintenance', self.restart], True).strip()
-            result = fluxcli.invoke(['-v'], True).strip()
+            result = fluxcli.invoke(['maintenance', self.restart], True).strip()
             
             # log
             self.logger.debug('maintenance-run-result:\n%s' % result)

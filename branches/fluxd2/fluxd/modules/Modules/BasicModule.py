@@ -131,7 +131,7 @@ class BasicModule(IModule):
         self.running = False
 
         # join thread
-        self.thread.join(2.0)
+        self.thread.join(5.0)
 
         # shutdown if still alive
         if self.thread.isAlive():

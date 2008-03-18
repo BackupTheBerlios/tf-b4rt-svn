@@ -65,7 +65,7 @@ class Fluazu(BasicModule):
         self.maxReconnectTries = int(Config().get(name, 'maxReconnectTries').strip())
         
         # fluazu-daemon
-        self.fluazud = FluAzuD(self.logger)
+        self._fluazud = FluAzuD(self.logger)
 
     """ -------------------------------------------------------------------- """
     """ status                                                               """
@@ -73,12 +73,12 @@ class Fluazu(BasicModule):
     def status(self):
         data = {}
         data['version'] = __version_str__
-        fluazudStatus = self.fluazud.getStatus()
+        fluazudStatus = self._fluazud.getStatus()
         for ke, va in fluazudStatus.iteritems():
             data[ke] = va
-        for transfer in self.fluazud.transfers:
+        for transfer in self._fluazud.transfers:
             data["Transfer %s" % transfer.name] = transfer.state
-        for dName, dObj in self.fluazud.downloads.iteritems():
+        for dName, dObj in self._fluazud.downloads.iteritems():
             data["Download %s" % dName] = dObj.__str__()
         return data
 
@@ -95,7 +95,7 @@ class Fluazu(BasicModule):
         if cmd == 'stop':
             if self.running:
                 self.running = False
-                self.fluazud.stop()
+                self._fluazud.stop()
                 return 'initialize Module-shutdown...'
             else:
                 return 'Module not running'
@@ -118,7 +118,7 @@ class Fluazu(BasicModule):
         self.logger.debug('onStart')
         
         # run fluazud
-        self.fluazud.run(self.path_tf, self.path_fluxd, self.host, self.port, self.secure, self.username, self.password, self.maxReconnectTries)
+        self._fluazud.run(self.path_tf, self.path_fluxd, self.host, self.port, self.secure, self.username, self.password, self.maxReconnectTries)
 
     """ -------------------------------------------------------------------- """
     """ main                                                                 """
@@ -126,12 +126,12 @@ class Fluazu(BasicModule):
     def main(self):
 
         # main-loop
-        while self.running and self.fluazud.isRunning():
+        while self.running and self._fluazud.isRunning():
 
             try:
 
                 # call fluazud-main
-                self.fluazud.main()
+                self._fluazud.main()
 
             except Exception, e:
                 if self.running:
@@ -146,4 +146,4 @@ class Fluazu(BasicModule):
         self.logger.debug('onStop')
         
         # shutdown fluazud
-        self.fluazud.shutdown()
+        self._fluazud.shutdown()

@@ -71,6 +71,7 @@
     <Folder Include="fluxd\modules\Modules" />
     <Folder Include="fluxd\modules\Modules\fluazu" />
     <Folder Include="fluxd\modules\Modules\fluazu\dopal" />
+    <Folder Include="fluxd\modules\Modules\qmgr" />
     <Folder Include="fluxd\server" />
     <Folder Include="fluxd\server\Server" />
   </ItemGroup>
@@ -154,6 +155,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="fluxd\functions\string.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\functions\transfer.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="fluxd\functions\__init__.py">
@@ -265,6 +269,18 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="fluxd\modules\Modules\Qmgr.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\qmgr\QueueEntry.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\qmgr\QueueManager.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\qmgr\QueueRequest.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\modules\Modules\qmgr\__init__.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="fluxd\modules\Modules\Rssad.py">

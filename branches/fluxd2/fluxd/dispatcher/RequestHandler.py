@@ -163,6 +163,10 @@ class RequestHandler(object):
         # call command
         data = moduleManager.moduleCommand(moduleName, moduleCommand)
 
+        # if data is none, return none
+        if data is None:
+	        return None
+ 
         # return result
         return Result(data, None)
 

@@ -26,6 +26,7 @@ import threading
 from threading import Thread
 from threading import Lock
 from Queue import Queue
+from Queue import Empty
 # fluxd-imports
 from fluxd.Config import Config
 from fluxd.interfaces.IActivator import IActivator
