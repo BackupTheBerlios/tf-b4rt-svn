@@ -203,7 +203,7 @@ class FluxdQmgr extends FluxdServiceMod
     		// send command
     		$result = Fluxd::sendServiceCommand($this->moduleName, 'enqueue;'.$transfer.';'.$user, 1);
 	        // log
-	        AuditAction($cfg["constants"]["queued_transfer"], $result);
+	        AuditAction($cfg["constants"]["fluxd"], $result);
 	        // just 2 sec... dont stress fluxd
 	        sleep(2);
     	}
@@ -228,10 +228,10 @@ class FluxdQmgr extends FluxdServiceMod
 	            stopTransferSettings($transfer);
 	            // update the stat file.
 	            $this->_updateStatFile($transfer);
+		        // log
+		        AuditAction($cfg["constants"]["fluxd"], $result);
 	            // log
 	            AuditAction($cfg["constants"]["unqueued_transfer"], $transfer);
-		        // log
-		        AuditAction($cfg["constants"]["unqueued_transfer"], $result);
 	            // just 2 sec... dont stress fluxd
 	            sleep(2);
         	}

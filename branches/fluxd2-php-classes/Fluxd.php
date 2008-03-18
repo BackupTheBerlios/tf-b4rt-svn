@@ -411,7 +411,8 @@ class Fluxd
     	global $cfg;
         if ($this->state == FLUXD_STATE_RUNNING) {
         	AuditAction($cfg["constants"]["fluxd"], "Stopping fluxd");
-            $this->instance_sendCommand('die', 0);
+            $result = $this->instance_sendCommand('die', 1);
+            AuditAction($cfg["constants"]["fluxd"], $result);
             // check if fluxd still running
             $maxLoops = 125;
             $loopCtr = 0;
@@ -546,7 +547,7 @@ class Fluxd
      */
     function instance_setConfig($key, $value) {
        if ($this->state == FLUXD_STATE_RUNNING)
-           $this->instance_sendCommand('set '.$key.' '.$value, 0);
+           $this->instance_sendCommand('set '.$key.' '.$value, 1);
     }
 
 	/**
@@ -554,7 +555,7 @@ class Fluxd
 	 */
     function instance_reloadDBCache() {
 		if ($this->state == FLUXD_STATE_RUNNING)
-			$this->instance_sendCommand('reloadDBCache', 0);
+			$this->instance_sendCommand('reloadDBCache', 1);
     }
 
 	/**
@@ -562,7 +563,7 @@ class Fluxd
 	 */
     function instance_reloadModules() {
 		if ($this->state == FLUXD_STATE_RUNNING)
-			$this->instance_sendCommand('reloadModules', 0);
+			$this->instance_sendCommand('reloadModules', 1);
     }
 
     /**
@@ -594,7 +595,7 @@ class Fluxd
      * @param $read does this command return something ?
      * @return string with retval or null if error
      */
-    function instance_sendCommand($command, $read = 0) {
+    function instance_sendCommand($command, $read = 1) {
         if ($this->state == FLUXD_STATE_RUNNING) {
         	// create socket
             $socket = @socket_create(AF_UNIX, SOCK_STREAM, 0);
