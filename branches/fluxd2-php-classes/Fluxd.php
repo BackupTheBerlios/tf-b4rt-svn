@@ -355,6 +355,7 @@ class Fluxd
             $startCommand .= " nohup " . $cfg["pythonCmd"];
             $startCommand .= " ".tfb_shellencode($cfg["docroot"]."bin/fluxd2/fluxd.py");
             $startCommand .= " start";
+            $startCommand .= " --file.cfg=".tfb_shellencode($cfg["docroot"]."bin/fluxd2/fluxd.cfg");
             $startCommand .= " --dir.docroot=".tfb_shellencode($cfg["docroot"]);
             $startCommand .= " --dir.pathTf=".tfb_shellencode($cfg["path"]);
             $startCommand .= " --dir.pathFluxd=".tfb_shellencode($cfg["path"].".fluxd");
