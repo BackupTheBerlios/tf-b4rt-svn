@@ -14,6 +14,9 @@ $Id$
 
 - icon updates
 
+- sqlite: better catch connection errors (e.g. when db-creation fails because 
+  of missing rights) (3304)
+
 - ajax update now uses %-value for updating the bar (3239)
 
 - index: modify run/seed tooltips to be different between advanced & quick
@@ -49,6 +52,28 @@ $Id$
 ***** fixes *****
 
 - various theme-related bugfixes
+
+- netstat:
+  * Fixes a bug in detecting ports in use on BSD, which caused 
+    transmission to attempt to bind to the same port every time you 
+    started a new torrent. (3321)
+  * Fixed bug in netstatConnectionsSum for FreeBSD, altered system calls
+    to be more resource-efficient by having sockstat output the right
+    stuff and leave less for grep/awk to parse. (3322)
+  * Fixed a bug in the netstat code where fbsd machines might see the 
+    port of a running transmission transfer as 80, since transmission
+    opens both port 80 and a high-numbered port from the minport-maxport
+    range. (3323)
+  * Fixed a bug that would cause transmission not to select the next 
+    availible port if, and only if, there was no outgoing connection 
+    from the client on the previous port number, and you are using BSD. 
+    Now, we will always select a valid port number. (3326)
+
+- sqlite: fix some SQL queries with joins (use field aliases to get same 
+  behavior as other dbs) Thanks to Korax1 on IRC (3307)
+
+- fluxd rssad filter edit-page: fix superfluous HTML-encoding of 
+  filter entries (3305)
 
 - bandwidth-bar: fixed style-issue if up or download is above 100% (3295)
 
@@ -97,6 +122,7 @@ $Id$
   * convert UTF-8 names to ISO-8859-1 (3170)
 
 - torrent search:
+  * Search engine: fix for isohunt search engine, thanks to coneybeare (3311)
   * TorrentSpy: switch to a download URL that works for now (3282)
   * fix parsing of mininova results so the number of comments isn't displayed
     as part of the torrent name (3231)
@@ -138,10 +164,11 @@ $Id$
 ***** updates *****
 
 - Torrent Transfer-Clients:
-  * Transmission v0.95 -- modified for tf-b4rt
+  * Transmission v1.06 -- modified for tf-b4rt
+  * Transmission v0.96 -- modified for tf-b4rt
   * Mainline (BitTorrent) v5.2.0
 
-- ADOdb V4.96a
+- ADOdb V4.98
 
 
 --------------------------------------------------------------------------------
