@@ -70,7 +70,11 @@ class Qmgr(BasicModule):
             Config().get('dir', 'pathFluxd').strip() + "qmgr/", \
             Config().get('dir', 'pathTf').strip() + '.transfers/', \
             int(Config().getExt(name, 'maxTotalTransfers').strip()), \
-            int(Config().getExt(name, 'maxUserTransfers').strip()))
+            int(Config().getExt(name, 'maxTotalDownloadingTransfers').strip()), \
+            int(Config().getExt(name, 'maxTotalSeedingTransfers').strip()), \
+            int(Config().getExt(name, 'maxUserTransfers').strip()), \
+            int(Config().getExt(name, 'maxUserDownloadingTransfers').strip()), \
+            int(Config().getExt(name, 'maxUserSeedingTransfers').strip()))
             
         # request-map
         self._requestMap = {
@@ -86,7 +90,11 @@ class Qmgr(BasicModule):
         data['version'] = __version_str__
         data['interval'] = self.interval
         data['maxTotalTransfers'] = self._queueManager.maxTotalTransfers
+        data['maxTotalDownloadingTransfers'] = self._queueManager.maxTotalDownloadingTransfers
+        data['maxTotalSeedingTransfers'] = self._queueManager.maxTotalSeedingTransfers
         data['maxUserTransfers'] = self._queueManager.maxUserTransfers
+        data['maxUserDownloadingTransfers'] = self._queueManager.maxUserDownloadingTransfers
+        data['maxUserSeedingTransfers'] = self._queueManager.maxUserSeedingTransfers
         data['queueCount'] = str(self._queueManager.queueCount())
         data['queueList'] = self._queueManager.queueList()
         for sn, sv in self._queueManager.stats.iteritems():
@@ -268,8 +276,9 @@ class Qmgr(BasicModule):
             
         except Empty:
         
-            # debug
-            self.logger.debug("request-queue is empty")
+            # DEBUG
+            #self.logger.debug("request-queue is empty")
+            pass
 
         except Exception, e:
             self.logger.error("Exception in Qmgr-requestCheck (%s)" % (e))
@@ -295,7 +304,7 @@ class Qmgr(BasicModule):
         if self._requestMap.has_key(qRequest.type):
             result = self._requestMap[qRequest.type](qRequest.data)
             if qRequest.callback is not None and result is not None:
-	            qRequest.callback(result)
+                qRequest.callback(result)
  
         # unmapped type
         else:

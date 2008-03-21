@@ -268,13 +268,13 @@ class Daemon(object):
 
                 # check if we got a running server
                 if not serverManager.isServerRunning():
-                    raise Exception, "No Servers running"
+                    raise Exception, "No Server running"
 
                 # sleep
                 time.sleep(2)
 
                 # DEBUG
-                self.logger.debug('%d Threads active' % activeCount())
+                #self.logger.debug('%d Threads active' % activeCount())
 
         except Exception, e:
             raise Exception, "Error in daemon (%s)" % (e)

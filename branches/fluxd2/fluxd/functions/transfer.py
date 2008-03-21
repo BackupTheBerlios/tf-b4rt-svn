@@ -45,23 +45,23 @@ def transferStart(name):
 def isTransferRunning(name):
 
     # this method is not reliable as it does not count azu-downloads
-    
-	# imports
-	import os
 
-	# check
-	try:
-	
-		# ps
-		p = os.popen("ps -o pid= -ww")
-		ps = p.read().strip()
-		p.close()
-		
-		# return match
-		return (ps.__contains__(name))
-		
-	except:
-		pass
-		
+    # imports
+    import os
+
+    # check
+    try:
+
+        # ps
+        p = os.popen("ps -o pid= -ww")
+        ps = p.read().strip()
+        p.close()
+
+        # return match
+        return (ps.__contains__(name))
+
+    except:
+        pass
+
     # return
-	return False
+    return False

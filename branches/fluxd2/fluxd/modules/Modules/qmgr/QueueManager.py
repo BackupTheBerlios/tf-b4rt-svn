@@ -38,10 +38,15 @@ from fluxd.modules.Modules.qmgr.QueueEntry import QueueEntry
 """ ------------------------------------------------------------------------ """
 class QueueManager(object):
 
+    # delim
+    DELIM = '/'
+
     """ -------------------------------------------------------------------- """
     """ __init__                                                             """
     """ -------------------------------------------------------------------- """
-    def __init__(self, logger, tf_pathQmgr, tf_pathTransfers, maxTotal, maxUser):
+    def __init__(self, logger, tf_pathQmgr, tf_pathTransfers, \
+        maxTotal, maxDownloadTotal, maxSeedTotal, \
+        maxUser, maxDownloadUser, maxSeedUser):
     
         # logger
         self.logger = logger
@@ -50,7 +55,11 @@ class QueueManager(object):
         self.pathQmgr = tf_pathQmgr
         self.pathTransfers = tf_pathTransfers
         self.maxTotalTransfers = maxTotal
+        self.maxTotalDownloadingTransfers = maxDownloadTotal
+        self.maxTotalSeedingTransfers = maxSeedTotal
         self.maxUserTransfers = maxUser
+        self.maxUserDownloadingTransfers = maxDownloadUser
+        self.maxUserSeedingTransfers = maxSeedUser
 
         # file-vars
         self.fileQueue = self.pathQmgr + "qmgr.queue"
@@ -64,16 +73,21 @@ class QueueManager(object):
         
         # transfers
         #  dict-key: transfer-name
-        #  dict-value: username
+        #  dict-value: statfile-object
         self._transfers = {}
         
-        # user-stats
+        # transfers
+        #  dict-key: running|downloading|seeding
+        #  dict-value: count of transfers
+        self._transferStats = {}
+        
+        # transfer-stats
         #  dict-key: username
         #  dict-value: dict:
-        #   dict-key: running|downloading|seeding
-        #   dict-value: count of transfers
+        #   dict-key: running-total|downloading-total|seeding-total|running|downloading|seeding|sf
+        #   dict-value: count of transfers or stat-file-object (key = sf)
         self._userStats = {}
-        
+
         # initialize
         self.initialize()
 
@@ -83,7 +97,9 @@ class QueueManager(object):
     def initialize(self):
 
         # info
-        self.logger.info("initializing QueueManager (%d/%d) ..." % (self.maxTotalTransfers, self.maxUserTransfers))
+        self.logger.info("initializing QueueManager (%d/%d/%d %d/%d/%d) ..." \
+            % (self.maxTotalTransfers, self.maxTotalDownloadingTransfers, self.maxTotalSeedingTransfers, \
+            self.maxUserTransfers, self.maxUserDownloadingTransfers, self.maxUserSeedingTransfers))
 
         # main-path
         if not os.path.isdir(self.pathQmgr):
@@ -147,7 +163,7 @@ class QueueManager(object):
 
             # process it
             self._queueProcessMain()
- 
+
         # save queue
         self._queueSave()
        
@@ -160,16 +176,18 @@ class QueueManager(object):
         self.logger.info("adding to queue: %s/%s" % (qEntry.name, qEntry.user))
         
         # check
-        if self._queue.__contains__(qEntry):
-        
-            # message
-            msg = "entry already exists: %s/%s" % (qEntry.name, qEntry.user)
+        for qE in self._queue:
+
+            if qE.name == qEntry.name:
             
-            # log
-            self.logger.warning(msg)
-            
-            # return
-            return msg
+                # message
+                msg = "entry already exists: %s/%s" % (qEntry.name, qEntry.user)
+                
+                # log
+                self.logger.warning(msg)
+                
+                # return
+                return msg
         
         # add to queue
         self._queue.append(qEntry)
@@ -185,24 +203,26 @@ class QueueManager(object):
         # log
         self.logger.info("removing from queue: %s/%s" % (qEntry.name, qEntry.user))
         
-        # check
-        if not self._queue.__contains__(qEntry):
+        # remove
+        for qE in self._queue:
+
+            if qE.name == qEntry.name:
+                
+                # remove from queue
+                self._queue.remove(qE)
+                
+                # return
+                return "removed transfer: %s" % qEntry.name
         
-            # message
-            msg = "entry does not exist: %s/%s" % (qEntry.name, qEntry.user)
-            
-            # log
-            self.logger.warning(msg)
-            
-            # return
-            return msg
-        
-        # remove from queue
-        self._queue.remove(qEntry)
-        
+        # message
+        msg = "entry does not exist: %s/%s" % (qEntry.name, qEntry.user)
+
+        # log
+        self.logger.warning(msg)
+
         # return
-        return "removed transfer: %s" % qEntry.name
-  
+        return msg
+
     """ -------------------------------------------------------------------- """
     """ queueCount                                                           """
     """ -------------------------------------------------------------------- """
@@ -233,7 +253,8 @@ class QueueManager(object):
         while len(queue) > 0:
 
             # process next entry
-            self._queueProcessEntry(queue.pop(0))
+            if self._queueProcessEntry(queue.pop(0)):
+                break;
             
     """ -------------------------------------------------------------------- """
     """ _queueProcessEntry                                                   """
@@ -243,30 +264,155 @@ class QueueManager(object):
         # debug
         self.logger.debug("processing entry: %s/%s" % (qEntry.name, qEntry.user))
         
-        # check global limit
-        if len(self._transfers.keys()) >= self.maxTotalTransfers:
+        ## get vars ##
+        
+        # get transfer stats
+        runningTotal = 0
+        downloadingTotal = 0
+        seedingTotal = 0
+        if self._transferStats.has_key('running'):
+            runningTotal = self._transferStats['running']
+        if self._transferStats.has_key('downloading'):
+            downloadingTotal = self._transferStats['downloading']
+        if self._transferStats.has_key('seeding'):
+            seedingTotal = self._transferStats['seeding']
+
+        # DEBUG
+        #self.logger.debug("runningTotal: %d" % runningTotal)
+        #self.logger.debug("downloadingTotal: %d" % downloadingTotal)
+        #self.logger.debug("seedingTotal: %d" % seedingTotal)
+
+        # get user stats
+        runningUser = 0
+        downloadingUser = 0
+        seedingUser = 0
+        if self._userStats.has_key(qEntry.user):
+            runningUser = self._userStats[qEntry.user]['running']
+            downloadingUser = self._userStats[qEntry.user]['downloading']
+            seedingUser = self._userStats[qEntry.user]['seeding']
+
+        # DEBUG
+        #self.logger.debug("runningUser: %d" % runningUser)
+        #self.logger.debug("downloadingUser: %d" % downloadingUser)
+        #self.logger.debug("seedingUser: %d" % seedingUser)
+        
+        # get statfile
+        sf = None
+        if self._transfers.has_key(qEntry.name):
+            sf = self._transfers[qEntry.name]
+        else:
+            try:
+                sf = StatFile("%s%s.stat" % (self.pathTransfers, qEntry.name))
+            except Exception, e:
+                sf = None
+                self.logger.warning("Error loading statfile for transfer %s (%s)" % (name, e))
+        
+        # get percentage from statfile
+        percentage = parseFloat(sf.percent_done)
+
+        # DEBUG
+        #self.logger.debug("percentage: %d" % percentage)
+        
+        ## evaluate ##
+        
+        ## global limit
+        if runningTotal < self.maxTotalTransfers:
             
+            # debug
+            self.logger.debug("global limit not reached")
+
+        else:
+
             # debug
             self.logger.debug("global limit reached")
             
             # return
-            return False
+            return True
 
-        # debug
-        self.logger.debug("global limit not reached")
+        ## user limit
+        if  runningUser < self.maxUserTransfers:
         
-        # check if user limit met
-        if self._userStats.has_key(qEntry.user) and self._userStats[qEntry.user]['running'] >= self.maxUserTransfers:
+            # debug
+            self.logger.debug("user limit not reached")
+        
+        else:
         
             # debug
             self.logger.debug("user limit reached")
             
             # return
             return False
+
+        # is download ?
+        if percentage > -200 and percentage < 100:
+
+            # check global download limit
+            if downloadingTotal < self.maxTotalDownloadingTransfers:
+            
+                # debug
+                self.logger.debug("global downloading limit not reached")
+            
+                # check user download limit
+                if downloadingUser < self.maxUserDownloadingTransfers:
+                
+                    # debug
+                    self.logger.debug("user downloading limit not reached")
+                    
+                    # start it
+                    if self._startTransfer(qEntry, sf):
+
+                        # remove it from the queue
+                        self.queueRemove(qEntry)
+                
+                else:
+                
+                    # debug
+                    self.logger.debug("user downloading limit reached")
+            
+            else:
+            
+                # debug
+                self.logger.debug("global downloading limit reached")
+
+        # is seed ?
+        else:
+
+            # check global seeding limit
+            if seedingTotal < self.maxTotalSeedingTransfers:
+            
+                # debug
+                self.logger.debug("global seeding limit not reached")
+                
+                # check user seeding limit
+                if seedingUser < self.maxUserSeedingTransfers:
+                
+                    # debug
+                    self.logger.debug("user seeding limit not reached")
+                    
+                    # start it
+                    if self._startTransfer(qEntry, sf):
+
+                        # remove it from the queue
+                        self.queueRemove(qEntry)
+                
+                else:
+                
+                    # debug
+                    self.logger.debug("user seeding limit reached")
+            
+            else:
+            
+                # debug
+                self.logger.debug("global seeding limit reached")
         
-        # debug
-        self.logger.debug("user limit not reached")
-        
+        # return
+        return False
+
+    """ -------------------------------------------------------------------- """
+    """ _startTransfer                                                       """
+    """ -------------------------------------------------------------------- """
+    def _startTransfer(self, qEntry, sf):
+
         # log
         self.logger.info("starting transfer %s" % qEntry.name)
         
@@ -291,10 +437,7 @@ class QueueManager(object):
         self.stats['startCount'] += 1
         
         # add it to transfers
-        self._addTransfer(qEntry.name, qEntry.user, None)
-        
-        # remove it from the queue
-        self.queueRemove(qEntry)
+        self._addTransfer(qEntry.name, qEntry.user, sf)
         
         # return
         return True
@@ -321,18 +464,38 @@ class QueueManager(object):
                 f.close()
 
                 # process data
-                lines = data.split("\n")
+                lines = data.strip().split("\n")
                 for line in lines:
-                
-                    # transfer-name
-                    transfer = line.strip()
+
+                    # strip
+                    line = line.strip()
                     
                     # check
-                    if transfer == '':
+                    if line == '':
+                        continue
+
+                    # get name and user
+                    name = ''
+                    user = ''
+                    tAry = line.split(QueueManager.DELIM)
+                    if len(tAry) == 2:
+                        name = tAry[0].strip()
+                        user = tAry[1].strip()
+                    else:
+                         # debug
+                        self.logger.debug("skipping transfer in wrong format: %s" % line)
+                        # continue
+                        continue
+                    
+                    # check name
+                    if name == '':
+                        # debug
+                        self.logger.debug("skipping transfer with empty name: %s" % line)
+                        # continue
                         continue
 
                     # process transfer
-                    file = "%s%s.stat" % (self.pathTransfers, transfer)
+                    file = "%s%s.stat" % (self.pathTransfers, name)
                     try:
                     
                         # load statfile
@@ -340,20 +503,22 @@ class QueueManager(object):
                         
                         # only if queued state
                         if not sf.running == '3':
-	                        continue
+                            # debug
+                            self.logger.debug("skipping transfer not in queue state: %s" % name)
+                            # continue
+                            continue
  
                         # check user
-                        if sf.transferowner == '':
-                            raise Exception, "transfer has no owner"
-	                        
-	                    # add transfer
-	                    self.queueAdd(QueueEntry(transfer, sf.transferowner))
+                        if sf.transferowner != '' and sf.transferowner != user:
+                            # debug
+                            self.logger.debug("updating owner from statfile: %s->%s" % (user, sf.transferowner))
+                            user = sf.transferowner
+                            
+                        # add transfer
+                        self.queueAdd(QueueEntry(name, user))
                         
                     except Exception, e:
-                        self.logger.error("error when loading statfile %s for transfer %s (%s)" % (file, transfer, e))
-
-                # remove file
-                os.remove(self.fileQueue)
+                        self.logger.error("error when loading statfile %s for transfer %s (%s)" % (file, name, e))
 
             except Exception, e:
                 raise Exception, "_queueLoad: Failed to process file %s (%s)" % (self.fileQueue, e)
@@ -371,20 +536,17 @@ class QueueManager(object):
         # debug
         self.logger.debug("saving queue")
         
-        # get list
-        qList = self._queueList()
-        
         # content
         content = ''
-        if len(qList) > 0:
-	        content = '\n'.join(qList)
+        for qEntry in self._queue:
+            content += "%s%s%s\n" % (qEntry.name, QueueManager.DELIM, qEntry.user)
         
         # write file
         try:
         
             # write
             f = open(self.fileQueue, 'w')
-            f.write(content + "\n")
+            f.write(content)
             f.flush()
             f.close()
             
@@ -419,11 +581,12 @@ class QueueManager(object):
     """ -------------------------------------------------------------------- """
     def _updateTransfers(self):
 
-        # debug
-        self.logger.debug("updating transfers...")
+        # DEBUG
+        #self.logger.debug("updating transfers...")
 
         # reset member
         self._transfers = {}
+        self._transferStats = {}
         self._userStats = {}
 
         # glob silences access errors -- but loss of access to transfers path needs to
@@ -448,7 +611,7 @@ class QueueManager(object):
                 
             # check transfer-running
             if not sf.running == '1':
-	            continue
+                continue
  
             # add it to transfers
             self._addTransfer(name, sf.transferowner, sf)
@@ -467,10 +630,15 @@ class QueueManager(object):
             # use n/a
             user = 'n/a'
         
-        # add it to transfers
-        self._transfers[name] = user
+        # transfer stats
+        if not self._transferStats.has_key('running'):
+            self._transferStats['running'] = 0
+        if not self._transferStats.has_key('downloading'):
+            self._transferStats['downloading'] = 0
+        if not self._transferStats.has_key('seeding'):
+            self._transferStats['seeding'] = 0
         
-        # update user stats
+        # user stats
         if not self._userStats.has_key(user):
             self._userStats[user] = {}
             self._userStats[user]['running'] = 0
@@ -479,24 +647,32 @@ class QueueManager(object):
         
         # running
         self._userStats[user]['running'] += 1
+        self._transferStats['running'] += 1
         
         # sf is provided ?
-        percentage = 0.
         if sf == None:
             try:
                 sf = StatFile("%s%s.stat" % (self.pathTransfers, name))
-                percentage = parseFloat(sf.percent_done)
             except Exception, e:
+                sf = StatFile()
                 self.logger.warning("Error loading state for transfer %s (%s)" % (name, e))
+                
+        # add it to transfers
+        self._transfers[name] = sf
+        
+        # percentage
+        percentage = parseFloat(sf.percent_done)
         
         # download/seed
-        if percentage < 100:
+        if percentage > -200 and percentage < 100:
         
             # downloading
             self._userStats[user]['downloading'] += 1
+            self._transferStats['downloading'] += 1
             
         else:
         
             # seeding
             self._userStats[user]['seeding'] += 1
+            self._transferStats['seeding'] += 1
 

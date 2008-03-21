@@ -165,7 +165,7 @@ class RequestHandler(object):
 
         # if data is none, return none
         if data is None:
-	        return None
+            return None
  
         # return result
         return Result(data, None)

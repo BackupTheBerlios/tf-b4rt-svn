@@ -128,7 +128,11 @@ def defaultConfig():
 	configParser.set('Qmgr', 'class', 'Qmgr')
 	configParser.set('Qmgr', 'interval', 'DB:fluxd_Qmgr_interval')
 	configParser.set('Qmgr', 'maxTotalTransfers', 'DB:fluxd_Qmgr_maxTotalTransfers')
+	configParser.set('Qmgr', 'maxTotalDownloadingTransfers', '3')
+	configParser.set('Qmgr', 'maxTotalSeedingTransfers', '2')
 	configParser.set('Qmgr', 'maxUserTransfers', 'DB:fluxd_Qmgr_maxUserTransfers')
+	configParser.set('Qmgr', 'maxUserDownloadingTransfers', '1')
+	configParser.set('Qmgr', 'maxUserSeedingTransfers', '1')
 
 	# Fluazu
 	configParser.add_section('Fluazu')
