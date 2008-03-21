@@ -76,16 +76,16 @@ class QueueManager(object):
         #  dict-value: statfile-object
         self._transfers = {}
         
-        # transfers
+        # transfer-stats
         #  dict-key: running|downloading|seeding
         #  dict-value: count of transfers
         self._transferStats = {}
         
-        # transfer-stats
+        # user-stats
         #  dict-key: username
         #  dict-value: dict:
-        #   dict-key: running-total|downloading-total|seeding-total|running|downloading|seeding|sf
-        #   dict-value: count of transfers or stat-file-object (key = sf)
+        #   dict-key: running|downloading|seeding
+        #   dict-value: count of transfers
         self._userStats = {}
 
         # initialize
