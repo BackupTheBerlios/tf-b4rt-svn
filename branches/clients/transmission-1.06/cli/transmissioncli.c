@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmissioncli.c 5115 2008-02-25 21:53:53Z charles $
+ * $Id$
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -51,14 +51,16 @@ const char * USAGE =
 "  -a, --announce <url> Used in conjunction with -c.\n"
 "  -r, --private        Used in conjunction with -c.\n"
 "  -m, --comment <text> Adds an optional comment when creating a torrent.\n"
-"  -d, --download <int> Maximum download rate (-1 = no limit, default = -1)\n"
+"  -d, --download <int> Maximum download rate \n" \
+"                       (-1|0 = no limit, -2 = null, default = -1)\n" \
 "  -f, --finish <shell script> Command you wish to run on completion\n" 
 "  -h, --help           Print this help and exit\n" 
 "  -i, --info           Print metainfo and exit\n"
 "  -n  --nat-traversal  Attempt NAT traversal using NAT-PMP or UPnP IGD\n"
 "  -p, --port <int>     Port we should listen on (default = %d)\n"
 "  -s, --scrape         Print counts of seeders/leechers and exit\n"
-"  -u, --upload <int>   Maximum upload rate (-1 = no limit, default = 20)\n"
+"  -u, --upload <int>   Maximum upload rate \n" \
+"                       (-1|0 = no limit, -2 = null, default = 20)\n" \
 "  -v, --verbose <int>  Verbose level (0 to 2, default = 0)\n"
 "  -V, --version        Print the version number and exit\n"
 "  -y, --recheck        Force a recheck of the torrent data\n"
@@ -180,6 +182,26 @@ main( int argc, char ** argv )
         TOF_print( TOF_message );
         return EXIT_FAILURE;
     }
+
+	// check rate-args to behave like other clients in tfb
+	// up
+	switch (uploadLimit) {
+		case 0:
+			uploadLimit = -1;
+			break;
+		case -2:
+			uploadLimit = 0;
+			break;
+	}
+	// down
+	switch (downloadLimit) {
+		case 0:
+			downloadLimit = -1;
+			break;
+		case -2:
+			downloadLimit = 0;
+			break;
+	}
 
     /* Initialize libtransmission */
     h = tr_initFull( "cli",
