@@ -354,25 +354,6 @@ Manual Upgrade from official TorrentFlux 2.1/2.2/2.3
 
 
 -----------------------------------------------------------------
-Install Transmission (transmissioncli)
------------------------------------------------------------------
-
-1. Untar the package into a directory.
-
-   tar -jxvf Transmission-<version>.tar.bz2
-
-2. Build + Install.
-   Go to the directory just extracted and execute :
-
-   ./configure --disable-gtk
-   make
-   make install
-
-   Note: It may be called 'make' or 'gmake' depending on your
-         system.
-
-
------------------------------------------------------------------
 Additional / Optional
 -----------------------------------------------------------------
 
