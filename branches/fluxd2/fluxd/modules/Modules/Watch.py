@@ -101,8 +101,26 @@ class Watch(BasicModule):
         elif cmd == 'invoke':
             return self.invoke()
 
-        # return
-        return cmd
+        # reloadConfig   
+        elif cmd.startswith('reloadConfig'):
+
+            # interval
+            self.interval = int(Config().getExt(self.name, 'interval').strip())
+
+            # jobs
+            self.initializeJobs(Config().getExt(self.name, 'jobs').strip())
+
+            # message
+            msg = 'Config reloaded (interval: %d; jobs: %s)' % (self.interval, self.jobs.__str__())
+
+            # info
+            self.logger.info(msg)
+
+            # return
+            return msg
+
+        # unknown
+        return 'Command unknown: %s' % cmd
 
     """ -------------------------------------------------------------------- """
     """ getVersion                                                           """
@@ -205,7 +223,8 @@ class Watch(BasicModule):
             fluxcli = Activator().getInstance('Fluxcli')
             
             # process jobs
-            for job in self.jobs:
+            jobCopy = self.jobs.copy()
+            for job in jobCopy:
             
                 # build arg-array
                 args = []
