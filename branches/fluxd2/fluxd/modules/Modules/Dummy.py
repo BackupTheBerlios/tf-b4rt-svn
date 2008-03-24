@@ -73,9 +73,21 @@ class Dummy(BasicModule):
                 return 'initialize Module-shutdown...'
             else:
                 return 'Module not running'
+        
+        # reloadConfig   
+        elif cmd.startswith('reloadConfig'):
+        
+            # message
+            msg = 'Config reloaded.'
+            
+            # info
+            self.logger.info(msg)
+            
+            # return
+            return msg
 
-        # return
-        return cmd
+        # unknown
+        return 'Command unknown: %s' % cmd
 
     """ -------------------------------------------------------------------- """
     """ getVersion                                                           """
