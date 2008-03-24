@@ -168,6 +168,15 @@ class Qmgr(BasicModule):
             else:
                 return 'Dequeue-Command in wrong format: %s' % cmd
         
+	# reloadDB
+	elif cmd.startswith('reloadDB'):
+	    self._queueManager.maxUserTransfers = int(Config().getExt('Qmgr', 'maxUserTransfers').strip())
+	    self._queueManager.maxTotalTransfers = int(Config().getExt('Qmgr', 'maxTotalTransfers').strip())
+	    self._queueManager.maxTotalSeedingTransfers = int(Config().getExt('Qmgr', 'maxTotalSeedingTransfers').strip())
+	    self._queueManager.maxTotalDownloadingTransfers = int(Config().getExt('Qmgr', 'maxTotalDownloadingTransfers').strip())
+	    self._queueManager.maxUserDownloadingTransfers = int(Config().getExt('Qmgr', 'maxUserDownloadingTransfers').strip())
+	    self._queueManager.maxUserSeedingTransfers = int(Config().getExt('Qmgr', 'maxUserSeedingTransfers').strip())
+
         # unknown
         else:
             return 'Command unknown: %s' % cmd
