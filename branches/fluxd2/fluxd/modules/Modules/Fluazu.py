@@ -100,8 +100,20 @@ class Fluazu(BasicModule):
             else:
                 return 'Module not running'
 
-        # return
-        return cmd
+        # reloadConfig   
+        elif cmd.startswith('reloadConfig'):
+
+            # message
+            msg = 'Config reloaded on-the-fly not supported, module-reload is needed'
+
+            # info
+            self.logger.info(msg)
+
+            # return
+            return msg
+
+        # unknown
+        return 'Command unknown: %s' % cmd
 
     """ -------------------------------------------------------------------- """
     """ getVersion                                                           """
