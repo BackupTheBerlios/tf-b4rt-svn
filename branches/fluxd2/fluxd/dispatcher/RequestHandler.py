@@ -339,14 +339,16 @@ class RequestHandler(object):
         # database-load
         databaseManager.load()
 
+        # get ModuleManager-instance
+        moduleManager = Activator().getInstance('ModuleManager')
+
         # Signal the loaded modules to come and check if they need to update
         # themselves
-        moduleManager = Activator().getInstance('ModuleManager')
         for module in moduleManager.runningModules():
-            data = moduleManager.moduleCommand(module, 'reloadDB')
+            data = moduleManager.moduleCommand(module, 'reloadConfig')
 
         # return result
-        return Result('Database reloaded (%s)' % str(databaseManager.getSettingsCount()), None)
+        return Result('Database-Config reloaded (%s)' % str(databaseManager.getSettingsCount()), None)
 
     """ -------------------------------------------------------------------- """
     """ reloadModules                                                        """
