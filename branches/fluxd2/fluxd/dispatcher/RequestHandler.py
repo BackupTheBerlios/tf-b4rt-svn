@@ -344,11 +344,13 @@ class RequestHandler(object):
 
         # Signal the loaded modules to come and check if they need to update
         # themselves
+        modmsg = ''
         for module in moduleManager.runningModules():
             data = moduleManager.moduleCommand(module, 'reloadConfig')
+            modmsg += '%s: %s\n' % (module, data)
 
         # return result
-        return Result('Database-Config reloaded (%s)' % str(databaseManager.getSettingsCount()), None)
+        return Result('Database-Config reloaded (%s)\n%s' % (str(databaseManager.getSettingsCount()), modmsg), None)
 
     """ -------------------------------------------------------------------- """
     """ reloadModules                                                        """
