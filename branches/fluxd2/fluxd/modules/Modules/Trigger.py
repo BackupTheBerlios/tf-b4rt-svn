@@ -45,8 +45,9 @@ class Trigger(BasicModule):
 
     # events
     Events = [
-        'OnDownloadCompleted',  # For all transfer types.
-        'OnSeedingStopped',     # For torrents only.
+	'OnDownloadStarted',	# For all transfer types. started by e.g. Qmgr
+        'OnDownloadStopped',	# For all transfer types. stopped by sharekill or download completed for nzb
+        'OnSeedingStarted',     # For torrents only. download is complete, but we're still uploading
     ]
 
     # params
@@ -68,6 +69,9 @@ class Trigger(BasicModule):
     # lock
     InstanceLock = Lock()
 
+    # delim
+    DELIM = '/'
+
     """ -------------------------------------------------------------------- """
     """ __init__                                                             """
     """ -------------------------------------------------------------------- """
@@ -76,16 +80,18 @@ class Trigger(BasicModule):
         # base
         BasicModule.__init__(self, name, *p, **k)
 
+	# jobs hash
+	self.jobs = {}
+
         # transfers path
         self.transfersPath = Config().get('dir', 'pathTf').strip() + Trigger.TransfersPath
 
         # interval
         self.interval = int(Config().getExt(name, 'interval').strip())
 
-        # commands
-        self.commands = dict(
-            [(event, Config().get(name, 'cmd-' + event).strip()) for event in Trigger.Events]
-        )
+	# jobs File path
+	self.pathTrigger = Config().get('dir', 'pathFluxd').strip() + 'trigger/'
+	self.fileTrigger = self.pathTrigger + 'trigger.jobs'
 
         # invocation-count
         self.runCount = 0
@@ -125,6 +131,21 @@ class Trigger(BasicModule):
         elif cmd == 'invoke':
             return self.invoke()
 
+	elif cmd == 'reloadConfig':
+	    self.interval = int(Config().getExt('Trigger', 'interval').strip())
+
+            # message
+            msg = 'Config reloaded (%d)' % \
+            ( \
+                self.interval
+            )
+
+            # info
+            self.logger.info(msg)
+
+            # return
+            return msg
+
         # return
         return cmd
 
@@ -142,10 +163,23 @@ class Trigger(BasicModule):
         # config
         self.logger.info('interval: %d' % self.interval)
 
+        # main-path
+        if not os.path.isdir(self.pathTrigger):
+            try:
+                self.logger.info("main-path %s does not exist, trying to create ..." % self.pathTrigger)
+                os.mkdir(self.pathTrigger, 0700)
+                self.logger.info("done.")
+            except:
+                self.logger.error("Failed to create main-path %s" % self.pathTrigger)
+                return False
+
         # initialize
         self.logger.info('initializing transfers state...')
         self._transfers = self._takeSnapshot()
         self.logger.info('...done (tracking %d transfers)' % len(self._transfers))
+
+	# load up saved jobs
+	self._loadJobs()
 
     """ -------------------------------------------------------------------- """
     """ main                                                                 """
@@ -291,7 +325,21 @@ class Trigger(BasicModule):
         new_percent_done = parseFloat(new.percent_done)
         new_downtotal    = parseLong(new.downtotal)
 
-        # OnDownloadCompleted:
+	# transfer started:
+	#   * transition of running
+	#	from !1 to 1
+	if old_running != 1 and new_running == 1:
+	    if 'transferStarted' in self.jobs[name].keys():
+		self._fireEvent('transferStarted', name)
+
+	# transfer stopped:
+	#    * transition of running
+	#	from 1 to !1
+	if old_running == 1 and new_running != 1:
+	    if 'transferStopped' in self.jobs[name].keys():
+		self._fireEvent('transferStopped', name)
+
+        # transfer Completed:
         #   * transition of (running, percent_done)
         #       from (*, <100) to ([01], 100)
         #   * with downtotal > 0 (to not interpret a checking->seeding
@@ -299,64 +347,236 @@ class Trigger(BasicModule):
         if old_percent_done < 100. and \
            new_running in (0, 1) and new_percent_done == 100. and \
            new_downtotal > 0L:
-            self._fireEvent('OnDownloadCompleted', name, type, old, new)
+	    if 'transferCompleted' in self.jobs[name].keys():
+		self._fireEvent('transferCompleted', name)
 
-        # OnSeedingStopped:
+        # transfer Seeding:
         #   * torrents only
         #   * transition of (running, percent_done)
-        #       from (!0, *) to (0, 100)
+        #       from (1, *) to (1, 100)
         if type == 'torrent' and \
-           old_running != 0 and \
-           new_running == 0 and new_percent_done == 100.:
-            self._fireEvent('OnSeedingStopped', name, type, old, new)
+           old_running == 1 and \
+           new_running == 1 and new_percent_done == 100.:
+	    if 'transferSeeding' in self.jobs[name].keys():
+		self._fireEvent('transferSeeding', name)
 
     """ -------------------------------------------------------------------- """
     """ _fireEvent                                                           """
     """ -------------------------------------------------------------------- """
-    def _fireEvent(self, event, name, type, old, new):
+    def _fireEvent(self, event, name):
+	"""call each action for this event."""
 
-        # Get command.
-        if event not in self.commands:
-            self.logger.error('Unknown event: %s' % event)
-            return
-        command = self.commands[event]
-        if not command:
-            # Event is not bound, nothing to do.
-            return
+	for action in self.jobs[name][event]:
+	    # Log.
+	    self.logger.info("%s: %s (%s)" % (event, name, action))
 
-        # Log.
-        self.logger.info("%s: %s" % (event, name))
-
-        # And fire event.
-        try:
-            self._fireEventCore(event, name, type, old, new, command)
-        except Exception, e:
-            self.logger.warning("Error running %s command for transfer %s (%s)" % (event, name, e))
+            # And fire event.
+            try:
+		self._fireEventCore(event, name, action)
+	    except Exception, e:
+		self.logger.warning("Error running %s event for transfer %s (%s)" % (event, name, e))
 
     """ -------------------------------------------------------------------- """
     """ _fireEventCore                                                       """
     """ -------------------------------------------------------------------- """
-    def _fireEventCore(self, event, name, type, old, new, command):
+    def _fireEventCore(self, event, name, action):
+	"""actually call the event."""
 
-        # Store transfer parent path, will be command's cwd for convenience.
-        pathTf = Config().get('dir', 'pathTf').strip()
+	if action.startswith('execute'):
+	    script = action.split(':')[1]
 
-        # Prepare parameters.
-        params = {}
-        params[Trigger.Param_CURDATE]  = time.strftime(Config().get('logging', 'Dateformat'))
-        params[Trigger.Param_DOCROOT]  = Config().get('dir', 'docroot').strip()
-        params[Trigger.Param_EVENT]    = event
-        params[Trigger.Param_FLUXCLI]  = Activator().getInstance('Fluxcli').getPath()
-        params[Trigger.Param_FLUXD]    = Config().get('dir', 'pathFluxd').strip()
-        params[Trigger.Param_OWNER]    = new.transferowner.strip()
-        params[Trigger.Param_PATH]     = pathTf
-        params[Trigger.Param_PHP]      = Config().get('file', 'php').strip()
-        params[Trigger.Param_TRANSFER] = name
-        params[Trigger.Param_TYPE]     = type
+	    # pass stuff to the environment
+	    params = {}
+            params[Trigger.Param_CURDATE]  = time.strftime(Config().get('logging', 'Dateformat'))
+            params[Trigger.Param_DOCROOT]  = Config().get('dir', 'docroot').strip()
+            params[Trigger.Param_EVENT]    = event
+            params[Trigger.Param_FLUXCLI]  = Activator().getInstance('Fluxcli').getPath()
+            params[Trigger.Param_FLUXD]    = Config().get('dir', 'pathFluxd').strip()
+            params[Trigger.Param_OWNER]    = new.transferowner.strip()
+            params[Trigger.Param_PATH]     = pathTf
+            params[Trigger.Param_PHP]      = Config().get('file', 'php').strip()
+            params[Trigger.Param_TRANSFER] = name 
+            params[Trigger.Param_TYPE]     = type  
 
-        # Prepare environment (clean up and add params).
-        env = dict([(k, v) for k, v in os.environ.iteritems() if not k.startswith(Trigger.ParamPrefix)])
-        env.update(params)
+            # Prepare environment (clean up and add params).
+            env = dict([(k, v) for k, v in os.environ.iteritems() if not k.startswith(Trigger.ParamPrefix)])
+            env.update(params)
 
-        # Run command.
-        bgShellCmd(self.logger, self.name + ':' + event, command, pathTf, env)
+	    bgShellCmd(self.logger, self.name + ':' + event, script, pathTf, env)
+
+	elif action == 'email':
+	    # TODO: determine email capabilities. I'd like to have an email
+	    # address stored in the user's profile, so we could email them
+	    # there, but I'd also like to be able to fallback to PM
+	    pass
+
+	elif action == 'unzip':
+	    # TODO: find the rar/zip'd files we downloaded and unzip them
+	    pass
+
+	elif action.startswith('move'):
+	    destination = action.split(':')[1]
+
+	    # TODO: move the files to the destination
+	    pass
+	else:
+	    self.logger.info('inavlid action given: %s' % action)
+
+    """ -------------------------------------------------------------------- """
+    """ _loadJobs                                                            """
+    """ -------------------------------------------------------------------- """
+    def _loadJobs(self):
+	"""Load up any saved jobs from previous runs."""
+
+	# debug
+        self.logger.debug("loading jobs")
+
+        # read in queue-file
+        if os.path.isfile(self.fileTrigger):
+
+            # info
+            self.logger.info("loading saved jobs %s" % self.fileTrigger)
+
+            try:
+
+                # read file to mem
+                f = open(self.fileTrigger, 'r')
+                data = f.read()
+                f.close()
+
+                # process data
+                lines = data.strip().split("\n")
+                for line in lines:
+
+                    # strip
+                    line = line.strip()
+
+                    # check
+                    if line == '':
+                        continue
+
+                    # get name and user
+                    name = ''
+                    event = ''
+		    action = ''
+                    tAry = line.split(Trigger.DELIM)
+                    if len(tAry) == 3:
+                        name = tAry[0].strip()
+                        event = tAry[1].strip()
+			action = tAry[2].strip()
+                    else:
+                         # debug
+                        self.logger.debug("skipping transfer in wrong format: %s" % line)
+                        # continue
+                        continue
+
+                    # check name
+                    if name == '':
+                        # debug
+                        self.logger.debug("skipping transfer with empty name: %s" % line)
+                        # continue
+
+                    # process transfer
+                    file = "%s%s.stat" % (self.transfersPath, name)
+                    try:
+
+                        # add transfer
+                        self.addJob(name, event, action)
+
+                    except Exception, e:
+                        self.logger.error("error when loading statfile %s for transfer %s (%s)" % (file, name, e))
+
+            except Exception, e:
+                raise Exception, "_loadJobs: Failed to process file %s (%s)" % (self.fileTrigger, e)
+
+        else:
+
+            # info
+            self.logger.info("no saved queue present %s" % self.fileTrigger)
+
+    """ -------------------------------------------------------------------- """
+    """ _saveJobs                                                            """
+    """ -------------------------------------------------------------------- """
+    def _saveJobs(self):
+	"""saves jobs dict for later use."""
+
+        # debug
+        self.logger.debug("saving jobs")
+
+	# content
+	content = ''
+	for transfer in self.jobs.keys():
+	    for event in self.jobs[transfer].keys():
+		content += '%s%s%s%s%s\n' % (transfer, Trigger.DELIM, event, Trigger.DELIM, self.jobs[transfer][event])
+
+        # write file
+        try:
+
+            # write
+            f = open(self.fileTrigger, 'w')
+            f.write(content)
+            f.flush()
+            f.close()
+
+            # return
+            return True
+
+        except Exception, e:
+
+            # log
+            self.logger.error("Error when saving queue file (%s)" % e)
+
+        # return
+        return False
+
+    """ -------------------------------------------------------------------- """
+    """ addJob                                                               """
+    """ -------------------------------------------------------------------- """
+    def addJob(self, transfer, event, action):
+	"""Adds a job to the jobs hash.
+
+	action should be a list, even if it only contains one item!"""
+
+	# debug
+	self.logger.debug('Adding to jobs t: %s e: %s a: %s' % (transfer, event, action))
+
+	if event in self.jobs[transfer]:
+	    # this event is already defined
+	    self.logger.debug('Attempted to add an event that already exists for this transfer: %s (%s)' % (transfer, event))
+	    return False
+	else:
+	    self.jobs[transfer]={event: action}
+	    self.logger.debug('Added job for %s' % transfer)
+
+    """ -------------------------------------------------------------------- """
+    """ removeJob                                                            """
+    """ -------------------------------------------------------------------- """
+    def removeJob(self, transfer, event, action):
+	"""removes a job from the jobs hash"""
+
+	# debug
+	self.logger.debug('removing job from jobs for %s' % transfer)
+
+	if transfer in self.jobs.keys():
+	    if event in self.jobs[transfer].keys():
+		if action in self.jobs[transfer][event]:
+		    self.jobs[transfer][event].pop(self.jobs[transfer][event].index(action))
+		else:
+		    self.logger.debug('No job defined for action: %s' % action)
+		    return False
+	    else:
+		self.logger.debug('No job defined for event: %s' % event)
+		return False
+	else:
+	    self.logger.debug('No job defined for transfer: %s' % transfer)
+	    return False
+
+	if self.jobs[transfer][event] == []:
+	    # the jobs hash is now empty for this event, remove the event key
+	    self.logger.debug('No actions defined for event, removing event key for transfer: %s (%s)' % (transfer, event))
+	    del self.jobs[transfer][event]
+
+	if self.jobs[transfer] == {}:
+	    # the jobs hash is now empty for this transfer, remove the transfer
+	    self.logger.debug('No events defined for transfer, removing transfer: %s' % transfer)
+	    del self.jobs[transfer]
