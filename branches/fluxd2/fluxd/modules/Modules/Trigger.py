@@ -45,9 +45,9 @@ class Trigger(BasicModule):
 
     # events
     Events = [
-	'OnDownloadStarted',	# For all transfer types. started by e.g. Qmgr
-        'OnDownloadStopped',	# For all transfer types. stopped by sharekill or download completed for nzb
-        'OnSeedingStarted',     # For torrents only. download is complete, but we're still uploading
+        'OnDownloadStarted',    # For all transfer types. started by e.g. Qmgr
+        'OnDownloadStopped',    # For all transfer types. stopped by sharekill or download completed for nzb
+        'OnSeedingStarted'     # For torrents only. download is complete, but we're still uploading
     ]
 
     # params
@@ -80,8 +80,8 @@ class Trigger(BasicModule):
         # base
         BasicModule.__init__(self, name, *p, **k)
 
-	# jobs hash
-	self.jobs = {}
+        # jobs hash
+        self.jobs = {}
 
         # transfers path
         self.transfersPath = Config().get('dir', 'pathTf').strip() + Trigger.TransfersPath
@@ -89,9 +89,9 @@ class Trigger(BasicModule):
         # interval
         self.interval = int(Config().getExt(name, 'interval').strip())
 
-	# jobs File path
-	self.pathTrigger = Config().get('dir', 'pathFluxd').strip() + 'trigger/'
-	self.fileTrigger = self.pathTrigger + 'trigger.jobs'
+        # jobs File path
+        self.pathTrigger = Config().get('dir', 'pathFluxd').strip() + 'trigger/'
+        self.fileTrigger = self.pathTrigger + 'trigger.jobs'
 
         # invocation-count
         self.runCount = 0
@@ -131,13 +131,13 @@ class Trigger(BasicModule):
         elif cmd == 'invoke':
             return self.invoke()
 
-	elif cmd == 'reloadConfig':
-	    self.interval = int(Config().getExt('Trigger', 'interval').strip())
+        elif cmd == 'reloadConfig':
+            self.interval = int(Config().getExt('Trigger', 'interval').strip())
 
             # message
             msg = 'Config reloaded (%d)' % \
             ( \
-                self.interval
+                self.interval \
             )
 
             # info
@@ -178,8 +178,8 @@ class Trigger(BasicModule):
         self._transfers = self._takeSnapshot()
         self.logger.info('...done (tracking %d transfers)' % len(self._transfers))
 
-	# load up saved jobs
-	self._loadJobs()
+        # load up saved jobs
+        self._loadJobs()
 
     """ -------------------------------------------------------------------- """
     """ main                                                                 """
@@ -325,19 +325,19 @@ class Trigger(BasicModule):
         new_percent_done = parseFloat(new.percent_done)
         new_downtotal    = parseLong(new.downtotal)
 
-	# transfer started:
-	#   * transition of running
-	#	from !1 to 1
-	if old_running != 1 and new_running == 1:
-	    if 'transferStarted' in self.jobs[name].keys():
-		self._fireEvent('transferStarted', name)
+        # transfer started:
+        #   * transition of running
+        #  from !1 to 1
+        if old_running != 1 and new_running == 1:
+            if 'transferStarted' in self.jobs[name].keys():
+                self._fireEvent('transferStarted', name)
 
-	# transfer stopped:
-	#    * transition of running
-	#	from 1 to !1
-	if old_running == 1 and new_running != 1:
-	    if 'transferStopped' in self.jobs[name].keys():
-		self._fireEvent('transferStopped', name)
+        # transfer stopped:
+        #    * transition of running
+        # from 1 to !1
+        if old_running == 1 and new_running != 1:
+            if 'transferStopped' in self.jobs[name].keys():
+                self._fireEvent('transferStopped', name)
 
         # transfer Completed:
         #   * transition of (running, percent_done)
@@ -345,48 +345,49 @@ class Trigger(BasicModule):
         #   * with downtotal > 0 (to not interpret a checking->seeding
         #       transition as a download completion)
         if old_percent_done < 100. and \
-           new_running in (0, 1) and new_percent_done == 100. and \
-           new_downtotal > 0L:
-	    if 'transferCompleted' in self.jobs[name].keys():
-		self._fireEvent('transferCompleted', name)
+            new_running in (0, 1) and new_percent_done == 100. and \
+            new_downtotal > 0L:
+            if 'transferCompleted' in self.jobs[name].keys():
+                self._fireEvent('transferCompleted', name)
 
         # transfer Seeding:
         #   * torrents only
         #   * transition of (running, percent_done)
         #       from (1, *) to (1, 100)
         if type == 'torrent' and \
-           old_running == 1 and \
-           new_running == 1 and new_percent_done == 100.:
-	    if 'transferSeeding' in self.jobs[name].keys():
-		self._fireEvent('transferSeeding', name)
+            old_running == 1 and \
+            new_running == 1 and new_percent_done == 100.:
+            if 'transferSeeding' in self.jobs[name].keys():
+                self._fireEvent('transferSeeding', name)
 
     """ -------------------------------------------------------------------- """
     """ _fireEvent                                                           """
     """ -------------------------------------------------------------------- """
     def _fireEvent(self, event, name):
-	"""call each action for this event."""
+        """call each action for this event."""
 
-	for action in self.jobs[name][event]:
-	    # Log.
-	    self.logger.info("%s: %s (%s)" % (event, name, action))
+        for action in self.jobs[name][event]:
+        
+            # Log.
+            self.logger.info("%s: %s (%s)" % (event, name, action))
 
             # And fire event.
             try:
-		self._fireEventCore(event, name, action)
-	    except Exception, e:
-		self.logger.warning("Error running %s event for transfer %s (%s)" % (event, name, e))
+                self._fireEventCore(event, name, action)
+            except Exception, e:
+                self.logger.warning("Error running %s event for transfer %s (%s)" % (event, name, e))
 
     """ -------------------------------------------------------------------- """
     """ _fireEventCore                                                       """
     """ -------------------------------------------------------------------- """
     def _fireEventCore(self, event, name, action):
-	"""actually call the event."""
+        """actually call the event."""
 
-	if action.startswith('execute'):
-	    script = action.split(':')[1]
+        if action.startswith('execute'):
+            script = action.split(':')[1]
 
-	    # pass stuff to the environment
-	    params = {}
+            # pass stuff to the environment
+            params = {}
             params[Trigger.Param_CURDATE]  = time.strftime(Config().get('logging', 'Dateformat'))
             params[Trigger.Param_DOCROOT]  = Config().get('dir', 'docroot').strip()
             params[Trigger.Param_EVENT]    = event
@@ -402,33 +403,33 @@ class Trigger(BasicModule):
             env = dict([(k, v) for k, v in os.environ.iteritems() if not k.startswith(Trigger.ParamPrefix)])
             env.update(params)
 
-	    bgShellCmd(self.logger, self.name + ':' + event, script, pathTf, env)
+            bgShellCmd(self.logger, self.name + ':' + event, script, pathTf, env)
 
-	elif action == 'email':
-	    # TODO: determine email capabilities. I'd like to have an email
-	    # address stored in the user's profile, so we could email them
-	    # there, but I'd also like to be able to fallback to PM
-	    pass
+        elif action == 'email':
+            # TODO: determine email capabilities. I'd like to have an email
+            # address stored in the user's profile, so we could email them
+            # there, but I'd also like to be able to fallback to PM
+            pass
 
-	elif action == 'unzip':
-	    # TODO: find the rar/zip'd files we downloaded and unzip them
-	    pass
+        elif action == 'unzip':
+            # TODO: find the rar/zip'd files we downloaded and unzip them
+            pass
 
-	elif action.startswith('move'):
-	    destination = action.split(':')[1]
+        elif action.startswith('move'):
+            destination = action.split(':')[1]
 
-	    # TODO: move the files to the destination
-	    pass
-	else:
-	    self.logger.info('inavlid action given: %s' % action)
+            # TODO: move the files to the destination
+            pass
+        else:
+            self.logger.info('inavlid action given: %s' % action)
 
     """ -------------------------------------------------------------------- """
     """ _loadJobs                                                            """
     """ -------------------------------------------------------------------- """
     def _loadJobs(self):
-	"""Load up any saved jobs from previous runs."""
+        """Load up any saved jobs from previous runs."""
 
-	# debug
+        # debug
         self.logger.debug("loading jobs")
 
         # read in queue-file
@@ -458,12 +459,12 @@ class Trigger(BasicModule):
                     # get name and user
                     name = ''
                     event = ''
-		    action = ''
+                    action = ''
                     tAry = line.split(Trigger.DELIM)
                     if len(tAry) == 3:
                         name = tAry[0].strip()
                         event = tAry[1].strip()
-			action = tAry[2].strip()
+                        action = tAry[2].strip()
                     else:
                          # debug
                         self.logger.debug("skipping transfer in wrong format: %s" % line)
@@ -498,16 +499,16 @@ class Trigger(BasicModule):
     """ _saveJobs                                                            """
     """ -------------------------------------------------------------------- """
     def _saveJobs(self):
-	"""saves jobs dict for later use."""
+        """saves jobs dict for later use."""
 
         # debug
         self.logger.debug("saving jobs")
 
-	# content
-	content = ''
-	for transfer in self.jobs.keys():
-	    for event in self.jobs[transfer].keys():
-		content += '%s%s%s%s%s\n' % (transfer, Trigger.DELIM, event, Trigger.DELIM, self.jobs[transfer][event])
+        # content
+        content = ''
+        for transfer in self.jobs.keys():
+            for event in self.jobs[transfer].keys():
+                content += '%s%s%s%s%s\n' % (transfer, Trigger.DELIM, event, Trigger.DELIM, self.jobs[transfer][event])
 
         # write file
         try:
@@ -533,50 +534,51 @@ class Trigger(BasicModule):
     """ addJob                                                               """
     """ -------------------------------------------------------------------- """
     def addJob(self, transfer, event, action):
-	"""Adds a job to the jobs hash.
+        """Adds a job to the jobs hash.
 
-	action should be a list, even if it only contains one item!"""
+        action should be a list, even if it only contains one item!"""
 
-	# debug
-	self.logger.debug('Adding to jobs t: %s e: %s a: %s' % (transfer, event, action))
+        # debug
+        self.logger.debug('Adding to jobs t: %s e: %s a: %s' % (transfer, event, action))
 
-	if event in self.jobs[transfer]:
-	    # this event is already defined
-	    self.logger.debug('Attempted to add an event that already exists for this transfer: %s (%s)' % (transfer, event))
-	    return False
-	else:
-	    self.jobs[transfer]={event: action}
-	    self.logger.debug('Added job for %s' % transfer)
+        if event in self.jobs[transfer]:
+            # this event is already defined
+            self.logger.debug('Attempted to add an event that already exists for this transfer: %s (%s)' % (transfer, event))
+            return False
+        else:
+            self.jobs[transfer]={event: action}
+            self.logger.debug('Added job for %s' % transfer)
 
     """ -------------------------------------------------------------------- """
     """ removeJob                                                            """
     """ -------------------------------------------------------------------- """
     def removeJob(self, transfer, event, action):
-	"""removes a job from the jobs hash"""
+        """removes a job from the jobs hash"""
 
-	# debug
-	self.logger.debug('removing job from jobs for %s' % transfer)
+        # debug
+        self.logger.debug('removing job from jobs for %s' % transfer)
 
-	if transfer in self.jobs.keys():
-	    if event in self.jobs[transfer].keys():
-		if action in self.jobs[transfer][event]:
-		    self.jobs[transfer][event].pop(self.jobs[transfer][event].index(action))
-		else:
-		    self.logger.debug('No job defined for action: %s' % action)
-		    return False
-	    else:
-		self.logger.debug('No job defined for event: %s' % event)
-		return False
-	else:
-	    self.logger.debug('No job defined for transfer: %s' % transfer)
-	    return False
+        if transfer in self.jobs.keys():
+            if event in self.jobs[transfer].keys():
+                if action in self.jobs[transfer][event]:
+                    self.jobs[transfer][event].pop(self.jobs[transfer][event].index(action))
+                else:
+                    self.logger.debug('No job defined for action: %s' % action)
+                    return False
+            else:
+                self.logger.debug('No job defined for event: %s' % event)
+            return False
+        else:
+            self.logger.debug('No job defined for transfer: %s' % transfer)
+            return False
 
-	if self.jobs[transfer][event] == []:
-	    # the jobs hash is now empty for this event, remove the event key
-	    self.logger.debug('No actions defined for event, removing event key for transfer: %s (%s)' % (transfer, event))
-	    del self.jobs[transfer][event]
+        if self.jobs[transfer][event] == []:
+            # the jobs hash is now empty for this event, remove the event key
+            self.logger.debug('No actions defined for event, removing event key for transfer: %s (%s)' % (transfer, event))
+            del self.jobs[transfer][event]
 
-	if self.jobs[transfer] == {}:
-	    # the jobs hash is now empty for this transfer, remove the transfer
-	    self.logger.debug('No events defined for transfer, removing transfer: %s' % transfer)
-	    del self.jobs[transfer]
+        if self.jobs[transfer] == {}:
+            # the jobs hash is now empty for this transfer, remove the transfer
+            self.logger.debug('No events defined for transfer, removing transfer: %s' % transfer)
+            del self.jobs[transfer]
+
