@@ -53,6 +53,8 @@ class RequestHandler(object):
         self.__requestMap = {
             'modlist': self.modlist,
             'modstate': self.modstate,
+            'modstart': self.modstart,
+            'modstop': self.modstop,
             'status': self.status,
             'set': self.set,
             'reloadDBCache': self.reloadDBCache,
@@ -212,6 +214,59 @@ class RequestHandler(object):
 
         # return result
         return Result(mstate, None)
+
+    """ -------------------------------------------------------------------- """
+    """ modstart                                                             """
+    """ -------------------------------------------------------------------- """
+    def modstart(self, args):
+
+        # mod-name
+        module = args[0].strip()
+
+        # get ModuleManager-instance
+        moduleManager = Activator().getInstance('ModuleManager')
+
+        # check if running
+        if moduleManager.isModuleRunning(module):
+            return Result('Module already running: %s' % module, None)
+
+        # get Dispatcher-instance
+        dispatcher = Activator().getInstance('Dispatcher') 
+
+        # start it
+        try:
+            moduleManager.startModule(dispatcher.requestHandler, module)
+        except Exception, e:
+            # return result
+            return Result('Error when starting Module: %s' % module, e)
+
+        # return result
+        return Result('Module started: %s' % module, None)
+
+    """ -------------------------------------------------------------------- """
+    """ modstop                                                             """
+    """ -------------------------------------------------------------------- """
+    def modstop(self, args):
+
+        # mod-name
+        module = args[0].strip()
+
+        # get ModuleManager-instance
+        moduleManager = Activator().getInstance('ModuleManager')
+
+        # check if running
+        if not moduleManager.isModuleRunning(module):
+            return Result('Module not running: %s' % module, None)
+
+        # stop it
+        try:
+            moduleManager.stopModule(module)
+        except Exception, e:
+            # return result
+            return Result('Error when stopping Module: %s' % module, e)
+
+        # return result
+        return Result('Module stopped: %s' % module, None)
 
     """ -------------------------------------------------------------------- """
     """ set                                                                  """
