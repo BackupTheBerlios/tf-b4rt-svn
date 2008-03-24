@@ -93,8 +93,28 @@ class Maintenance(BasicModule):
         elif cmd == 'invoke':
             return self.invoke()
 
-        # return
-        return cmd
+        # reloadConfig   
+        elif cmd.startswith('reloadConfig'):
+
+            # interval
+            self.interval = int(Config().getExt(self.name, 'interval').strip())
+
+            # restart
+            self.restart = 'false'
+            if isTrue(Config().getExt(self.name, 'restart').strip()):
+                self.restart = 'true'
+
+            # message
+            msg = 'Config reloaded (interval: %d; restart: %s)' % (self.interval, self.restart)
+
+            # info
+            self.logger.info(msg)
+
+            # return
+            return msg
+
+        # unknown
+        return 'Command unknown: %s' % cmd
 
     """ -------------------------------------------------------------------- """
     """ getVersion                                                           """
