@@ -78,7 +78,7 @@ class Dummy(BasicModule):
         elif cmd.startswith('reloadConfig'):
         
             # message
-            msg = 'Config reloaded.'
+            msg = 'Config reloaded'
             
             # info
             self.logger.info(msg)

@@ -168,21 +168,34 @@ class Qmgr(BasicModule):
             else:
                 return 'Dequeue-Command in wrong format: %s' % cmd
         
-        # reloadDB
-        elif cmd.startswith('reloadDB'):
-            self._queueManager.maxUserTransfers = int(Config().getExt('Qmgr', 'maxUserTransfers').strip())
-            self._queueManager.maxTotalTransfers = int(Config().getExt('Qmgr', 'maxTotalTransfers').strip())
-            self._queueManager.maxTotalSeedingTransfers = int(Config().getExt('Qmgr', 'maxTotalSeedingTransfers').strip())
-            self._queueManager.maxTotalDownloadingTransfers = int(Config().getExt('Qmgr', 'maxTotalDownloadingTransfers').strip())
-            self._queueManager.maxUserDownloadingTransfers = int(Config().getExt('Qmgr', 'maxUserDownloadingTransfers').strip())
-            self._queueManager.maxUserSeedingTransfers = int(Config().getExt('Qmgr', 'maxUserSeedingTransfers').strip())
+        # reloadConfig
+        elif cmd.startswith('reloadConfig'):
+        
+            # reload settings
+            self.interval = int(Config().getExt(self.name, 'interval').strip())
+            self._queueManager.maxUserTransfers = int(Config().getExt(self.name, 'maxUserTransfers').strip())
+            self._queueManager.maxTotalTransfers = int(Config().getExt(self.name, 'maxTotalTransfers').strip())
+            self._queueManager.maxTotalSeedingTransfers = int(Config().getExt(self.name, 'maxTotalSeedingTransfers').strip())
+            self._queueManager.maxTotalDownloadingTransfers = int(Config().getExt(self.name, 'maxTotalDownloadingTransfers').strip())
+            self._queueManager.maxUserDownloadingTransfers = int(Config().getExt(self.name, 'maxUserDownloadingTransfers').strip())
+            self._queueManager.maxUserSeedingTransfers = int(Config().getExt(self.name, 'maxUserSeedingTransfers').strip())
+        
+            # message
+            msg = 'Config reloaded (%d %d/%d/%d %d/%d/%d)' % \
+            ( \
+                self.interval, \
+                self._queueManager.maxTotalTransfers, self._queueManager.maxTotalDownloadingTransfers, self._queueManager.maxTotalSeedingTransfers, \
+                self._queueManager.maxUserTransfers, self._queueManager.maxUserDownloadingTransfers, self._queueManager.maxUserSeedingTransfers\
+            )
+            
+            # info
+            self.logger.info(msg)
+            
+            # return
+            return msg
 
         # unknown
-        else:
-            return 'Command unknown: %s' % cmd
-
-        # return
-        return cmd
+        return 'Command unknown: %s' % cmd
 
     """ -------------------------------------------------------------------- """
     """ getVersion                                                           """
