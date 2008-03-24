@@ -260,7 +260,7 @@ class Qmgr(BasicModule):
         self._queueManager.stop()
 
         # join queue, only python 2.5
-        if hasattr(self.__queueRequest, 'join'):
+        if hasattr(self._queueRequest, 'join'):
             try:
                 
                 # debug

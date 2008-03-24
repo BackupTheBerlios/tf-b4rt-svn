@@ -303,7 +303,7 @@ class Daemon(object):
                 moduleManager.stopModule()
                 # check if we got a running module
                 tries = 0
-                triesMax = 25
+                triesMax = 75
                 nap = 0.2
                 isRunning = True
                 while isRunning and tries < triesMax:
