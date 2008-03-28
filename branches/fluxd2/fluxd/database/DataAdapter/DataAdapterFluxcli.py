@@ -45,6 +45,8 @@ class DataAdapterFluxcli(IDataAdapter):
     """ loadSettings                                                         """
     """ -------------------------------------------------------------------- """
     def loadSettings(self):
+    
+        # info
         self.logger.info('loading settings...')
 
         # load settings via fluxcli

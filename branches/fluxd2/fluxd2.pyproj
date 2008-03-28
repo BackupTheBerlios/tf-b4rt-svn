@@ -112,6 +112,9 @@
     <Compile Include="fluxd\daemon\__init__.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="fluxd\database\DataAdapter\DataAdapterADOdb.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="fluxd\database\DataAdapter\DataAdapterFluxcli.py">
       <SubType>Code</SubType>
     </Compile>
@@ -155,6 +158,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="fluxd\functions\string.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="fluxd\functions\tfbconfig.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="fluxd\functions\transfer.py">

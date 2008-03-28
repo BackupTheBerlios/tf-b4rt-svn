@@ -164,4 +164,3 @@ class DatabaseManager(IActivator):
         return getClassByName(
             '%s.%s' % (Config().get('database', 'DataAdapterPackage').strip(), adapterClass),
             adapterClass)()
-        #return getClassByName(Config().get('database', 'DataAdapterPackage').strip() + '.' + adapterClass, adapterClass)()
