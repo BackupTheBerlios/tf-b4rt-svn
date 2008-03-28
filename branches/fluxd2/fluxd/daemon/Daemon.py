@@ -290,6 +290,9 @@ class Daemon(object):
         # get Dispatcher-instance
         dispatcher = Activator().getInstance('Dispatcher')
 
+        # get DatabaseManager-instance
+        databaseManager = Activator().getInstance('DatabaseManager')
+
         # get ServerManager-instance
         serverManager = Activator().getInstance('ServerManager')
 
@@ -352,6 +355,12 @@ class Daemon(object):
                     raise Exception, "Dispatcher-Thread still running after %d seconds" % (triesMax * nap)
         except Exception, e:
             self.logger.error("Error when stopping Dispatcher (%s)" % (e))
+
+        # save settings
+        try:
+            databaseManager.save()
+        except Exception, e:
+            self.logger.error("Error when saving settings (%s)" % (e))
 
         # delete pid-file
         self.__pidDelete()
