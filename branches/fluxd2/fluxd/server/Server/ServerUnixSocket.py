@@ -58,6 +58,10 @@ class ServerUnixSocket(ServerGenericSocket):
     """ -------------------------------------------------------------------- """
     def getServerSocket(self):
 
+        # cleanup if exists
+        if os.path.exists(self.socketPath):
+            self.cleanupServerSocket()
+ 
         # log
         self.logger.info("create server-socket... (%s)" % self.socketPath)
 
