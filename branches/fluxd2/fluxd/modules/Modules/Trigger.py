@@ -62,6 +62,18 @@ class Trigger(BasicModule):
     Param_PHP      = ParamPrefix + 'PHP'        # php-cli path (the one to use for fluxcli invocations).
     Param_TRANSFER = ParamPrefix + 'TRANSFER'   # Transfer name.
     Param_TYPE     = ParamPrefix + 'TYPE'       # Transfer type (torrent, wget, nzb, unknown).
+    Param_RUNNING  = ParamPrefix + 'RUNNING'    # Is the transfer running
+    Param_PERCENT  = ParamPrefix + 'PERCENT'    # what percent done
+    Param_TIME     = ParamPrefix + 'TIME'       # Estimated time left
+    Param_DOWN     = ParamPrefix + 'DOWN'       # downspeed
+    Param_UP       = ParamPrefix + 'UP'         # upspeed
+    Param_SEEDS    = ParamPrefix + 'SEEDS'      # number of seeds
+    Param_PEERS    = ParamPrefix + 'PEERS'      # number of peers
+    Param_SHARING  = ParamPrefix + 'SHARING'    # current seeding percentage
+    Param_SEEDLIM  = ParamPrefix + 'SEEDLIM'    # seedlimit
+    Param_UPTOTAL  = ParamPrefix + 'UPTOTAL'    # total amount uploaded
+    Param_DOWNTOTAL= ParamPrefix + 'DOWNTOTAL'  # total amount downloaded
+    Param_SIZE     = ParamPrefix + 'SIZE'       # total size of the files
 
     # path
     TransfersPath = '.transfers/'
@@ -70,7 +82,8 @@ class Trigger(BasicModule):
     InstanceLock = Lock()
 
     # delim
-    DELIM = '/'
+    DELIM = ';'
+    CmdDelim = '#'
 
     """ -------------------------------------------------------------------- """
     """ __init__                                                             """
@@ -146,6 +159,43 @@ class Trigger(BasicModule):
             # return
             return msg
 
+        elif cmd.startswith('listJobs'):
+            # return the job list
+            return self.listJobs()
+
+        elif cmd.startswith('addJob'):
+            # get the arguments
+            args = cmd.split(Trigger.DELIM)
+            if len(args) == 4:
+                (transfer, event, actionItem) = args[1:]
+                
+                if self.addJob(transfer, event, actionItem):
+                    msg = 'Added job for transfer: %s' % transfer
+                    self.logger.info(msg)
+                else:
+                    msg = 'Failed to add job for transfer: %s' % transfer
+                    self.logger.error(msg)
+            else:
+		self.logger.error('Invalid number of arguments given in addJob: %d' % len(args))
+	    return msg
+
+	elif cmd.startswith('removeJob'):
+	    # get the arguments
+	    args = cmd.split(Trigger.DELIM)
+	    if len(args) == 4:
+		(transfer, event, actionItem) = args[1:]
+
+		if self.removeJob(transfer, event, actionItem):
+		    msg = 'Removed job for transfer: %s' % transfer
+		    self.logger.info(msg)
+		    return msg
+		else:
+		    msg = 'Failed to remove job for transfer: %s' % transfer
+		    self.logger.error(msg)
+		    return msg
+	    else:
+		self.logger.error('Invalid number of arguments given in removeJob: %d' % len(args))
+
         # return
         return cmd
 
@@ -213,6 +263,9 @@ class Trigger(BasicModule):
     """ onStop                                                               """
     """ -------------------------------------------------------------------- """
     def onStop(self):
+
+        # save the job queue
+        self._saveJobs()
 
         # cleanup
         del self._transfers
@@ -321,6 +374,7 @@ class Trigger(BasicModule):
         else:
             old_running      = -1
             old_percent_done = 0.
+
         new_running      = parseInt(new.running, -1)
         new_percent_done = parseFloat(new.percent_done)
         new_downtotal    = parseLong(new.downtotal)
@@ -330,14 +384,14 @@ class Trigger(BasicModule):
         #  from !1 to 1
         if old_running != 1 and new_running == 1:
             if 'transferStarted' in self.jobs[name].keys():
-                self._fireEvent('transferStarted', name)
+                self._fireEvent('transferStarted', name, new)
 
         # transfer stopped:
         #    * transition of running
         # from 1 to !1
         if old_running == 1 and new_running != 1:
             if 'transferStopped' in self.jobs[name].keys():
-                self._fireEvent('transferStopped', name)
+                self._fireEvent('transferStopped', name, new)
 
         # transfer Completed:
         #   * transition of (running, percent_done)
@@ -348,7 +402,7 @@ class Trigger(BasicModule):
             new_running in (0, 1) and new_percent_done == 100. and \
             new_downtotal > 0L:
             if 'transferCompleted' in self.jobs[name].keys():
-                self._fireEvent('transferCompleted', name)
+                self._fireEvent('transferCompleted', name, new)
 
         # transfer Seeding:
         #   * torrents only
@@ -357,13 +411,17 @@ class Trigger(BasicModule):
         if type == 'torrent' and \
             old_running == 1 and \
             new_running == 1 and new_percent_done == 100.:
-            if 'transferSeeding' in self.jobs[name].keys():
-                self._fireEvent('transferSeeding', name)
+            try:
+                if 'transferSeeding' in self.jobs[name].keys():
+                    self._fireEvent('transferSeeding', name, new)
+            except Exception, e:
+                #self.logger.error("Error getting keys for %s (%s)" % (name, e))
+		pass
 
     """ -------------------------------------------------------------------- """
     """ _fireEvent                                                           """
     """ -------------------------------------------------------------------- """
-    def _fireEvent(self, event, name):
+    def _fireEvent(self, event, name, new):
         """call each action for this event."""
 
         for action in self.jobs[name][event]:
@@ -373,18 +431,18 @@ class Trigger(BasicModule):
 
             # And fire event.
             try:
-                self._fireEventCore(event, name, action)
+                self._fireEventCore(event, name, action, new)
             except Exception, e:
                 self.logger.warning("Error running %s event for transfer %s (%s)" % (event, name, e))
 
     """ -------------------------------------------------------------------- """
     """ _fireEventCore                                                       """
     """ -------------------------------------------------------------------- """
-    def _fireEventCore(self, event, name, action):
+    def _fireEventCore(self, event, name, action, new):
         """actually call the event."""
 
         if action.startswith('execute'):
-            script = action.split(':')[1]
+            script = action.split(Trigger.CmdDelim)[1]
 
             # pass stuff to the environment
             params = {}
@@ -394,16 +452,29 @@ class Trigger(BasicModule):
             params[Trigger.Param_FLUXCLI]  = Activator().getInstance('Fluxcli').getPath()
             params[Trigger.Param_FLUXD]    = Config().get('dir', 'pathFluxd').strip()
             params[Trigger.Param_OWNER]    = new.transferowner.strip()
-            params[Trigger.Param_PATH]     = pathTf
+            params[Trigger.Param_PATH]     = Config().get('dir', 'pathTf').strip()
             params[Trigger.Param_PHP]      = Config().get('file', 'php').strip()
             params[Trigger.Param_TRANSFER] = name 
-            params[Trigger.Param_TYPE]     = type  
+            #params[Trigger.Param_TYPE]    = type
+            params[Trigger.Param_RUNNING]  = new.running
+            params[Trigger.Param_PERCENT]  = new.percent_done
+            params[Trigger.Param_TIME]     = new.time_left
+            params[Trigger.Param_DOWN]     = new.down_speed
+            params[Trigger.Param_UP]       = new.up_speed
+            params[Trigger.Param_SEEDS]    = new.seeds
+            params[Trigger.Param_PEERS]    = new.peers
+            params[Trigger.Param_SHARING]  = new.sharing
+            params[Trigger.Param_SEEDLIM]  = new.seedlimit
+            params[Trigger.Param_UPTOTAL]  = new.uptotal
+            params[Trigger.Param_DOWNTOTAL]= new.downtotal
+            params[Trigger.Param_SIZE]     = new.size
 
             # Prepare environment (clean up and add params).
             env = dict([(k, v) for k, v in os.environ.iteritems() if not k.startswith(Trigger.ParamPrefix)])
             env.update(params)
 
-            bgShellCmd(self.logger, self.name + ':' + event, script, pathTf, env)
+            bgShellCmd(self.logger, self.name + ':' + event, script, Config().get('dir', 'pathTf').strip(), env)
+            self.removeJob(name, event, action)
 
         elif action == 'email':
             # TODO: determine email capabilities. I'd like to have an email
@@ -416,7 +487,7 @@ class Trigger(BasicModule):
             pass
 
         elif action.startswith('move'):
-            destination = action.split(':')[1]
+            destination = action.split(Trigger.CmdDelim)[1]
 
             # TODO: move the files to the destination
             pass
@@ -482,7 +553,10 @@ class Trigger(BasicModule):
                     try:
 
                         # add transfer
-                        self.addJob(name, event, action)
+                        if self.addJob(name, event, action):
+			    self.logger.info('Sucessfully loaded job for transfer: %s' % name)
+			else:
+			    self.logger.error('Failed to load job for transfer: %s' % name)
 
                     except Exception, e:
                         self.logger.error("error when loading statfile %s for transfer %s (%s)" % (file, name, e))
@@ -508,7 +582,8 @@ class Trigger(BasicModule):
         content = ''
         for transfer in self.jobs.keys():
             for event in self.jobs[transfer].keys():
-                content += '%s%s%s%s%s\n' % (transfer, Trigger.DELIM, event, Trigger.DELIM, self.jobs[transfer][event])
+                for action in self.jobs[transfer][event]:
+                    content += '%s%s%s%s%s\n' % (transfer, Trigger.DELIM, event, Trigger.DELIM, action)
 
         # write file
         try:
@@ -536,18 +611,45 @@ class Trigger(BasicModule):
     def addJob(self, transfer, event, action):
         """Adds a job to the jobs hash.
 
-        action should be a list, even if it only contains one item!"""
+        action needs to be a list in the self.jobs dict, but it can remain
+        a string till then"""
 
         # debug
         self.logger.debug('Adding to jobs t: %s e: %s a: %s' % (transfer, event, action))
 
-        if event in self.jobs[transfer]:
-            # this event is already defined
-            self.logger.debug('Attempted to add an event that already exists for this transfer: %s (%s)' % (transfer, event))
-            return False
+        if transfer in self.jobs.keys():
+            # transfer already has jobs defined, make sure we don't overwrite them
+
+            if event in self.jobs[transfer].keys():
+                # this event is already defined
+                if action in self.jobs[transfer][event]:
+                    # this action is already defined for this event
+                    self.logger.debug('Attempted to add an event that already exists for this transfer: %s (%s)' % (transfer, event))
+                    return False
+                else:
+                    # this action is not defined for the event, add it
+                    self.jobs[transfer][event].append(action)
+            else:
+                # first, cast action to a list - the easy way
+                action = action.split()
+
+                self.jobs[transfer]={event: action}
+                self.logger.debug('Added job for %s' % transfer)
+	        return True
+
         else:
-            self.jobs[transfer]={event: action}
-            self.logger.debug('Added job for %s' % transfer)
+            # transfer doesn't exist in the jobs hash, create it
+
+            # first, cast action to a list - the easy way
+            action = action.split()
+
+            # now, create the job.
+            self.jobs[transfer] = {event: action}
+
+            # log
+            self.logger.debug('Created job for transfer: %s event: %s action: %s' % (transfer, event, action[0]))
+
+            return True
 
     """ -------------------------------------------------------------------- """
     """ removeJob                                                            """
@@ -558,16 +660,20 @@ class Trigger(BasicModule):
         # debug
         self.logger.debug('removing job from jobs for %s' % transfer)
 
+        # strip off newline characters from action
+        action = action.rstrip()
+
         if transfer in self.jobs.keys():
             if event in self.jobs[transfer].keys():
                 if action in self.jobs[transfer][event]:
                     self.jobs[transfer][event].pop(self.jobs[transfer][event].index(action))
+                    self.logger.debug("removed job from hash.")
                 else:
                     self.logger.debug('No job defined for action: %s' % action)
                     return False
             else:
                 self.logger.debug('No job defined for event: %s' % event)
-            return False
+                return False
         else:
             self.logger.debug('No job defined for transfer: %s' % transfer)
             return False
@@ -582,3 +688,23 @@ class Trigger(BasicModule):
             self.logger.debug('No events defined for transfer, removing transfer: %s' % transfer)
             del self.jobs[transfer]
 
+        return True
+
+    """ ------------------------------------------------------------------- """
+    """ listJobs                                                            """
+    """ ------------------------------------------------------------------- """
+    def listJobs(self):
+        """lists the jobs in the queue"""
+
+        # debug
+        self.logger.debug('listing jobs in queue')
+
+        retVal = ''
+
+        for key in self.jobs.keys():
+            retVal += key + " " +str(self.jobs[key]) + '\n'
+
+        if retVal == '':
+            retVal = 'No jobs in queue'
+
+        return retVal
