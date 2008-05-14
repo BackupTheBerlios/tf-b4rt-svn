@@ -176,25 +176,25 @@ class Trigger(BasicModule):
                     msg = 'Failed to add job for transfer: %s' % transfer
                     self.logger.error(msg)
             else:
-		self.logger.error('Invalid number of arguments given in addJob: %d' % len(args))
-	    return msg
+                self.logger.error('Invalid number of arguments given in addJob: %d' % len(args))
+            return msg
 
-	elif cmd.startswith('removeJob'):
-	    # get the arguments
-	    args = cmd.split(Trigger.DELIM)
-	    if len(args) == 4:
-		(transfer, event, actionItem) = args[1:]
+        elif cmd.startswith('removeJob'):
+            # get the arguments
+            args = cmd.split(Trigger.DELIM)
+            if len(args) == 4:
+                (transfer, event, actionItem) = args[1:]
 
-		if self.removeJob(transfer, event, actionItem):
-		    msg = 'Removed job for transfer: %s' % transfer
-		    self.logger.info(msg)
-		    return msg
-		else:
-		    msg = 'Failed to remove job for transfer: %s' % transfer
-		    self.logger.error(msg)
-		    return msg
-	    else:
-		self.logger.error('Invalid number of arguments given in removeJob: %d' % len(args))
+                if self.removeJob(transfer, event, actionItem):
+                    msg = 'Removed job for transfer: %s' % transfer
+                    self.logger.info(msg)
+                    return msg
+                else:
+                    msg = 'Failed to remove job for transfer: %s' % transfer
+                    self.logger.error(msg)
+                    return msg
+            else:
+                self.logger.error('Invalid number of arguments given in removeJob: %d' % len(args))
 
         # return
         return cmd
@@ -416,7 +416,7 @@ class Trigger(BasicModule):
                     self._fireEvent('transferSeeding', name, new)
             except Exception, e:
                 #self.logger.error("Error getting keys for %s (%s)" % (name, e))
-		pass
+                pass
 
     """ -------------------------------------------------------------------- """
     """ _fireEvent                                                           """
@@ -477,10 +477,34 @@ class Trigger(BasicModule):
             self.removeJob(name, event, action)
 
         elif action == 'email':
-            # TODO: determine email capabilities. I'd like to have an email
-            # address stored in the user's profile, so we could email them
-            # there, but I'd also like to be able to fallback to PM
-            pass
+            """ since we don't have email capabilities now, just pm the user"""
+            # get fluxcli instance
+            fluxcli = Activator().getInstance('Fluxcli');
+
+            # invoke fluxcli
+            try:
+                # invoke
+                fluxcli.invoke(['pm', 'Trigger', new.transferowner.strip(), name + ' has met criteria: ' + event], False).strip()
+            except Exception, e:
+                raise Exception, "Exception when attempting to pm the user"
+
+            self.removeJob(name, event, action)
+
+        elif action.startswith('tset'):
+            """ adjust transfer settings."""
+            # check the parameters
+            (setting, value) = action.split(Trigger.CmdDelim)[1:]
+
+            # get fluxcli instance
+            fluxcli = Activator().getInstance('Fluxcli');
+
+            # invoke fluxcli
+            try:
+                fluxcli.invoke(['tset', name, setting, value], True).strip()
+            except Exception, e:
+                raise Exception, "Exception when attempting to adjust torrent settings"
+
+            self.removeJob(name, event, action)
 
         elif action == 'unzip':
             # TODO: find the rar/zip'd files we downloaded and unzip them
@@ -554,9 +578,9 @@ class Trigger(BasicModule):
 
                         # add transfer
                         if self.addJob(name, event, action):
-			    self.logger.info('Sucessfully loaded job for transfer: %s' % name)
-			else:
-			    self.logger.error('Failed to load job for transfer: %s' % name)
+                            self.logger.info('Sucessfully loaded job for transfer: %s' % name)
+                        else:
+                            self.logger.error('Failed to load job for transfer: %s' % name)
 
                     except Exception, e:
                         self.logger.error("error when loading statfile %s for transfer %s (%s)" % (file, name, e))
@@ -635,7 +659,7 @@ class Trigger(BasicModule):
 
                 self.jobs[transfer]={event: action}
                 self.logger.debug('Added job for %s' % transfer)
-	        return True
+                return True
 
         else:
             # transfer doesn't exist in the jobs hash, create it
