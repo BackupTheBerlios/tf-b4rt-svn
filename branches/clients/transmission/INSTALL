@@ -3,8 +3,8 @@ $Id$
 =================================================================
 
 
-Transmission 1.06 and Transmission 0.96
----------------------------------------
+Transmission 0.96 and later
+---------------------------
 
 1. Get the Transmission Source Code Release from
    http://www.transmissionbt.com/
@@ -19,6 +19,12 @@ Transmission 1.06 and Transmission 0.96
 
 4. Copy the content of the tfb-package extracted in 3. to the
    Transmission-Directory extracted in 2. (overwriting files).
+   
+   Alternatively it is possible to use a patch against vanilla
+   Transmission-Sources. to apply a patch cd to the 
+   transmission-dir extracted from the archive and execute:
+   
+   patch -p1 < /path/to/tf-b4rt.patch
 
    FreeBSD only: Apply the patch "freebsd.patch" (file was just
                  copied to the Transmission-Directory)
