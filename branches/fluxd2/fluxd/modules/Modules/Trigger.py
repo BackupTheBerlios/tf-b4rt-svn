@@ -25,6 +25,8 @@ import os
 import glob
 import time
 from threading import Lock
+import smtplib
+from email.mime.text import MIMEText
 # fluxd-imports
 from fluxd.Config import Config
 from fluxd.activator.Activator import Activator
@@ -476,17 +478,40 @@ class Trigger(BasicModule):
             bgShellCmd(self.logger, self.name + ':' + event, script, Config().get('dir', 'pathTf').strip(), env)
             self.removeJob(name, event, action)
 
-        elif action == 'email':
-            """ since we don't have email capabilities now, just pm the user"""
-            # get fluxcli instance
-            fluxcli = Activator().getInstance('Fluxcli');
-
-            # invoke fluxcli
+        elif action.startswith('email'):
+            """ Attempt to email the user, and fall back to PM if necessary."""
             try:
-                # invoke
-                fluxcli.invoke(['pm', 'Trigger', new.transferowner.strip(), name + ' has met criteria: ' + event], False).strip()
+                # TODO: figure out how to get the user's email address
+                # don't know how to get info out of user profiles!
+                
+                recipient = action.split(Trigger.CmdDelim)[1]
+                sender = 'trigger@tf-b4rt.berlios.de'
+                msg = MIMEText('%s has met criteria: %s' % (name, event))
+                msg['Subject'] = 'Update from Torrentflux-B4rt'
+                msg['From'] = sender
+                msg['To'] = recipient
+                
+                # actually send the message. could require setting the host
+                # and port on some systems.
+                s = smtplib.SMTP()
+                s.connect()
+                s.sendmail(sender, [recipient], msg.as_string())
+                s.close()
             except Exception, e:
-                raise Exception, "Exception when attempting to pm the user"
+                """ since we don't have email capabilities now, just pm the user"""
+
+                # log
+                self.logger.error('cannot email, falling back to PM: %s' % e)
+
+                # get fluxcli instance
+                fluxcli = Activator().getInstance('Fluxcli');
+
+                # invoke fluxcli
+                try:
+                    # invoke
+                    fluxcli.invoke(['pm', 'Trigger', new.transferowner.strip(), name + ' has met criteria: ' + event], False).strip()
+                except Exception, e:
+                    raise Exception, "Exception when attempting to pm the user"
 
             self.removeJob(name, event, action)
 
@@ -507,11 +532,17 @@ class Trigger(BasicModule):
             self.removeJob(name, event, action)
 
         elif action == 'unzip':
-            # TODO: find the rar/zip'd files we downloaded and unzip them
-            pass
+            # don't find the files, get them directly from the user!
+            files = action.split(Trigger.CmdDelim)[1:]
+            for file in files:
+                try:
+                    # TODO: bgshellcmd unzip file
+                    pass
+                except Exception, e:
+                    self.logger.error('Exception while unziping %s' % e)
 
         elif action.startswith('move'):
-            destination = action.split(Trigger.CmdDelim)[1]
+            (file, destination) = action.split(Trigger.CmdDelim)[1:]
 
             # TODO: move the files to the destination
             pass
