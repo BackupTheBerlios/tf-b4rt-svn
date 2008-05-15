@@ -509,9 +509,9 @@ class Trigger(BasicModule):
                 # invoke fluxcli
                 try:
                     # invoke
-                    fluxcli.invoke(['pm', 'Trigger', new.transferowner.strip(), name + ' has met criteria: ' + event], False).strip()
+                    fluxcli.invoke(['pm', 'Trigger', new.transferowner.strip(), name + ' has met criteria: ' + event], False)
                 except Exception, e:
-                    raise Exception, "Exception when attempting to pm the user"
+                    raise Exception, 'Exception when attempting to pm the user: %s' % e
 
             self.removeJob(name, event, action)
 
