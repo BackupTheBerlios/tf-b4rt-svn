@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: cli.c 7664 2009-01-11 17:46:51Z charles $
+ * $Id$
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
