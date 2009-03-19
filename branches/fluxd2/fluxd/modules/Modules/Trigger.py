@@ -22,6 +22,7 @@
 ################################################################################
 # standard-imports
 import os
+import sys
 import glob
 import time
 from threading import Lock
@@ -37,7 +38,7 @@ from fluxd.functions.string import parseInt, parseLong, parseFloat
 from fluxd.functions.psutils import bgShellCmd
 ################################################################################
 
-__version__ = (0, 0, 1)
+__version__ = (0, 0, 2)
 __version_str__ = '%s.%s' % (__version__[0], ''.join([str(part) for part in __version__[1:]]))
 
 """ ------------------------------------------------------------------------ """
@@ -48,7 +49,7 @@ class Trigger(BasicModule):
     # events
     Events = [
         'OnDownloadStarted',    # For all transfer types. started by e.g. Qmgr
-        'OnDownloadStopped',    # For all transfer types. stopped by sharekill or download completed for nzb
+        'OnDownloadStopped',    # For all transfer types. stopped by sharekill or download completed for nzb or wget
         'OnSeedingStarted'     # For torrents only. download is complete, but we're still uploading
     ]
 
@@ -76,6 +77,14 @@ class Trigger(BasicModule):
     Param_UPTOTAL  = ParamPrefix + 'UPTOTAL'    # total amount uploaded
     Param_DOWNTOTAL= ParamPrefix + 'DOWNTOTAL'  # total amount downloaded
     Param_SIZE     = ParamPrefix + 'SIZE'       # total size of the files
+    
+    # arhcivers dict
+    archivers = {
+                 ".zip": Config().getExt('Trigger',  'path_unzip').strip() + ' ', 
+                 ".gz": Config().getExt('Trigger',  'path_tar').strip() + ' -zxvf ',    #works
+                 ".tgz": Config().getExt('Trigger',  'path_tar').strip() + ' -zxvf ',    # works
+                 ".rar": Config().getExt('Trigger',  'path_unrar').strip() + ' e '
+                 }
 
     # path
     TransfersPath = '.transfers/'
@@ -217,13 +226,14 @@ class Trigger(BasicModule):
 
         # main-path
         if not os.path.isdir(self.pathTrigger):
+            self.logger.info("main-path %s does not exist, trying to create ..." % self.pathTrigger)
             try:
-                self.logger.info("main-path %s does not exist, trying to create ..." % self.pathTrigger)
                 os.mkdir(self.pathTrigger, 0700)
-                self.logger.info("done.")
             except:
                 self.logger.error("Failed to create main-path %s" % self.pathTrigger)
                 return False
+            
+            self.logger.info("done.")
 
         # initialize
         self.logger.info('initializing transfers state...')
@@ -303,7 +313,7 @@ class Trigger(BasicModule):
             return True
 
         except Exception, e:
-            self.logger.error("Error when calling trigger (%s)" % (e))
+            self.logger.error("Error when invoking trigger (%s)" % (e))
 
     """ -------------------------------------------------------------------- """
     """ _takeSnapshot                                                        """
@@ -481,8 +491,8 @@ class Trigger(BasicModule):
         elif action.startswith('email'):
             """ Attempt to email the user, and fall back to PM if necessary."""
             try:
-                # TODO: figure out how to get the user's email address
-                # don't know how to get info out of user profiles!
+                # Can't get the email out of the DB at this time
+                # it must be inserted into the job initially.
                 
                 recipient = action.split(Trigger.CmdDelim)[1]
                 sender = 'trigger@tf-b4rt.berlios.de'
@@ -498,7 +508,7 @@ class Trigger(BasicModule):
                 s.sendmail(sender, [recipient], msg.as_string())
                 s.close()
             except Exception, e:
-                """ since we don't have email capabilities now, just pm the user"""
+                """ email failed, fallback to PM"""
 
                 # log
                 self.logger.error('cannot email, falling back to PM: %s' % e)
@@ -531,19 +541,29 @@ class Trigger(BasicModule):
 
             self.removeJob(name, event, action)
 
-        elif action == 'unzip':
+        elif action.startswith('unzip'):
             # don't find the files, get them directly from the user!
             files = action.split(Trigger.CmdDelim)[1:]
             for file in files:
                 try:
                     # TODO: bgshellcmd unzip file
-                    pass
-                except Exception, e:
-                    self.logger.error('Exception while unziping %s' % e)
+                    
+                    # Get the file's extension
+                    extension = os.path.splitext(file)[1]
+                    
+                    # Get path to the unzip binary
+                    path_unzip = Trigger.archivers[extension]
+                    
+                    bgShellCmd(self.logger,  self.name + ':' + event,  path_unzip + file,  Config().get('dir', 'pathTf').strip() + new.transferowner.strip())
+                except:
+                    self.logger.error('Exception while unziping %s' % sys.exc_info()[0])
+                    return False
+                    
+            self.removeJob(name,  event,  action)
 
         elif action.startswith('move'):
-            (file, destination) = action.split(Trigger.CmdDelim)[1:]
 
+            (file, destination) = action.split(Trigger.CmdDelim)[1:]
             # TODO: move the files to the destination
             pass
         else:
