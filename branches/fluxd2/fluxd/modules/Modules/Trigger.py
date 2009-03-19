@@ -38,7 +38,7 @@ from fluxd.functions.string import parseInt, parseLong, parseFloat
 from fluxd.functions.psutils import bgShellCmd
 ################################################################################
 
-__version__ = (0, 0, 2)
+__version__ = (0, 0, 3)
 __version_str__ = '%s.%s' % (__version__[0], ''.join([str(part) for part in __version__[1:]]))
 
 """ ------------------------------------------------------------------------ """
@@ -80,11 +80,14 @@ class Trigger(BasicModule):
     
     # arhcivers dict
     archivers = {
-                 ".zip": Config().getExt('Trigger',  'path_unzip').strip() + ' ', 
-                 ".gz": Config().getExt('Trigger',  'path_tar').strip() + ' -zxvf ',    #works
-                 ".tgz": Config().getExt('Trigger',  'path_tar').strip() + ' -zxvf ',    # works
+                 ".zip": Config().getExt('Trigger',  'path_unzip').strip() + ' ',
+                 ".gz": Config().getExt('Trigger',  'path_gunzip').strip() + ' ',
+                 ".tgz": Config().getExt('Trigger',  'path_tar').strip() + ' -zxvf ',
                  ".rar": Config().getExt('Trigger',  'path_unrar').strip() + ' e '
                  }
+                 
+    # bin_mv
+    bin_mv = Config().getExt('Trigger',  'path_mv').strip()
 
     # path
     TransfersPath = '.transfers/'
@@ -546,26 +549,33 @@ class Trigger(BasicModule):
             files = action.split(Trigger.CmdDelim)[1:]
             for file in files:
                 try:
-                    # TODO: bgshellcmd unzip file
-                    
                     # Get the file's extension
                     extension = os.path.splitext(file)[1]
+                    
+                    # seperate gzip'd files from tar'd and gzip'd files
+                    if file.endswith('.tar.gz'):
+                        # Tar'd and Gzip'd file, switch extension
+                        # so we use the right command to extract it
+                        extension = '.tgz'
                     
                     # Get path to the unzip binary
                     path_unzip = Trigger.archivers[extension]
                     
                     bgShellCmd(self.logger,  self.name + ':' + event,  path_unzip + file,  Config().get('dir', 'pathTf').strip() + new.transferowner.strip())
                 except:
-                    self.logger.error('Exception while unziping %s' % sys.exc_info()[0])
+                    self.logger.error('Exception while unziping %s' % e)
                     return False
                     
             self.removeJob(name,  event,  action)
 
         elif action.startswith('move'):
-
-            (file, destination) = action.split(Trigger.CmdDelim)[1:]
-            # TODO: move the files to the destination
-            pass
+            file, destination = action.split(Trigger.CmdDelim)[1:3]
+            
+            bgShellCmd(self.logger,  self.name + ':' + event,  Trigger.bin_mv + ' ' + file + ' ' + destination,  Config().get('dir', 'pathTf').strip())
+            
+            self.removeJob(name,  event,  action)
+            
+            
         else:
             self.logger.info('inavlid action given: %s' % action)
 
