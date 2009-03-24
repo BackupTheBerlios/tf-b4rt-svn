@@ -698,6 +698,9 @@ class Trigger(BasicModule):
 
         action needs to be a list in the self.jobs dict, but it can remain
         a string till then"""
+        
+        # remove trailing whitespace
+        action = action.rstrip()
 
         # debug
         self.logger.debug('Adding to jobs t: %s e: %s a: %s' % (transfer, event, action))
@@ -714,27 +717,23 @@ class Trigger(BasicModule):
                 else:
                     # this action is not defined for the event, add it
                     self.jobs[transfer][event].append(action)
+                    
             else:
-                # first, cast action to a list - the easy way
-                action = action.split()
+                # first, create a temp hash to hold the new job
+                tempHash = {event: [action]}
 
-                self.jobs[transfer]={event: action}
-                self.logger.debug('Added job for %s' % transfer)
-                return True
-
+                # now update the jobs hash with the new job
+                self.jobs[transfer].update(tempHash)
+                
         else:
             # transfer doesn't exist in the jobs hash, create it
-
-            # first, cast action to a list - the easy way
-            action = action.split()
-
-            # now, create the job.
-            self.jobs[transfer] = {event: action}
-
-            # log
-            self.logger.debug('Created job for transfer: %s event: %s action: %s' % (transfer, event, action[0]))
-
-            return True
+            self.jobs[transfer] = {event: [action]}
+            
+        # debug
+        self.logger.debug('Created job for transfer: %s event: %s action %s' % (transfer, event, action))
+            
+        # return
+        return True
 
     """ -------------------------------------------------------------------- """
     """ removeJob                                                            """
