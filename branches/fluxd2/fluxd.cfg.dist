@@ -69,6 +69,11 @@ enabled = DB:fluxd_Trigger_enabled
 module = fluxd.modules.Modules.Trigger
 class = Trigger
 interval = DB:fluxd_Trigger_interval
+path_unzip = DB:bin_unzip
+path_unrar = DB:bin_unrar
+path_tar = /usr/bin/tar
+path_gunzip = /usr/bin/gunzip
+path_mv = /bin/mv
 
 [Qmgr]
 enabled = DB:fluxd_Qmgr_enabled
