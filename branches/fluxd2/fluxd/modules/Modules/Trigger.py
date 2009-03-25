@@ -38,20 +38,13 @@ from fluxd.functions.string import parseInt, parseLong, parseFloat
 from fluxd.functions.psutils import bgShellCmd
 ################################################################################
 
-__version__ = (0, 0, 3)
+__version__ = (0, 0, 4)
 __version_str__ = '%s.%s' % (__version__[0], ''.join([str(part) for part in __version__[1:]]))
 
 """ ------------------------------------------------------------------------ """
 """ Trigger                                                                  """
 """ ------------------------------------------------------------------------ """
 class Trigger(BasicModule):
-
-    # events
-    Events = [
-        'OnDownloadStarted',    # For all transfer types. started by e.g. Qmgr
-        'OnDownloadStopped',    # For all transfer types. stopped by sharekill or download completed for nzb or wget
-        'OnSeedingStarted'     # For torrents only. download is complete, but we're still uploading
-    ]
 
     # params
     ParamPrefix = 'TFB_'
@@ -489,7 +482,7 @@ class Trigger(BasicModule):
             env.update(params)
 
             bgShellCmd(self.logger, self.name + ':' + event, script, Config().get('dir', 'pathTf').strip(), env)
-            self.removeJob(name, event, action)
+            return self.removeJob(name, event, action)
 
         elif action.startswith('email'):
             """ Attempt to email the user, and fall back to PM if necessary."""
@@ -526,7 +519,7 @@ class Trigger(BasicModule):
                 except Exception, e:
                     raise Exception, 'Exception when attempting to pm the user: %s' % e
 
-            self.removeJob(name, event, action)
+            return self.removeJob(name, event, action)
 
         elif action.startswith('tset'):
             """ adjust transfer settings."""
@@ -542,7 +535,7 @@ class Trigger(BasicModule):
             except Exception, e:
                 raise Exception, "Exception when attempting to adjust torrent settings"
 
-            self.removeJob(name, event, action)
+            return self.removeJob(name, event, action)
 
         elif action.startswith('unzip'):
             # don't find the files, get them directly from the user!
@@ -566,18 +559,19 @@ class Trigger(BasicModule):
                     self.logger.error('Exception while unziping %s' % e)
                     return False
                     
-            self.removeJob(name,  event,  action)
+            return self.removeJob(name,  event,  action)
 
         elif action.startswith('move'):
             file, destination = action.split(Trigger.CmdDelim)[1:3]
             
             bgShellCmd(self.logger,  self.name + ':' + event,  Trigger.bin_mv + ' ' + file + ' ' + destination,  Config().get('dir', 'pathTf').strip())
             
-            self.removeJob(name,  event,  action)
+            return self.removeJob(name,  event,  action)
             
             
         else:
             self.logger.info('inavlid action given: %s' % action)
+            return False
 
     """ -------------------------------------------------------------------- """
     """ _loadJobs                                                            """
