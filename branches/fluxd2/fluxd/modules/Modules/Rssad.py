@@ -217,7 +217,7 @@ class Rssad(BasicModule):
             fluxcli = Activator().getInstance('Fluxcli')
             
             # process jobs
-            jobCopy = self.jobs.copy()
+            jobCopy = self.jobs[:]
             for job in jobCopy:
             
                 # build arg-array
