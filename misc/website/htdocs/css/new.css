@@ -61,7 +61,7 @@ body {
 	color: #666;
 	font-size: smaller;
 	font-weight: normal;
-	letter-spacing: -1px;
+	letter-spacing: +1px;
 }
 
 #header a:hover {
@@ -85,7 +85,7 @@ body {
 
 #navi li {
 	display: inline;
-	margin: 0 5px 0 10px;
+	margin: 0 4px 0 5px;
 	font-size: medium;
 	font-weight: bold;
 }
@@ -95,7 +95,7 @@ body {
 	color: #fff;
 	font-size: medium;
 	font-weight: normal;
-	letter-spacing: -1px;
+	letter-spacing: 0px;
 }
 
 #navi a:hover {
@@ -111,7 +111,6 @@ body {
 	color: #837b67;
 	margin-bottom: 1em;
 	font-weight: normal;
-	letter-spacing: -1px;
 	font-family: Georgia, "Times New Roman", Times, serif;
 }
 
@@ -168,7 +167,6 @@ body {
 	color: #666;
 	font-size: smaller;
 	font-weight: normal;
-	letter-spacing: -1px;
 }
 
 #credits a:hover {
